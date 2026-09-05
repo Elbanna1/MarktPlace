@@ -41,12 +41,6 @@ builder.WebHost.ConfigureKestrel(options =>
     options.AddServerHeader = false;
 });
 
-if (OperatingSystem.IsWindows())
-{
-    builder.Services.Configure<Microsoft.AspNetCore.Builder.IISServerOptions>(options =>
-        options.MaxRequestBodySize = FileUploadConstants.MaxRequestBodySizeBytes);
-}
-
 builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = FileUploadConstants.MaxRequestBodySizeBytes;
