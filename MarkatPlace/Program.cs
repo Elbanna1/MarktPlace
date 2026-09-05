@@ -5,7 +5,6 @@ using MarkatPlace.Middleware;
 using MarkatPlace.RealTime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -42,8 +41,11 @@ builder.WebHost.ConfigureKestrel(options =>
     options.AddServerHeader = false;
 });
 
-builder.Services.Configure<Microsoft.AspNetCore.Builder.IISServerOptions>(options =>
-    options.MaxRequestBodySize = FileUploadConstants.MaxRequestBodySizeBytes);
+if (OperatingSystem.IsWindows())
+{
+    builder.Services.Configure<Microsoft.AspNetCore.Builder.IISServerOptions>(options =>
+        options.MaxRequestBodySize = FileUploadConstants.MaxRequestBodySizeBytes);
+}
 
 builder.Services.Configure<FormOptions>(options =>
 {
@@ -107,15 +109,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor
-                             | ForwardedHeaders.XForwardedProto
-                             | ForwardedHeaders.XForwardedHost;
-
-    options.KnownIPNetworks.Clear();
-    options.KnownProxies.Clear();
-});
+builder.Services.AddReverseProxyForwardedHeaders(builder.Configuration);
 
 builder.Services.AddResponseCompression(options =>
 {

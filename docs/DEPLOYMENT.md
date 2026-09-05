@@ -2,8 +2,15 @@
 
 [← README](../README.md) · Related: [SECURITY](SECURITY.md) · [TROUBLESHOOTING](TROUBLESHOOTING.md) · [SETUP](SETUP.md)
 
-Target: **IIS**, in-process hosting via `AspNetCoreModuleV2`, configured by
-`MarkatPlace/web.config`.
+Target: **Kestrel on Linux behind Nginx**.
+
+```
+Internet → Nginx (TLS) → Kestrel → MarkatPlace
+```
+
+Kestrel is the ASP.NET Core default server and the only server production uses. Nothing in the
+application requires IIS; `MarkatPlace/web.config` is inert outside IIS and is kept only for the
+legacy Windows/IIS publish path (see [web.config](#webconfig)).
 
 ---
 
@@ -51,11 +58,38 @@ the environment supplies them.
 dotnet publish MarkatPlace/MarkatPlace.csproj -c Release -o ./publish
 ```
 
-Deploy the contents of `./publish` to the IIS application directory.
+Deploy the contents of `./publish` to the application directory on the server and start it:
+
+```bash
+ASPNETCORE_ENVIRONMENT=Production dotnet MarkatPlace.dll
+```
+
+### Listening address
+
+**No listening address is hard-coded**, in code or in `appsettings*.json`. With nothing configured
+Kestrel binds `http://localhost:5000`; the environment chooses otherwise:
+
+| Variable | Example | Notes |
+| --- | --- | --- |
+| `ASPNETCORE_URLS` | `http://127.0.0.1:5000` | Loopback only — Nginx is the public listener |
+| `ASPNETCORE_URLS` | `http://unix:/run/markatplace.sock` | Unix socket, if you prefer one to a port |
+
+Point Nginx's `proxy_pass` at the same address. Do not add a `Kestrel:Endpoints` section to
+`appsettings*.json`: endpoint configuration **overrides** `ASPNETCORE_URLS`, so the server would lose
+the ability to choose. A test enforces this.
+
+TLS is terminated by Nginx, so Kestrel needs no certificate and binds no HTTPS endpoint.
+`UseHttpsRedirection` only issues a redirect when it can resolve an HTTPS port — leave the
+http → https redirect to Nginx, or set `ASPNETCORE_HTTPS_PORT=443` to have the application issue it.
+
+`App:BaseUrl` is **only** the fallback used when a URL is built outside an HTTP request; inside a
+request the scheme and host come from the request itself. Set `App__BaseUrl` to the public https
+origin — the committed value is a localhost development URL.
 
 ### `web.config`
 
-Shipped with the application. Two things matter:
+Not used on Linux — Kestrel never reads it, and `dotnet publish` ships it regardless. It matters only
+if the application is published to IIS on Windows. Two things matter there:
 
 | Setting | Value | Why |
 | --- | --- | --- |
@@ -114,14 +148,36 @@ anyone who can reach the endpoint.
 ## Reverse proxy
 
 `UseForwardedHeaders` runs first and honours `X-Forwarded-For`, `X-Forwarded-Proto` and
-`X-Forwarded-Host`. `KnownIPNetworks` and `KnownProxies` are **cleared**, so headers are honoured
-regardless of the proxy's internal IP.
+`X-Forwarded-Host`. This is what makes generated upload URLs use the real public domain and scheme,
+what makes HSTS and `UseHttpsRedirection` see the original https request, and what makes rate
+limiting partition by the real client IP rather than the proxy's.
 
-This is what makes generated upload URLs use the real public domain and scheme, and what makes
-rate limiting partition by the real client IP rather than the proxy's.
+**Only loopback is trusted by default** — which is exactly Nginx on the same host. Headers arriving
+from anywhere else are ignored, so an internet client cannot forge its own IP, scheme or host.
+Configured in `MarkatPlace/Extensions/ForwardedHeadersExtensions.cs`, tuned by the
+`ForwardedHeaders` section:
 
-> Because the proxy list is cleared, the application trusts these headers unconditionally. It must
-> therefore sit **behind** a proxy that strips client-supplied `X-Forwarded-*` headers.
+| Key | Default | Use when |
+| --- | --- | --- |
+| `KnownProxies` | *(empty)* | Nginx connects from another host — list its address |
+| `KnownNetworks` | *(empty)* | The proxy's address varies — list its CIDR range |
+| `ForwardLimit` | `1` | `2` if a CDN sits in front of Nginx |
+| `TrustAnyProxy` | `false` | Last resort; see the warning below |
+
+> If Nginx does **not** connect from loopback and its address is not listed, the headers are silently
+> ignored: generated URLs lose `https`, and every client lands in one rate-limit partition keyed on
+> the proxy's IP. That is the failure to look for first.
+
+> `TrustAnyProxy: true` honours the headers from any caller. It is only safe when something upstream
+> strips client-supplied `X-Forwarded-*` headers — this was the behaviour before the Linux/Nginx
+> move, when the application ran in-process under IIS.
+
+Nginx must send them. `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;` and
+`proxy_set_header X-Forwarded-Proto $scheme;` are the two that matter; add
+`X-Forwarded-Host $host` if the public host differs from the one Nginx proxies to. WebSockets for
+SignalR need `proxy_http_version 1.1`, `proxy_set_header Upgrade $http_upgrade;` and
+`proxy_set_header Connection "upgrade";` on the `/hubs/` location, plus a `proxy_read_timeout` longer
+than the hub's idle period.
 
 ---
 
@@ -168,6 +224,8 @@ curl -sI https://<host>/api/lookups/categories-tree | grep -iE "x-content-type|x
 - [ ] `/health` reports `Healthy`
 - [ ] A public endpoint returns data
 - [ ] Security headers present; **no `Server: Kestrel`**
+- [ ] An https request returns `Strict-Transport-Security` — proof `X-Forwarded-Proto` was trusted
+- [ ] An image URL in an API response starts `https://<public host>`, not `http://` or `localhost`
 - [ ] An uploaded image URL from before the deployment still opens
 - [ ] Login works and returns a token
 - [ ] SignalR connects: `wss://<host>/hubs/notifications?access_token=<jwt>`

@@ -188,7 +188,7 @@ dotnet test Tests/MarkatPlace.Tests/MarkatPlace.Tests.csproj
 | [TESTING.md](docs/TESTING.md) | Run or write tests |
 | [SECURITY.md](docs/SECURITY.md) | Review or harden security |
 | [PERFORMANCE.md](docs/PERFORMANCE.md) | Understand the query and index decisions |
-| [DEPLOYMENT.md](docs/DEPLOYMENT.md) | Deploy to IIS / production |
+| [DEPLOYMENT.md](docs/DEPLOYMENT.md) | Deploy to production (Kestrel behind Nginx) |
 | [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Fix something that is broken |
 | [DECISIONS.md](docs/DECISIONS.md) | Understand *why* something odd exists before changing it |
 
@@ -245,8 +245,9 @@ These are the ones that cause real damage when broken. The full list is in
 
 ## Deployment overview
 
-Published to **IIS** (in-process, `AspNetCoreModuleV2`) with `MarkatPlace/web.config`. Migrations
-apply automatically on start-up. Uploaded files live under `MarkatPlace/wwwroot/uploads/` and are
+Runs on **Kestrel behind Nginx** on Linux — `dotnet MarkatPlace.dll`, with the listening address
+supplied by `ASPNETCORE_URLS`. IIS is not required anywhere. Migrations apply automatically on
+start-up. Uploaded files live under `MarkatPlace/wwwroot/uploads/` and are
 served as static files at permanent public URLs.
 
 Health probes: `GET /health/live` (process) and `GET /health` (database). Both are exempt from rate

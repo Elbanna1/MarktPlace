@@ -198,7 +198,7 @@ would be 48 copies that eventually disagree.
 
 From `MarkatPlace/Program.cs`, in order:
 
-1. `UseForwardedHeaders` — so scheme/host are correct behind IIS
+1. `UseForwardedHeaders` — so scheme/host/client IP are correct behind Nginx (loopback trusted by default)
 2. `GlobalExceptionHandlingMiddleware` — wraps everything
 3. `SqlDiagnosticsMiddleware` — **only when `Diagnostics:SqlCounter` is true**
 4. `UseStatusCodePages` — gives 404/405/413/415 an Arabic `ApiResponse` body

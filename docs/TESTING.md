@@ -52,6 +52,7 @@ Expected: **1,532 passing, 0 failing, 0 skipped**.
 | `NoEnglishInResponsesTests` | Source-wide sweep of every response/exception call site |
 | `UploadSecurityTests` | Magic-byte detection, executables, SVG exclusion, size ceilings |
 | `DeploymentSafetyTests` | No committed secrets, IIS ≥ app upload limit, diagnostics off |
+| `ReverseProxyHostingTests` | Forwarded headers behind Nginx, no IIS requirement, no pinned listening address |
 | `OwnerVisibilityTests` | The owner-visibility rule cannot be reintroduced-broken |
 | `ArabicText`, `RepositoryRoot`, `CSharpSource` | Helpers |
 
@@ -90,6 +91,10 @@ This is not theoretical: 707 messages were English before these tests existed.
 | `IIS_accepts_at_least_as_large_a_body_as_the_application_does` | IIS rejecting uploads the app accepts |
 | `Detailed_errors_and_stdout_logging_are_off_in_the_shipped_web_config` | Stack traces rendered to the browser |
 | `Every_accepted_upload_format_declares_a_content_type…` | A file stored whose URL answers 404 |
+| `Nginx_on_the_same_host_is_trusted_without_any_configuration` | Losing https on generated URLs behind the proxy |
+| `An_unknown_caller_cannot_forge_the_scheme_the_host_or_the_client_ip` | Trusting `X-Forwarded-*` from the internet |
+| `No_production_code_path_requires_IIS` | IIS creeping back into a Linux deployment |
+| `The_shipped_configuration_hard_codes_no_listening_address` | A pinned endpoint overriding `ASPNETCORE_URLS` |
 
 > The web.config test strips XML comments before asserting, so it is unaffected by whether the file
 > carries explanatory comments.

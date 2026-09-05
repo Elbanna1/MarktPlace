@@ -177,7 +177,7 @@ Registered into the host with `.AddApplicationPart(typeof(AuthController).Assemb
 | `RealTime/` | `NotificationHub`, `SignalRRealtimeNotifier` |
 | `wwwroot/uploads/` | Uploaded files, served publicly |
 | `appsettings*.json` | Layered configuration |
-| `web.config` | IIS hosting — request limits, logging switches |
+| `web.config` | Legacy IIS hosting only — request limits, logging switches. Inert under Kestrel |
 
 ---
 
@@ -193,6 +193,7 @@ xUnit, hermetic (no database, no host). See [TESTING.md](TESTING.md).
 | `NoEnglishInResponsesTests` | Source-wide sweep for English in responses |
 | `UploadSecurityTests` | Magic-byte detection, SVG exclusion, size ceilings |
 | `DeploymentSafetyTests` | No committed secrets; IIS ≥ app upload limit |
+| `ReverseProxyHostingTests` | Forwarded headers behind Nginx; no IIS requirement; no pinned address |
 | `OwnerVisibilityTests` | The owner-visibility rule cannot be reintroduced-broken |
 | `ArabicText`, `RepositoryRoot`, `CSharpSource` | Helpers (a small C# string lexer) |
 
