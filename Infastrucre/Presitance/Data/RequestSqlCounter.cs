@@ -1,0 +1,74 @@
+using System.Data.Common;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
+namespace Persistence.Data;
+
+public sealed class RequestSqlCounter
+{
+    private long _elapsedTicks;
+
+    public int Count { get; private set; }
+
+    public double ElapsedMilliseconds => (double)_elapsedTicks / TimeSpan.TicksPerMillisecond;
+
+    public void Record(TimeSpan duration)
+    {
+        Count++;
+        _elapsedTicks += duration.Ticks;
+    }
+}
+
+public sealed class SqlCountInterceptor : DbCommandInterceptor
+{
+    private readonly RequestSqlCounter _counter;
+
+    public SqlCountInterceptor(RequestSqlCounter counter)
+    {
+        _counter = counter;
+    }
+
+    public override DbDataReader ReaderExecuted(
+        DbCommand command, CommandExecutedEventData eventData, DbDataReader result)
+    {
+        _counter.Record(eventData.Duration);
+        return base.ReaderExecuted(command, eventData, result);
+    }
+
+    public override ValueTask<DbDataReader> ReaderExecutedAsync(
+        DbCommand command, CommandExecutedEventData eventData, DbDataReader result,
+        CancellationToken cancellationToken = default)
+    {
+        _counter.Record(eventData.Duration);
+        return base.ReaderExecutedAsync(command, eventData, result, cancellationToken);
+    }
+
+    public override object? ScalarExecuted(
+        DbCommand command, CommandExecutedEventData eventData, object? result)
+    {
+        _counter.Record(eventData.Duration);
+        return base.ScalarExecuted(command, eventData, result);
+    }
+
+    public override ValueTask<object?> ScalarExecutedAsync(
+        DbCommand command, CommandExecutedEventData eventData, object? result,
+        CancellationToken cancellationToken = default)
+    {
+        _counter.Record(eventData.Duration);
+        return base.ScalarExecutedAsync(command, eventData, result, cancellationToken);
+    }
+
+    public override int NonQueryExecuted(
+        DbCommand command, CommandExecutedEventData eventData, int result)
+    {
+        _counter.Record(eventData.Duration);
+        return base.NonQueryExecuted(command, eventData, result);
+    }
+
+    public override ValueTask<int> NonQueryExecutedAsync(
+        DbCommand command, CommandExecutedEventData eventData, int result,
+        CancellationToken cancellationToken = default)
+    {
+        _counter.Record(eventData.Duration);
+        return base.NonQueryExecutedAsync(command, eventData, result, cancellationToken);
+    }
+}

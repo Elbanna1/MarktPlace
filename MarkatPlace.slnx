@@ -1,0 +1,16 @@
+﻿<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Core/Domain/Domain.csproj" />
+    <Project Path="Core/Services/Services.csproj" />
+    <Project Path="Core/ServicesAbstraction/ServicesAbstraction.csproj" />
+  </Folder>
+  <Folder Name="/Infastrcure/">
+    <Project Path="Infastrucre/Presantion/Presantion.csproj" />
+    <Project Path="Infastrucre/Presitance/Presitance.csproj" />
+  </Folder>
+  <Project Path="MarkatPlace/MarkatPlace.csproj" />
+  <Project Path="Shared/Shared.csproj" />
+  <Folder Name="/Tests/">
+    <Project Path="Tests/MarkatPlace.Tests/MarkatPlace.Tests.csproj" />
+  </Folder>
+</Solution>

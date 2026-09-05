@@ -1,0 +1,10 @@
+namespace Shared.DTOs.OnlineShopping;
+
+public class OnlineShoppingLookupItemDto
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; } = default!;
+
+    public string NameEn { get; set; } = default!;
+}

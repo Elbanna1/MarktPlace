@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- Grants access to Microsoft.AspNetCore.Http.IFormFile so multipart request DTOs (e.g. the
+       advertisement create request) can expose an uploadable Images property that Swagger renders
+       as a multi-file picker. The core/service layers keep using the framework-agnostic UploadImageModel. -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>

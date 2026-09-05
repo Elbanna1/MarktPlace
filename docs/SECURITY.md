@@ -1,0 +1,274 @@
+# Security
+
+[← README](../README.md) · Related: [AUTHENTICATION](AUTHENTICATION.md) · [AUTHORIZATION](AUTHORIZATION.md) · [DEPLOYMENT](DEPLOYMENT.md)
+
+> This document contains **no** secrets. Every credential referenced here lives in an environment
+> variable.
+
+---
+
+## Required production configuration
+
+**Read this before any deployment.**
+
+### 1. `JwtSettings__SecretKey` — the application will not start without it
+
+`appsettings.json` deliberately carries **no** signing key. Production must supply one as an
+environment variable: **at least 32 random characters**.
+
+Start-up throws if the key is missing, shorter than 32 bytes, or a known placeholder / previously
+published value (checked outside Development only).
+
+> **Why the check exists.** The key used to live in `appsettings.json`, which is committed — so every
+> copy of the source carried it, and anyone holding it could mint a valid token for **any** account,
+> administrators included, without ever seeing a password. The fail-fast is what stops that
+> configuration from ever running again.
+
+> **Rotating the key signs every user out.** Access tokens live 40 days, refresh tokens 60.
+
+## Secrets and credentials
+
+### Rotate credentials that have ever been committed
+
+Any credential that has been in this repository's history must be treated as **public**. Rotate it at
+the source, then supply the new value as an environment variable:
+
+| Credential | Environment variable |
+| --- | --- |
+| Database password | `ConnectionStrings__DefaultConnection` |
+| SMTP password | `EmailSettings__Password` |
+
+### 3. `AdminUser` must stay unset in production
+
+`IdentityDataSeeder` has **no fallback credentials**: with the section unset it ensures the roles
+exist and seeds **no account**. Its absence from `appsettings.Production.json` *is* the safety
+mechanism.
+
+To bootstrap the first administrator on a fresh database: set `AdminUser__UserName`, `__Email` and
+`__Password` as environment variables, start once, then **remove them**.
+
+### 4. Diagnostics stay off
+
+| Switch | Production |
+| --- | --- |
+| `ASPNETCORE_DETAILEDERRORS` | **unset** — renders start-up stack traces into the browser |
+| `stdoutLogEnabled` (web.config) | `"false"` |
+| `Diagnostics__SqlCounter` | `false` |
+
+---
+
+## Authentication
+
+See [AUTHENTICATION.md](AUTHENTICATION.md). Summary of the controls:
+
+| Control | Implementation |
+| --- | --- |
+| Password policy | ≥ 8 chars, digit + lower + upper + non-alphanumeric |
+| Lockout | 5 failed attempts → 15 minutes |
+| Token signing | HMAC-SHA256, `ClockSkew = Zero` |
+| HTTPS metadata | Required outside Development |
+| No user enumeration | Login and forgot-password answer identically for known and unknown accounts |
+| Password-reset replay | OTP single-use; the whole session is wiped after a successful reset |
+
+**Verified:** a wrong password and an unknown username return the same status **and** the same
+message; `alg=none` forgery, garbage tokens, empty bearers and missing prefixes all answer 401.
+
+---
+
+## Authorization
+
+See [AUTHORIZATION.md](AUTHORIZATION.md).
+
+| Control | Implementation |
+| --- | --- |
+| Admin surface | `[Authorize(Roles = Admin)]` on `api/v2/admin` |
+| Per-page permissions | `AdminPermissionFilter`, **first** global filter |
+| Fail closed | An admin action with no permission annotation is refused and logged as an error |
+| Grants read per request | From the database, never from the JWT |
+| Instant role changes | `DatabaseRoleClaimsTransformation` inside the authentication middleware |
+
+**Verified:** all **131** admin operations answer **401** to an anonymous caller and **403** to a
+signed-in non-administrator.
+
+---
+
+## IDOR protection
+
+Ownership is enforced **in the query**, which fails closed — a mistake returns fewer rows, never
+more.
+
+```
+(ModerationStatus == Approved AND window open)  OR  UserId == viewerUserId
+```
+
+`viewerUserId` comes from the authenticated principal's `NameIdentifier` claim and **nowhere else**.
+
+**Verified refused** — user B against user A's pending listing:
+
+| Vector | Result |
+| --- | --- |
+| Plain `GET` | 404 |
+| `?userId=<A>`, `?ownerId=<A>`, `?viewerUserId=<A>` | 404 |
+| `?includeUnmoderated=true`, `?isOwner=true`, `?moderationStatus=1` | 404 |
+| Forged `X-User-Id` / `X-Owner-Id` / `nameid` headers | 404 |
+| Tampered token | 401 |
+| `PUT` with a fully valid payload | 404, and A's listing unchanged |
+| `DELETE` | 404 |
+| B's `my-listings` | Does not contain A's listing |
+
+---
+
+## Input validation
+
+| Control | Implementation |
+| --- | --- |
+| Every request DTO validated | FluentValidation via the global `ValidationFilter` → **422** |
+| ModelState 400 suppressed | FluentValidation is the single source |
+| SQL injection | EF Core parameterises everything. Injection-shaped search terms are treated as text |
+| Mass assignment | Server-owned fields are ignored, not trusted |
+
+**Verified ignored** when posted: `IsFeatured`, `IsPremium`, `IsUrgent`, `ModerationStatus`,
+`ViewCount`, `UserId`, `PublishedAt`, `ExpireAt`, `CreatedAt`, `IsDeleted`.
+
+---
+
+## Upload security
+
+| Control | Implementation |
+| --- | --- |
+| Format decided by **magic bytes** | `ImageFormatCatalog.Detect` — never the name or declared MIME type |
+| Stored name | A generated 32-hex GUID + the **detected** extension |
+| Path traversal | Structurally impossible — the submitted name never reaches the file system |
+| Executables | `LooksExecutable` rejects PE and ELF |
+| **SVG excluded** | XML with no signature; can carry script that runs against our own origin |
+| Size limits | 5 MB per image, 10 per listing; 10 MB CV; 50 MB video |
+| Served with | `Content-Security-Policy: default-src 'none'; sandbox`, `X-Content-Type-Options: nosniff`, `ServeUnknownFileTypes = false` |
+
+**Verified:** a PHP file, an HTML file, a script-bearing SVG and an empty file are all rejected. A
+real PNG named `a.png.php` or `../../../evil.png` is **accepted** — correctly — and stored as
+`<32 hex>.png` inside `/uploads/lands/`. Rejecting it would only punish users whose phone produced an
+odd file name.
+
+> Uploaded files are **public**. Anyone with the URL can read them. There is no private file store —
+> do not put anything confidential there.
+
+---
+
+## Rate limiting
+
+| Policy | Default | Applies to |
+| --- | --- | --- |
+| Global | 600 / min | Everything without another policy |
+| `auth` | 20 / min | `/api/auth/*` |
+
+Partitioned by **user id** when authenticated, otherwise by remote IP (honouring forwarded headers,
+so a proxy does not collapse every visitor into one bucket). Health probes are exempt. A rejection is
+429 with `Retry-After` and an Arabic message.
+
+> Disabling limits (`RateLimiting:Enabled=false`) keeps the named `auth` policy **registered** with
+> no limit. An endpoint whose policy does not exist makes the middleware throw — which would turn
+> "disabled" into HTTP 500 on every login.
+
+---
+
+## Error handling
+
+| Control | Implementation |
+| --- | --- |
+| Global handler | `GlobalExceptionHandlingMiddleware` wraps the whole pipeline |
+| 500 body | `حصل خطأ غير متوقع. من فضلك حاول تاني بعد شوية.` — nothing else |
+| Stack traces | Logged server-side only |
+| Bodyless statuses | `UseStatusCodePages` formats 404/405/413/415 into the envelope |
+| Client disconnects | Logged as information (499), not as an error |
+
+**Verified across 14 error paths:** no exception type, SQL, file path, connection string, credential
+column or internal identifier appears in any response body.
+
+---
+
+## Sensitive data
+
+Never serialised in any payload:
+
+`passwordHash` · `securityStamp` · `concurrencyStamp` · `refreshToken` · `refreshTokenExpiry` ·
+`passwordResetOtp` · `passwordResetToken` · `passwordResetVerified` · `lockoutEnd` ·
+`accessFailedCount` · `normalizedUserName` · `normalizedEmail` · `twoFactorEnabled`
+
+**Verified** on the profile, notifications, admin user list and public feed payloads.
+
+Logging rules: never log passwords, tokens, refresh tokens, or full request bodies containing
+sensitive data. Do log authentication failures, authorization failures, background-job failures and
+notification-delivery failures.
+
+`AdminAuditLog` is append-only — never updated, never deleted, never soft-deleted. A trail that can
+be edited is not evidence.
+
+---
+
+## CORS
+
+A single fully open `AllowAll` policy: any origin, any header, any method.
+
+> **This is a deliberate choice, and it is safe as configured**: authentication is a bearer token in
+> the `Authorization` header and SignalR authenticates via the `access_token` query string. Neither
+> relies on cross-origin cookies, so `AllowCredentials` is not used — and the CORS protocol forbids
+> combining `*` with credentials anyway.
+>
+> If cookie authentication is ever introduced, this policy must be narrowed to an allow-list first.
+
+---
+
+## Security headers
+
+Set on every response by middleware in `Program.cs`:
+
+| Header | Value |
+| --- | --- |
+| `X-Content-Type-Options` | `nosniff` |
+| `X-Frame-Options` | `DENY` |
+| `Referrer-Policy` | `no-referrer` |
+| `X-XSS-Protection` | `0` (the legacy auditor is a liability, not a control) |
+| `Strict-Transport-Security` | via `UseHsts`, outside Development |
+
+The Kestrel `Server` banner is **suppressed** (`AddServerHeader = false`).
+
+On `/uploads/*` additionally: `Cache-Control: public,max-age=31536000,immutable`,
+`Access-Control-Allow-Origin: *`, `Content-Security-Policy: default-src 'none'; sandbox`.
+
+---
+
+## Token security
+
+| Property | Value | Note |
+| --- | --- | --- |
+| Algorithm | HMAC-SHA256 | |
+| Clock skew | Zero | |
+| Access lifetime | **40 days** | ⚠️ cannot be revoked before expiry |
+| Refresh lifetime | 60 days | One per user |
+| Logout | Clears the refresh token | The access token stays valid until it expires |
+
+### Token lifetimes
+
+A 40-day access token is a deliberate long-session product decision, documented in `JwtSettings`. The
+consequence is that a leaked access token cannot be revoked for over a month, and logout does not
+invalidate it.
+
+If that trade-off is ever revisited, shortening `AccessTokenExpirationDays` (to hours or days) and
+relying on the refresh token would restore revocability. `RefreshTokenExpirationDays` must remain
+greater than `AccessTokenExpirationDays`, which start-up enforces.
+
+---
+
+## Production checklist
+
+- [ ] `JwtSettings__SecretKey` set (≥ 32 random chars, never committed)
+- [ ] Database password rotated and supplied via `ConnectionStrings__DefaultConnection`
+- [ ] SMTP password rotated and supplied via `EmailSettings__Password`
+- [ ] `AdminUser` unset (or set once, then removed)
+- [ ] `ASPNETCORE_DETAILEDERRORS` unset
+- [ ] `stdoutLogEnabled="false"` in `web.config`
+- [ ] `Diagnostics__SqlCounter` false
+- [ ] HTTPS enforced; HSTS active
+- [ ] `web.config` `maxAllowedContentLength` ≥ the application's ceiling
+- [ ] Health probes reachable by the load balancer
+- [ ] CORS reviewed against the actual frontend origins
