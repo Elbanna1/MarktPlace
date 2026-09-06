@@ -49,6 +49,7 @@ builder.Services.Configure<FormOptions>(options =>
 });
 
 builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddAppUrlSettings(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationServices();
 builder.Services.AddJwtAuthentication(builder.Configuration, builder.Environment);
 

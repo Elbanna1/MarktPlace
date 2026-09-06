@@ -8,7 +8,13 @@ public class AppSettings
 
     public string? BaseUrl { get; set; }
 
-    public string? FrontendUrl { get; set; }
+    private string? _frontendUrl;
+
+    public string? FrontendUrl
+    {
+        get => _frontendUrl;
+        set => _frontendUrl = string.IsNullOrWhiteSpace(value) ? null : value.Trim().TrimEnd('/');
+    }
 
     private string _registerPath = ReferralCatalog.DefaultRegisterPath;
 

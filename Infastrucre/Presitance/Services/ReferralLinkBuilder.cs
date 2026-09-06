@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using ServicesAbstraction;
 using Shared.Settings;
@@ -7,12 +6,10 @@ namespace Persistence.Services;
 
 public class ReferralLinkBuilder : IReferralLinkBuilder
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly AppSettings _app;
 
-    public ReferralLinkBuilder(IHttpContextAccessor httpContextAccessor, IOptions<AppSettings> app)
+    public ReferralLinkBuilder(IOptions<AppSettings> app)
     {
-        _httpContextAccessor = httpContextAccessor;
         _app = app.Value;
     }
 
@@ -25,21 +22,23 @@ public class ReferralLinkBuilder : IReferralLinkBuilder
 
         var separator = path.Contains('?') ? "&" : "?";
 
-        return $"{ResolveBaseUrl()}{path}{separator}{query}";
+        return $"{ResolveFrontendUrl()}{path}{separator}{query}";
     }
 
-    private string ResolveBaseUrl()
+    private string ResolveFrontendUrl()
     {
-        if (!string.IsNullOrWhiteSpace(_app.FrontendUrl))
-            return _app.FrontendUrl.TrimEnd('/');
+        var frontendUrl = _app.FrontendUrl ?? _app.BaseUrl;
 
-        var request = _httpContextAccessor.HttpContext?.Request;
-        if (request is not null)
+        if (string.IsNullOrWhiteSpace(frontendUrl))
         {
-            var pathBase = request.PathBase.HasValue ? request.PathBase.Value!.TrimEnd('/') : string.Empty;
-            return $"{request.Scheme}://{request.Host.Value}{pathBase}";
+            throw new InvalidOperationException(
+                $"{AppSettings.SectionName}:FrontendUrl is not configured, so an invitation link " +
+                "cannot be built. Set it to the public address of the frontend site (for example " +
+                "'App__FrontendUrl=https://shopiklopik.com'). The link is deliberately never derived " +
+                "from the incoming request, because that would point invitees at the API host " +
+                "instead of the site they are meant to register on.");
         }
 
-        return _app.BaseUrl?.TrimEnd('/') ?? string.Empty;
+        return frontendUrl.TrimEnd('/');
     }
 }

@@ -434,3 +434,41 @@ clears the app's. Behaviour that genuinely needs data is proven where data exist
 
 **Consequence.** There is **no** `WebApplicationFactory` harness in the repository. That is a
 deliberate split, not an omission.
+
+---
+
+## D-29 — Invitation links are built from the frontend URL, never from the request
+
+**Problem.** `ReferralLinkBuilder` fell back to the incoming request's scheme and host whenever
+`App:FrontendUrl` was unset. In production every request arrives at the API host, so every invitation
+link came out as `https://api.shopiklopik.com/register?ref=CODE` — an address with no register page.
+
+**Decision.** The builder resolves `App:FrontendUrl` (falling back only to `App:BaseUrl`) and throws
+if neither is configured. It no longer takes `IHttpContextAccessor`. `AddAppUrlSettings` fails
+start-up outside Development when the key is missing, is not an absolute `http`/`https` URL, or is a
+loopback address.
+
+**Why.** An invitation is a link to the *site*. Deriving it from the request can only ever produce
+the API origin, and a silent wrong answer is worse than a start-up failure.
+
+**Consequence.** No invitation URL is persisted. `Referral` and `ReferralLinkEvent` store the code
+only, and the link is rebuilt on every read — so changing `App:FrontendUrl` fixes every invitation
+that already exists, past and future, with no data migration.
+
+---
+
+## D-30 — Demo data cannot reach a non-development database
+
+**Decision.** `DevelopmentDataSeeder.SeedAsync` returns a skipped report unless `IHostEnvironment` is
+Development, before it resolves the `DbContext`. `DemoData:Enabled` now defaults to `false`, so the
+seeder is opt-in even in Development — `appsettings.Development.json` is the only file that turns it
+on.
+
+**Why.** The `IsDevelopment()` guard in `Program.cs` was the only thing standing between a demo user
+and a production database. Two independent guards, one of them inside the seeder itself, mean a
+future caller cannot lose the protection by accident.
+
+**Consequence.** `HasData` stays exactly as it was. Every seeded row is reference data the
+application needs; nothing seeded belongs to a user. A test proves that by walking the EF model and
+failing on any seeded entity that carries an owner column.
+

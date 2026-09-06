@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServicesAbstraction;
@@ -52,7 +53,20 @@ public static class DevelopmentDataSeeder
         ILogger logger,
         CancellationToken cancellationToken = default)
     {
-        if (configuration.GetValue("DemoData:Enabled", true) is false)
+        var environment = services.GetRequiredService<IHostEnvironment>();
+
+        if (!environment.IsDevelopment())
+        {
+            return new DemoSeedReport
+            {
+                Skipped = true,
+                SkipReason =
+                    $"The demo data seeder only runs in the Development environment; the current " +
+                    $"environment is {environment.EnvironmentName}."
+            };
+        }
+
+        if (configuration.GetValue("DemoData:Enabled", false) is false)
             return new DemoSeedReport { Skipped = true, SkipReason = "DemoData:Enabled is false." };
 
         var db = services.GetRequiredService<AppDbContext>();

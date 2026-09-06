@@ -86,6 +86,20 @@ http → https redirect to Nginx, or set `ASPNETCORE_HTTPS_PORT=443` to have the
 request the scheme and host come from the request itself. Set `App__BaseUrl` to the public https
 origin — the committed value is a localhost development URL.
 
+`App:FrontendUrl` is a different thing: the public address of the **site**, not of this API. It is
+the only thing an invitation link is built from, and it is never derived from the incoming request —
+that would send invitees to the API host instead of the page they are meant to register on. The
+committed value is `https://shopiklopik.com`; override it with `App__FrontendUrl` if the site moves.
+Start-up **fails** outside Development when the key is missing, is not an absolute `http`/`https`
+URL, or points at localhost.
+
+`DemoData:Enabled` is `false` in `appsettings.json` and in `appsettings.Production.json`, and
+`DevelopmentDataSeeder` refuses to run in any environment other than Development regardless of the
+flag. A Production database therefore comes up with **reference data only** — categories,
+sub-categories, the governorate and its centers, every module lookup, the home sections, the platform
+settings row, the payment methods and the banner placements. No users, listings, notifications,
+comments, referrals or payments are ever seeded.
+
 ### `web.config`
 
 Not used on Linux — Kestrel never reads it, and `dotnet publish` ships it regardless. It matters only
