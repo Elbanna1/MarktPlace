@@ -8,7 +8,7 @@ public static class ImageConstants
 
     public const long MaxFileSizeBytes = 5 * 1024 * 1024;
 
-    public const long MaxRequestBodySizeBytes = (MaxImagesPerItem * MaxFileSizeBytes) + (5 * 1024 * 1024);
+    public const long MaxRequestBodySizeBytes = FileUploadConstants.MaxRequestBodySizeBytes;
 
     public static readonly string[] AllowedExtensions = ImageFormatCatalog.AllExtensions;
 

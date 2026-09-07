@@ -262,19 +262,35 @@ wiped after a successful reset.
 Validation failure. **Not 400** — the built-in ModelState 400 is deliberately suppressed. The
 messages are Arabic and describe the field in the user's terms.
 
-### HTTP 413, or an IIS HTML error page on upload
+### HTTP 413 on upload — and the CORS error that follows it
 
-**Cause.** The body exceeds a limit. Ceilings, innermost first:
+**Look at Nginx first.** Its stock `client_max_body_size` is **1 MB**, which is far below anything a
+listing with photographs weighs. Nginx then answers 413 *itself*, from an HTML error page that has no
+`Access-Control-Allow-Origin`, so the browser console shows a CORS error and the real cause — the
+size — never appears. This is exactly what
+`POST https://api.shopiklopik.com/api/workshops` was doing.
 
-| Limit | Value |
-| --- | --- |
-| Per-file (image) | 5 MB |
-| Per-endpoint `[RequestSizeLimit]` | module-specific |
-| Kestrel / `FormOptions` | 105 MB |
-| **IIS `maxAllowedContentLength`** | **105 MB** |
+```bash
+grep -r client_max_body_size /etc/nginx/          # expect 256m
+sudo cp deploy/nginx/api.shopiklopik.com.conf /etc/nginx/sites-available/api.shopiklopik.com
+sudo nginx -t && sudo systemctl reload nginx
+```
 
-If IIS is lower than the app's ceiling you get a raw HTML **404.13**, not the Arabic envelope. A test
-enforces `IIS ≥ app`.
+Ceilings, innermost first:
+
+| Limit | Value | Rejected with |
+| --- | --- | --- |
+| Per-file (image) | 5 MB | `400` + Arabic naming the file |
+| Images per listing | 10 | `400` + Arabic |
+| Any single file, before buffering | 50 MB | `400` + Arabic |
+| Per-endpoint `[RequestSizeLimit]` | 256 MB on every listing form | `413` + Arabic |
+| Kestrel / `FormOptions` | 256 MB | `413` + Arabic |
+| **Nginx `client_max_body_size`** | **256 MB** | `413` + Arabic **with CORS headers** |
+| IIS `maxAllowedContentLength` (Windows only) | 256 MB | HTML 404.13 |
+
+`RequestSizeLimitTests` fails the build if any of these drops below `FileUploadConstants
+.MaxRequestBodySizeBytes`, so a 413 in production means a *deployed* Nginx that does not match the
+committed site file. See [DEPLOYMENT § Upload size](DEPLOYMENT.md#upload-size).
 
 ### A file uploads successfully but its URL answers 404
 
@@ -298,14 +314,23 @@ Rate limited: 20/min on `/api/auth/*`, 600/min elsewhere. For local testing, rai
 
 ## CORS
 
-CORS is fully open (`AllowAnyOrigin`, `AllowAnyHeader`, `AllowAnyMethod`), so a genuine CORS failure
-is unusual. If you see one:
+CORS is an **allow-list** (`Cors:AllowedOrigins`), not `AllowAnyOrigin`. Before blaming CORS, read
+the response status with `curl -i` — most reported "CORS errors" are another failure whose response
+lost its headers.
 
-1. **Credentials.** `AllowAnyOrigin` cannot be combined with credentials. Use the bearer token in the
-   `Authorization` header — do not send cookies.
-2. **SignalR.** Pass the JWT as the `access_token` **query-string** value, not a header.
-3. **A non-CORS failure presenting as one.** A 500 with no CORS headers looks like a CORS error in
-   the browser. Check the actual status and the server logs.
+1. **The origin is not listed.** Apex and `www` are different origins. Add one with
+   `Cors__AllowedOrigins__0=https://example.com` — an index **replaces** that array element, so
+   re-list the existing entries too.
+2. **A 413 from Nginx.** The commonest false CORS error on this API. See
+   [HTTP 413 on upload](#http-413-on-upload--and-the-cors-error-that-follows-it).
+3. **Credentials.** `Cors__AllowAnyOrigin=true` (the escape hatch) disables credentialed requests.
+   Use the bearer token in the `Authorization` header — do not send cookies.
+4. **SignalR.** Pass the JWT as the `access_token` **query-string** value, not a header.
+5. **An application error presenting as one.** `GlobalExceptionHandlingMiddleware` runs outside
+   `UseCors` and clears the response before writing the error body; it re-applies the
+   `Access-Control-*` and `Vary` headers across that clear, so a 404, 413 or 500 keeps them.
+   `RequestSizeLimitTests` guards this. If you see an error response *without* those headers, it did
+   not come from the application — check Nginx.
 
 ---
 

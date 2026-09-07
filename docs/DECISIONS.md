@@ -507,3 +507,64 @@ takeover path.
 one; the ordinary "forgot password" flow is how such a user adds one. It also has no phone number and
 defaults to مركز الفيوم, both correctable in the profile screen — those two fields have no equivalent
 in a Google profile.
+
+---
+
+## D-32 — One 256 MB request ceiling, and the reverse proxy is what enforces it
+
+**Decision.** `FileUploadConstants.MaxRequestBodySizeBytes` is a single explicit **256 MB** and every
+layer repeats exactly that number: Kestrel's `Limits.MaxRequestBodySize`, `FormOptions
+.MultipartBodyLengthLimit`, every listing endpoint's `[RequestSizeLimit]`, Nginx's
+`client_max_body_size`, and IIS's `maxAllowedContentLength`. The Nginx site is committed at
+`deploy/nginx/api.shopiklopik.com.conf`, and `RequestSizeLimitTests` fails the build if any of the
+five drifts.
+
+**Why the per-module ceilings were collapsed.** They were computed — `images + video`, `video + cv +
+image + slack` — and each came out different, so a request's fate depended on which of eight
+arithmetic expressions its controller happened to reference. `POST /api/workshops` sat at 55 MB. One
+documented number that the client can also *read* (`upload.maxRequestSizeMb` on the create-ad form)
+is worth more than eight tightly-fitted ones. Nothing about what may be **stored** changed: 5 MB an
+image, ten images, 50 MB a video, 10 MB a CV, magic-byte detection — all still enforced, all still
+answering 400 with the precise Arabic sentence. The ceiling is only the outer bound on one HTTP
+request, and it is deliberately finite.
+
+**Why Nginx is the rejector, not Kestrel.** Nginx compares `Content-Length` before reading the body
+and closes lingeringly, so the client reliably receives the reply. Kestrel can only refuse
+mid-stream, and the reset that follows can cost the client the response it just wrote. So the two
+limits are **equal** — Nginx is never the more generous of the two — and Nginx's `error_page 413`
+returns the same Arabic JSON envelope the application would have returned, with the CORS headers on
+it.
+
+**What this fixed.** Nginx's stock `client_max_body_size` is 1 MB. Every listing posted with a few
+photographs was answered 413 by Nginx, from an HTML page carrying no `Access-Control-Allow-Origin`,
+so the browser reported a CORS failure and the size never surfaced. Two application bugs sat behind
+it: Kestrel's `BadHttpRequestException` (413) fell into the catch-all and became a **500**, and
+`GlobalExceptionHandlingMiddleware` — which runs outside `UseCors` — cleared the response headers
+before writing the error body, stripping the CORS headers off **every** error it handled.
+
+---
+
+## D-33 — The create-advertisement breadcrumb is server-built
+
+**Decision.** `GET /api/lookups/create-ad-form/{categoryId}/{subCategoryId?}` returns a `breadcrumb[]`
+alongside the fields: `home → category → subCategory → form`, each step carrying `level`, `id`,
+`name`, `nameAr`, `icon` and the site `path`. `AdFormBreadcrumbBuilder` is the only place it is
+shaped, and it reads the names straight off the resolved `Category` and `SubCategory` rows.
+
+**Why not build it in the frontend.** The alternative is a second copy of 12 category and 52
+sub-category names in the client, which is precisely what `create-ad-form` and `read-config` exist to
+prevent (D-1). The Arabic names on the trail are the same strings `categories-tree` publishes; there
+is no second source to keep in step, and a new module gets a correct breadcrumb the day its schema is
+registered.
+
+**Why the site route is in the response.** `path` is `/create-product/{categoryId}/{subCategoryId}`,
+built from `App:CreateAdPath` (default `/create-product`) and `App:HomePath`, the same way
+`App:RegisterPath` already shapes an invitation link. The API already publishes the *submit*
+endpoint; publishing the page route the user came from costs one configuration key and saves the
+client from re-deriving it.
+
+**Consequence.** An invalid selection has **no** breadcrumb rather than a partial one:
+`CategorySelectionResolver` still throws first — 404 for an unknown category or sub-category, 400 for
+a sub-category belonging to another category, all in Arabic — so a create page can never render a
+trail that misdescribes where the user is.
+

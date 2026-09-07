@@ -13,6 +13,7 @@ MarkatPlace.slnx                Solution — 8 projects
 fix-migration-history.sql       One-off repair script (see TROUBLESHOOTING.md)
 README.md                       Entry point
 docs/                           This documentation
+deploy/nginx/                   The committed Nginx site (see DEPLOYMENT.md)
 Core/                           Domain, abstractions, business logic
 Infastrucre/                    Persistence + Presentation  (folder name is misspelled)
 Shared/                         Contracts shared by every layer
@@ -194,6 +195,8 @@ xUnit, hermetic (no database, no host). See [TESTING.md](TESTING.md).
 | `UploadSecurityTests` | Magic-byte detection, SVG exclusion, size ceilings |
 | `DeploymentSafetyTests` | No committed secrets; IIS ≥ app upload limit |
 | `ReverseProxyHostingTests` | Forwarded headers behind Nginx; no IIS requirement; no pinned address |
+| `RequestSizeLimitTests` | The 256 MB ceiling across Kestrel, forms, endpoints and the committed Nginx site; the Arabic 413; CORS headers on error responses |
+| `CreateAdNavigationTests` | The create-advertisement breadcrumb for every category and sub-category; invalid ids carry none |
 | `OwnerVisibilityTests` | The owner-visibility rule cannot be reintroduced-broken |
 | `ArabicText`, `RepositoryRoot`, `CSharpSource` | Helpers (a small C# string lexer) |
 

@@ -6,42 +6,33 @@ public static class FileUploadConstants
 
     public const long MaxVideoSizeBytes = 50 * 1024 * 1024;
 
-    public const long MaxJobRequestBodySizeBytes =
-        MaxVideoSizeBytes + MaxDocumentSizeBytes + ImageConstants.MaxFileSizeBytes + (5 * 1024 * 1024);
+    public const long MaxRequestBodySizeBytes = 256L * 1024 * 1024;
 
-    public const long MaxAntiqueRequestBodySizeBytes =
-        ImageConstants.MaxRequestBodySizeBytes + MaxVideoSizeBytes;
+    public const int MaxRequestBodySizeMegabytes = (int)(MaxRequestBodySizeBytes / (1024 * 1024));
 
-    public const long MaxClothingRequestBodySizeBytes =
-        ImageConstants.MaxRequestBodySizeBytes + MaxVideoSizeBytes;
+    public const long MaxSingleFileSizeBytes = MaxVideoSizeBytes;
 
-    public const long MaxOnlineShoppingRequestBodySizeBytes =
-        ImageConstants.MaxRequestBodySizeBytes + MaxVideoSizeBytes;
+    public const long ReverseProxyMaxBodySizeBytes = MaxRequestBodySizeBytes;
 
-    public const long MaxHomeFurnishingRequestBodySizeBytes =
-        ImageConstants.MaxRequestBodySizeBytes + MaxVideoSizeBytes;
+    public const int ReverseProxyMaxBodySizeMegabytes =
+        (int)(ReverseProxyMaxBodySizeBytes / (1024 * 1024));
 
-    public const long MaxRealEstateRequestBodySizeBytes =
-        ImageConstants.MaxRequestBodySizeBytes + MaxVideoSizeBytes;
+    public const long MaxJobRequestBodySizeBytes = MaxRequestBodySizeBytes;
 
-    public const long MaxAdvertisementRequestBodySizeBytes =
-        ImageConstants.MaxRequestBodySizeBytes + MaxVideoSizeBytes;
+    public const long MaxAntiqueRequestBodySizeBytes = MaxRequestBodySizeBytes;
+
+    public const long MaxClothingRequestBodySizeBytes = MaxRequestBodySizeBytes;
+
+    public const long MaxOnlineShoppingRequestBodySizeBytes = MaxRequestBodySizeBytes;
+
+    public const long MaxHomeFurnishingRequestBodySizeBytes = MaxRequestBodySizeBytes;
+
+    public const long MaxRealEstateRequestBodySizeBytes = MaxRequestBodySizeBytes;
+
+    public const long MaxAdvertisementRequestBodySizeBytes = MaxRequestBodySizeBytes;
 
     public const long MaxBannerBookingRequestBodySizeBytes =
         (3 * ImageConstants.MaxFileSizeBytes) + (2 * 1024 * 1024);
-
-    public static readonly long MaxRequestBodySizeBytes = new[]
-    {
-        ImageConstants.MaxRequestBodySizeBytes,
-        MaxAdvertisementRequestBodySizeBytes,
-        MaxJobRequestBodySizeBytes,
-        MaxAntiqueRequestBodySizeBytes,
-        MaxClothingRequestBodySizeBytes,
-        MaxOnlineShoppingRequestBodySizeBytes,
-        MaxHomeFurnishingRequestBodySizeBytes,
-        MaxRealEstateRequestBodySizeBytes,
-        MaxBannerBookingRequestBodySizeBytes
-    }.Max();
 
     public const string AdsVideoFolder = "ads-video";
 

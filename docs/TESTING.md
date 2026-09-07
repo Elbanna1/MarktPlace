@@ -8,7 +8,7 @@ Testing is split in two on purpose:
 | --- | --- | --- |
 | **What** | `Tests/MarkatPlace.Tests` (xUnit) | HTTP suites run against a running instance |
 | **Guards** | Structure, invariants, validation logic | Behaviour across all modules and roles |
-| **Speed** | 1,720 tests, a few seconds | Minutes |
+| **Speed** | 1,926 tests, a few seconds | Minutes |
 | **Needs** | Nothing external | A running API + a database |
 
 Hermetic tests guard the *shape* so a bug cannot be reintroduced silently; HTTP suites prove the
@@ -34,7 +34,7 @@ dotnet test Tests/MarkatPlace.Tests/MarkatPlace.Tests.csproj \
 dotnet test Tests/MarkatPlace.Tests/MarkatPlace.Tests.csproj -c Release
 ```
 
-Expected: **1,720 passing, 0 failing, 0 skipped**.
+Expected: **1,926 passing, 0 failing, 0 skipped**.
 
 > Stop any running API first, or the build cannot overwrite the locked DLLs.
 
@@ -52,6 +52,8 @@ Expected: **1,720 passing, 0 failing, 0 skipped**.
 | `NoEnglishInResponsesTests` | Source-wide sweep of every response/exception call site |
 | `UploadSecurityTests` | Magic-byte detection, executables, SVG exclusion, size ceilings |
 | `DeploymentSafetyTests` | No committed secrets, IIS ≥ app upload limit, diagnostics off |
+| `RequestSizeLimitTests` | The 256 MB ceiling, every endpoint's `RequestSizeLimit`, the committed Nginx site, the Arabic 413 and the CORS headers on error responses |
+| `CreateAdNavigationTests` | The create-advertisement breadcrumb for every category and sub-category, invalid ids, the `/create-product` route |
 | `ReverseProxyHostingTests` | Forwarded headers behind Nginx, no IIS requirement, no pinned listening address |
 | `OwnerVisibilityTests` | The owner-visibility rule cannot be reintroduced-broken |
 | `ArabicText`, `RepositoryRoot`, `CSharpSource` | Helpers |
@@ -138,6 +140,13 @@ verified by reintroducing the bug:
 | Phone rule tightened to reject WE's 015 | `EgyptianInputTests` |
 | `LandRepository` reverted to the pre-fix shape | `OwnerVisibilityTests` |
 | The Lost & Found `catch (NotFoundException)` removed | `OwnerVisibilityTests` |
+| Nginx `client_max_body_size` back to `1m` | `RequestSizeLimitTests` |
+| `POST /api/workshops` back to a 55 MB `[RequestSizeLimit]` | `RequestSizeLimitTests` |
+| The CORS headers no longer carried across `Response.Clear()` | `RequestSizeLimitTests` |
+| The `BadHttpRequestException` 413 mapping removed (oversize becomes 500) | `RequestSizeLimitTests` |
+| The single-file guard moved back after the file is buffered | `RequestSizeLimitTests` |
+| The breadcrumb's sub-category step dropped | `CreateAdNavigationTests` |
+| A breadcrumb label hardcoded instead of read from the lookups | `CreateAdNavigationTests` |
 
 **Do this for any new guard.** Reintroduce, confirm red, revert, confirm green.
 

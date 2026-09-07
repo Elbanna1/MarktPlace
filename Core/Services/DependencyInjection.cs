@@ -71,6 +71,8 @@ public static class DependencyInjection
         services.AddScoped<IAdminAlertService, AdminAlertService>();
 
         services.AddScoped<CategorySelectionResolver>();
+
+        services.AddScoped<AdFormBreadcrumbBuilder>();
         services.AddScoped<ICreateAdFormService, CreateAdFormService>();
         services.AddScoped<IReadConfigService, ReadConfigService>();
         services.AddScoped<ILostFoundService, LostFoundService>();

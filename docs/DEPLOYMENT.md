@@ -119,7 +119,7 @@ if the application is published to IIS on Windows. Two things matter there:
 
 | Setting | Value | Why |
 | --- | --- | --- |
-| `maxAllowedContentLength` | `110100480` (105 MB) | Must be **≥** the application's ceiling (`FileUploadConstants.MaxRequestBodySizeBytes`). IIS rejects an oversized body **itself**, with an HTML 404.13 page, before the request reaches the app — so a lower value silently breaks every listing posted with a video |
+| `maxAllowedContentLength` | `268435456` (256 MB) | Must be **≥** the application's ceiling (`FileUploadConstants.MaxRequestBodySizeBytes`). IIS rejects an oversized body **itself**, with an HTML 404.13 page, before the request reaches the app — so a lower value silently breaks every listing posted with a video |
 | `stdoutLogEnabled` | `"false"` | Diagnostic switch, not a setting |
 | `ASPNETCORE_DETAILEDERRORS` | **absent** | Would render start-up stack traces into the browser |
 
@@ -204,6 +204,81 @@ Nginx must send them. `proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_f
 SignalR need `proxy_http_version 1.1`, `proxy_set_header Upgrade $http_upgrade;` and
 `proxy_set_header Connection "upgrade";` on the `/hubs/` location, plus a `proxy_read_timeout` longer
 than the hub's idle period.
+
+### The Nginx site is committed
+
+`deploy/nginx/api.shopiklopik.com.conf` is the site the API runs behind. It is a normal file in the
+repository, so the upload ceiling, the forwarded headers and the SignalR upgrade cannot drift away
+from the code that depends on them.
+
+```bash
+sudo cp deploy/nginx/api.shopiklopik.com.conf /etc/nginx/sites-available/api.shopiklopik.com
+sudo ln -sf /etc/nginx/sites-available/api.shopiklopik.com /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+---
+
+## Upload size
+
+One number governs the whole platform: **`FileUploadConstants.MaxRequestBodySizeBytes` = 256 MB**
+(268,435,456 bytes). It is deliberately explicit and deliberately **not** unlimited.
+
+| Layer | Setting | Value |
+| --- | --- | --- |
+| Nginx | `client_max_body_size` | `256m` |
+| Kestrel | `Limits.MaxRequestBodySize` | `FileUploadConstants.MaxRequestBodySizeBytes` |
+| ASP.NET Core forms | `FormOptions.MultipartBodyLengthLimit` | `FileUploadConstants.MaxRequestBodySizeBytes` |
+| Each listing endpoint | `[RequestSizeLimit(...)]` | `FileUploadConstants.MaxRequestBodySizeBytes` |
+| IIS (unused on Linux) | `maxAllowedContentLength` | `268435456` |
+
+`RequestSizeLimitTests` recomputes all five and fails the build if any of them drops below the
+ceiling, or if any endpoint asks for more than it.
+
+> **Nginx's stock `client_max_body_size` is 1 MB.** That default is what made
+> `POST https://api.shopiklopik.com/api/workshops` answer **413 Content Too Large** for any listing
+> with a few photographs — and, because Nginx's own 413 is an HTML page with no
+> `Access-Control-Allow-Origin`, the browser reported it as a CORS failure rather than as a size
+> problem. Deploying the committed site file is what fixes it; nothing in the application can.
+
+**The per-file rules are unchanged**, and they are what a user actually runs into:
+
+| Rule | Limit | Rejected with |
+| --- | --- | --- |
+| One image | 5 MB | `400` + `الملف '…' أكبر من الحد الأقصى وهو 5 ميجابايت.` |
+| Images per listing | 10 | `400` + `مسموح بـ 10 صور بحد أقصى؛ …` |
+| One video | 50 MB | `400` + the Arabic video message |
+| One CV | 10 MB | `400` + the Arabic document message |
+| Any single file, before it is buffered | 50 MB | `400` + `… أكبر من الحد الأقصى لأي ملف واحد …` |
+
+Magic-byte detection, the executable check and the extension rules all still run. The 256 MB ceiling
+is only the outer bound on one HTTP request; it never widens what may be stored.
+
+### What an oversized request answers
+
+**Nginx is the layer that refuses it.** It compares `Content-Length` before reading the body and can
+close the connection cleanly, so the browser reliably receives the reply. Kestrel can only refuse
+mid-stream, and the TCP reset that follows may cost the client the response — which is why the two
+limits are equal rather than Nginx being the more generous of the two.
+
+Nginx's `error_page 413` in the committed site returns the same JSON envelope the API uses, in
+Arabic, **with the CORS headers on it**:
+
+```json
+{ "success": false, "message": "حجم الملفات اللي بتبعتها أكبر من المسموح. صغّر الصور أو الفيديو وجرّب تاني. أقصى حجم للطلب الواحد 256 ميجابايت.", "data": null, "errors": null }
+```
+
+ASP.NET Core keeps the identical behaviour as a backstop for anything that reaches it directly:
+`GlobalExceptionHandlingMiddleware` maps Kestrel's `BadHttpRequestException` (413) and the multipart
+reader's `InvalidDataException` onto **HTTP 413** with that Arabic message, instead of letting them
+fall through to a generic 500.
+
+### CORS headers survive an error response
+
+`GlobalExceptionHandlingMiddleware` runs *outside* `UseCors`, and it clears the response before
+writing the error body. It now carries the `Access-Control-*` and `Vary` headers across that clear.
+Without it every error the middleware handled — 404, 413, 500 — reached the browser stripped of its
+CORS headers and was reported as a CORS failure instead of as the error it was.
 
 ---
 

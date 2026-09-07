@@ -1,5 +1,7 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using Shared.Constants;
 using Shared.DTOs.Advertisements;
+using Shared.Exceptions;
 
 namespace Presentation.Extensions;
 
@@ -30,6 +32,17 @@ public static class FormFileExtensions
     {
         if (file is null || file.Length == 0)
             return null;
+
+        if (file.Length > FileUploadConstants.MaxSingleFileSizeBytes)
+        {
+            var name = string.IsNullOrWhiteSpace(file.FileName)
+                ? "الملف المرفوع"
+                : $"الملف '{file.FileName}'";
+
+            throw new BadRequestException(
+                $"{name} أكبر من الحد الأقصى لأي ملف واحد وهو " +
+                $"{FileUploadConstants.MaxSingleFileSizeBytes / (1024 * 1024)} ميجابايت.");
+        }
 
         using var memoryStream = new MemoryStream();
         await file.CopyToAsync(memoryStream, cancellationToken);

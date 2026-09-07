@@ -129,7 +129,9 @@ app.UseStatusCodePages(async context =>
     {
         StatusCodes.Status404NotFound => "الرابط المطلوب مش موجود.",
         StatusCodes.Status405MethodNotAllowed => "الطريقة دي مش مدعومة على الرابط ده.",
-        StatusCodes.Status413PayloadTooLarge => "حجم الطلب أكبر من المسموح على الرابط ده.",
+        StatusCodes.Status413PayloadTooLarge =>
+            $"{UserMessages.Errors.RequestTooLarge} أقصى حجم للطلب الواحد " +
+            $"{FileUploadConstants.MaxRequestBodySizeMegabytes} ميجابايت.",
         StatusCodes.Status415UnsupportedMediaType => "نوع المحتوى ده مش مدعوم على الرابط ده.",
         _ => "مش قادرين ننفذ الطلب."
     };

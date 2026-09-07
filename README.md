@@ -42,7 +42,7 @@ Two properties shape the whole codebase:
 | Real-time | SignalR (`/hubs/notifications`) |
 | E-mail | MailKit / MimeKit (password-reset OTP) |
 | API docs | Swashbuckle 9 — two OpenAPI documents (`v1`, `v2`) |
-| Tests | xUnit (`Tests/MarkatPlace.Tests`, 1,720 tests) |
+| Tests | xUnit (`Tests/MarkatPlace.Tests`, 1,926 tests) |
 
 ---
 
@@ -166,7 +166,7 @@ See [SETUP.md § Configuration](docs/SETUP.md#5-configure-the-remaining-environm
 dotnet test Tests/MarkatPlace.Tests/MarkatPlace.Tests.csproj
 ```
 
-1,720 tests, no external database required, a few seconds. See [TESTING.md](docs/TESTING.md).
+1,926 tests, no external database required, a few seconds. See [TESTING.md](docs/TESTING.md).
 
 ---
 

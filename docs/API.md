@@ -191,7 +191,8 @@ GET /api/lookups/create-ad-form/11/47
 ```
 
 which returns `fields[]` (with `required`, `requiredWhen`, `visibleWhen`, `optionsSource`,
-`defaultValue`, `writesFields`), `lookups{}` and `submit{endpoint, method, contentType}`.
+`defaultValue`, `writesFields`), `lookups{}`, `submit{endpoint, method, contentType}`,
+`breadcrumb[]` and `upload{}`.
 
 ### List
 
@@ -342,11 +343,58 @@ Real-time delivery: [ARCHITECTURE § Real-time](ARCHITECTURE.md#real-time-notifi
 | Route | Purpose |
 | --- | --- |
 | `GET /categories-tree` | Every category and sub-category — the module inventory |
-| `GET /create-ad-form/{categoryId}/{subCategoryId?}` | The whole create form: fields, conditions, lookups, submit endpoint |
+| `GET /create-ad-form/{categoryId}/{subCategoryId?}` | The whole create form: fields, conditions, lookups, submit endpoint, **breadcrumb** and **upload limits** |
 | `GET /read-config/{categoryId}/{subCategoryId?}` | Every read route for that selection, with `query` pinning ids |
 | `GET /governorates`, `/centers`, `/listing-types` | Reference data |
 
 All anonymous. These two endpoints are why the frontend holds no business logic.
+
+### Where am I? — `breadcrumb`
+
+`create-ad-form` answers with the trail that leads to the form it just described, so the create page
+can show the user's position without knowing a single category name or id:
+
+```json
+"breadcrumb": [
+  { "level": "home",        "name": "Home",                 "nameAr": "الرئيسية",        "path": "/",                  "isCurrent": false },
+  { "level": "category",    "id": 2, "name": "Workshops & Craftsmen", "nameAr": "الورش والحرفيين", "path": "/create-product/2",   "isCurrent": false },
+  { "level": "subCategory", "id": 5, "name": "Workshops",   "nameAr": "الورش",           "path": "/create-product/2/5", "isCurrent": false },
+  { "level": "form",        "name": "Create Advertisement", "nameAr": "إنشاء إعلان",     "path": "/create-product/2/5", "isCurrent": true  }
+]
+```
+
+- `nameAr` is the **same** Arabic name the categories tree publishes; it is read from the lookup
+  tables, never written down a second time.
+- `path` is the site route for that step. `/create-product` is the default; `App:CreateAdPath` and
+  `App:HomePath` change it without a code change, exactly as `App:RegisterPath` does for invitations.
+- `level` is one of `home`, `category`, `subCategory`, `form` — switch on it rather than on position.
+- When the route names a category but no sub-category, the response sets `requiresSubCategory: true`
+  and the trail is three steps long, ending at `اختر القسم الفرعي` instead of `إنشاء إعلان`.
+- An unknown category, an unknown sub-category or a sub-category belonging to another category still
+  fails the way it always has — **404** `القسم 999 مش موجود.`, **404** `القسم الفرعي 9999 مش موجود.`,
+  **400** `القسم الفرعي 1 مش تابع للقسم 2.` — and carries no breadcrumb at all. There is never a
+  half-correct trail to render.
+
+The same shape holds for all 52 category/sub-category pairs; `CreateAdNavigationTests` walks every
+one of them.
+
+### How much may I send? — `upload`
+
+```json
+"upload": {
+  "maxRequestSizeMb": 256,
+  "maxImages": 10,
+  "maxImageSizeMb": 5,
+  "maxVideoSizeMb": 50,
+  "maxDocumentSizeMb": 10,
+  "tooLargeMessage": "حجم الملفات اللي بتبعتها أكبر من المسموح. صغّر الصور أو الفيديو وجرّب تاني. أقصى حجم للطلب الواحد 256 ميجابايت."
+}
+```
+
+Every value is read from the same constants the server enforces, so the form can refuse an oversized
+selection before spending the upload — and say the same sentence the server would have said. Per-file
+limits are also published on each file field as `maxFiles`, `maxSizeMb` and `allowedExtensions`.
+See [DEPLOYMENT § Upload size](DEPLOYMENT.md#upload-size).
 
 ---
 

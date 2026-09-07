@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+using System.Text.Json;
+using Shared.Constants;
 using Shared.Exceptions;
 using Shared.Responses;
 
@@ -8,6 +9,17 @@ public class GlobalExceptionHandlingMiddleware
 {
     private static readonly JsonSerializerOptions SerializerOptions =
         new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+    private static readonly string[] PreservedHeaders =
+    [
+        "Access-Control-Allow-Origin",
+        "Access-Control-Allow-Credentials",
+        "Access-Control-Allow-Headers",
+        "Access-Control-Allow-Methods",
+        "Access-Control-Expose-Headers",
+        "Access-Control-Max-Age",
+        "Vary"
+    ];
 
     private readonly RequestDelegate _next;
     private readonly ILogger<GlobalExceptionHandlingMiddleware> _logger;
@@ -40,6 +52,30 @@ public class GlobalExceptionHandlingMiddleware
             if (!context.Response.HasStarted)
                 context.Response.StatusCode = StatusCodesExtra.ClientClosedRequest;
         }
+        catch (BadHttpRequestException ex)
+        {
+            var statusCode = ex.StatusCode == StatusCodes.Status413PayloadTooLarge
+                ? StatusCodes.Status413PayloadTooLarge
+                : StatusCodes.Status400BadRequest;
+
+            _logger.LogWarning(
+                "Rejected {Method} {Path} at the protocol level with {StatusCode}: {Message}",
+                context.Request.Method, context.Request.Path, statusCode, ex.Message);
+
+            await WriteResponseAsync(context, statusCode, DescribeProtocolFailure(statusCode), null);
+        }
+        catch (InvalidDataException ex)
+        {
+            _logger.LogWarning(
+                "Rejected the multipart body of {Method} {Path}: {Message}",
+                context.Request.Method, context.Request.Path, ex.Message);
+
+            await WriteResponseAsync(
+                context,
+                StatusCodes.Status413PayloadTooLarge,
+                DescribeProtocolFailure(StatusCodes.Status413PayloadTooLarge),
+                null);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unhandled exception: {Message}", ex.Message);
@@ -50,6 +86,12 @@ public class GlobalExceptionHandlingMiddleware
                 null);
         }
     }
+
+    private static string DescribeProtocolFailure(int statusCode) =>
+        statusCode == StatusCodes.Status413PayloadTooLarge
+            ? $"{UserMessages.Errors.RequestTooLarge} " +
+              $"أقصى حجم للطلب الواحد {FileUploadConstants.MaxRequestBodySizeMegabytes} ميجابايت."
+            : UserMessages.Errors.MalformedRequest;
 
     private async Task WriteResponseAsync(
         HttpContext context,
@@ -65,7 +107,19 @@ public class GlobalExceptionHandlingMiddleware
             return;
         }
 
+        var preserved = new List<KeyValuePair<string, Microsoft.Extensions.Primitives.StringValues>>();
+
+        foreach (var name in PreservedHeaders)
+        {
+            if (context.Response.Headers.TryGetValue(name, out var value))
+                preserved.Add(new KeyValuePair<string, Microsoft.Extensions.Primitives.StringValues>(name, value));
+        }
+
         context.Response.Clear();
+
+        foreach (var header in preserved)
+            context.Response.Headers[header.Key] = header.Value;
+
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = statusCode;
 

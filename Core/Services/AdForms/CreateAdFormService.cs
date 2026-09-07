@@ -16,21 +16,37 @@ namespace Services.AdForms;
 public class CreateAdFormService : ICreateAdFormService
 {
     private readonly CategorySelectionResolver _selectionResolver;
+    private readonly AdFormBreadcrumbBuilder _breadcrumbs;
     private readonly ILookupService _lookupService;
     private readonly IAdminFormRepository _formOverrides;
     private readonly IMapper _mapper;
 
     public CreateAdFormService(
         CategorySelectionResolver selectionResolver,
+        AdFormBreadcrumbBuilder breadcrumbs,
         ILookupService lookupService,
         IAdminFormRepository formOverrides,
         IMapper mapper)
     {
         _selectionResolver = selectionResolver;
+        _breadcrumbs = breadcrumbs;
         _lookupService = lookupService;
         _formOverrides = formOverrides;
         _mapper = mapper;
     }
+
+    public static CreateAdFormUploadLimitsDto UploadLimits() =>
+        new()
+        {
+            MaxRequestSizeMb = FileUploadConstants.MaxRequestBodySizeMegabytes,
+            MaxImages = ImageConstants.MaxImagesPerItem,
+            MaxImageSizeMb = (int)(ImageConstants.MaxFileSizeBytes / (1024 * 1024)),
+            MaxVideoSizeMb = (int)(FileUploadConstants.MaxVideoSizeBytes / (1024 * 1024)),
+            MaxDocumentSizeMb = (int)(FileUploadConstants.MaxDocumentSizeBytes / (1024 * 1024)),
+            TooLargeMessage =
+                $"{UserMessages.Errors.RequestTooLarge} أقصى حجم للطلب الواحد " +
+                $"{FileUploadConstants.MaxRequestBodySizeMegabytes} ميجابايت."
+        };
 
     public async Task<CreateAdFormDto> GetCreateAdFormAsync(
         int categoryId, int? subCategoryId = null, CancellationToken cancellationToken = default)
@@ -55,6 +71,9 @@ public class CreateAdFormService : ICreateAdFormService
             SubCategory = selection.SubCategory is null
                 ? null
                 : _mapper.Map<SubCategoryDto>(selection.SubCategory),
+            Breadcrumb = _breadcrumbs.Build(
+                selection.Category, selection.SubCategory, requiresSubCategory: false),
+            Upload = UploadLimits(),
             RequiresSubCategory = false,
             Module = schema.Module,
             Submit = schema.Submit,
@@ -68,6 +87,8 @@ public class CreateAdFormService : ICreateAdFormService
         new()
         {
             Category = _mapper.Map<CategoryDto>(category),
+            Breadcrumb = _breadcrumbs.Build(category, null, requiresSubCategory: true),
+            Upload = UploadLimits(),
             RequiresSubCategory = true,
             Module = "lookups",
             Lookups = new CreateAdFormLookupsDto

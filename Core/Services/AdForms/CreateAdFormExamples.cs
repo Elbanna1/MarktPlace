@@ -5,6 +5,7 @@ using Shared.DTOs.FruitVegetableMerchants;
 using Shared.DTOs.WholesaleTraders;
 using Shared.DTOs.Suppliers;
 using Shared.DTOs.Lookups.Forms;
+using Services.Lookups;
 using Shared.Enums;
 
 namespace Services.AdForms;
@@ -94,10 +95,16 @@ public static class CreateAdFormExamples
     {
         var schema = AdFormSchemaCatalog.GetSchema((int)category, (int)subCategory)!;
 
+        var categoryDto = CategoryExample(category);
+        var subCategoryDto = SubCategoryExample(category, subCategory);
+
         var form = new CreateAdFormDto
         {
-            Category = CategoryExample(category),
-            SubCategory = SubCategoryExample(category, subCategory),
+            Category = categoryDto,
+            SubCategory = subCategoryDto,
+            Breadcrumb = AdFormBreadcrumbBuilder.Build(
+                categoryDto, subCategoryDto, requiresSubCategory: false),
+            Upload = CreateAdFormService.UploadLimits(),
             RequiresSubCategory = false,
             Module = schema.Module,
             Submit = schema.Submit,

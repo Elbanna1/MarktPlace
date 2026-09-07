@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Shared.DTOs.Lookups.Forms;
 
@@ -8,6 +8,11 @@ public class CreateAdFormDto
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public SubCategoryDto? SubCategory { get; set; }
+
+    public IReadOnlyList<AdFormBreadcrumbItemDto> Breadcrumb { get; set; } =
+        Array.Empty<AdFormBreadcrumbItemDto>();
+
+    public CreateAdFormUploadLimitsDto Upload { get; set; } = new();
 
     public bool RequiresSubCategory { get; set; }
 

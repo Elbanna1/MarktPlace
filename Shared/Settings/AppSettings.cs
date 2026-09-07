@@ -1,4 +1,4 @@
-using Shared.Constants;
+﻿using Shared.Constants;
 
 namespace Shared.Settings;
 
@@ -24,6 +24,26 @@ public class AppSettings
         set => _registerPath = string.IsNullOrWhiteSpace(value)
             ? ReferralCatalog.DefaultRegisterPath
             : value.Trim();
+    }
+
+    private string _createAdPath = FrontendRoutes.DefaultCreateAdPath;
+
+    public string CreateAdPath
+    {
+        get => _createAdPath;
+        set => _createAdPath = string.IsNullOrWhiteSpace(value)
+            ? FrontendRoutes.DefaultCreateAdPath
+            : "/" + value.Trim().Trim('/');
+    }
+
+    private string _homePath = FrontendRoutes.DefaultHomePath;
+
+    public string HomePath
+    {
+        get => _homePath;
+        set => _homePath = string.IsNullOrWhiteSpace(value)
+            ? FrontendRoutes.DefaultHomePath
+            : "/" + value.Trim().TrimStart('/');
     }
 
     private string _referralQueryParameter = ReferralCatalog.DefaultQueryParameter;
