@@ -38,6 +38,22 @@ the source, then supply the new value as an environment variable:
 | Database password | `ConnectionStrings__DefaultConnection` |
 | SMTP password | `EmailSettings__Password` |
 
+### 2. `GoogleAuth__ClientSecret` — never in a committed file
+
+Google Sign-In needs two values. They are **not** equally sensitive:
+
+| Value | Where it lives | Why |
+| --- | --- | --- |
+| `GoogleAuth:ClientId` | Committed in `appsettings.json` | Public — the browser sends it to Google on every sign-in |
+| `GoogleAuth:ClientSecret` | `GoogleAuth__ClientSecret` **only** | A credential. It is used solely for the authorization-code exchange |
+
+The secret is never returned by an endpoint (`GET /api/auth/google/config` publishes `enabled` and
+`clientId` only), never logged, and never rendered into Swagger. `GoogleAuthConfigurationTests` fails
+the build if a `GOCSPX-` value appears anywhere in the repository or in a committed configuration
+file, and if any logging call in the sign-in path carries a credential.
+
+Google ID tokens are verified and discarded — **no** Google access or refresh token is stored.
+
 ### 3. `AdminUser` must stay unset in production
 
 `IdentityDataSeeder` has **no fallback credentials**: with the section unset it ensures the roles
@@ -207,14 +223,29 @@ be edited is not evidence.
 
 ## CORS
 
-A single fully open `AllowAll` policy: any origin, any header, any method.
+An **allow-list**, built in `MarkatPlace/Extensions/CorsExtensions.cs` from `Cors:AllowedOrigins`
+and applied as the single policy `MarkatPlaceCors`: the listed origins, any header, any method,
+`AllowCredentials`.
 
-> **This is a deliberate choice, and it is safe as configured**: authentication is a bearer token in
-> the `Authorization` header and SignalR authenticates via the `access_token` query string. Neither
-> relies on cross-origin cookies, so `AllowCredentials` is not used — and the CORS protocol forbids
-> combining `*` with credentials anyway.
->
-> If cookie authentication is ever introduced, this policy must be narrowed to an allow-list first.
+| Key | Committed value | Purpose |
+| --- | --- | --- |
+| `Cors:AllowedOrigins` | the site (apex + `www`), the API host, and the usual local dev ports | The browser origins allowed to call the API |
+| `Cors:AllowAnyOrigin` | `false` | Escape hatch — restores the old fully open policy without a redeploy |
+| `Cors:AllowLocalhostInDevelopment` | `true` | In Development only, any loopback origin is also allowed, whatever port the developer picked |
+
+> **This replaced a fully open `AllowAnyOrigin` policy.** The old one was defensible while the API
+> was bearer-token-only, but an allow-list costs nothing here and is what makes credentialed
+> requests possible at all — the CORS protocol forbids combining `*` with credentials.
+
+**Adding an origin.** Apex and `www` are different origins, and so are `localhost` and `127.0.0.1`.
+Add one with `Cors__AllowedOrigins__0=https://example.com`, remembering that an indexed environment
+variable **replaces** the committed array element at that index — re-list the existing entries too.
+A configured value that is not an absolute `http`/`https` origin **fails start-up** rather than being
+silently ignored.
+
+`Cors__AllowAnyOrigin=true` is the emergency revert if a production origin turns out to be missing;
+it also disables credentialed requests. Uploaded files under `/uploads` carry their own
+`Access-Control-Allow-Origin: *` and are unaffected either way.
 
 ---
 
@@ -268,6 +299,8 @@ greater than `AccessTokenExpirationDays`, which start-up enforces.
 - [ ] `ASPNETCORE_DETAILEDERRORS` unset
 - [ ] `stdoutLogEnabled="false"` in `web.config`
 - [ ] `Diagnostics__SqlCounter` false
+- [ ] `GoogleAuth__ClientSecret` set as an environment variable if the authorization-code flow is used, and absent from every committed file
+- [ ] `Cors__AllowedOrigins` lists every origin the site is actually served from
 - [ ] HTTPS enforced; HSTS active
 - [ ] `web.config` `maxAllowedContentLength` ≥ the application's ceiling
 - [ ] Health probes reachable by the load balancer

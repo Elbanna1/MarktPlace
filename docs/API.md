@@ -106,6 +106,8 @@ misleading 415.
 | --- | --- | --- | --- |
 | `POST` | `/register` | anonymous | Create an account → **201** with tokens |
 | `POST` | `/login` | anonymous | Sign in |
+| `POST` | `/google` | anonymous | Sign in with a Google credential → **200**, or **201** when it creates the account |
+| `GET` | `/google/config` | anonymous | `{ enabled, clientId }` — what the browser needs to render the Google button |
 | `POST` | `/refresh-token` | anonymous | Exchange an expired access token |
 | `POST` | `/forgot-password` | anonymous | Start a password reset |
 | `POST` | `/verify-reset-code` | anonymous + reset token | Verify the OTP |
@@ -135,6 +137,23 @@ Both return `AuthResponse`:
 ```jsonc
 { "token": "...", "refreshToken": "...", "expiration": "...", "refreshTokenExpiration": "...", "user": { ... } }
 ```
+
+**`POST /api/auth/google`**
+
+```jsonc
+{
+  "idToken": "<Google ID token>",   // or "code" for the authorization-code flow — one is required
+  "code": null,
+  "redirectUri": null,              // overrides GoogleAuth:RedirectUri for the code exchange
+  "referralCode": "ABC123XY",       // optional — the ?ref= value, applied only to a NEW account
+  "center": "سنورس"                 // optional — one of the seven مراكز; defaults to الفيوم
+}
+```
+
+Returns the **same `AuthResponse`**: **200** when an existing user was signed in, **201** when the
+credential created the account. The credential is verified against Google server-side; there is no
+`email` field, because an e-mail is never proof of a Google identity. Full flow, Google Console
+entries and referral rules: [GOOGLE_SIGN_IN.md](GOOGLE_SIGN_IN.md).
 
 **Password reset** is a three-step session. Step 1 returns an opaque `resetToken`; steps 2 and 3 send
 it in the **`X-Password-Reset-Token` header** — not in the body, and the e-mail is not repeated. The

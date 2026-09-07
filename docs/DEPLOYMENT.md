@@ -26,10 +26,22 @@ legacy Windows/IIS publish path (see [web.config](#webconfig)).
 | `EmailSettings__Password` | ✅ | SMTP password for password-reset e-mails |
 | `ASPNETCORE_ENVIRONMENT` | ✅ | `Production` |
 | `AdminUser__UserName` / `__Email` / `__Password` | Bootstrap only | Set once on a fresh database, start, then **remove** |
+| `GoogleAuth__ClientSecret` | Code flow only | Google OAuth client secret. **Never in a committed file.** Not needed by the default ID-token flow |
+| `GoogleAuth__ClientId` | Optional | Overrides the committed public client id — set it only if the OAuth client is replaced |
+| `Cors__AllowedOrigins__0`, `__1`, … | Optional | Overrides the committed browser allow-list. An index **replaces** that array element, so re-list the existing entries |
 
 The section separator is `__` (double underscore).
 
 Full checklist: [SECURITY.md § Production checklist](SECURITY.md#production-checklist).
+
+> **Google Sign-In.** The client **id** is committed (it is public); only the **secret** is an
+> environment variable, and only the authorization-code flow needs it. The Google Console must list
+> `https://shopiklopik.com` (and `https://www.shopiklopik.com`) as **Authorized JavaScript origins**;
+> the default flow needs **no** redirect URI. See [GOOGLE_SIGN_IN.md](GOOGLE_SIGN_IN.md).
+
+> **CORS is now an allow-list**, not `AllowAnyOrigin`. If the site is served from an origin that is
+> not in `Cors:AllowedOrigins`, the browser blocks every call. `Cors__AllowAnyOrigin=true` reverts to
+> the old behaviour without a redeploy.
 
 > **Rotating the JWT key signs every user out** — access tokens live 40 days. Announce it.
 

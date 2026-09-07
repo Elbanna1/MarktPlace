@@ -31,6 +31,8 @@ public class AuthService : IAuthService
     private readonly INotificationService _notificationService;
     private readonly IReferralService _referralService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IGoogleTokenValidator _googleTokens;
+    private readonly GoogleAuthSettings _googleSettings;
 
     public AuthService(
         UserManager<ApplicationUser> userManager,
@@ -42,7 +44,9 @@ public class AuthService : IAuthService
         IOptions<JwtSettings> jwtSettings,
         INotificationService notificationService,
         IReferralService referralService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IGoogleTokenValidator googleTokens,
+        IOptions<GoogleAuthSettings> googleSettings)
     {
         _userManager = userManager;
         _tokenService = tokenService;
@@ -54,6 +58,8 @@ public class AuthService : IAuthService
         _notificationService = notificationService;
         _referralService = referralService;
         _unitOfWork = unitOfWork;
+        _googleTokens = googleTokens;
+        _googleSettings = googleSettings.Value;
     }
 
     private static void EnsureAccountUsable(ApplicationUser user)
@@ -196,6 +202,228 @@ public class AuthService : IAuthService
 
         return await BuildAuthResponseAsync(user);
     }
+
+    public GoogleAuthConfigDto GetGoogleConfig() =>
+        new()
+        {
+            Enabled = _googleTokens.IsConfigured,
+            ClientId = _googleTokens.ClientId
+        };
+
+    public async Task<GoogleSignInResult> GoogleSignInAsync(
+        GoogleSignInRequest request, CancellationToken cancellationToken = default)
+    {
+        var profile = await _googleTokens.ValidateAsync(request, cancellationToken);
+
+        var linked = await _userManager.FindByLoginAsync(GoogleAuthCatalog.ProviderName, profile.Subject);
+
+        if (linked is not null)
+        {
+            await EnsureGoogleAccountUsableAsync(linked);
+            await NotifyNewLoginAsync(linked);
+
+            return new GoogleSignInResult(await BuildAuthResponseAsync(linked), AccountCreated: false);
+        }
+
+        if (_googleSettings.RequireVerifiedEmail && !profile.EmailVerified)
+            throw new UnauthorizedException(UserMessages.Auth.GoogleEmailNotVerified);
+
+        if (string.IsNullOrWhiteSpace(profile.Email))
+            throw new UnauthorizedException(UserMessages.Auth.GoogleEmailNotVerified);
+
+        var email = profile.Email.Trim();
+
+        var existing = await _userManager.FindByEmailAsync(email);
+
+        if (existing is not null)
+        {
+            if (!_googleSettings.LinkVerifiedEmailToExistingAccount)
+                throw new ConflictException(UserMessages.Auth.GoogleEmailAlreadyRegistered);
+
+            await EnsureGoogleAccountUsableAsync(existing);
+            await LinkGoogleLoginAsync(existing, profile);
+            await NotifyNewLoginAsync(existing);
+
+            return new GoogleSignInResult(await BuildAuthResponseAsync(existing), AccountCreated: false);
+        }
+
+        var created = await CreateGoogleUserAsync(request, profile, email, cancellationToken);
+
+        return new GoogleSignInResult(await BuildAuthResponseAsync(created), AccountCreated: true);
+    }
+
+    private async Task<ApplicationUser> CreateGoogleUserAsync(
+        GoogleSignInRequest request,
+        GoogleUserProfile profile,
+        string email,
+        CancellationToken cancellationToken)
+    {
+        var referrer = await _referralService.ResolveReferrerForRegistrationAsync(
+            request.ReferralCode, cancellationToken);
+
+        var (firstName, secondName) = GoogleAuthCatalog.SplitDisplayName(
+            profile.GivenName, profile.FamilyName, profile.Name, email);
+
+        var user = new ApplicationUser
+        {
+            FirstName = firstName,
+            SecondName = secondName,
+            UserName = await ReserveUsernameAsync(profile.Name, email),
+            Email = email,
+            EmailConfirmed = profile.EmailVerified,
+            Governorate = GoogleAuthCatalog.DefaultGovernorate,
+            Center = LocationConstants.IsValidCenter(request.Center)
+                ? request.Center!
+                : GoogleAuthCatalog.DefaultCenter,
+            CreatedAt = DateTime.UtcNow,
+
+            ReferralCode = await _referralService.GenerateUniqueCodeAsync(cancellationToken)
+        };
+
+        Guid? referralId = null;
+
+        await using (var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken))
+        {
+            IdentityResult result;
+
+            try
+            {
+                result = await _userManager.CreateAsync(user);
+            }
+            catch (Exception exception) when (_unitOfWork.IsUniqueConstraintViolation(exception))
+            {
+                _logger.LogInformation(
+                    exception,
+                    "A concurrent external sign-in lost a uniqueness race; asking the caller to retry.");
+
+                throw new ConflictException(UserMessages.Auth.GoogleSignInRetry);
+            }
+
+            if (!result.Succeeded)
+                throw new BadRequestException(UserMessages.Auth.GoogleSignInRetry, DescribeErrors(result));
+
+            await LinkGoogleLoginAsync(user, profile);
+
+            if (referrer is not null)
+            {
+                var referral = await _referralService.RecordAsync(
+                    referrer, user, referrer.ReferralCode!, cancellationToken);
+
+                referralId = referral.Id;
+            }
+
+            await transaction.CommitAsync(cancellationToken);
+        }
+
+        await _notificationService.CreateAsync(
+            user.Id,
+            "مرحبًا بك",
+            "🎊 تم إنشاء حسابك بنجاح. أهلًا بك في سوق الفيوم.",
+            NotificationType.AccountCreated,
+            referenceId: null,
+            referenceType: NotificationReferenceTypes.Account,
+            action: NotificationAction.Created,
+            icon: "🎊",
+            entityName: "الحساب");
+
+        if (referralId is not null)
+        {
+            try
+            {
+                await _referralService.NotifyReferrerAsync(referralId.Value, cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(
+                    exception,
+                    "Referral {ReferralId} was recorded but its notification could not be sent.",
+                    referralId);
+            }
+        }
+
+        return user;
+    }
+
+    private async Task LinkGoogleLoginAsync(ApplicationUser user, GoogleUserProfile profile)
+    {
+        var login = new UserLoginInfo(
+            GoogleAuthCatalog.ProviderName, profile.Subject, GoogleAuthCatalog.ProviderDisplayName);
+
+        IdentityResult result;
+
+        try
+        {
+            result = await _userManager.AddLoginAsync(user, login);
+        }
+        catch (Exception exception) when (_unitOfWork.IsUniqueConstraintViolation(exception))
+        {
+            _logger.LogInformation(
+                exception,
+                "The external login for user {UserId} was already stored; treating it as linked.",
+                user.Id);
+
+            return;
+        }
+
+        if (result.Succeeded)
+            return;
+
+        var alreadyLinked = await _userManager.GetLoginsAsync(user);
+
+        if (alreadyLinked.Any(stored =>
+                stored.LoginProvider == GoogleAuthCatalog.ProviderName &&
+                stored.ProviderKey == profile.Subject))
+        {
+            return;
+        }
+
+        _logger.LogWarning(
+            "Could not link the external login to user {UserId}: {Errors}",
+            user.Id, string.Join("; ", DescribeErrors(result)));
+
+        throw new ConflictException(UserMessages.Auth.GoogleSignInRetry);
+    }
+
+    private async Task<string> ReserveUsernameAsync(string? fullName, string email)
+    {
+        var baseName = GoogleAuthCatalog.SuggestUsername(fullName, email);
+
+        for (var attempt = 0; attempt < GoogleAuthCatalog.MaxUsernameAttempts; attempt++)
+        {
+            var candidate = GoogleAuthCatalog.UsernameCandidate(baseName, attempt);
+
+            if (await _userManager.FindByNameAsync(candidate) is null)
+                return candidate;
+        }
+
+        throw new ConflictException(UserMessages.Auth.GoogleSignInRetry);
+    }
+
+    private async Task EnsureGoogleAccountUsableAsync(ApplicationUser user)
+    {
+        if (await _userManager.IsLockedOutAsync(user))
+        {
+            _logger.LogWarning("External sign-in attempt on locked-out account {UserId}.", user.Id);
+            throw new UnauthorizedException(UserMessages.Auth.AccountLocked);
+        }
+
+        EnsureAccountUsable(user);
+
+        if (await _userManager.GetAccessFailedCountAsync(user) > 0)
+            await _userManager.ResetAccessFailedCountAsync(user);
+    }
+
+    private Task NotifyNewLoginAsync(ApplicationUser user) =>
+        _notificationService.CreateAsync(
+            user.Id,
+            "تسجيل دخول جديد",
+            "🛡️ تم تسجيل دخول جديد إلى حسابك.",
+            NotificationType.NewLogin,
+            referenceId: null,
+            referenceType: NotificationReferenceTypes.Account,
+            action: NotificationAction.Created,
+            icon: "🛡️",
+            entityName: "الحساب");
 
     public async Task<AuthResponse> RefreshTokenAsync(RefreshTokenRequest request)
     {

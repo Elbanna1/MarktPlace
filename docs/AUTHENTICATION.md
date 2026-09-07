@@ -1,6 +1,6 @@
 # Authentication
 
-[← README](../README.md) · Related: [AUTHORIZATION](AUTHORIZATION.md) · [SECURITY](SECURITY.md) · [API](API.md)
+[← README](../README.md) · Related: [AUTHORIZATION](AUTHORIZATION.md) · [SECURITY](SECURITY.md) · [API](API.md) · [GOOGLE_SIGN_IN](GOOGLE_SIGN_IN.md)
 
 ASP.NET Core Identity for account storage and password hashing; **JWT bearer tokens** for request
 authentication. There are no cookies and no server-side session.
@@ -63,6 +63,31 @@ POST /api/auth/login        { "username": "...", "password": "..." }
 
 > Steps 1 and 3 answer identically on purpose. A different message would turn login into a way to
 > discover which usernames exist.
+
+---
+
+## Google Sign-In
+
+```
+POST /api/auth/google        anonymous        → 200 (signed in) / 201 (account created)
+GET  /api/auth/google/config anonymous        → { enabled, clientId }
+```
+
+An **addition** to password login, not a replacement. The browser obtains a Google **ID token**; the
+API verifies it server-side with `Google.Apis.Auth` (signature against Google's keys, issuer,
+expiry, and audience = `GoogleAuth:ClientId`) and answers with the **same `AuthResponse`** the
+password login returns.
+
+Identity is keyed on the Google **subject**, stored in Identity's own `AspNetUserLogins` — so **no
+migration was needed**. An account is created only for a **verified** Google e-mail, and an existing
+account is linked only when it owns that verified e-mail. Account status, lockout and roles follow
+the password login's rules exactly.
+
+A `referralCode` may travel with the credential; it is applied through the same `IReferralService`
+calls registration uses, and **only** when a new account is created.
+
+Full detail — the flow, the Google Console entries, the referral guarantees and the frontend
+contract: **[GOOGLE_SIGN_IN.md](GOOGLE_SIGN_IN.md)**.
 
 ---
 

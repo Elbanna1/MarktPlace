@@ -72,6 +72,30 @@ public static class UserMessages
 
         public const string ResetSessionExpired =
             "لازم تتأكد من الكود الأول، أو إن الوقت خلص. ابدأ خطوات نسيت كلمة السر من الأول.";
+
+        public const string GoogleSignedIn = "تم تسجيل الدخول بحساب جوجل بنجاح.";
+
+        public const string GoogleRegistered =
+            "تم إنشاء حسابك بحساب جوجل. أهلاً بيك في ماركت بليس.";
+
+        public const string GoogleConfigLoaded = "تم تحميل إعدادات الدخول بحساب جوجل.";
+
+        public const string GoogleCredentialInvalid =
+            "بيانات الدخول بحساب جوجل مش صحيحة أو انتهت صلاحيتها. جرب تاني.";
+
+        public const string GoogleCredentialRequired =
+            "لازم تبعت بيانات الدخول اللي جاية من جوجل.";
+
+        public const string GoogleEmailNotVerified =
+            "لازم تفعّل البريد الإلكتروني بتاع حساب جوجل الأول عشان تقدر تسجل بيه.";
+
+        public const string GoogleNotAvailable = "الدخول بحساب جوجل مش متاح دلوقتي.";
+
+        public const string GoogleEmailAlreadyRegistered =
+            "البريد ده مسجل عندنا بحساب بكلمة سر. سجل دخولك بكلمة السر الأول.";
+
+        public const string GoogleSignInRetry =
+            "مش قادرين نكمل الدخول بحساب جوجل دلوقتي. جرب تاني.";
     }
 
     public static class Profile

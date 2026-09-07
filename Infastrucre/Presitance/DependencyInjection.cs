@@ -24,6 +24,9 @@ public static class DependencyInjection
 
         services.Configure<AppSettings>(configuration.GetSection(AppSettings.SectionName));
 
+        services.Configure<GoogleAuthSettings>(
+            configuration.GetSection(GoogleAuthSettings.SectionName));
+
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         if (string.IsNullOrWhiteSpace(connectionString))
             throw new InvalidOperationException(
@@ -75,6 +78,9 @@ public static class DependencyInjection
 
         services.AddSingleton<ITokenService, JwtService>();
         services.AddTransient<IEmailService, EmailService>();
+
+        services.AddHttpClient();
+        services.AddScoped<IGoogleTokenValidator, GoogleTokenValidator>();
         services.AddScoped<IUserRepository, UserRepository>();
 
         services.AddHttpContextAccessor();

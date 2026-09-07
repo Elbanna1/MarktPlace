@@ -40,6 +40,30 @@ public class AuthController : ControllerBase
         return Ok(ApiResponse<AuthResponse>.Ok(result, UserMessages.Auth.LoggedIn));
     }
 
+    [HttpPost("google")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ApiResponse<AuthResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<AuthResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<ApiResponse<AuthResponse>>> GoogleSignIn(
+        [FromBody] GoogleSignInRequest request)
+    {
+        var result = await _authService.GoogleSignInAsync(request, HttpContext.RequestAborted);
+
+        return result.AccountCreated
+            ? StatusCode(StatusCodes.Status201Created,
+                ApiResponse<AuthResponse>.Ok(result.Auth, UserMessages.Auth.GoogleRegistered))
+            : Ok(ApiResponse<AuthResponse>.Ok(result.Auth, UserMessages.Auth.GoogleSignedIn));
+    }
+
+    [HttpGet("google/config")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ApiResponse<GoogleAuthConfigDto>), StatusCodes.Status200OK)]
+    public ActionResult<ApiResponse<GoogleAuthConfigDto>> GoogleConfig() =>
+        Ok(ApiResponse<GoogleAuthConfigDto>.Ok(
+            _authService.GetGoogleConfig(), UserMessages.Auth.GoogleConfigLoaded));
+
     [HttpPost("refresh-token")]
     [AllowAnonymous]
     public async Task<ActionResult<ApiResponse<AuthResponse>>> RefreshToken([FromBody] RefreshTokenRequest request)

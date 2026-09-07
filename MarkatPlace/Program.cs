@@ -92,17 +92,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Mvc.ApiBehaviorOptions>(options 
 
 builder.Services.AddSwaggerWithJwt();
 
-const string CorsPolicy = "AllowAll";
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(CorsPolicy, policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
+builder.Services.AddApiCors(builder.Configuration, builder.Environment);
 
 builder.Services.AddReverseProxyForwardedHeaders(builder.Configuration);
 
@@ -231,7 +221,7 @@ app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = uploadContentTy
 
 app.UseResponseCaching();
 
-app.UseCors(CorsPolicy);
+app.UseCors(CorsExtensions.PolicyName);
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -268,7 +258,7 @@ app.MapHealthChecks("/health", new HealthCheckOptions
     .DisableRateLimiting()
     .AllowAnonymous();
 
-app.MapHub<NotificationHub>("/hubs/notifications").RequireCors(CorsPolicy);
+app.MapHub<NotificationHub>("/hubs/notifications").RequireCors(CorsExtensions.PolicyName);
 
 using (var scope = app.Services.CreateScope())
 {

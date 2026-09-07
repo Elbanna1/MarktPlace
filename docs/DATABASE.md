@@ -18,11 +18,15 @@ The schema is wide rather than deep. Most tables belong to one of these families
 | Module lookup tables | 200+ | `LandTypes`, `HorseVaccinations` |
 | Multi-select selection tables | ~40 | `LandUtilitySelections` |
 | Cross-module interaction tables | ~6 | `ListingViews`, `ListingFavorites`, `ListingRatings`, `ListingReports` |
-| Identity | 7 | `AspNetUsers`, `AspNetRoles`, … |
+| Identity | 7 | `AspNetUsers`, `AspNetRoles`, `AspNetUserLogins`, … |
 | Platform | ~20 | `Notifications`, `Payments`, `Banners`, `Referrals`, `AdminAuditLogs` |
 
 A module lookup table is `(Id, Name, NameAr)` seeded from a catalogue in `Shared/Constants` — the
 code is the source of truth, the table is its materialisation.
+
+> **`AspNetUserLogins` is not decorative.** Google Sign-In stores its link there, keyed
+> `("Google", <Google subject>)` — which is why adding it required **no migration**. See
+> [GOOGLE_SIGN_IN.md](GOOGLE_SIGN_IN.md).
 
 ---
 

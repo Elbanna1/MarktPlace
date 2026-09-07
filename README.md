@@ -42,7 +42,7 @@ Two properties shape the whole codebase:
 | Real-time | SignalR (`/hubs/notifications`) |
 | E-mail | MailKit / MimeKit (password-reset OTP) |
 | API docs | Swashbuckle 9 — two OpenAPI documents (`v1`, `v2`) |
-| Tests | xUnit (`Tests/MarkatPlace.Tests`, 1,532 tests) |
+| Tests | xUnit (`Tests/MarkatPlace.Tests`, 1,720 tests) |
 
 ---
 
@@ -166,7 +166,7 @@ See [SETUP.md § Configuration](docs/SETUP.md#5-configure-the-remaining-environm
 dotnet test Tests/MarkatPlace.Tests/MarkatPlace.Tests.csproj
 ```
 
-1,532 tests, no database required, under one second. See [TESTING.md](docs/TESTING.md).
+1,720 tests, no external database required, a few seconds. See [TESTING.md](docs/TESTING.md).
 
 ---
 
@@ -182,6 +182,7 @@ dotnet test Tests/MarkatPlace.Tests/MarkatPlace.Tests.csproj
 | [DATABASE.md](docs/DATABASE.md) | Work with entities, migrations, indexes |
 | [AUTHENTICATION.md](docs/AUTHENTICATION.md) | Understand login, JWT, refresh, password reset |
 | [AUTHORIZATION.md](docs/AUTHORIZATION.md) | Understand roles, admin pages and permissions |
+| [GOOGLE_SIGN_IN.md](docs/GOOGLE_SIGN_IN.md) | Understand or configure Continue with Google |
 | [BUSINESS_RULES.md](docs/BUSINESS_RULES.md) | **Avoid breaking existing behaviour** |
 | [DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md) | Add a feature, module, endpoint or migration |
 | [CONVENTIONS.md](docs/CONVENTIONS.md) | Write code that matches the project |

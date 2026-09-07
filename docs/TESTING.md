@@ -8,8 +8,8 @@ Testing is split in two on purpose:
 | --- | --- | --- |
 | **What** | `Tests/MarkatPlace.Tests` (xUnit) | HTTP suites run against a running instance |
 | **Guards** | Structure, invariants, validation logic | Behaviour across all modules and roles |
-| **Speed** | 1,532 tests, < 1 s | Minutes |
-| **Needs** | Nothing | A running API + a database |
+| **Speed** | 1,720 tests, a few seconds | Minutes |
+| **Needs** | Nothing external | A running API + a database |
 
 Hermetic tests guard the *shape* so a bug cannot be reintroduced silently; HTTP suites prove the
 *behaviour*.
@@ -34,7 +34,7 @@ dotnet test Tests/MarkatPlace.Tests/MarkatPlace.Tests.csproj \
 dotnet test Tests/MarkatPlace.Tests/MarkatPlace.Tests.csproj -c Release
 ```
 
-Expected: **1,532 passing, 0 failing, 0 skipped**.
+Expected: **1,720 passing, 0 failing, 0 skipped**.
 
 > Stop any running API first, or the build cannot overwrite the locked DLLs.
 
@@ -232,7 +232,10 @@ See [PERFORMANCE.md](PERFORMANCE.md).
 Stated plainly so nobody assumes otherwise:
 
 - **No integration tests in the repository.** There is no `WebApplicationFactory` harness; the
-  in-repo suite is deliberately hermetic.
+  in-repo suite is deliberately hermetic. The one exception is `GoogleSignInHarness`, which wires the
+  real `AuthService`, `ReferralService` and Identity `UserManager` over the **EF in-memory provider**
+  — still hermetic (no SQL Server, no network), but it exercises behaviour rather than shape, because
+  the account-linking and referral-exactly-once rules cannot be proven by reading source.
 - **No load/soak testing.** Latency figures come from single-client measurement.
 - **No CI configuration** was found in the repository.
 - **No frontend tests** — this repository is the backend only.

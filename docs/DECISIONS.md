@@ -343,16 +343,25 @@ authorization middleware that evaluates `[Authorize(Roles = …)]` — the only 
 
 ---
 
-## D-22 — CORS is fully open
+## D-22 — CORS is a configured allow-list *(superseded the fully open policy)*
 
-**Decision.** `AllowAnyOrigin`, `AllowAnyHeader`, `AllowAnyMethod`.
+**Decision.** One policy, `MarkatPlaceCors`, built from `Cors:AllowedOrigins`:
+`WithOrigins(...)`, `AllowAnyHeader`, `AllowAnyMethod`, `AllowCredentials`. In Development any
+loopback origin is additionally allowed, so a developer's chosen port never needs a config change.
+`Cors:AllowAnyOrigin=true` restores the previous fully open behaviour without a redeploy.
 
-**Why it is safe as configured.** Authentication is a bearer token in the `Authorization` header, and
-SignalR authenticates via the `access_token` query string. Neither relies on cross-origin cookies, so
-`AllowCredentials` is not used — and the CORS protocol forbids combining `*` with credentials anyway.
+**It used to be `AllowAnyOrigin`.** That was defensible — authentication is a bearer token in the
+`Authorization` header and SignalR authenticates via the `access_token` query string, so nothing
+relied on cross-origin cookies. But it also meant `AllowCredentials` could never be used (the CORS
+protocol forbids combining it with `*`), and an allow-list costs nothing when the set of origins is
+this small and this stable.
 
-**Consequence.** If cookie authentication is ever introduced, this **must** be narrowed to an
-allow-list first.
+**Why an unparseable origin fails start-up.** A typo in the list would otherwise surface as the site
+being unable to call the API at all, with the reason visible only in the browser console.
+
+**Consequence.** Apex and `www` are different origins; both are listed. A new frontend origin must be
+added to `Cors:AllowedOrigins` (and, for Google Sign-In, to the Google Console's Authorized
+JavaScript origins) before it can call the API.
 
 ---
 
@@ -472,3 +481,29 @@ future caller cannot lose the protection by accident.
 application needs; nothing seeded belongs to a user. A test proves that by walking the EF model and
 failing on any seeded entity that carries an owner column.
 
+---
+
+## D-31 — Google Sign-In verifies an ID token; there is no backend callback
+
+**Decision.** `POST /api/auth/google` takes the ID token the browser obtained from Google Identity
+Services and verifies it server-side with Google's own `Google.Apis.Auth`
+(`GoogleJsonWebSignature.ValidateAsync`): signature against Google's published keys, issuer, expiry
+with zero clock tolerance, and audience against `GoogleAuth:ClientId`. It answers with the same
+`AuthResponse` the password login returns. An authorization `code` is accepted as an alternative and
+exchanged server-side using the client secret.
+
+**Why not a redirect/callback flow.** The API has no cookies and no server-side session, so a
+callback landing on `api.shopiklopik.com` would have had to invent one just to hand a token back to
+the site. The ID-token flow needs only an **Authorized JavaScript origin** in the Google Console —
+no redirect URI, and no client secret at all.
+
+**Why the Google subject and not the e-mail.** Identity is keyed on `(LoginProvider, ProviderKey)` =
+`("Google", sub)` in Identity's existing `AspNetUserLogins` table, so **no migration was needed**. An
+e-mail is only ever used to *link* to an account that already owns it, and only when Google reports
+it as verified — an unverified address is refused outright, which is what closes the e-mail-only
+takeover path.
+
+**Consequence.** A Google-created account has **no password**, so it cannot be entered by guessing
+one; the ordinary "forgot password" flow is how such a user adds one. It also has no phone number and
+defaults to مركز الفيوم, both correctable in the profile screen — those two fields have no equivalent
+in a Google profile.
