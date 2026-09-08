@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using Shared.Constants;
 using Shared.DTOs.Admin;
 using Shared.DTOs.Lookups.Forms;
@@ -11,7 +11,8 @@ public class UpdateUserStatusRequestValidator : AbstractValidator<UpdateUserStat
     public UpdateUserStatusRequestValidator()
     {
         RuleFor(x => x.Status)
-            .IsInEnum().WithMessage("حالة المستخدم غير صحيحة.");
+            .IsInEnum().WithMessage("حالة المستخدم غير صحيحة.")
+            .Must(UserAccountCatalog.IsAdminAssignable).WithMessage("حالة المستخدم غير صحيحة.");
 
         RuleFor(x => x.Reason)
             .MaximumLength(500).WithMessage("لا يمكن أن يتجاوز السبب 500 حرف.");

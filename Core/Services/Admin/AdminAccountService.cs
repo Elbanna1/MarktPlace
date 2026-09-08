@@ -16,7 +16,7 @@ public class AdminAccountService : IAdminAccountService
     private readonly IAdminAccountRepository _repository;
     private readonly IAdminAuditService _audit;
     private readonly INotificationService _notifications;
-    private readonly IUserRoleCache _roleCache;
+    private readonly IUserAccessStateCache _accessState;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<AdminAccountService> _logger;
 
@@ -25,7 +25,7 @@ public class AdminAccountService : IAdminAccountService
         IAdminAccountRepository repository,
         IAdminAuditService audit,
         INotificationService notifications,
-        IUserRoleCache roleCache,
+        IUserAccessStateCache accessState,
         IUnitOfWork unitOfWork,
         ILogger<AdminAccountService> logger)
     {
@@ -33,7 +33,7 @@ public class AdminAccountService : IAdminAccountService
         _repository = repository;
         _audit = audit;
         _notifications = notifications;
-        _roleCache = roleCache;
+        _accessState = accessState;
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
@@ -150,7 +150,7 @@ public class AdminAccountService : IAdminAccountService
 
         await transaction.CommitAsync(cancellationToken);
 
-        _roleCache.Invalidate(user.Id);
+        _accessState.Invalidate(user.Id);
 
         await _audit.LogAsync(
             AdminAuditAction.CreateAdmin,
@@ -268,6 +268,8 @@ public class AdminAccountService : IAdminAccountService
         if (!update.Succeeded)
             throw new BadRequestException("مش قادرين نغير حالة الحساب.", Describe(update));
 
+        _accessState.Invalidate(admin.Id);
+
         await _audit.LogAsync(
             request.IsActive ? AdminAuditAction.ActivateAdmin : AdminAuditAction.DeactivateAdmin,
             AdminAuditCatalog.Targets.Admin,
@@ -330,7 +332,7 @@ public class AdminAccountService : IAdminAccountService
         if (!removal.Succeeded)
             throw new BadRequestException("مش قادرين نسحب صلاحية المسؤول.", Describe(removal));
 
-        _roleCache.Invalidate(admin.Id);
+        _accessState.Invalidate(admin.Id);
 
         await _audit.LogAsync(
             AdminAuditAction.RevokeAdmin,

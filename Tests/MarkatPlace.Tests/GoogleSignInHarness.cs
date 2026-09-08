@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +37,10 @@ internal sealed class GoogleSignInHarness : IAsyncDisposable
         Tokens = (StubTokenService)provider.GetRequiredService<ITokenService>();
         Referrals = provider.GetRequiredService<IReferralService>();
         Auth = provider.GetRequiredService<IAuthService>();
+        Account = provider.GetRequiredService<IAccountService>();
+        Closure = (RecordingAccountClosureRepository)provider.GetRequiredService<IAccountClosureRepository>();
+        AccessState = provider.GetRequiredService<IUserAccessStateCache>();
+        Roles = provider.GetRequiredService<RoleManager<IdentityRole>>();
     }
 
     public AppDbContext Context { get; }
@@ -52,6 +56,14 @@ internal sealed class GoogleSignInHarness : IAsyncDisposable
     public IReferralService Referrals { get; }
 
     public IAuthService Auth { get; }
+
+    public IAccountService Account { get; }
+
+    public RecordingAccountClosureRepository Closure { get; }
+
+    public IUserAccessStateCache AccessState { get; }
+
+    public RoleManager<IdentityRole> Roles { get; }
 
     public static GoogleSignInHarness Create(GoogleAuthSettings? settings = null)
     {
@@ -120,6 +132,10 @@ internal sealed class GoogleSignInHarness : IAsyncDisposable
         services.AddScoped<IReferralService, ReferralService>();
         services.AddScoped<IAuthService, AuthService>();
 
+        services.AddSingleton<IAccountClosureRepository, RecordingAccountClosureRepository>();
+        services.AddSingleton<IUserAccessStateCache, Persistence.Services.UserAccessStateCache>();
+        services.AddScoped<IAccountService, AccountService>();
+
         return new GoogleSignInHarness(services.BuildServiceProvider());
     }
 
@@ -151,10 +167,35 @@ internal sealed class GoogleSignInHarness : IAsyncDisposable
         return user;
     }
 
+    public async Task PutInRoleAsync(ApplicationUser user, string role)
+    {
+        if (!await Roles.RoleExistsAsync(role))
+            Assert.True((await Roles.CreateAsync(new IdentityRole(role))).Succeeded);
+
+        Assert.True((await Users.AddToRoleAsync(user, role)).Succeeded);
+    }
+
     public Task<int> CountReferralsAsync(string referrerUserId) =>
         Context.Set<Referral>().CountAsync(referral => referral.ReferrerUserId == referrerUserId);
 
     public ValueTask DisposeAsync() => _provider.DisposeAsync();
+}
+
+internal sealed class RecordingAccountClosureRepository : IAccountClosureRepository
+{
+    public List<string> Closed { get; } = [];
+
+    public int ListingsPerAccount { get; set; } = 3;
+
+    public int InterestsPerAccount { get; set; } = 2;
+
+    public Task<AccountClosureResult> CloseAsync(
+        string userId, CancellationToken cancellationToken = default)
+    {
+        Closed.Add(userId);
+
+        return Task.FromResult(new AccountClosureResult(ListingsPerAccount, InterestsPerAccount));
+    }
 }
 
 internal sealed class StubGoogleTokenValidator : IGoogleTokenValidator

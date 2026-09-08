@@ -29,6 +29,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IProfileService, ProfileService>();
+        services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAdvertisementService, AdvertisementService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<ILookupService, LookupService>();

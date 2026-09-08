@@ -1,4 +1,4 @@
-# Performance
+﻿# Performance
 
 [← README](../README.md) · Related: [DATABASE](DATABASE.md) · [TESTING](TESTING.md) · [DECISIONS](DECISIONS.md)
 
@@ -244,7 +244,7 @@ Known, measured, and not yet fixed.
 | --- | ---: | --- |
 | A narrow search term still scans every live listing | 738 ms | Full-text search. **Not verifiable in the environment inspected** — `SERVERPROPERTY('IsFullTextInstalled')` returned 0 and no Arabic word breaker (LCID 1025) was registered. Check the production host before planning it |
 | `related` sorts on a computed predicate over an `OR` | 205 ms | Splitting it into two seekable top-N queries plus `(UserId, CreatedAt)` and `(Center, CreatedAt)` indexes. Provably equivalent but **unmeasured** — left for a pass that can verify it |
-| Admin dashboard issues 33 round trips | 108 ms | Acceptable: a constant, not an N+1, and only administrators pay it |
+| Admin dashboard issues 28 round trips (was 33) | ~100 ms | Acceptable: a constant, not an N+1, and only administrators pay it. The remaining calls hit different tables and cannot be folded together without a second `DbContext` |
 | The covering index exists only for أراضي | — | The same pattern per module, after a storage check |
 
 ### Index hygiene
@@ -255,6 +255,38 @@ unlikely to be chosen by any plan.
 
 > **Do not drop them speculatively.** Review against `sys.dm_db_index_usage_stats` **on production**
 > first — usage on a development database proves nothing.
+
+---
+
+## 2026-09-08 — repeated aggregates over the same table
+
+Two admin screens issued several scalar aggregates where one query answers all of them. Measured
+with `Diagnostics__SqlCounter=true` against LocalDB seeded with 200,044 listings and 5,078 users,
+warm, `X-Sql-Count` read from the response header.
+
+| Endpoint | Before | After | Change |
+| --- | ---: | ---: | --- |
+| `GET /api/v2/admin/users/{id}` | **18** | **13** | Six sequential `COUNT`s, each over the **49-way `UNION ALL`** of every listing module, replaced by one `GROUP BY (Status, ModerationStatus)` over the same union. `AdminAdRepository.GetStatusBreakdownAsync` already did exactly this globally — it only needed an `ownerId` |
+| `GET /api/v2/admin/dashboard` | **33** | **28** | `GetUserCountsAsync` 2→1, `GetBannerCountsAsync` 2→1, `GetRevenueAsync` 4→2, `GetBannerRevenueAsync` 2→1. Each pair reads the **same table**; `GroupBy(_ => 1)` with `Count(predicate)` / `Sum(cond ? x : 0)` folds them into one `SELECT` |
+
+The dashboard payload was captured before and after and compared field by field: identical apart from
+`activeAdsCount`, which moved by 1 because it depends on `ExpireAt > utcNow` and an ad expired between
+the two calls.
+
+`GroupBy(_ => 1)` returns **no row** for an empty table, so every call site falls back to zero
+explicitly — the old `SumAsync(...) ?? 0m` behaviour is preserved.
+
+### Not changed, and why
+
+- The remaining 28 dashboard round trips read **different** tables. Folding them needs parallel
+  queries on separate `DbContext` instances — a real refactor for one admin screen, not a small
+  safe change.
+- `AccountStatusMiddleware` (new) costs **zero** extra round trips: the account state is read by the
+  roles query that already ran, and cached with it for five minutes. Verified: `GET /api/ads` answers
+  with `X-Sql-Count: 1` for an authenticated caller, the same as anonymous.
+- Closing an account issues one `UPDATE` per listing module plus one `DELETE`. That is ~48 statements
+  for an operation a user performs **once**, and every one is set-based (`ExecuteUpdateAsync`) with no
+  entity materialised.
 
 ---
 

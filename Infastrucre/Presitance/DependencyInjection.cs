@@ -231,6 +231,8 @@ public static class DependencyInjection
                     moduleType)!);
         }
 
+        services.AddScoped<IAccountClosureRepository, AccountClosureRepository>();
+
         services.AddScoped<IListingLifecycleRepository, ListingLifecycleRepository>();
 
         services.AddScoped<IAdminAdRepository, AdminAdRepository>();
@@ -248,7 +250,7 @@ public static class DependencyInjection
 
         services.AddScoped<IAdminActionContext, AdminActionContext>();
 
-        services.AddSingleton<IUserRoleCache, UserRoleCache>();
+        services.AddSingleton<IUserAccessStateCache, UserAccessStateCache>();
         services.AddScoped<IClaimsTransformation, DatabaseRoleClaimsTransformation>();
 
         services.AddScoped<IListingInteractionRepository, ListingInteractionRepository>();

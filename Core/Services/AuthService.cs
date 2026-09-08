@@ -69,6 +69,9 @@ public class AuthService : IAuthService
 
         var reason = string.IsNullOrWhiteSpace(user.StatusReason) ? null : $" السبب: {user.StatusReason}";
 
+        if (user.Status == UserAccountStatus.Deactivated)
+            throw new ForbiddenException(UserMessages.Account.DeactivatedAccess);
+
         var message = user.Status == UserAccountStatus.Blocked
             ? $"تم حظر هذا الحساب.{reason}"
             : $"تم إيقاف هذا الحساب مؤقتًا.{reason}";

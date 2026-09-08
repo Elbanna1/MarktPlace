@@ -15,11 +15,11 @@ public class DatabaseRoleClaimsTransformation : IClaimsTransformation
     private static readonly string AdminRoutePrefix = "/" + ApiVersions.AdminRoutePrefix;
 
     private readonly AppDbContext _db;
-    private readonly IUserRoleCache _cache;
+    private readonly IUserAccessStateCache _cache;
     private readonly IHttpContextAccessor _accessor;
 
     public DatabaseRoleClaimsTransformation(
-        AppDbContext db, IUserRoleCache cache, IHttpContextAccessor accessor)
+        AppDbContext db, IUserAccessStateCache cache, IHttpContextAccessor accessor)
     {
         _db = db;
         _cache = cache;
@@ -41,30 +41,44 @@ public class DatabaseRoleClaimsTransformation : IClaimsTransformation
         if (string.IsNullOrWhiteSpace(userId))
             return principal;
 
-        var roles = await ResolveRolesAsync(userId);
+        var state = await ResolveAsync(userId);
 
-        Rewrite(identity, roles);
+        Rewrite(identity, state);
 
         return principal;
     }
 
-    private async Task<IReadOnlyList<string>> ResolveRolesAsync(string userId)
+    private async Task<UserAccessState> ResolveAsync(string userId)
     {
         var administration = IsAdministrationRequest();
 
         if (!administration && _cache.TryGet(userId, out var cached))
             return cached;
 
-        var roles = await _db.UserRoles
-            .Where(link => link.UserId == userId)
-            .Join(_db.Roles, link => link.RoleId, role => role.Id, (_, role) => role.Name)
-            .Where(name => name != null)
-            .Select(name => name!)
-            .ToListAsync(_accessor.HttpContext?.RequestAborted ?? CancellationToken.None);
+        var cancellationToken = _accessor.HttpContext?.RequestAborted ?? CancellationToken.None;
 
-        _cache.Set(userId, roles);
+        var row = await _db.Users
+            .AsNoTracking()
+            .Where(user => user.Id == userId)
+            .Select(user => new
+            {
+                user.Status,
+                Roles = _db.UserRoles
+                    .Where(link => link.UserId == user.Id)
+                    .Join(_db.Roles, link => link.RoleId, role => role.Id, (_, role) => role.Name)
+                    .Where(name => name != null)
+                    .Select(name => name!)
+                    .ToList()
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        return roles;
+        var state = row is null
+            ? UserAccessState.Missing
+            : new UserAccessState(true, row.Status, row.Roles);
+
+        _cache.Set(userId, state);
+
+        return state;
     }
 
     private bool IsAdministrationRequest()
@@ -78,20 +92,27 @@ public class DatabaseRoleClaimsTransformation : IClaimsTransformation
                value.StartsWithSegments(LegacyAdminRoutePrefix, StringComparison.OrdinalIgnoreCase);
     }
 
-    private static void Rewrite(ClaimsIdentity identity, IReadOnlyList<string> roles)
+    private static void Rewrite(ClaimsIdentity identity, UserAccessState state)
     {
         var stale = identity.Claims
             .Where(claim =>
                 claim.Type == identity.RoleClaimType ||
                 claim.Type == ClaimTypes.Role ||
                 claim.Type == "role" ||
-                claim.Type == "roles")
+                claim.Type == "roles" ||
+                claim.Type == AuthConstants.AccountStatusClaimType)
             .ToList();
 
         foreach (var claim in stale)
             identity.TryRemoveClaim(claim);
 
-        foreach (var role in roles)
+        identity.AddClaim(new Claim(
+            AuthConstants.AccountStatusClaimType,
+            state.Exists
+                ? ((int)state.Status).ToString()
+                : AuthConstants.AccountMissingClaimValue));
+
+        foreach (var role in state.Roles)
             identity.AddClaim(new Claim(identity.RoleClaimType, role));
     }
 }

@@ -1,4 +1,4 @@
-using ServicesAbstraction;
+﻿using ServicesAbstraction;
 using Shared.Constants;
 using Shared.DTOs.Admin;
 using Shared.DTOs.BannerBookings;
@@ -54,7 +54,7 @@ public class AdminDashboardService : IAdminDashboardService
         var pendingReports = await _dashboard.GetPendingReportsCountAsync(cancellationToken);
         var (totalRevenue, monthlyRevenue) = await _dashboard.GetRevenueAsync(monthStart, cancellationToken);
 
-        var adsByStatus = await _ads.GetStatusBreakdownAsync(utcNow, cancellationToken);
+        var adsByStatus = await _ads.GetStatusBreakdownAsync(utcNow, cancellationToken: cancellationToken);
 
         var adsTotal = adsByStatus.Sum(row => row.Count);
         var adsActive = adsByStatus.Where(row => row.Status == ListingStatus.Active).Sum(row => row.Count);
@@ -191,7 +191,7 @@ public class AdminDashboardService : IAdminDashboardService
         var utcNow = DateTime.UtcNow;
         recentCount = Math.Clamp(recentCount, 1, 20);
 
-        var adsByStatus = await _ads.GetStatusBreakdownAsync(utcNow, cancellationToken);
+        var adsByStatus = await _ads.GetStatusBreakdownAsync(utcNow, cancellationToken: cancellationToken);
         var pendingAds = adsByStatus.Where(row => row.ModerationStatus == ModerationStatus.Pending).Sum(row => row.Count);
         var suspendedAds = adsByStatus.Where(row => row.ModerationStatus == ModerationStatus.Suspended).Sum(row => row.Count);
         var pendingReports = await _dashboard.GetPendingReportsCountAsync(cancellationToken);

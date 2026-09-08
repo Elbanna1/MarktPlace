@@ -1,4 +1,4 @@
-# API
+﻿# API
 
 [← README](../README.md) · Related: [AUTHENTICATION](AUTHENTICATION.md) · [AUTHORIZATION](AUTHORIZATION.md) · [MODULES](MODULES.md) · [BUSINESS_RULES](BUSINESS_RULES.md)
 
@@ -317,6 +317,32 @@ which **defaults to `Advertisement` (1)**.
 | `POST` | `/change-password` | |
 
 All require authentication. `my-listings` shows the caller's own listings **in every state**.
+
+---
+
+## Account — `/api/account`
+
+| Method | Route | Purpose |
+| --- | --- | --- |
+| `DELETE` | `/` | Close the signed-in account (self-service deactivation) |
+
+Body: `{ "confirm": true, "password": "...", "reason": "..." }`.
+
+- `confirm` must be `true` — **422** otherwise.
+- `password` is required **only when the account has one**. A Google-only account (created by
+  `POST /api/auth/google`, which never sets a password) closes without it. A wrong password answers
+  **401**.
+- The caller can only ever close **their own** account: the id comes from the `NameIdentifier`
+  claim and the route accepts no id at all.
+- An account holding the `Admin` or `SuperAdmin` role is refused (**403**); the last active
+  `SuperAdmin` gets its own message. A Super Admin must revoke the role first.
+- Effect: `Status` → `Deactivated (4)`, refresh token and password-reset session cleared, the owner's
+  listings in **every module** moved to `ModerationStatus.Suspended`, and the owner's notification
+  interests deleted. Notifications, comments, ratings, payments, referrals and the account row itself
+  are **kept** — nothing that another record depends on is deleted.
+- The already-issued access token stops working **immediately** (see
+  [SECURITY](SECURITY.md#account-state-is-enforced-on-every-request)); a second call answers **403**.
+- Login and Google sign-in answer **403** afterwards.
 
 ---
 

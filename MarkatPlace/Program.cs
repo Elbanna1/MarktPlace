@@ -226,6 +226,9 @@ app.UseResponseCaching();
 app.UseCors(CorsExtensions.PolicyName);
 
 app.UseAuthentication();
+
+app.UseMiddleware<AccountStatusMiddleware>();
+
 app.UseAuthorization();
 
 app.UseRateLimiter();

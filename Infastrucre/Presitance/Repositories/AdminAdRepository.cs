@@ -1,4 +1,4 @@
-using Domain.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Persistence.Listings;
@@ -57,10 +57,13 @@ public class AdminAdRepository : IAdminAdRepository
     }
 
     public async Task<IReadOnlyList<AdminAdStatusCount>> GetStatusBreakdownAsync(
-        DateTime utcNow, CancellationToken cancellationToken = default)
+        DateTime utcNow, string? ownerId = null, CancellationToken cancellationToken = default)
     {
         var query = BuildQuery(
-            new AdminAdFilterParams(), search: null, matchedUserIds: Array.Empty<string>(), utcNow);
+            new AdminAdFilterParams { OwnerId = ownerId },
+            search: null,
+            matchedUserIds: Array.Empty<string>(),
+            utcNow);
 
         if (query is null)
             return Array.Empty<AdminAdStatusCount>();

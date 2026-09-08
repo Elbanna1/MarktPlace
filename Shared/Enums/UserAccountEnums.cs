@@ -6,5 +6,7 @@ public enum UserAccountStatus
 
     Suspended = 2,
 
-    Blocked = 3
+    Blocked = 3,
+
+    Deactivated = 4
 }

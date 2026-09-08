@@ -1,4 +1,4 @@
-using Domain.Entities;
+﻿using Domain.Entities;
 using Shared.DTOs.Admin;
 using Shared.DTOs.Listings;
 using Shared.Enums;
@@ -24,7 +24,7 @@ public interface IAdminAdRepository
         bool includeTotal = true);
 
     Task<IReadOnlyList<AdminAdStatusCount>> GetStatusBreakdownAsync(
-        DateTime utcNow, CancellationToken cancellationToken = default);
+        DateTime utcNow, string? ownerId = null, CancellationToken cancellationToken = default);
 
     Task<int> CountByStatusAsync(
         ModerationStatus status, DateTime utcNow, CancellationToken cancellationToken = default);

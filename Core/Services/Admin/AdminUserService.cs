@@ -1,4 +1,4 @@
-using Domain.Entities;
+﻿using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using ServicesAbstraction;
@@ -19,6 +19,7 @@ public class AdminUserService : IAdminUserService
     private readonly INotificationService _notifications;
     private readonly IAdminAuditService _audit;
     private readonly IAdminAlertService _alerts;
+    private readonly IUserAccessStateCache _accessState;
     private readonly ILogger<AdminUserService> _logger;
 
     private const int RecentAdsCount = 10;
@@ -31,6 +32,7 @@ public class AdminUserService : IAdminUserService
         INotificationService notifications,
         IAdminAuditService audit,
         IAdminAlertService alerts,
+        IUserAccessStateCache accessState,
         ILogger<AdminUserService> logger)
     {
         _users = users;
@@ -40,6 +42,7 @@ public class AdminUserService : IAdminUserService
         _notifications = notifications;
         _audit = audit;
         _alerts = alerts;
+        _accessState = accessState;
         _logger = logger;
     }
 
@@ -102,6 +105,9 @@ public class AdminUserService : IAdminUserService
 
         var reason = request.Reason?.Trim();
 
+        if (!UserAccountCatalog.IsAdminAssignable(request.Status))
+            throw new BadRequestException("حالة المستخدم غير صحيحة.");
+
         if (request.Status != UserAccountStatus.Active && string.IsNullOrWhiteSpace(reason))
             throw new BadRequestException("سبب الإيقاف أو الحظر مطلوب.");
 
@@ -119,6 +125,8 @@ public class AdminUserService : IAdminUserService
         }
 
         await _users.SaveChangesAsync(cancellationToken);
+
+        _accessState.Invalidate(user.Id);
 
         _logger.LogInformation(
             "Admin {AdminId} set account {UserId} to {Status}.", adminUserId, user.Id, request.Status);
@@ -152,14 +160,16 @@ public class AdminUserService : IAdminUserService
     {
         var utcNow = DateTime.UtcNow;
 
+        var breakdown = await _ads.GetStatusBreakdownAsync(utcNow, user.Id, cancellationToken);
+
         var counts = new AdminUserListingCountsDto
         {
-            Total = await CountAsync(user.Id, filter => { }, utcNow, cancellationToken),
-            Active = await CountAsync(user.Id, f => f.Status = ListingStatus.Active, utcNow, cancellationToken),
-            Pending = await CountAsync(user.Id, f => f.ModerationStatus = ModerationStatus.Pending, utcNow, cancellationToken),
-            Rejected = await CountAsync(user.Id, f => f.ModerationStatus = ModerationStatus.Rejected, utcNow, cancellationToken),
-            Suspended = await CountAsync(user.Id, f => f.ModerationStatus = ModerationStatus.Suspended, utcNow, cancellationToken),
-            Expired = await CountAsync(user.Id, f => f.Status = ListingStatus.Expired, utcNow, cancellationToken)
+            Total = breakdown.Sum(row => row.Count),
+            Active = Sum(breakdown, row => row.Status == ListingStatus.Active),
+            Pending = Sum(breakdown, row => row.ModerationStatus == ModerationStatus.Pending),
+            Rejected = Sum(breakdown, row => row.ModerationStatus == ModerationStatus.Rejected),
+            Suspended = Sum(breakdown, row => row.ModerationStatus == ModerationStatus.Suspended),
+            Expired = Sum(breakdown, row => row.Status == ListingStatus.Expired)
         };
 
         var recentAds = await _adService.GetAdsAsync(
@@ -204,15 +214,9 @@ public class AdminUserService : IAdminUserService
         };
     }
 
-    private Task<int> CountAsync(
-        string ownerId, Action<AdminAdFilterParams> configure, DateTime utcNow,
-        CancellationToken cancellationToken)
-    {
-        var filter = new AdminAdFilterParams { OwnerId = ownerId };
-        configure(filter);
-
-        return _ads.CountAsync(filter, utcNow, cancellationToken);
-    }
+    private static int Sum(
+        IReadOnlyList<AdminAdStatusCount> breakdown, Func<AdminAdStatusCount, bool> predicate) =>
+        breakdown.Where(predicate).Sum(row => row.Count);
 
     private async Task<IReadOnlyCollection<string>> GetAdminUserIdsAsync()
     {

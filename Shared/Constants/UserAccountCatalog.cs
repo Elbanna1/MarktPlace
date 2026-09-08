@@ -9,12 +9,23 @@ public static class UserAccountCatalog
         {
             [UserAccountStatus.Active] = "فعال",
             [UserAccountStatus.Suspended] = "موقوف",
-            [UserAccountStatus.Blocked] = "محظور"
+            [UserAccountStatus.Blocked] = "محظور",
+            [UserAccountStatus.Deactivated] = "مقفول بطلب صاحبه"
         };
+
+    public static readonly IReadOnlyList<UserAccountStatus> AdminAssignableStatuses =
+    [
+        UserAccountStatus.Active,
+        UserAccountStatus.Suspended,
+        UserAccountStatus.Blocked
+    ];
+
+    public static bool IsAdminAssignable(UserAccountStatus status) =>
+        AdminAssignableStatuses.Contains(status);
 
     public static string GetStatusName(UserAccountStatus status) =>
         StatusNames.TryGetValue(status, out var name) ? name : status.ToString();
 
     public static IReadOnlyList<(UserAccountStatus Status, string Name)> Options { get; } =
-        StatusNames.Select(entry => (entry.Key, entry.Value)).ToList();
+        AdminAssignableStatuses.Select(status => (status, GetStatusName(status))).ToList();
 }

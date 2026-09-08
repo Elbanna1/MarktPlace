@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using ServicesAbstraction;
 using Shared.Constants;
@@ -19,31 +19,38 @@ public class AdminDashboardRepository : IAdminDashboardRepository
     public async Task<(int Total, int Suspended)> GetUserCountsAsync(
         CancellationToken cancellationToken = default)
     {
-        var total = await _context.Users.CountAsync(cancellationToken);
+        var counts = await _context.Users
+            .AsNoTracking()
+            .GroupBy(_ => 1)
+            .Select(group => new
+            {
+                Total = group.Count(),
+                Suspended = group.Count(user => user.Status != UserAccountStatus.Active)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        var suspended = await _context.Users
-            .CountAsync(user => user.Status != UserAccountStatus.Active, cancellationToken);
-
-        return (total, suspended);
+        return counts is null ? (0, 0) : (counts.Total, counts.Suspended);
     }
 
     public async Task<(int Active, int Pending)> GetBannerCountsAsync(
         DateTime utcNow, CancellationToken cancellationToken = default)
     {
-        var active = await _context.BannerBookings
-            .CountAsync(
-                booking => booking.Status == BannerBookingStatus.Published &&
-                           booking.StartDate <= utcNow &&
-                           booking.EndDate > utcNow,
-                cancellationToken);
+        var counts = await _context.BannerBookings
+            .AsNoTracking()
+            .GroupBy(_ => 1)
+            .Select(group => new
+            {
+                Active = group.Count(booking =>
+                    booking.Status == BannerBookingStatus.Published &&
+                    booking.StartDate <= utcNow &&
+                    booking.EndDate > utcNow),
+                Pending = group.Count(booking =>
+                    booking.Status == BannerBookingStatus.PendingReview ||
+                    booking.Status == BannerBookingStatus.PaymentApproved)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        var pending = await _context.BannerBookings
-            .CountAsync(
-                booking => booking.Status == BannerBookingStatus.PendingReview ||
-                           booking.Status == BannerBookingStatus.PaymentApproved,
-                cancellationToken);
-
-        return (active, pending);
+        return counts is null ? (0, 0) : (counts.Active, counts.Pending);
     }
 
     public async Task<int> GetPendingPaymentsCountAsync(CancellationToken cancellationToken = default)
@@ -74,21 +81,29 @@ public class AdminDashboardRepository : IAdminDashboardRepository
         var paidBookings = _context.BannerBookings
             .Where(booking => booking.PaymentStatus == BannerPaymentStatus.Paid);
 
-        var paymentsTotal = await approvedPayments
-            .SumAsync(payment => (decimal?)payment.Amount, cancellationToken) ?? 0m;
+        var payments = await approvedPayments
+            .GroupBy(_ => 1)
+            .Select(group => new
+            {
+                Total = group.Sum(payment => (decimal?)payment.Amount),
+                Monthly = group.Sum(payment =>
+                    payment.ApprovedAt >= monthStartUtc ? (decimal?)payment.Amount : 0m)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        var bookingsTotal = await paidBookings
-            .SumAsync(booking => (decimal?)booking.Price, cancellationToken) ?? 0m;
+        var bookings = await paidBookings
+            .GroupBy(_ => 1)
+            .Select(group => new
+            {
+                Total = group.Sum(booking => (decimal?)booking.Price),
+                Monthly = group.Sum(booking =>
+                    booking.PaymentApprovedAt >= monthStartUtc ? (decimal?)booking.Price : 0m)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        var paymentsMonthly = await approvedPayments
-            .Where(payment => payment.ApprovedAt >= monthStartUtc)
-            .SumAsync(payment => (decimal?)payment.Amount, cancellationToken) ?? 0m;
-
-        var bookingsMonthly = await paidBookings
-            .Where(booking => booking.PaymentApprovedAt >= monthStartUtc)
-            .SumAsync(booking => (decimal?)booking.Price, cancellationToken) ?? 0m;
-
-        return (paymentsTotal + bookingsTotal, paymentsMonthly + bookingsMonthly);
+        return (
+            (payments?.Total ?? 0m) + (bookings?.Total ?? 0m),
+            (payments?.Monthly ?? 0m) + (bookings?.Monthly ?? 0m));
     }
 
     public async Task<IReadOnlyList<AdminDashboardBannerRequestDto>> GetLatestBannerRequestsAsync(
@@ -234,13 +249,17 @@ public class AdminDashboardRepository : IAdminDashboardRepository
             .AsNoTracking()
             .Where(booking => booking.PaymentStatus == BannerPaymentStatus.Paid);
 
-        var total = await paid.SumAsync(booking => (decimal?)booking.Price, cancellationToken) ?? 0m;
+        var revenue = await paid
+            .GroupBy(_ => 1)
+            .Select(group => new
+            {
+                Total = group.Sum(booking => (decimal?)booking.Price),
+                Monthly = group.Sum(booking =>
+                    booking.PaymentApprovedAt >= monthStartUtc ? (decimal?)booking.Price : 0m)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        var monthly = await paid
-            .Where(booking => booking.PaymentApprovedAt >= monthStartUtc)
-            .SumAsync(booking => (decimal?)booking.Price, cancellationToken) ?? 0m;
-
-        return (total, monthly);
+        return (revenue?.Total ?? 0m, revenue?.Monthly ?? 0m);
     }
 
     public async Task<IReadOnlyDictionary<BannerBookingStatus, int>> GetBannerStatusCountsAsync(

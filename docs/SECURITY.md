@@ -1,4 +1,4 @@
-# Security
+﻿# Security
 
 [← README](../README.md) · Related: [AUTHENTICATION](AUTHENTICATION.md) · [AUTHORIZATION](AUTHORIZATION.md) · [DEPLOYMENT](DEPLOYMENT.md)
 
@@ -105,6 +105,52 @@ See [AUTHORIZATION.md](AUTHORIZATION.md).
 
 **Verified:** all **131** admin operations answer **401** to an anonymous caller and **403** to a
 signed-in non-administrator.
+
+---
+
+## Account state is enforced on every request
+
+An access token lives **40 days** and cannot be revoked by signing out. Until 2026-09-08 the account
+state was checked **only at login, refresh and Google sign-in**, so suspending or blocking an account
+cleared its refresh token but left every access token already in the wild working for up to 40 days
+on the whole non-admin surface. (The admin surface was never affected — `AdminPermissionService`
+re-reads the status from the database on every request.)
+
+`AccountStatusMiddleware` closes that gap, and is what makes self-service closure meaningful:
+
+| Layer | What it does |
+| --- | --- |
+| `DatabaseRoleClaimsTransformation` | Reads `Status` **and** the roles in one query and stamps `markatplace:account-status` onto the principal. Any claim of that type arriving inside the token is **removed first** — the value is never taken from the caller |
+| `IUserAccessStateCache` | 5-minute per-user cache. **Bypassed entirely on `/api/v2/admin`**, and invalidated the moment an administrator changes a status or an owner closes their account, so a change takes effect on the next request |
+| `AccountStatusMiddleware` | Runs between `UseAuthentication` and `UseAuthorization`, so it covers MVC **and** the SignalR hub. Non-`Active` ⇒ **403** with an Arabic message; an account row that no longer exists ⇒ **401** |
+
+**Verified at runtime:** the same bearer token answered 200 on `GET /api/profile`, then **403** on the
+very next request after `PUT /api/v2/admin/users/{id}/status` set the account to Suspended.
+
+Cost: **zero** extra round trips on the hot path — the state travels with the roles query that was
+already there, and is cached for five minutes.
+
+> The cache is **in-process**. On a single instance (the current deployment: one Kestrel process
+> behind Nginx) invalidation is immediate. Behind more than one instance, a status change would take
+> up to five minutes to reach the other instances — shorten `UserAccessStateCache.Lifetime` or move
+> the cache out of process before scaling out.
+
+---
+
+## Account states
+
+| Value | Name | Set by | Login | Existing access token |
+| --- | --- | --- | --- | --- |
+| 1 | `Active` | default; admin | allowed | works |
+| 2 | `Suspended` | admin | 403 | **403** |
+| 3 | `Blocked` | admin | 403 | **403** |
+| 4 | `Deactivated` | **the owner only**, via `DELETE /api/account` | 403 | **403** |
+
+`Deactivated` is deliberately **not** admin-assignable — `UserAccountCatalog.AdminAssignableStatuses`
+is checked by both `UpdateUserStatusRequestValidator` (422) and `AdminUserService` (defence in
+depth), so an administrator cannot stamp an account as closed-by-its-owner. An administrator can
+still set it back to `Active` for a support request; the owner's listings stay `Suspended` and need
+re-approval.
 
 ---
 
@@ -277,12 +323,14 @@ On `/uploads/*` additionally: `Cache-Control: public,max-age=31536000,immutable`
 | Access lifetime | **40 days** | ⚠️ cannot be revoked before expiry |
 | Refresh lifetime | 60 days | One per user |
 | Logout | Clears the refresh token | The access token stays valid until it expires |
+| Suspend / block / close | Clears the refresh token **and** the cached access state | The access token stops working on the **next request** — see [Account state](#account-state-is-enforced-on-every-request) |
 
 ### Token lifetimes
 
 A 40-day access token is a deliberate long-session product decision, documented in `JwtSettings`. The
-consequence is that a leaked access token cannot be revoked for over a month, and logout does not
-invalidate it.
+consequence is that a **leaked** access token cannot be revoked for over a month, and logout does not
+invalidate it. Revoking the *account* is now enough, however: suspending, blocking or closing it
+stops every token it holds on the next request.
 
 If that trade-off is ever revisited, shortening `AccessTokenExpirationDays` (to hours or days) and
 relying on the refresh token would restore revocability. `RefreshTokenExpirationDays` must remain

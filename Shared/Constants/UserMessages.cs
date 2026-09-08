@@ -98,6 +98,38 @@ public static class UserMessages
             "مش قادرين نكمل الدخول بحساب جوجل دلوقتي. جرب تاني.";
     }
 
+    public static class Account
+    {
+        public const string Deactivated =
+            "تم إقفال حسابك. مش هتقدر تدخل بيه تاني، ولو غيّرت رأيك كلّم خدمة العملاء.";
+
+        public const string ConfirmationRequired =
+            "لازم تأكد إنك عايز تقفل حسابك فعلاً.";
+
+        public const string PasswordRequired = "اكتب كلمة السر بتاعتك عشان نتأكد إنك أنت.";
+
+        public const string PasswordIncorrect = "كلمة السر غلط.";
+
+        public const string AlreadyDeactivated = "الحساب ده مقفول بالفعل.";
+
+        public const string AdminCannotSelfDeactivate =
+            "حسابات المسؤولين مينفعش تتقفل من هنا. اطلب من مسؤول أعلى إنه يسحب الصلاحية الأول.";
+
+        public const string LastSuperAdminProtected =
+            "مينفعش تقفل آخر حساب مسؤول أعلى في المنصة.";
+
+        public const string SuspendedAccess =
+            "حسابك موقوف مؤقتًا، فمش هتقدر تستخدم الخدمة دلوقتي.";
+
+        public const string BlockedAccess = "حسابك محظور، فمش هتقدر تستخدم الخدمة.";
+
+        public const string DeactivatedAccess =
+            "الحساب ده مقفول. لو عايز ترجعه تاني كلّم خدمة العملاء.";
+
+        public const string UnknownAccount =
+            "الحساب ده مابقاش موجود. سجّل دخولك من تاني.";
+    }
+
     public static class Profile
     {
         public const string Loaded = "تم تحميل بياناتك.";
