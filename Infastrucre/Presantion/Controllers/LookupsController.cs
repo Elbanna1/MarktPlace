@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Filters;
 using ServicesAbstraction;
 using Shared.DTOs.Advertisements;
 using Shared.DTOs.Lookups;
@@ -17,6 +18,8 @@ namespace Presentation.Controllers;
 [Produces("application/json")]
 public class LookupsController : ControllerBase
 {
+    private const int ReferenceDataMaxAgeSeconds = 300;
+
     private readonly ILookupService _lookupService;
     private readonly ICreateAdFormService _createAdFormService;
     private readonly IReadConfigService _readConfigService;
@@ -44,6 +47,7 @@ public class LookupsController : ControllerBase
     }
 
     [HttpGet("read-config/{categoryId:int}/{subCategoryId:int?}")]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds)]
     [ProducesResponseType(typeof(ApiResponse<ReadConfigDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -63,6 +67,7 @@ public class LookupsController : ControllerBase
     }
 
     [HttpGet("categories-tree")]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<CategoryTreeDto>>>> GetCategoriesTree()
     {
         var result = await _lookupService.GetCategoriesTreeAsync(HttpContext.RequestAborted);

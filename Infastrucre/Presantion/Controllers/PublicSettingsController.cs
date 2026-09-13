@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Filters;
 using ServicesAbstraction;
 using Shared.DTOs.Settings;
 using Shared.Responses;
@@ -21,6 +22,7 @@ public class PublicSettingsController : ControllerBase
     }
 
     [HttpGet]
+    [HttpCache(Revalidate = true)]
     [ProducesResponseType(typeof(ApiResponse<PublicSettingsDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<PublicSettingsDto>>> Get()
     {

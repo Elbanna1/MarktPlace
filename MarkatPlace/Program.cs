@@ -90,7 +90,8 @@ builder.Services.Configure<Microsoft.AspNetCore.Mvc.ApiBehaviorOptions>(options 
     options.SuppressMapClientErrors = true;
 });
 
-builder.Services.AddSwaggerWithJwt();
+if (builder.Environment.IsDevelopment())
+    builder.Services.AddSwaggerWithJwt();
 
 builder.Services.AddApiCors(builder.Configuration, builder.Environment);
 
@@ -154,36 +155,39 @@ app.Use(async (context, next) =>
     await next();
 });
 
-app.Use(async (context, next) =>
+if (app.Environment.IsDevelopment())
 {
-    if (context.Request.Path.StartsWithSegments("/swagger", out var remainder) &&
-        (remainder.Value is null ||
-         remainder.Value.Length == 0 ||
-         string.Equals(remainder.Value, "/", StringComparison.Ordinal) ||
-         string.Equals(remainder.Value, "/index.html", StringComparison.OrdinalIgnoreCase) ||
-         string.Equals(remainder.Value, "/index.js", StringComparison.OrdinalIgnoreCase)))
+    app.Use(async (context, next) =>
     {
-        context.Response.OnStarting(() =>
+        if (context.Request.Path.StartsWithSegments("/swagger", out var remainder) &&
+            (remainder.Value is null ||
+             remainder.Value.Length == 0 ||
+             string.Equals(remainder.Value, "/", StringComparison.Ordinal) ||
+             string.Equals(remainder.Value, "/index.html", StringComparison.OrdinalIgnoreCase) ||
+             string.Equals(remainder.Value, "/index.js", StringComparison.OrdinalIgnoreCase)))
         {
-            context.Response.Headers.CacheControl = "no-store, no-cache, must-revalidate";
-            context.Response.Headers.Remove(Microsoft.Net.Http.Headers.HeaderNames.ETag);
-            return Task.CompletedTask;
-        });
-    }
+            context.Response.OnStarting(() =>
+            {
+                context.Response.Headers.CacheControl = "no-store, no-cache, must-revalidate";
+                context.Response.Headers.Remove(Microsoft.Net.Http.Headers.HeaderNames.ETag);
+                return Task.CompletedTask;
+            });
+        }
 
-    await next();
-});
+        await next();
+    });
 
-app.UseSwagger();
-app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint($"/swagger/{ApiVersions.V1}/swagger.json", "MarkatPlace V1");
-    options.SwaggerEndpoint($"/swagger/{ApiVersions.AdminV2}/swagger.json", "MarkatPlace Admin V2");
-    options.RoutePrefix = "swagger";
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint($"/swagger/{ApiVersions.V1}/swagger.json", "MarkatPlace V1");
+        options.SwaggerEndpoint($"/swagger/{ApiVersions.AdminV2}/swagger.json", "MarkatPlace Admin V2");
+        options.RoutePrefix = "swagger";
+    });
 
-app.MapGet("/", () => Results.Redirect("/swagger"))
-    .ExcludeFromDescription();
+    app.MapGet("/", () => Results.Redirect("/swagger"))
+        .ExcludeFromDescription();
+}
 
 app.UseHttpsRedirection();
 
@@ -221,9 +225,9 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = uploadContentTypes });
 
-app.UseResponseCaching();
-
 app.UseCors(CorsExtensions.PolicyName);
+
+app.UseResponseCaching();
 
 app.UseAuthentication();
 
