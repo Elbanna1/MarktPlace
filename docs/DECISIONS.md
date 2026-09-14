@@ -568,3 +568,42 @@ client from re-deriving it.
 a sub-category belonging to another category, all in Arabic — so a create page can never render a
 trail that misdescribes where the user is.
 
+---
+
+## D-34 — Swagger is public in Development and password-gated everywhere else
+
+**Decision.** Swagger and Swagger UI are registered in **every** environment. Outside Development one
+middleware, `SwaggerBasicAuthMiddleware`, stands in front of them and demands HTTP Basic
+authentication for every path under `/swagger` — the UI, its static assets and both generated
+documents. Missing or wrong credentials get `401` with
+`WWW-Authenticate: Basic realm="Swagger"`; the credentials are compared with
+`CryptographicOperations.FixedTimeEquals` and come only from `SwaggerAuth__Username` and
+`SwaggerAuth__Password`.
+
+**Why not keep it Development-only.** It already was, and the consequence was that the people who
+needed the API contract in production could not read it. Deleting the endpoint is not a safe default
+either: something always turns out to depend on it (D-23 exists because a *missing document* was
+mistaken for a caching bug). Publishing it behind a password keeps it available without publishing
+the API surface to the internet.
+
+**Why not gate it at Nginx.** `auth_basic` would work, but it puts the rule in a file that is not in
+this repository, is not covered by a test, and is re-applied by hand on every server rebuild. The
+middleware travels with the code, is asserted by `SwaggerAccessTests`, and behaves identically on a
+developer machine.
+
+**Why a middleware and not `[Authorize]`.** Swagger UI is served by Swashbuckle's own middleware, not
+by MVC, so there is no action to decorate. An authentication *scheme* was rejected for the same
+reason the gate is not a policy: adding one to the application would put a second scheme in reach of
+`/api/...`, and the requirement is that the normal API cannot notice this feature exists. The
+middleware returns on its first line for any path that is not `/swagger`, so it changes no status
+code, no body, no header and no CORS result anywhere else.
+
+**Fail closed, never fail loud.** With no credentials configured the gate refuses everything rather
+than throwing at start-up. A forgotten Swagger password must not be able to take the site down; it
+only takes `/swagger` down, and start-up says so in the log.
+
+**HTTPS only.** Basic authentication sends a reusable password on every request, so outside
+Development an http request to `/swagger` is redirected to https **before** any challenge is issued —
+the browser is never invited to send the password in the clear. Behind Nginx this is decided from
+`X-Forwarded-Proto`, which `UseForwardedHeaders` has already applied.
+

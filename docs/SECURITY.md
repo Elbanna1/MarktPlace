@@ -349,6 +349,7 @@ greater than `AccessTokenExpirationDays`, which start-up enforces.
 - [ ] `Diagnostics__SqlCounter` false
 - [ ] `GoogleAuth__ClientSecret` set as an environment variable if the authorization-code flow is used, and absent from every committed file
 - [ ] `Cors__AllowedOrigins` lists every origin the site is actually served from
+- [ ] `SwaggerAuth__Username` and `SwaggerAuth__Password` set (long, random, never committed) — without both, `/swagger` answers 401 to everyone
 - [ ] HTTPS enforced; HSTS active
 - [ ] `web.config` `maxAllowedContentLength` ≥ the application's ceiling
 - [ ] Health probes reachable by the load balancer

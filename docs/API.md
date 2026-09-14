@@ -10,7 +10,10 @@ and behaviours** the schema cannot express.
 | MarkatPlace V1 (public) | `/swagger/v1/swagger.json` | 623 |
 | MarkatPlace Admin V2 | `/swagger/v2/swagger.json` | 131 |
 
-Swagger UI: `/swagger`. `/` redirects there.
+Swagger UI: `/swagger`; in Development `/` redirects there. Outside Development every path under
+`/swagger` — the UI, its assets and both documents above — is behind HTTP Basic authentication
+and answers `401` without it. Nothing under `/api/...` is affected; see
+[DEPLOYMENT.md § Swagger in production](DEPLOYMENT.md#swagger-in-production).
 
 > The two documents are separated by `ApiExplorerSettings(GroupName)`, with an either/or inclusion
 > predicate — so an admin endpoint can never leak into V1 and no public endpoint can appear in V2.

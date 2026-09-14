@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
 using Persistence;
 using Persistence.Data;
 using Persistence.Data.Development;
@@ -90,8 +91,10 @@ builder.Services.Configure<Microsoft.AspNetCore.Mvc.ApiBehaviorOptions>(options 
     options.SuppressMapClientErrors = true;
 });
 
-if (builder.Environment.IsDevelopment())
-    builder.Services.AddSwaggerWithJwt();
+builder.Services.Configure<SwaggerAuthSettings>(
+    builder.Configuration.GetSection(SwaggerAuthSettings.SectionName));
+
+builder.Services.AddSwaggerWithJwt();
 
 builder.Services.AddApiCors(builder.Configuration, builder.Environment);
 
@@ -155,36 +158,49 @@ app.Use(async (context, next) =>
     await next();
 });
 
+if (!app.Environment.IsDevelopment() &&
+    !app.Services.GetRequiredService<IOptions<SwaggerAuthSettings>>().Value.IsConfigured)
+{
+    app.Logger.LogWarning(
+        "Swagger is locked: no {Section} credentials are configured, so every request under " +
+        "{Path} is refused with 401. Set {UsernameKey} and {PasswordKey} to open it.",
+        SwaggerAuthSettings.SectionName, SwaggerAuthSettings.PathPrefix,
+        $"{SwaggerAuthSettings.SectionName}__{nameof(SwaggerAuthSettings.Username)}",
+        $"{SwaggerAuthSettings.SectionName}__{nameof(SwaggerAuthSettings.Password)}");
+}
+
+app.UseMiddleware<SwaggerBasicAuthMiddleware>();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/swagger", out var remainder) &&
+        (remainder.Value is null ||
+         remainder.Value.Length == 0 ||
+         string.Equals(remainder.Value, "/", StringComparison.Ordinal) ||
+         string.Equals(remainder.Value, "/index.html", StringComparison.OrdinalIgnoreCase) ||
+         string.Equals(remainder.Value, "/index.js", StringComparison.OrdinalIgnoreCase)))
+    {
+        context.Response.OnStarting(() =>
+        {
+            context.Response.Headers.CacheControl = "no-store, no-cache, must-revalidate";
+            context.Response.Headers.Remove(Microsoft.Net.Http.Headers.HeaderNames.ETag);
+            return Task.CompletedTask;
+        });
+    }
+
+    await next();
+});
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint($"/swagger/{ApiVersions.V1}/swagger.json", "MarkatPlace V1");
+    options.SwaggerEndpoint($"/swagger/{ApiVersions.AdminV2}/swagger.json", "MarkatPlace Admin V2");
+    options.RoutePrefix = "swagger";
+});
+
 if (app.Environment.IsDevelopment())
 {
-    app.Use(async (context, next) =>
-    {
-        if (context.Request.Path.StartsWithSegments("/swagger", out var remainder) &&
-            (remainder.Value is null ||
-             remainder.Value.Length == 0 ||
-             string.Equals(remainder.Value, "/", StringComparison.Ordinal) ||
-             string.Equals(remainder.Value, "/index.html", StringComparison.OrdinalIgnoreCase) ||
-             string.Equals(remainder.Value, "/index.js", StringComparison.OrdinalIgnoreCase)))
-        {
-            context.Response.OnStarting(() =>
-            {
-                context.Response.Headers.CacheControl = "no-store, no-cache, must-revalidate";
-                context.Response.Headers.Remove(Microsoft.Net.Http.Headers.HeaderNames.ETag);
-                return Task.CompletedTask;
-            });
-        }
-
-        await next();
-    });
-
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint($"/swagger/{ApiVersions.V1}/swagger.json", "MarkatPlace V1");
-        options.SwaggerEndpoint($"/swagger/{ApiVersions.AdminV2}/swagger.json", "MarkatPlace Admin V2");
-        options.RoutePrefix = "swagger";
-    });
-
     app.MapGet("/", () => Results.Redirect("/swagger"))
         .ExcludeFromDescription();
 }

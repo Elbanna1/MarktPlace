@@ -29,6 +29,7 @@ legacy Windows/IIS publish path (see [web.config](#webconfig)).
 | `GoogleAuth__ClientSecret` | Code flow only | Google OAuth client secret. **Never in a committed file.** Not needed by the default ID-token flow |
 | `GoogleAuth__ClientId` | Optional | Overrides the committed public client id — set it only if the OAuth client is replaced |
 | `Cors__AllowedOrigins__0`, `__1`, … | Optional | Overrides the committed browser allow-list. An index **replaces** that array element, so re-list the existing entries |
+| `SwaggerAuth__Username` / `SwaggerAuth__Password` | Swagger only | HTTP Basic credentials for `/swagger`. Without **both**, every path under `/swagger` answers 401 and the rest of the API is untouched. **Never in a committed file** |
 
 The section separator is `__` (double underscore).
 
@@ -300,11 +301,31 @@ out.
 
 ## Swagger in production
 
-Swagger is **enabled in every environment** and reachable at `/swagger`; `/` redirects there.
+Swagger is **enabled in every environment** and reachable at `/swagger`. Outside Development it is
+**not public**: `SwaggerBasicAuthMiddleware` guards everything under `/swagger` with HTTP Basic
+authentication, and nothing else.
 
-> This is a deliberate choice — the docs are always available. If exposing the API surface publicly is
-> not acceptable, gate `/swagger` at the reverse proxy. Do not remove the endpoint without checking
-> who depends on it.
+| | Development | Production |
+| --- | --- | --- |
+| `/swagger` with no credentials | served | **401** `WWW-Authenticate: Basic realm="Swagger"` |
+| `/swagger` with the right credentials | served | served |
+| `/swagger` over plain http | served | 302 to `https://` — the browser is never asked to send a password in the clear |
+| `/api/...`, `/uploads/...`, `/health`, `/hubs/...` | untouched | **untouched** |
+| `/` | redirects to `/swagger` | unchanged (no redirect) |
+
+The credentials come from `SwaggerAuth__Username` and `SwaggerAuth__Password` and from nowhere else.
+They are **not** in any committed file, and there is no fallback: if either is missing or blank
+outside Development, the gate **fails closed** — every `/swagger` path answers 401, start-up logs a
+warning, and the API carries on serving normally. Losing the Swagger password can never take the
+site down.
+
+The gate is a single middleware that returns immediately for any path that is not under `/swagger`,
+so it adds no behaviour to the normal API: no authentication scheme, no authorization policy, no
+CORS change, no change to any status code or response body. `/swagger` is the only prefix it looks
+at — `/swaggerish` and `/api/swagger` are not swagger.
+
+> Basic authentication is a shared password, not an account. Use a long random one, keep it out of
+> the repository, and rotate it when anyone who knew it leaves.
 
 The generated entry points (`/swagger`, `/swagger/index.html`, `/swagger/index.js`) are marked
 `no-store`, because Swashbuckle otherwise caches the **generated** document picker for seven days —
