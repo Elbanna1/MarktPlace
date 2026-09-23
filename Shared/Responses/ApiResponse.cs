@@ -1,4 +1,6 @@
-﻿namespace Shared.Responses;
+﻿using System.Text.Json.Serialization;
+
+namespace Shared.Responses;
 
 public class ApiResponse<T>
 {
@@ -6,8 +8,10 @@ public class ApiResponse<T>
 
     public string Message { get; set; } = string.Empty;
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public T? Data { get; set; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public IReadOnlyList<string>? Errors { get; set; }
 
     public ApiResponse() { }
@@ -33,6 +37,7 @@ public class ApiResponse
 
     public string Message { get; set; } = string.Empty;
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public IReadOnlyList<string>? Errors { get; set; }
 
     public ApiResponse() { }

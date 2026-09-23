@@ -44,7 +44,8 @@ public class CamelConfiguration : IEntityTypeConfiguration<Camel>
         builder.HasQueryFilter(QueryFilterNames.SoftDelete, x => !x.IsDeleted);
 
         builder.HasIndex(x => x.CreatedAt);
-        builder.HasIndex(x => x.SellerName);
+        builder.HasIndex(x => new { x.ModerationStatus, x.SellerName }, "IX_Camels_Advertisers")
+            .IncludeProperties(x => new { x.IsDeleted, x.ExpireAt });
         builder.HasIndex(x => x.Breed);
         builder.HasIndex(x => x.Purpose);
         builder.HasIndex(x => x.Age);

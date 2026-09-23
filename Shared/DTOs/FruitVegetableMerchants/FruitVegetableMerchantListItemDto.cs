@@ -11,9 +11,6 @@ public class FruitVegetableMerchantListItemDto : IListingStats
     public string StallName { get; set; } = default!;
     public string MerchantName { get; set; } = default!;
 
-    public string Phone { get; set; } = default!;
-    public string? WhatsApp { get; set; }
-
     public string ProductName { get; set; } = default!;
     public MerchantSaleType SaleType { get; set; }
 

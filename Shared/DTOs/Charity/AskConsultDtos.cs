@@ -1,4 +1,4 @@
-using Shared.Enums;
+﻿using Shared.Enums;
 
 using Shared.DTOs.Common;
 
@@ -46,7 +46,7 @@ public class AskConsultDetailsDto : CharityDetailsDtoBase
     public override ListingModuleType StatsListingType => ListingModuleType.AskConsult;
 }
 
-public class AskConsultListItemDto : CharityDetailsDtoBase
+public class AskConsultListItemDto : CharityListItemDtoBase
 {
     public AskConsultCategory Category { get; set; }
 

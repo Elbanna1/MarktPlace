@@ -92,52 +92,59 @@ public class AuthService : IAuthService
         if (await _userRepository.IsPhoneNumberTakenAsync(request.Phone))
             throw new ConflictException("رقم الموبايل ده مسجل قبل كده.");
 
-        var referrer = await _referralService.ResolveReferrerForRegistrationAsync(request.ReferralCode);
-
-        var user = new ApplicationUser
-        {
-            FirstName = AccountNameRules.NormalizeWhitespace(request.FirstName),
-            SecondName = AccountNameRules.NormalizeWhitespace(request.SecondName),
-            UserName = username,
-            Email = request.Email.Trim(),
-            PhoneNumber = request.Phone.Trim(),
-            Governorate = LocationConstants.Governorate,
-            Center = request.Center,
-            CreatedAt = DateTime.UtcNow,
-
-            ReferralCode = await _referralService.GenerateUniqueCodeAsync()
-        };
-
-        Guid? referralId = null;
-
-        await using (var transaction = await _unitOfWork.BeginTransactionAsync())
-        {
-            IdentityResult result;
-
-            try
+        var (user, referralId) = await _unitOfWork.ExecuteInTransactionAsync(
+            async (transaction, cancellationToken) =>
             {
-                result = await _userManager.CreateAsync(user, request.Password);
-            }
-            catch (Exception exception) when (_unitOfWork.IsUniqueConstraintViolation(exception))
-            {
-                _logger.LogInformation(
-                    exception,
-                    "A concurrent registration lost a uniqueness race; reporting it as a conflict.");
+                var referrer =
+                    await _referralService.ResolveReferrerForRegistrationAsync(request.ReferralCode);
 
-                throw new ConflictException("رقم الموبايل ده مسجل قبل كده.");
-            }
+                var created = new ApplicationUser
+                {
+                    FirstName = AccountNameRules.NormalizeWhitespace(request.FirstName),
+                    SecondName = AccountNameRules.NormalizeWhitespace(request.SecondName),
+                    UserName = username,
+                    Email = request.Email.Trim(),
+                    PhoneNumber = request.Phone.Trim(),
+                    Governorate = LocationConstants.Governorate,
+                    Center = request.Center,
+                    CreatedAt = DateTime.UtcNow,
 
-            if (!result.Succeeded)
-                throw new BadRequestException("مش قادرين نكمل إنشاء الحساب. حاول تاني.", DescribeErrors(result));
+                    ReferralCode = await _referralService.GenerateUniqueCodeAsync(cancellationToken)
+                };
 
-            if (referrer is not null)
-            {
-                var referral = await _referralService.RecordAsync(referrer, user, referrer.ReferralCode!);
-                referralId = referral.Id;
-            }
+                IdentityResult result;
 
-            await transaction.CommitAsync();
-        }
+                try
+                {
+                    result = await _userManager.CreateAsync(created, request.Password);
+                }
+                catch (Exception exception) when (_unitOfWork.IsUniqueConstraintViolation(exception))
+                {
+                    _logger.LogInformation(
+                        exception,
+                        "A concurrent registration lost a uniqueness race; reporting it as a conflict.");
+
+                    throw new ConflictException("رقم الموبايل ده مسجل قبل كده.");
+                }
+
+                if (!result.Succeeded)
+                    throw new BadRequestException(
+                        "مش قادرين نكمل إنشاء الحساب. حاول تاني.", DescribeErrors(result));
+
+                Guid? recorded = null;
+
+                if (referrer is not null)
+                {
+                    var referral = await _referralService.RecordAsync(
+                        referrer, created, referrer.ReferralCode!, cancellationToken);
+
+                    recorded = referral.Id;
+                }
+
+                await transaction.CommitAsync(cancellationToken);
+
+                return (created, recorded);
+            });
 
         await _notificationService.CreateAsync(
             user.Id,
@@ -261,62 +268,66 @@ public class AuthService : IAuthService
         string email,
         CancellationToken cancellationToken)
     {
-        var referrer = await _referralService.ResolveReferrerForRegistrationAsync(
-            request.ReferralCode, cancellationToken);
-
         var (firstName, secondName) = GoogleAuthCatalog.SplitDisplayName(
             profile.GivenName, profile.FamilyName, profile.Name, email);
 
-        var user = new ApplicationUser
-        {
-            FirstName = firstName,
-            SecondName = secondName,
-            UserName = await ReserveUsernameAsync(profile.Name, email),
-            Email = email,
-            EmailConfirmed = profile.EmailVerified,
-            Governorate = GoogleAuthCatalog.DefaultGovernorate,
-            Center = LocationConstants.IsValidCenter(request.Center)
-                ? request.Center!
-                : GoogleAuthCatalog.DefaultCenter,
-            CreatedAt = DateTime.UtcNow,
-
-            ReferralCode = await _referralService.GenerateUniqueCodeAsync(cancellationToken)
-        };
-
-        Guid? referralId = null;
-
-        await using (var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken))
-        {
-            IdentityResult result;
-
-            try
+        var (user, referralId) = await _unitOfWork.ExecuteInTransactionAsync(
+            async (transaction, token) =>
             {
-                result = await _userManager.CreateAsync(user);
-            }
-            catch (Exception exception) when (_unitOfWork.IsUniqueConstraintViolation(exception))
-            {
-                _logger.LogInformation(
-                    exception,
-                    "A concurrent external sign-in lost a uniqueness race; asking the caller to retry.");
+                var referrer = await _referralService.ResolveReferrerForRegistrationAsync(
+                    request.ReferralCode, token);
 
-                throw new ConflictException(UserMessages.Auth.GoogleSignInRetry);
-            }
+                var created = new ApplicationUser
+                {
+                    FirstName = firstName,
+                    SecondName = secondName,
+                    UserName = await ReserveUsernameAsync(profile.Name, email),
+                    Email = email,
+                    EmailConfirmed = profile.EmailVerified,
+                    Governorate = GoogleAuthCatalog.DefaultGovernorate,
+                    Center = LocationConstants.IsValidCenter(request.Center)
+                        ? request.Center!
+                        : GoogleAuthCatalog.DefaultCenter,
+                    CreatedAt = DateTime.UtcNow,
 
-            if (!result.Succeeded)
-                throw new BadRequestException(UserMessages.Auth.GoogleSignInRetry, DescribeErrors(result));
+                    ReferralCode = await _referralService.GenerateUniqueCodeAsync(token)
+                };
 
-            await LinkGoogleLoginAsync(user, profile);
+                IdentityResult result;
 
-            if (referrer is not null)
-            {
-                var referral = await _referralService.RecordAsync(
-                    referrer, user, referrer.ReferralCode!, cancellationToken);
+                try
+                {
+                    result = await _userManager.CreateAsync(created);
+                }
+                catch (Exception exception) when (_unitOfWork.IsUniqueConstraintViolation(exception))
+                {
+                    _logger.LogInformation(
+                        exception,
+                        "A concurrent external sign-in lost a uniqueness race; asking the caller to retry.");
 
-                referralId = referral.Id;
-            }
+                    throw new ConflictException(UserMessages.Auth.GoogleSignInRetry);
+                }
 
-            await transaction.CommitAsync(cancellationToken);
-        }
+                if (!result.Succeeded)
+                    throw new BadRequestException(
+                        UserMessages.Auth.GoogleSignInRetry, DescribeErrors(result));
+
+                await LinkGoogleLoginAsync(created, profile);
+
+                Guid? recorded = null;
+
+                if (referrer is not null)
+                {
+                    var referral = await _referralService.RecordAsync(
+                        referrer, created, referrer.ReferralCode!, token);
+
+                    recorded = referral.Id;
+                }
+
+                await transaction.CommitAsync(token);
+
+                return (created, recorded);
+            }, cancellationToken);
 
         await _notificationService.CreateAsync(
             user.Id,

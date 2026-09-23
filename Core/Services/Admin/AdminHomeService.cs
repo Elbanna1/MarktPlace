@@ -14,17 +14,20 @@ public class AdminHomeService : IAdminHomeService
     private readonly IAdminCatalogService _catalog;
     private readonly IFileService _fileService;
     private readonly IAdminAuditService _audit;
+    private readonly ILookupCache _cacheVersion;
 
     public AdminHomeService(
         IAdminHomeRepository repository,
         IAdminCatalogService catalog,
         IFileService fileService,
-        IAdminAuditService audit)
+        IAdminAuditService audit,
+        ILookupCache cacheVersion)
     {
         _repository = repository;
         _catalog = catalog;
         _fileService = fileService;
         _audit = audit;
+        _cacheVersion = cacheVersion;
     }
 
     private static string Describe(HomeSection section) =>
@@ -81,6 +84,8 @@ public class AdminHomeService : IAdminHomeService
 
         await _repository.SaveChangesAsync(cancellationToken);
 
+        _cacheVersion.Invalidate();
+
         await _audit.LogAsync(
             AdminAuditAction.UpdateHomeSection, AdminAuditCatalog.Targets.HomeSection,
             id.ToString(), $"تعديل قسم في الصفحة الرئيسية: {section.Key}",
@@ -116,6 +121,8 @@ public class AdminHomeService : IAdminHomeService
         try
         {
             await _repository.SaveChangesAsync(cancellationToken);
+
+            _cacheVersion.Invalidate();
         }
         catch
         {
@@ -142,6 +149,8 @@ public class AdminHomeService : IAdminHomeService
         section.UpdatedAt = DateTime.UtcNow;
 
         await _repository.SaveChangesAsync(cancellationToken);
+
+        _cacheVersion.Invalidate();
 
         if (!string.IsNullOrWhiteSpace(previousPath))
             _fileService.Delete(previousPath);
@@ -176,6 +185,8 @@ public class AdminHomeService : IAdminHomeService
         }
 
         await _repository.SaveChangesAsync(cancellationToken);
+
+        _cacheVersion.Invalidate();
 
         await _audit.LogAsync(
             AdminAuditAction.ReorderHomeSections, AdminAuditCatalog.Targets.HomeSection, null,

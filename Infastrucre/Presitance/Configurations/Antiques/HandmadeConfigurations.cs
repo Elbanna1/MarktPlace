@@ -1,4 +1,4 @@
-using Domain.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Shared.Constants;
@@ -57,7 +57,8 @@ public class HandmadeConfiguration : IEntityTypeConfiguration<Handmade>
         builder.HasQueryFilter(QueryFilterNames.SoftDelete, x => !x.IsDeleted);
 
         builder.HasIndex(x => x.CreatedAt);
-        builder.HasIndex(x => x.SellerName);
+        builder.HasIndex(x => new { x.ModerationStatus, x.SellerName }, "IX_Handmades_Advertisers")
+            .IncludeProperties(x => new { x.IsDeleted, x.ExpireAt });
         builder.HasIndex(x => x.HandmadeType);
         builder.HasIndex(x => x.IsFullyHandmade);
         builder.HasIndex(x => x.CustomOrder);

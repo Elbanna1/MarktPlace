@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using Shared.DTOs.Common;
 using Shared.DTOs.Listings;
@@ -33,15 +33,13 @@ public interface ICharityGalleryEdit
     List<Guid> RemoveImageIds { get; set; }
 }
 
-public abstract class CharityDetailsDtoBase : IListingStats
+public abstract class CharityListItemDtoBase : IListingStats
 {
     public Guid Id { get; set; }
 
     public string OwnerId { get; set; } = default!;
 
     public string OwnerName { get; set; } = default!;
-
-    public string Phone { get; set; } = default!;
 
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
@@ -95,6 +93,11 @@ public abstract class CharityDetailsDtoBase : IListingStats
     public int RatingsCount { get; set; }
 
     public bool IsFavorite { get; set; }
+}
+
+public abstract class CharityDetailsDtoBase : CharityListItemDtoBase
+{
+    public string Phone { get; set; } = default!;
 }
 
 public abstract class CharityFilterParamsBase : PaginationParams

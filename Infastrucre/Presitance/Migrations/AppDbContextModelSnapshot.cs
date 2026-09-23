@@ -170,6 +170,16 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Accessories_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Accessories_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Accessories_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Accessories_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("Accessories", (string)null);
                 });
 
@@ -1275,25 +1285,25 @@ namespace Presitance.Migrations
 
                     b.HasIndex("CategoryId", "SubCategoryId");
 
-                    b.HasIndex("ModerationStatus", "Status", "CreatedAt")
-                        .IsDescending(false, false, true);
-
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "Status", "CreatedAt"), new[] { "ExpireAt", "CategoryId", "SubCategoryId", "Price", "Views" });
-
-                    b.HasIndex("ModerationStatus", "Status", "Views", "CreatedAt")
+                    b.HasIndex("ModerationStatus", "Status", "CreatedAt", "Id")
                         .IsDescending(false, false, true, true);
 
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "Status", "Views", "CreatedAt"), new[] { "ExpireAt", "CategoryId", "SubCategoryId", "Price" });
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "Status", "CreatedAt", "Id"), new[] { "ExpireAt", "CategoryId", "SubCategoryId", "Price", "Views" });
 
-                    b.HasIndex(new[] { "ModerationStatus", "Status", "Price", "CreatedAt" }, "IX_Advertisements_Feed_PriceAsc")
-                        .IsDescending(false, false, false, true);
+                    b.HasIndex("ModerationStatus", "Status", "Views", "CreatedAt", "Id")
+                        .IsDescending(false, false, true, true, true);
 
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Status", "Price", "CreatedAt" }, "IX_Advertisements_Feed_PriceAsc"), new[] { "ExpireAt", "CategoryId", "SubCategoryId", "Views" });
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "Status", "Views", "CreatedAt", "Id"), new[] { "ExpireAt", "CategoryId", "SubCategoryId", "Price" });
 
-                    b.HasIndex(new[] { "ModerationStatus", "Status", "Price", "CreatedAt" }, "IX_Advertisements_Feed_PriceDesc")
-                        .IsDescending(false, false, true, true);
+                    b.HasIndex(new[] { "ModerationStatus", "Status", "Price", "CreatedAt", "Id" }, "IX_Advertisements_Feed_PriceAsc")
+                        .IsDescending(false, false, false, true, true);
 
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Status", "Price", "CreatedAt" }, "IX_Advertisements_Feed_PriceDesc"), new[] { "ExpireAt", "CategoryId", "SubCategoryId", "Views" });
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Status", "Price", "CreatedAt", "Id" }, "IX_Advertisements_Feed_PriceAsc"), new[] { "ExpireAt", "CategoryId", "SubCategoryId", "Views" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Status", "Price", "CreatedAt", "Id" }, "IX_Advertisements_Feed_PriceDesc")
+                        .IsDescending(false, false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Status", "Price", "CreatedAt", "Id" }, "IX_Advertisements_Feed_PriceDesc"), new[] { "ExpireAt", "CategoryId", "SubCategoryId", "Views" });
 
                     b.ToTable("Advertisements");
                 });
@@ -1544,14 +1554,26 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Price");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Antiques_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Antiques_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Antiques_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Antiques_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Antiques_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Antiques_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Antiques", (string)null);
                 });
@@ -2263,6 +2285,21 @@ namespace Presitance.Migrations
                         .IsDescending(false, true, true, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "IsPremium", "IsFeatured", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_Apartments_Feed_MostViewed")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_Apartments_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Apartments_Feed_PriceAsc")
+                        .IsDescending(false, true, true, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Apartments_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Apartments_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Apartments_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Apartments", (string)null);
                 });
@@ -3784,6 +3821,11 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_AskConsults_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_AskConsults_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("AskConsults", (string)null);
                 });
 
@@ -4511,6 +4553,21 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "IsPremium", "IsFeatured", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_BathroomSupplies_Feed_MostViewed")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_BathroomSupplies_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_BathroomSupplies_Feed_PriceAsc")
+                        .IsDescending(false, true, true, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_BathroomSupplies_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_BathroomSupplies_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_BathroomSupplies_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("BathroomSupplies", (string)null);
                 });
 
@@ -4891,14 +4948,16 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Purpose");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Bees_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Bees_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Bees", (string)null);
                 });
@@ -5309,14 +5368,16 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Purpose");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Birds_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Birds_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Birds", (string)null);
                 });
@@ -5843,6 +5904,11 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_BloodRequests_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_BloodRequests_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("BloodRequests", (string)null);
                 });
 
@@ -6023,14 +6089,16 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Purpose");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Camels_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Camels_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Camels", (string)null);
                 });
@@ -6795,14 +6863,26 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Price");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_CoinStamps_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_CoinStamps_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_CoinStamps_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_CoinStamps_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_CoinStamps_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_CoinStamps_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("CoinStamps", (string)null);
                 });
@@ -7751,6 +7831,16 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Cosmetics_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Cosmetics_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Cosmetics_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Cosmetics_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("Cosmetics", (string)null);
                 });
 
@@ -8484,14 +8574,26 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Price");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_DecorAntiques_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_DecorAntiques_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_DecorAntiques_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_DecorAntiques_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_DecorAntiques_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_DecorAntiques_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("DecorAntiques", (string)null);
                 });
@@ -10392,14 +10494,16 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Purpose");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Fish_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Fish_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Fish", (string)null);
                 });
@@ -11048,6 +11152,21 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "IsPremium", "IsFeatured", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_FurnishingCurtains_Feed_MostViewed")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_FurnishingCurtains_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_FurnishingCurtains_Feed_PriceAsc")
+                        .IsDescending(false, true, true, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_FurnishingCurtains_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_FurnishingCurtains_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_FurnishingCurtains_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("FurnishingCurtains", (string)null);
                 });
 
@@ -11568,6 +11687,21 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "IsPremium", "IsFeatured", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_Furnitures_Feed_MostViewed")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_Furnitures_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Furnitures_Feed_PriceAsc")
+                        .IsDescending(false, true, true, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Furnitures_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Furnitures_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Furnitures_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("Furnitures", (string)null);
                 });
 
@@ -12074,6 +12208,16 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_GiftToys_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_GiftToys_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_GiftToys_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_GiftToys_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("GiftToys", (string)null);
                 });
 
@@ -12436,14 +12580,26 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Price");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Handmades_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Handmades_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Handmades_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Handmades_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Handmades_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Handmades_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Handmades", (string)null);
                 });
@@ -12924,6 +13080,21 @@ namespace Presitance.Migrations
                         .IsDescending(false, true, true, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "IsPremium", "IsFeatured", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_HomeAppliances_Feed_MostViewed")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_HomeAppliances_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_HomeAppliances_Feed_PriceAsc")
+                        .IsDescending(false, true, true, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_HomeAppliances_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_HomeAppliances_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_HomeAppliances_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("HomeAppliances", (string)null);
                 });
@@ -13512,6 +13683,16 @@ namespace Presitance.Migrations
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_HomeKitchens_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_HomeKitchens_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_HomeKitchens_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_HomeKitchens_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("HomeKitchens", (string)null);
                 });
@@ -14212,6 +14393,16 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_HomemadeFoods_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_HomemadeFoods_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_HomemadeFoods_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_HomemadeFoods_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("HomemadeFoods", (string)null);
                 });
 
@@ -14541,14 +14732,16 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Purpose");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Horses_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Horses_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Horses", (string)null);
                 });
@@ -16606,6 +16799,21 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "IsPremium", "IsFeatured", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_KitchenTools_Feed_MostViewed")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_KitchenTools_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_KitchenTools_Feed_PriceAsc")
+                        .IsDescending(false, true, true, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_KitchenTools_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_KitchenTools_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_KitchenTools_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("KitchenTools", (string)null);
                 });
 
@@ -17343,6 +17551,21 @@ namespace Presitance.Migrations
                         .IsDescending(false, true, true, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "IsPremium", "IsFeatured", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_Lands_Feed_MostViewed")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_Lands_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "TotalPrice", "CreatedAt", "Id" }, "IX_Lands_Feed_PriceAsc")
+                        .IsDescending(false, true, true, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "TotalPrice", "CreatedAt", "Id" }, "IX_Lands_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "TotalPrice", "CreatedAt", "Id" }, "IX_Lands_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "TotalPrice", "CreatedAt", "Id" }, "IX_Lands_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Lands", (string)null);
                 });
@@ -18694,6 +18917,21 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "IsPremium", "IsFeatured", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_LightingDecors_Feed_MostViewed")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_LightingDecors_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_LightingDecors_Feed_PriceAsc")
+                        .IsDescending(false, true, true, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_LightingDecors_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_LightingDecors_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_LightingDecors_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("LightingDecors", (string)null);
                 });
 
@@ -19432,14 +19670,16 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Purpose");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Livestock_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Livestock_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Livestock", (string)null);
                 });
@@ -21035,14 +21275,16 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Purpose");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_OtherAnimals_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_OtherAnimals_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("OtherAnimals", (string)null);
                 });
@@ -21574,14 +21816,26 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Price");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Paintings_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Paintings_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Paintings_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Paintings_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Paintings_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_Paintings_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Paintings", (string)null);
                 });
@@ -22186,14 +22440,16 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Purpose");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Pets_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_Pets_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Pets", (string)null);
                 });
@@ -22823,6 +23079,21 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "IsPremium", "IsFeatured", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_PlantOrnaments_Feed_MostViewed")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_PlantOrnaments_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_PlantOrnaments_Feed_PriceAsc")
+                        .IsDescending(false, true, true, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_PlantOrnaments_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_PlantOrnaments_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_PlantOrnaments_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("PlantOrnaments", (string)null);
                 });
 
@@ -23302,13 +23573,13 @@ namespace Presitance.Migrations
                         },
                         new
                         {
-                            Id = 38,
-                            Name = "أخرى"
+                            Id = 39,
+                            Name = "قطع غيار السيارات"
                         },
                         new
                         {
-                            Id = 39,
-                            Name = "قطع غيار السيارات"
+                            Id = 38,
+                            Name = "أخرى"
                         });
                 });
 
@@ -23684,6 +23955,11 @@ namespace Presitance.Migrations
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
 
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_Rescues_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_Rescues_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
                     b.ToTable("Rescues", (string)null);
                 });
 
@@ -23944,14 +24220,16 @@ namespace Presitance.Migrations
 
                     b.HasIndex("Purpose");
 
-                    b.HasIndex("SellerName");
-
                     b.HasIndex("UserId");
 
                     b.HasIndex("ModerationStatus", "CreatedAt", "Id")
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_SheepGoats_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "SellerName" }, "IX_SheepGoats_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("SheepGoats", (string)null);
                 });
@@ -24708,6 +24986,21 @@ namespace Presitance.Migrations
                         .IsDescending(false, true, true, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "IsPremium", "IsFeatured", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_Shops_Feed_MostViewed")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "ViewCount", "CreatedAt", "Id" }, "IX_Shops_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Shops_Feed_PriceAsc")
+                        .IsDescending(false, true, true, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Shops_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Shops_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "IsPremium", "IsFeatured", "Price", "CreatedAt", "Id" }, "IX_Shops_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("Shops", (string)null);
                 });
@@ -26056,6 +26349,16 @@ namespace Presitance.Migrations
                         .IsDescending(false, true, true);
 
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_ShoppingElectronics_Feed_PriceAsc")
+                        .IsDescending(false, false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_ShoppingElectronics_Feed_PriceAsc"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_ShoppingElectronics_Feed_PriceDesc")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Price", "CreatedAt", "Id" }, "IX_ShoppingElectronics_Feed_PriceDesc"), new[] { "IsDeleted", "ExpireAt" });
 
                     b.ToTable("ShoppingElectronics", (string)null);
                 });

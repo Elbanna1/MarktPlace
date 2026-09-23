@@ -123,32 +123,35 @@ public class AdminAccountService : IAdminAccountService
         if (string.IsNullOrWhiteSpace(userId))
             throw new BadRequestException("معرف المستخدم مطلوب.");
 
-        var user = await _userManager.FindByIdAsync(userId)
-            ?? throw new NotFoundException("المستخدم غير موجود.");
-
-        if (await _userManager.IsInRoleAsync(user, AppRoles.Admin))
-            throw new ConflictException("المستخدم ده مسؤول بالفعل.");
-
-        await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
-
-        IdentityResult roleAssignment;
-
-        try
+        var user = await _unitOfWork.ExecuteInTransactionAsync(async (transaction, token) =>
         {
-            roleAssignment = await _userManager.AddToRoleAsync(user, AppRoles.Admin);
-        }
-        catch (Exception exception) when (_unitOfWork.IsUniqueConstraintViolation(exception))
-        {
-            throw new ConflictException("المستخدم ده مسؤول بالفعل.");
-        }
+            var candidate = await _userManager.FindByIdAsync(userId)
+                ?? throw new NotFoundException("المستخدم غير موجود.");
 
-        if (!roleAssignment.Succeeded)
-            throw new BadRequestException("مش قادرين نضيف صلاحية المسؤول.", Describe(roleAssignment));
+            if (await _userManager.IsInRoleAsync(candidate, AppRoles.Admin))
+                throw new ConflictException("المستخدم ده مسؤول بالفعل.");
 
-        if (grants.Count > 0)
-            await _repository.ReplaceGrantsAsync(user.Id, grants, actingSuperAdminId, cancellationToken);
+            IdentityResult roleAssignment;
 
-        await transaction.CommitAsync(cancellationToken);
+            try
+            {
+                roleAssignment = await _userManager.AddToRoleAsync(candidate, AppRoles.Admin);
+            }
+            catch (Exception exception) when (_unitOfWork.IsUniqueConstraintViolation(exception))
+            {
+                throw new ConflictException("المستخدم ده مسؤول بالفعل.");
+            }
+
+            if (!roleAssignment.Succeeded)
+                throw new BadRequestException("مش قادرين نضيف صلاحية المسؤول.", Describe(roleAssignment));
+
+            if (grants.Count > 0)
+                await _repository.ReplaceGrantsAsync(candidate.Id, grants, actingSuperAdminId, token);
+
+            await transaction.CommitAsync(token);
+
+            return candidate;
+        }, cancellationToken);
 
         _accessState.Invalidate(user.Id);
 

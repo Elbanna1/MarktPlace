@@ -1,6 +1,7 @@
 using Domain.Entities.Listings;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
+using Persistence.Listings;
 using ServicesAbstraction;
 using Shared.Constants;
 using Shared.DTOs.Listings;
@@ -28,6 +29,44 @@ public class ListingInteractionRepository : IListingInteractionRepository
         ListingModuleType type, Guid listingId, CancellationToken cancellationToken = default) =>
         _context.ListingViewCounters
             .FirstOrDefaultAsync(c => c.ListingType == type && c.ListingId == listingId, cancellationToken);
+
+    // Ten modules keep their own ViewCount column alongside the shared counter table, and each
+    // lives on a different entity type. Rather than give the flush worker ten repository
+    // dependencies, the column is updated generically: ModerationModuleRegistry already knows which
+    // CLR type each module is, and EF translates EF.Property into the same single UPDATE a typed
+    // ExecuteUpdate would produce. Modules without the column are a no-op.
+    public Task<int> IncrementModuleViewCountAsync(
+        ListingModuleType type, Guid listingId, int delta, CancellationToken cancellationToken = default)
+    {
+        if (!ModerationModuleRegistry.EntityTypes.TryGetValue(type, out var entityType))
+            return Task.FromResult(0);
+
+        if (_context.Model.FindEntityType(entityType)?.FindProperty(ViewCountProperty) is null)
+            return Task.FromResult(0);
+
+        return (Task<int>)IncrementModuleViewCountMethod
+            .MakeGenericMethod(entityType)
+            .Invoke(this, [listingId, delta, cancellationToken])!;
+    }
+
+    private const string ViewCountProperty = "ViewCount";
+
+    private static readonly System.Reflection.MethodInfo IncrementModuleViewCountMethod =
+        typeof(ListingInteractionRepository).GetMethod(
+            nameof(IncrementModuleViewCountCoreAsync),
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+
+    private Task<int> IncrementModuleViewCountCoreAsync<TEntity>(
+        Guid listingId, int delta, CancellationToken cancellationToken)
+        where TEntity : class =>
+        _context.Set<TEntity>()
+            .IgnoreQueryFilters()
+            .Where(entity => EF.Property<Guid>(entity, "Id") == listingId)
+            .ExecuteUpdateAsync(
+                setters => setters.SetProperty(
+                    entity => EF.Property<int>(entity, ViewCountProperty),
+                    entity => EF.Property<int>(entity, ViewCountProperty) + delta),
+                cancellationToken);
 
     public void AddViewer(ListingViewer viewer) => _context.ListingViewers.Add(viewer);
 
@@ -252,34 +291,6 @@ public class ListingInteractionRepository : IListingInteractionRepository
         }
 
         return result;
-    }
-
-    public async Task<(int TotalViews, int TotalFavorites)> GetOwnerTotalsAsync(
-        IReadOnlyCollection<(ListingModuleType Type, Guid ListingId)> ownedKeys,
-        CancellationToken cancellationToken = default)
-    {
-        if (ownedKeys.Count == 0)
-            return (0, 0);
-
-        var ids = ownedKeys.Select(k => k.ListingId).Distinct().ToList();
-        var types = ownedKeys.Select(k => k.Type).Distinct().ToList();
-        var wanted = ownedKeys.ToHashSet();
-
-        var views = await _context.ListingViewCounters
-            .AsNoTracking()
-            .Where(c => types.Contains(c.ListingType) && ids.Contains(c.ListingId))
-            .Select(c => new { c.ListingType, c.ListingId, c.TotalViews })
-            .ToListAsync(cancellationToken);
-
-        var favorites = await _context.ListingFavorites
-            .AsNoTracking()
-            .Where(f => types.Contains(f.ListingType) && ids.Contains(f.ListingId))
-            .Select(f => new { f.ListingType, f.ListingId })
-            .ToListAsync(cancellationToken);
-
-        return (
-            views.Where(v => wanted.Contains((v.ListingType, v.ListingId))).Sum(v => v.TotalViews),
-            favorites.Count(f => wanted.Contains((f.ListingType, f.ListingId))));
     }
 
     public Task<ListingReport?> GetReportAsync(

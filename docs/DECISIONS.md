@@ -607,3 +607,60 @@ Development an http request to `/swagger` is redirected to https **before** any 
 the browser is never invited to send the password in the clear. Behind Nginx this is decided from
 `X-Forwarded-Proto`, which `UseForwardedHeaders` has already applied.
 
+
+---
+
+## D-35 — The advertiser lookup is a database `GROUP BY`, and the name is the key
+
+**Problem.** The advertiser filter on a sub-category feed had no way to discover its own options. The
+frontend was requesting the listing endpoint repeatedly — `pageSize=50`, up to ten pages — and
+de-duplicating `SellerName` in JavaScript. That is up to ten HTTP round trips and ten full listing
+payloads (images, descriptions, lookups) to produce a list of names, and it can only ever see the
+first 500 listings, so an advertiser on page 11 is invisible.
+
+**Decision.** `GET /api/lookups/advertisers/{categoryId}/{subCategoryId}` returns one small page of
+advertiser names, searched and paginated by SQL Server:
+
+```sql
+SELECT SellerName, COUNT(*) FROM Birds
+WHERE IsDeleted = 0 AND ModerationStatus = 1 AND (ExpireAt IS NULL OR ExpireAt > GETUTCDATE())
+  AND SellerName LIKE @pattern ESCAPE '\'
+GROUP BY SellerName ORDER BY SellerName
+OFFSET @skip ROWS FETCH NEXT @take ROWS ONLY;
+```
+
+Two round trips — the page and its `COUNT` — no matter how many advertisers exist. Visibility is the
+two global query filters, so a pending, rejected, expired or deleted listing can never leak the name
+of an advertiser who has nothing published.
+
+**Why no advertiser table.** There is no advertiser entity and adding one would be wrong.
+`SellerName` is free text captured per listing (`entity.SellerName = request.SellerName`), never
+derived from the account, so one account can publish under several trading names. The listing filter
+matches that column. Introducing an `Advertisers` table would mean either back-filling identities the
+data does not contain, or keeping a second copy of a column that already exists on 14 tables.
+
+**Why `id` is the name.** `id` carries the value the caller sends back as `?sellerName=...`. A user
+id would be a key the feed cannot consume, and no new `userId` filter was added: that would mean
+touching 14 repositories to solve a problem the frontend does not have. The consequence is stated
+rather than hidden — **two accounts that type the same seller name are one option here, because they
+are one result set in the feed.** Making them distinguishable is a listing-filter change first and a
+lookup change second, in that order.
+
+**Scope.** Only the 14 sub-categories whose feed actually has a `sellerName` filter — الحيوانات and
+التحف والأنتيكات. `AdvertiserLookupCatalog` is the single place that says so; `SharedTail` reads it to
+decide whether `read-config` publishes the `advertisers` operation, and the `sellerName` filter
+parameter points at that operation through the existing `optionsSource` mechanism. افرش بيتك and
+عقارات store an advertiser name but their feeds have no such filter, so offering options there would
+hand the UI a value it cannot filter with; they answer `400`.
+
+**Index.** `IX_*_SellerName` was replaced — not supplemented — by
+`(ModerationStatus, SellerName) INCLUDE (IsDeleted, ExpireAt)` on all 14 tables. The single-column
+index could only ever be scanned, because every predicate on that column is `LIKE '%…%'`; the
+composite seeks the status, walks `SellerName` in order so `GROUP BY`/`ORDER BY` need no sort, and
+covers the two remaining predicates so there are no key lookups. Measured on 1,209 seeded rows:
+14 logical reads against 58 plus a sort worktable for the same query without it.
+
+**Caching.** 60 seconds, shared. Advertiser availability changes whenever a listing is approved or
+expires, so the long `max-age=300` used for genuine reference data would be wrong; a minute is short
+enough that a new advertiser appears promptly and long enough to absorb the burst a combobox
+generates while someone types.

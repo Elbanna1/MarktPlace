@@ -1,4 +1,4 @@
-using Domain.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Shared.Constants;
@@ -56,7 +56,8 @@ public class DecorAntiqueConfiguration : IEntityTypeConfiguration<DecorAntique>
         builder.HasQueryFilter(QueryFilterNames.SoftDelete, x => !x.IsDeleted);
 
         builder.HasIndex(x => x.CreatedAt);
-        builder.HasIndex(x => x.SellerName);
+        builder.HasIndex(x => new { x.ModerationStatus, x.SellerName }, "IX_DecorAntiques_Advertisers")
+            .IncludeProperties(x => new { x.IsDeleted, x.ExpireAt });
         builder.HasIndex(x => x.ItemType);
         builder.HasIndex(x => x.Material);
         builder.HasIndex(x => x.Condition);

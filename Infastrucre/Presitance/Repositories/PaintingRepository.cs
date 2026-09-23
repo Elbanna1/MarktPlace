@@ -103,7 +103,6 @@ public class PaintingRepository : IPaintingRepository
             filter.PageSize,
             keyed => keyed
                 .Include(x => x.Images)
-                .Include(x => x.Video)
                 .AsSplitQuery(),
             cancellationToken);
 

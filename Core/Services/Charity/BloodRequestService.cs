@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.Entities;
 using ServicesAbstraction;
 using Shared.Constants;
@@ -186,7 +186,7 @@ public class BloodRequestService : IBloodRequestService
         return Map<BloodRequestDetailsDto>(entity);
     }
 
-    private TDto Map<TDto>(BloodRequest entity) where TDto : CharityDetailsDtoBase
+    private TDto Map<TDto>(BloodRequest entity) where TDto : CharityListItemDtoBase
     {
         var dto = _mapper.Map<TDto>(entity);
 

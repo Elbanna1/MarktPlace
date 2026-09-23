@@ -193,11 +193,11 @@ public class ApartmentService : IApartmentService
     {
         var details = await BuildDetailsAsync(id, cancellationToken);
 
+        // The stored counter is advanced by the queued view the listing-interaction filter raises
+        // for this same GET, so the read performs no write of its own. The response still shows the
+        // view the caller just made.
         if (countView)
-        {
-            await _repository.IncrementViewCountAsync(id, cancellationToken);
             details.ViewCount++;
-        }
 
         return details;
     }

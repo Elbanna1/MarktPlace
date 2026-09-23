@@ -1,4 +1,4 @@
-using Shared.Enums;
+﻿using Shared.Enums;
 
 namespace Shared.DTOs.Charity;
 
@@ -39,7 +39,7 @@ public class BloodRequestDetailsDto : CharityDetailsDtoBase
     public override ListingModuleType StatsListingType => ListingModuleType.BloodRequest;
 }
 
-public class BloodRequestListItemDto : CharityDetailsDtoBase
+public class BloodRequestListItemDto : CharityListItemDtoBase
 {
     public string RequesterName { get; set; } = default!;
     public BloodGroup BloodGroup { get; set; }

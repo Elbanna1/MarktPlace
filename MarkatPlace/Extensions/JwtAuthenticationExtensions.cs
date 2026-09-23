@@ -87,16 +87,14 @@ public static class JwtAuthenticationExtensions
                     ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     ctx.Response.ContentType = "application/json";
                     var response = ApiResponse.Fail("لازم تسجل دخولك عشان توصل للمحتوى ده.");
-                    await ctx.Response.WriteAsync(JsonSerializer.Serialize(response,
-                        new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
+                    await ctx.Response.WriteAsync(JsonSerializer.Serialize(response, ApiJson.SerializerOptions));
                 },
                 OnForbidden = async ctx =>
                 {
                     ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
                     ctx.Response.ContentType = "application/json";
                     var response = ApiResponse.Fail("مالكش صلاحية توصل للمحتوى ده.");
-                    await ctx.Response.WriteAsync(JsonSerializer.Serialize(response,
-                        new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
+                    await ctx.Response.WriteAsync(JsonSerializer.Serialize(response, ApiJson.SerializerOptions));
                 }
             };
         });

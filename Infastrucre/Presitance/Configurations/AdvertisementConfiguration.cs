@@ -114,24 +114,24 @@ public class AdvertisementConfiguration : IEntityTypeConfiguration<Advertisement
         builder.HasIndex(a => a.CreatedAt);
         builder.HasIndex(a => new { a.CategoryId, a.SubCategoryId });
 
-        builder.HasIndex(a => new { a.ModerationStatus, a.Status, a.CreatedAt })
-            .IsDescending(false, false, true)
+        builder.HasIndex(a => new { a.ModerationStatus, a.Status, a.CreatedAt, a.Id })
+            .IsDescending(false, false, true, true)
             .IncludeProperties(a => new { a.ExpireAt, a.CategoryId, a.SubCategoryId, a.Price, a.Views });
 
-        builder.HasIndex(a => new { a.ModerationStatus, a.Status, a.Views, a.CreatedAt })
-            .IsDescending(false, false, true, true)
+        builder.HasIndex(a => new { a.ModerationStatus, a.Status, a.Views, a.CreatedAt, a.Id })
+            .IsDescending(false, false, true, true, true)
             .IncludeProperties(a => new { a.ExpireAt, a.CategoryId, a.SubCategoryId, a.Price });
 
         builder.HasIndex(
-                a => new { a.ModerationStatus, a.Status, a.Price, a.CreatedAt },
+                a => new { a.ModerationStatus, a.Status, a.Price, a.CreatedAt, a.Id },
                 "IX_Advertisements_Feed_PriceAsc")
-            .IsDescending(false, false, false, true)
+            .IsDescending(false, false, false, true, true)
             .IncludeProperties(a => new { a.ExpireAt, a.CategoryId, a.SubCategoryId, a.Views });
 
         builder.HasIndex(
-                a => new { a.ModerationStatus, a.Status, a.Price, a.CreatedAt },
+                a => new { a.ModerationStatus, a.Status, a.Price, a.CreatedAt, a.Id },
                 "IX_Advertisements_Feed_PriceDesc")
-            .IsDescending(false, false, true, true)
+            .IsDescending(false, false, true, true, true)
             .IncludeProperties(a => new { a.ExpireAt, a.CategoryId, a.SubCategoryId, a.Views });
     }
 }

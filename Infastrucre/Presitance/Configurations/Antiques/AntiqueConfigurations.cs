@@ -1,4 +1,4 @@
-using Domain.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Shared.Constants;
@@ -55,7 +55,8 @@ public class AntiqueConfiguration : IEntityTypeConfiguration<Antique>
         builder.HasQueryFilter(QueryFilterNames.SoftDelete, x => !x.IsDeleted);
 
         builder.HasIndex(x => x.CreatedAt);
-        builder.HasIndex(x => x.SellerName);
+        builder.HasIndex(x => new { x.ModerationStatus, x.SellerName }, "IX_Antiques_Advertisers")
+            .IncludeProperties(x => new { x.IsDeleted, x.ExpireAt });
         builder.HasIndex(x => x.AntiqueType);
         builder.HasIndex(x => x.ManufactureYear);
         builder.HasIndex(x => x.CountryOfOrigin);

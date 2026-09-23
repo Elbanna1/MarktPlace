@@ -19,6 +19,10 @@ public class BannerBookingService : IBannerBookingService
     private readonly IMapper _mapper;
     private readonly IAdminAuditService _audit;
     private readonly IAdminAlertService _alerts;
+    private readonly IPublicResponseCache _cache;
+    private readonly ILookupCache _cacheVersion;
+
+    private static readonly TimeSpan PublishedCacheDuration = TimeSpan.FromMinutes(1);
 
     public BannerBookingService(
         IBannerBookingRepository repository,
@@ -27,8 +31,12 @@ public class BannerBookingService : IBannerBookingService
         INotificationService notifications,
         IMapper mapper,
         IAdminAuditService audit,
-        IAdminAlertService alerts)
+        IAdminAlertService alerts,
+        IPublicResponseCache cache,
+        ILookupCache cacheVersion)
     {
+        _cache = cache;
+        _cacheVersion = cacheVersion;
         _repository = repository;
         _paymentService = paymentService;
         _fileService = fileService;
@@ -391,19 +399,26 @@ public class BannerBookingService : IBannerBookingService
         _repository.Update(booking);
         await _repository.SaveChangesAsync(cancellationToken);
 
+        _cacheVersion.Invalidate();
+
         return ToDto(booking, DateTime.UtcNow);
     }
 
-    public async Task<IReadOnlyList<PublishedBannerDto>> GetPublishedAsync(
+    public Task<IReadOnlyList<PublishedBannerDto>> GetPublishedAsync(
         BannerLocation? location = null,
         int? categoryId = null,
         int? subCategoryId = null,
         CancellationToken cancellationToken = default)
     {
-        var bookings = await _repository.GetPublishedAsync(
-            DateTime.UtcNow, location, categoryId, subCategoryId, cancellationToken);
+        var key = $"banner-bookings:published:{(int?)location}:{categoryId}:{subCategoryId}";
 
-        return _mapper.Map<IReadOnlyList<PublishedBannerDto>>(bookings);
+        return _cache.GetOrCreateAsync(key, PublishedCacheDuration, async token =>
+        {
+            var bookings = await _repository.GetPublishedAsync(
+                DateTime.UtcNow, location, categoryId, subCategoryId, token);
+
+            return _mapper.Map<IReadOnlyList<PublishedBannerDto>>(bookings);
+        }, cancellationToken);
     }
 
     public async Task<IReadOnlyList<PublishedBannerDto>> GetPublishedSliderAsync(
@@ -464,6 +479,8 @@ public class BannerBookingService : IBannerBookingService
         _repository.Update(booking);
         await _repository.SaveChangesAsync(cancellationToken);
 
+        _cacheVersion.Invalidate();
+
         await _audit.LogAsync(
             AdminAuditAction.ApproveBannerPayment, AdminAuditCatalog.Targets.BannerBooking,
             id.ToString(), $"تأكيد دفع بانر: {booking.Title}",
@@ -500,6 +517,8 @@ public class BannerBookingService : IBannerBookingService
 
         _repository.Update(booking);
         await _repository.SaveChangesAsync(cancellationToken);
+
+        _cacheVersion.Invalidate();
 
         await _audit.LogAsync(
             AdminAuditAction.RejectBannerPayment, AdminAuditCatalog.Targets.BannerBooking,
@@ -567,6 +586,8 @@ public class BannerBookingService : IBannerBookingService
         _repository.Update(booking);
         await _repository.SaveChangesAsync(cancellationToken);
 
+        _cacheVersion.Invalidate();
+
         await _audit.LogAsync(
             AdminAuditAction.ApproveBanner, AdminAuditCatalog.Targets.BannerBooking,
             id.ToString(), $"الموافقة على بانر: {booking.Title}",
@@ -617,6 +638,8 @@ public class BannerBookingService : IBannerBookingService
 
         await _repository.SaveChangesAsync(cancellationToken);
 
+        _cacheVersion.Invalidate();
+
         await _audit.LogAsync(
             AdminAuditAction.RejectBanner, AdminAuditCatalog.Targets.BannerBooking,
             id.ToString(),
@@ -656,6 +679,8 @@ public class BannerBookingService : IBannerBookingService
         _repository.Update(booking);
         await _repository.SaveChangesAsync(cancellationToken);
 
+        _cacheVersion.Invalidate();
+
         await _audit.LogAsync(
             AdminAuditAction.ExpireBanner, AdminAuditCatalog.Targets.BannerBooking,
             id.ToString(), $"إنهاء بانر: {booking.Title}",
@@ -679,6 +704,8 @@ public class BannerBookingService : IBannerBookingService
 
         _repository.Remove(booking);
         await _repository.SaveChangesAsync(cancellationToken);
+
+        _cacheVersion.Invalidate();
 
         foreach (var path in paths)
             _fileService.Delete(path);

@@ -31,11 +31,10 @@ public class AdvertisementMappingProfile : Profile
             .ForMember(d => d.PrimaryImageUrl, o => o.MapFrom(s =>
                 s.Images.Where(i => i.IsPrimary).Select(i => i.Url).FirstOrDefault()
                 ?? s.Images.Select(i => i.Url).FirstOrDefault()))
-            .ForMember(d => d.Owner, o => o.MapFrom(s => new OwnerDto
+            .ForMember(d => d.Owner, o => o.MapFrom(s => new ListingOwnerDto
             {
                 Id = s.OwnerId,
                 FullName = ((s.OwnerFirstName ?? string.Empty) + " " + (s.OwnerSecondName ?? string.Empty)).Trim(),
-                PhoneNumber = s.OwnerPhoneNumber ?? string.Empty,
                 Governorate = s.OwnerGovernorate ?? string.Empty,
                 Center = s.OwnerCenter ?? string.Empty,
                 ProfileImageUrl = s.OwnerProfileImageUrl,

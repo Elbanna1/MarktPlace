@@ -5,22 +5,18 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using Shared.Constants;
 using Shared.Responses;
+using Shared.Settings;
 
 namespace MarkatPlace.Extensions;
 
 public static class RateLimitingExtensions
 {
-    private static readonly JsonSerializerOptions SerializerOptions =
-        new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
     public static IServiceCollection AddApiRateLimiting(
         this IServiceCollection services, IConfiguration configuration)
     {
-        var section = configuration.GetSection("RateLimiting");
+        var settings = new RateLimitingSettings();
 
-        var enabled = section.GetValue("Enabled", true);
-        var permitPerMinute = section.GetValue("PermitPerMinute", 600);
-        var authPermitPerMinute = section.GetValue("AuthPermitPerMinute", 20);
+        configuration.GetSection(RateLimitingSettings.SectionName).Bind(settings);
 
         services.AddRateLimiter(options =>
         {
@@ -42,46 +38,58 @@ public static class RateLimitingExtensions
                 var response = ApiResponse.Fail(UserMessages.Errors.TooManyRequests);
 
                 await context.HttpContext.Response.WriteAsync(
-                    JsonSerializer.Serialize(response, SerializerOptions), cancellationToken);
+                    JsonSerializer.Serialize(response, ApiJson.SerializerOptions), cancellationToken);
             };
 
-            if (!enabled)
+            if (!settings.Enabled)
             {
                 options.AddPolicy(RateLimitPolicies.Auth, _ => RateLimitPartition.GetNoLimiter("disabled"));
                 return;
             }
 
+            // A signed-in caller is partitioned by account and gets the authenticated budget;
+            // everyone else is partitioned by address and gets the anonymous one. That is what
+            // keeps one noisy neighbour behind a shared address — CGNAT, a campus, an office —
+            // from spending a signed-in user's budget.
             options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
-                RateLimitPartition.GetFixedWindowLimiter(
-                    partitionKey: ResolveClientKey(context),
-                    factory: _ => new FixedWindowRateLimiterOptions
-                    {
-                        PermitLimit = permitPerMinute,
-                        Window = TimeSpan.FromMinutes(1),
-                        QueueLimit = 0
-                    }));
+                Partition(context, settings.Authenticated, settings.Anonymous));
 
             options.AddPolicy(RateLimitPolicies.Auth, context =>
-                RateLimitPartition.GetFixedWindowLimiter(
-                    partitionKey: ResolveClientKey(context),
-                    factory: _ => new FixedWindowRateLimiterOptions
-                    {
-                        PermitLimit = authPermitPerMinute,
-                        Window = TimeSpan.FromMinutes(1),
-                        QueueLimit = 0
-                    }));
+                Partition(context, settings.Auth, settings.Auth, prefix: "auth:"));
         });
 
         return services;
     }
 
-    private static string ResolveClientKey(HttpContext context)
+    private static RateLimitPartition<string> Partition(
+        HttpContext context,
+        RateLimitWindowSettings authenticated,
+        RateLimitWindowSettings anonymous,
+        string prefix = "")
     {
         var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (!string.IsNullOrEmpty(userId))
-            return $"user:{userId}";
 
-        var ip = context.Connection.RemoteIpAddress?.ToString();
-        return string.IsNullOrEmpty(ip) ? "anonymous" : $"ip:{ip}";
+        var (key, limits) = string.IsNullOrEmpty(userId)
+            ? ($"{prefix}{ClientAddressKey(context)}", anonymous)
+            : ($"{prefix}user:{userId}", authenticated);
+
+        return RateLimitPartition.GetSlidingWindowLimiter(key, _ => new SlidingWindowRateLimiterOptions
+        {
+            PermitLimit = limits.PermitPerWindow,
+            Window = limits.Window,
+            SegmentsPerWindow = limits.SegmentsPerWindow,
+            QueueLimit = limits.QueueLimit
+        });
+    }
+
+    // UseForwardedHeaders has already rewritten RemoteIpAddress from X-Forwarded-For by the time
+    // the limiter runs, so this is the client's address and not Nginx's. If the forwarded-header
+    // configuration ever stops trusting the proxy, every caller collapses onto one partition —
+    // see the ForwardedHeaders notes in appsettings.Production.json.
+    private static string ClientAddressKey(HttpContext context)
+    {
+        var address = context.Connection.RemoteIpAddress;
+
+        return address is null ? "anonymous" : $"ip:{address}";
     }
 }

@@ -302,6 +302,15 @@ internal sealed class FakeUnitOfWork : IUnitOfWork
     public Task<ITransactionScope> BeginTransactionAsync(CancellationToken cancellationToken = default) =>
         Task.FromResult<ITransactionScope>(new Scope(this));
 
+    public async Task<TResult> ExecuteInTransactionAsync<TResult>(
+        Func<ITransactionScope, CancellationToken, Task<TResult>> operation,
+        CancellationToken cancellationToken = default)
+    {
+        await using var scope = await BeginTransactionAsync(cancellationToken);
+
+        return await operation(scope, cancellationToken);
+    }
+
     public bool IsUniqueConstraintViolation(Exception exception) => false;
 
     private sealed class Scope : ITransactionScope

@@ -148,16 +148,11 @@ public abstract class RealEstateListItemDtoBase : IRealEstateNamedPayload, IList
     public string? ProjectName { get; set; }
     public string? District { get; set; }
 
-    public string Phone { get; set; } = default!;
-    public string? WhatsApp { get; set; }
-
     public bool Negotiable { get; set; }
 
     public string? PrimaryImageUrl { get; set; }
 
     public List<RealEstateImageDto> Images { get; set; } = new();
-
-    public string? VideoUrl { get; set; }
 
     public bool IsFeatured { get; set; }
     public bool IsPremium { get; set; }

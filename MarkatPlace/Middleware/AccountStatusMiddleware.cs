@@ -8,9 +8,6 @@ namespace MarkatPlace.Middleware;
 
 public class AccountStatusMiddleware
 {
-    private static readonly JsonSerializerOptions SerializerOptions =
-        new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
     private readonly RequestDelegate _next;
     private readonly ILogger<AccountStatusMiddleware> _logger;
 
@@ -98,6 +95,6 @@ public class AccountStatusMiddleware
         context.Response.ContentType = "application/json";
 
         await context.Response.WriteAsync(
-            JsonSerializer.Serialize(ApiResponse.Fail(message), SerializerOptions));
+            JsonSerializer.Serialize(ApiResponse.Fail(message), ApiJson.SerializerOptions));
     }
 }

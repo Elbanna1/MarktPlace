@@ -13,7 +13,7 @@ public static class PagedListingQuery
         string keyName = "Id")
         where TEntity : class
     {
-        var skip = (pageIndex - 1) * pageSize;
+        var skip = (int)Math.Clamp((long)(pageIndex - 1) * pageSize, 0, int.MaxValue);
 
         var keys = await ordered
             .Skip(skip)

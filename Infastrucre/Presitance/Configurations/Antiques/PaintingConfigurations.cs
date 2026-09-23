@@ -1,4 +1,4 @@
-using Domain.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Shared.Constants;
@@ -54,7 +54,8 @@ public class PaintingConfiguration : IEntityTypeConfiguration<Painting>
         builder.HasQueryFilter(QueryFilterNames.SoftDelete, x => !x.IsDeleted);
 
         builder.HasIndex(x => x.CreatedAt);
-        builder.HasIndex(x => x.SellerName);
+        builder.HasIndex(x => new { x.ModerationStatus, x.SellerName }, "IX_Paintings_Advertisers")
+            .IncludeProperties(x => new { x.IsDeleted, x.ExpireAt });
         builder.HasIndex(x => x.PaintingType);
         builder.HasIndex(x => x.ArtistName);
         builder.HasIndex(x => x.Originality);

@@ -102,7 +102,6 @@ public class HandmadeRepository : IHandmadeRepository
             keyed => keyed
                 .Include(x => x.Colors)
                 .Include(x => x.Images)
-                .Include(x => x.Video)
                 .AsSplitQuery(),
             cancellationToken);
 

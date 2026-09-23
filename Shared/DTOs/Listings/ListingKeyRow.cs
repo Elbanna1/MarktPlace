@@ -8,3 +8,10 @@ public class ListingKeyRow
 
     public Guid Id { get; set; }
 }
+
+public class UserListingStatusRow
+{
+    public ListingModuleType Type { get; set; }
+
+    public ListingStatus Status { get; set; }
+}

@@ -195,6 +195,39 @@ module, with a measurement.
 
 ---
 
+## The advertiser lookup index
+
+`IX_*_Advertisers` — migration `AddAdvertiserLookupIndexes`, on all 14 tables that carry a
+`SellerName` filter (الحيوانات 17-25, التحف والأنتيكات 26-30):
+
+```
+(ModerationStatus, SellerName) INCLUDE (IsDeleted, ExpireAt)
+```
+
+It **replaces** `IX_*_SellerName`, which was never seekable: every predicate on that column is
+`LIKE N'%…%'`, and the index carried neither the moderation status nor the expiry, so each candidate
+row still needed a key lookup. The composite seeks `ModerationStatus`, walks `SellerName` in order —
+so the `GROUP BY` is a stream aggregate and the `ORDER BY` needs no sort — and covers the two
+remaining predicates.
+
+Measured on an isolated LocalDB with 1,209 seeded bird listings / 1,207 distinct advertisers:
+
+| Query | Logical reads |
+| --- | ---: |
+| Advertiser page, `IX_Birds_Advertisers` | **14** |
+| Same query forced onto the clustered index | 58 + a sort worktable |
+
+The ratio widens with table size: the index is two narrow keys plus two flags, against a listing row
+of a hundred-odd columns. Both the page and its `COUNT` read the same index.
+
+**Request-count effect.** The frontend previously discovered advertiser options by walking the
+listing feed — `pageSize=50`, up to 10 pages, then de-duplicating in JavaScript. That is **up to 10
+HTTP requests carrying up to 500 full listing payloads**. Opening the filter now costs **1 request
+returning 20 names**, and each keystroke (debounced) costs 1 more. This is a request-count and
+payload-shape comparison, not a latency measurement — the old path was never benchmarked.
+
+---
+
 ## The owner-visibility rule costs nothing
 
 `VisibleToViewer` adds an OR-ed ownership branch to the by-id read. It was verified not to change the

@@ -240,6 +240,9 @@ public static class UserMessages
         public const string RequestTooLarge =
             "حجم الملفات اللي بتبعتها أكبر من المسموح. صغّر الصور أو الفيديو وجرّب تاني.";
 
+        public const string PageIndexOutOfRange =
+            "رقم الصفحة اللي طلبتها أكبر من المسموح. ابحث بفلاتر أدق بدل ما تعدي على كل الصفحات.";
+
         public const string MalformedRequest =
             "الطلب اللي وصلنا مش مكتمل أو اتقطع في النص. جرّب تبعته تاني.";
     }

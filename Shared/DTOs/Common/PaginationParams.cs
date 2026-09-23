@@ -2,7 +2,10 @@ namespace Shared.DTOs.Common;
 
 public class PaginationParams
 {
-    private const int MaxPageSize = 50;
+    public const int MaxPageSize = 50;
+
+    public const int MaxPageIndex = 10_000;
+
     private int _pageSize = 10;
     private int _pageIndex = 1;
 
@@ -17,4 +20,6 @@ public class PaginationParams
         get => _pageSize;
         set => _pageSize = value < 1 ? 10 : (value > MaxPageSize ? MaxPageSize : value);
     }
+
+    public bool IsPageIndexOutOfRange => _pageIndex > MaxPageIndex;
 }

@@ -17,9 +17,6 @@ public class WorkshopListItemDto : IListingStats
     public string Governorate { get; set; } = default!;
     public string Center { get; set; } = default!;
 
-    public string PhoneNumber { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
-
     public string AdTitle { get; set; } = default!;
     public string AdDescription { get; set; } = default!;
 

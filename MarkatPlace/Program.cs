@@ -82,7 +82,8 @@ builder.Services
 
         options.Filters.Add<ListingEditReviewFilter>();
     })
-    .AddApplicationPart(typeof(AuthController).Assembly);
+    .AddApplicationPart(typeof(AuthController).Assembly)
+    .AddJsonOptions(options => ApiJson.Configure(options.JsonSerializerOptions));
 
 builder.Services.Configure<Microsoft.AspNetCore.Mvc.ApiBehaviorOptions>(options =>
 {

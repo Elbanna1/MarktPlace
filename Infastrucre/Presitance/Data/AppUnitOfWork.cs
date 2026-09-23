@@ -20,6 +20,22 @@ public class AppUnitOfWork : IUnitOfWork
         return new EfTransactionScope(transaction);
     }
 
+    public Task<TResult> ExecuteInTransactionAsync<TResult>(
+        Func<ITransactionScope, CancellationToken, Task<TResult>> operation,
+        CancellationToken cancellationToken = default)
+    {
+        var strategy = _context.Database.CreateExecutionStrategy();
+
+        return strategy.ExecuteAsync(async token =>
+        {
+            _context.ChangeTracker.Clear();
+
+            await using var transaction = await BeginTransactionAsync(token);
+
+            return await operation(transaction, token);
+        }, cancellationToken);
+    }
+
     public bool IsUniqueConstraintViolation(Exception exception)
     {
         for (var current = exception; current is not null; current = current.InnerException)

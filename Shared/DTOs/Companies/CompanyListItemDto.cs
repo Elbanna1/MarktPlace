@@ -16,8 +16,6 @@ public class CompanyListItemDto : IListingStats
 
     public string Address { get; set; } = default!;
 
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
     public string? Website { get; set; }
 
     public string? LogoUrl { get; set; }

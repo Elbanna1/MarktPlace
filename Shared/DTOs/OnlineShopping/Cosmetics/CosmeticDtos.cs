@@ -131,8 +131,6 @@ public class CosmeticListItemDto : IListingStats
     public Guid Id { get; set; }
 
     public string StoreName { get; set; } = default!;
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
 
     public CosmeticSection Section { get; set; }
     public string SectionName { get; set; } = default!;
@@ -152,7 +150,6 @@ public class CosmeticListItemDto : IListingStats
 
     public string? PrimaryImageUrl { get; set; }
     public List<CosmeticImageDto> Images { get; set; } = new();
-    public string? VideoUrl { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

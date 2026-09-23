@@ -36,9 +36,6 @@ public class LivestockListItemDto : IListingStats
     public decimal Price { get; set; }
     public bool Negotiable { get; set; }
 
-    public string Phone { get; set; } = default!;
-    public string? WhatsApp { get; set; }
-
     public string Title { get; set; } = default!;
     public string Description { get; set; } = default!;
 

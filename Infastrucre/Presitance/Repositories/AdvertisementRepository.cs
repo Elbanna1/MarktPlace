@@ -151,7 +151,6 @@ public class AdvertisementRepository : IAdvertisementRepository
                 OwnerId = a.OwnerId,
                 OwnerFirstName = a.Owner.FirstName,
                 OwnerSecondName = a.Owner.SecondName,
-                OwnerPhoneNumber = a.Owner.PhoneNumber,
                 OwnerGovernorate = a.Owner.Governorate,
                 OwnerCenter = a.Owner.Center,
                 OwnerProfileImageUrl = a.Owner.ProfileImageUrl,
@@ -165,15 +164,6 @@ public class AdvertisementRepository : IAdvertisementRepository
                         Id = i.Id,
                         Url = i.ImageUrl,
                         IsPrimary = i.IsPrimary
-                    })
-                    .ToList(),
-
-                Features = a.AdvertisementFeatures
-                    .Select(af => new FeatureDto
-                    {
-                        Id = af.Feature.Id,
-                        Name = af.Feature.Name,
-                        Group = af.Feature.Group
                     })
                     .ToList()
             })
@@ -283,11 +273,28 @@ public class AdvertisementRepository : IAdvertisementRepository
     private static IQueryable<Advertisement> ApplySorting(IQueryable<Advertisement> query, AdvertisementSortBy sortBy) =>
         sortBy switch
         {
-            AdvertisementSortBy.Oldest => query.OrderBy(a => a.CreatedAt),
-            AdvertisementSortBy.PriceAsc => query.OrderBy(a => a.Price).ThenByDescending(a => a.CreatedAt),
-            AdvertisementSortBy.PriceDesc => query.OrderByDescending(a => a.Price).ThenByDescending(a => a.CreatedAt),
-            AdvertisementSortBy.MostViewed => query.OrderByDescending(a => a.Views).ThenByDescending(a => a.CreatedAt),
-            _ => query.OrderByDescending(a => a.CreatedAt)
+            AdvertisementSortBy.Oldest => query
+                .OrderBy(a => a.CreatedAt)
+                .ThenBy(a => a.Id),
+
+            AdvertisementSortBy.PriceAsc => query
+                .OrderBy(a => a.Price)
+                .ThenByDescending(a => a.CreatedAt)
+                .ThenByDescending(a => a.Id),
+
+            AdvertisementSortBy.PriceDesc => query
+                .OrderByDescending(a => a.Price)
+                .ThenByDescending(a => a.CreatedAt)
+                .ThenByDescending(a => a.Id),
+
+            AdvertisementSortBy.MostViewed => query
+                .OrderByDescending(a => a.Views)
+                .ThenByDescending(a => a.CreatedAt)
+                .ThenByDescending(a => a.Id),
+
+            _ => query
+                .OrderByDescending(a => a.CreatedAt)
+                .ThenByDescending(a => a.Id)
         };
 
     public async Task<IReadOnlyList<Advertisement>> GetAdvertisementsExpiringBetweenAsync(

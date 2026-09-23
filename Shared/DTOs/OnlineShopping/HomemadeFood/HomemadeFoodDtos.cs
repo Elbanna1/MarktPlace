@@ -161,8 +161,6 @@ public class HomemadeFoodListItemDto : IListingStats
     public Guid Id { get; set; }
 
     public string ProjectName { get; set; } = default!;
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
 
     public HomemadeFoodSection Section { get; set; }
     public string SectionName { get; set; } = default!;
@@ -188,7 +186,6 @@ public class HomemadeFoodListItemDto : IListingStats
 
     public string? PrimaryImageUrl { get; set; }
     public List<HomemadeFoodImageDto> Images { get; set; } = new();
-    public string? VideoUrl { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

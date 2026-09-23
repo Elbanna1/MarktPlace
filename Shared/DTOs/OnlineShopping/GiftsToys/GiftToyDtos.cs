@@ -126,8 +126,6 @@ public class GiftToyListItemDto : IListingStats
     public Guid Id { get; set; }
 
     public string StoreName { get; set; } = default!;
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
 
     public GiftToyType GiftType { get; set; }
     public string GiftTypeName { get; set; } = default!;
@@ -146,7 +144,6 @@ public class GiftToyListItemDto : IListingStats
 
     public string? PrimaryImageUrl { get; set; }
     public List<GiftToyImageDto> Images { get; set; } = new();
-    public string? VideoUrl { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

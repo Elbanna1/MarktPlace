@@ -15,7 +15,6 @@ public class LostFoundPostListItemDto : IListingViews
 
     public string ItemName { get; set; } = default!;
     public string Description { get; set; } = default!;
-    public string PhoneNumber { get; set; } = default!;
 
     public string Governorate { get; set; } = default!;
     public string Center { get; set; } = default!;

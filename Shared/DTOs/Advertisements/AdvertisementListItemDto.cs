@@ -1,4 +1,4 @@
-using Shared.DTOs.Listings;
+﻿using Shared.DTOs.Listings;
 using Shared.Enums;
 using System.Text.Json.Serialization;
 namespace Shared.DTOs.Advertisements;
@@ -48,9 +48,8 @@ public class AdvertisementListItemDto : IListingViews
 
     public string? PrimaryImageUrl { get; set; }
     public List<AdvertisementImageDto> Images { get; set; } = new();
-    public List<FeatureDto> Features { get; set; } = new();
 
-    public OwnerDto Owner { get; set; } = default!;
+    public ListingOwnerDto Owner { get; set; } = default!;
 
     ListingModuleType IListingViews.ViewsListingType => ListingModuleType.Advertisement;
 

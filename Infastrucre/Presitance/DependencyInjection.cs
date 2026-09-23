@@ -46,7 +46,17 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>((provider, options) =>
         {
             options.UseSqlServer(connectionString, sql =>
-                sql.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName));
+            {
+                sql.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName);
+
+                sql.EnableRetryOnFailure(
+                    maxRetryCount: configuration.GetValue("Database:MaxRetryCount", 5),
+                    maxRetryDelay: TimeSpan.FromSeconds(
+                        configuration.GetValue("Database:MaxRetryDelaySeconds", 10)),
+                    errorNumbersToAdd: null);
+
+                sql.CommandTimeout(configuration.GetValue("Database:CommandTimeoutSeconds", 60));
+            });
 
             options.AddInterceptors(provider.GetRequiredService<ListingEditModerationInterceptor>());
 
@@ -116,6 +126,7 @@ public static class DependencyInjection
         services.AddScoped<IHorseRepository, HorseRepository>();
         services.AddScoped<ICamelRepository, CamelRepository>();
         services.AddScoped<IBirdRepository, BirdRepository>();
+        services.AddScoped<IAdvertiserLookupRepository, AdvertiserLookupRepository>();
         services.AddScoped<IPetRepository, PetRepository>();
         services.AddScoped<IFishRepository, FishRepository>();
         services.AddScoped<IBeeRepository, BeeRepository>();

@@ -76,8 +76,6 @@ public static class AntiqueModuleExamples
         {
             Id = details.Id,
             SellerName = details.SellerName,
-            Phone = details.Phone,
-            WhatsApp = details.WhatsApp,
             ItemName = details.ItemName,
             ItemType = details.ItemType,
             ItemTypeName = details.ItemTypeName,
@@ -96,7 +94,6 @@ public static class AntiqueModuleExamples
             Description = details.Description,
             PrimaryImageUrl = details.Images[0].Url,
             Images = details.Images,
-            Video = details.Video,
             CreatedAt = details.CreatedAt
         };
     }
@@ -160,8 +157,6 @@ public static class AntiqueModuleExamples
         {
             Id = details.Id,
             SellerName = details.SellerName,
-            Phone = details.Phone,
-            WhatsApp = details.WhatsApp,
             AntiqueName = details.AntiqueName,
             AntiqueType = details.AntiqueType,
             AntiqueTypeName = details.AntiqueTypeName,
@@ -185,7 +180,6 @@ public static class AntiqueModuleExamples
             Description = details.Description,
             PrimaryImageUrl = details.Images[0].Url,
             Images = details.Images,
-            Video = details.Video,
             CreatedAt = details.CreatedAt
         };
     }
@@ -248,8 +242,6 @@ public static class AntiqueModuleExamples
         {
             Id = details.Id,
             SellerName = details.SellerName,
-            Phone = details.Phone,
-            WhatsApp = details.WhatsApp,
             PaintingName = details.PaintingName,
             PaintingType = details.PaintingType,
             PaintingTypeName = details.PaintingTypeName,
@@ -272,7 +264,6 @@ public static class AntiqueModuleExamples
             Description = details.Description,
             PrimaryImageUrl = details.Images[0].Url,
             Images = details.Images,
-            Video = details.Video,
             CreatedAt = details.CreatedAt
         };
     }
@@ -343,8 +334,6 @@ public static class AntiqueModuleExamples
         {
             Id = details.Id,
             SellerName = details.SellerName,
-            Phone = details.Phone,
-            WhatsApp = details.WhatsApp,
             ProductName = details.ProductName,
             HandmadeType = details.HandmadeType,
             HandmadeTypeName = details.HandmadeTypeName,
@@ -363,7 +352,6 @@ public static class AntiqueModuleExamples
             Description = details.Description,
             PrimaryImageUrl = details.Images[0].Url,
             Images = details.Images,
-            Video = details.Video,
             CreatedAt = details.CreatedAt
         };
     }
@@ -426,8 +414,6 @@ public static class AntiqueModuleExamples
         {
             Id = details.Id,
             SellerName = details.SellerName,
-            Phone = details.Phone,
-            WhatsApp = details.WhatsApp,
             ItemName = details.ItemName,
             ItemType = details.ItemType,
             ItemTypeName = details.ItemTypeName,
@@ -450,7 +436,6 @@ public static class AntiqueModuleExamples
             Description = details.Description,
             PrimaryImageUrl = details.Images[0].Url,
             Images = details.Images,
-            Video = details.Video,
             CreatedAt = details.CreatedAt
         };
     }

@@ -41,6 +41,13 @@ public static class DependencyInjection
 
         services.AddSingleton<ILookupCache, LookupCache>();
 
+        services.AddSingleton<IPublicResponseCache, Services.Caching.PublicResponseCache>();
+
+        services.AddSingleton<Services.Listings.ListingViewQueue>();
+        services.AddSingleton<IListingViewRecorder>(
+            provider => provider.GetRequiredService<Services.Listings.ListingViewQueue>());
+        services.AddHostedService<Services.Listings.ListingViewFlushService>();
+
         services.AddScoped<IHomeService, HomeService>();
 
         services.AddScoped<IListingInteractionService, ListingInteractionService>();
@@ -76,6 +83,7 @@ public static class DependencyInjection
         services.AddScoped<AdFormBreadcrumbBuilder>();
         services.AddScoped<ICreateAdFormService, CreateAdFormService>();
         services.AddScoped<IReadConfigService, ReadConfigService>();
+        services.AddScoped<IAdvertiserLookupService, AdvertiserLookupService>();
         services.AddScoped<ILostFoundService, LostFoundService>();
         services.AddScoped<IWorkshopService, WorkshopService>();
         services.AddScoped<ICraftsmanService, CraftsmanService>();

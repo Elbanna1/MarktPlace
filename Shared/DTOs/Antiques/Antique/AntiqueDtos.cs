@@ -89,8 +89,6 @@ public class AntiqueListItemDto : IListingStats
     public Guid Id { get; set; }
 
     public string SellerName { get; set; } = default!;
-    public string Phone { get; set; } = default!;
-    public string? WhatsApp { get; set; }
 
     public string AntiqueName { get; set; } = default!;
 
@@ -125,7 +123,6 @@ public class AntiqueListItemDto : IListingStats
 
     public string? PrimaryImageUrl { get; set; }
     public List<AntiqueImageDto> Images { get; set; } = new();
-    public AntiqueVideoDto? Video { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

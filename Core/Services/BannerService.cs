@@ -10,24 +10,37 @@ namespace Services;
 
 public class BannerService : IBannerService
 {
+    private static readonly TimeSpan ActiveCacheDuration = TimeSpan.FromMinutes(1);
+
+    private const string ActiveCacheKey = "banners:active";
+
     private readonly IBannerRepository _repository;
     private readonly IFileService _fileService;
     private readonly IMapper _mapper;
+    private readonly IPublicResponseCache _cache;
+    private readonly ILookupCache _cacheVersion;
 
-    public BannerService(IBannerRepository repository, IFileService fileService, IMapper mapper)
+    public BannerService(
+        IBannerRepository repository,
+        IFileService fileService,
+        IMapper mapper,
+        IPublicResponseCache cache,
+        ILookupCache cacheVersion)
     {
         _repository = repository;
         _fileService = fileService;
         _mapper = mapper;
+        _cache = cache;
+        _cacheVersion = cacheVersion;
     }
 
-    public async Task<IReadOnlyList<BannerDto>> GetActiveAsync(CancellationToken cancellationToken = default)
-    {
-        var now = DateTime.UtcNow;
-        var banners = await _repository.GetActiveAsync(now, cancellationToken);
+    public Task<IReadOnlyList<BannerDto>> GetActiveAsync(CancellationToken cancellationToken = default) =>
+        _cache.GetOrCreateAsync(ActiveCacheKey, ActiveCacheDuration, async token =>
+        {
+            var now = DateTime.UtcNow;
 
-        return ToDtos(banners, now);
-    }
+            return ToDtos(await _repository.GetActiveAsync(now, token), now);
+        }, cancellationToken);
 
     public async Task<IReadOnlyList<BannerDto>> GetAllAsync(
         BannerFilterParams filter, CancellationToken cancellationToken = default)
@@ -75,6 +88,8 @@ public class BannerService : IBannerService
         _repository.Add(banner);
         await _repository.SaveChangesAsync(cancellationToken);
 
+        _cacheVersion.Invalidate();
+
         return ToDto(banner, DateTime.UtcNow);
     }
 
@@ -114,6 +129,8 @@ public class BannerService : IBannerService
         _repository.Update(banner);
         await _repository.SaveChangesAsync(cancellationToken);
 
+        _cacheVersion.Invalidate();
+
         if (replacedImagePath is not null)
             _fileService.Delete(replacedImagePath);
 
@@ -129,6 +146,8 @@ public class BannerService : IBannerService
 
         _repository.Remove(banner);
         await _repository.SaveChangesAsync(cancellationToken);
+
+        _cacheVersion.Invalidate();
 
         _fileService.Delete(imagePath);
     }

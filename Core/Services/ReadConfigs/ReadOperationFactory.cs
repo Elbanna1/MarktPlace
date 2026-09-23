@@ -1,3 +1,4 @@
+using Shared.DTOs.Lookups;
 using Shared.DTOs.Lookups.Forms;
 using Shared.DTOs.Lookups.Read;
 
@@ -128,6 +129,28 @@ internal static class ReadOperationFactory
 
     public static ReadOperationDto Features() =>
         Operation(ReadOperationKeys.Features, "المميزات", "Features", $"{LookupsRoute}/features");
+
+    public static ReadOperationDto Advertisers(int categoryId, int subCategoryId) =>
+        Operation(ReadOperationKeys.Advertisers, "المعلنون", "Advertisers",
+            $"{LookupsRoute}/advertisers/{{categoryId}}/{{subCategoryId}}",
+            paginated: true,
+            routeParameters:
+            [
+                Param("categoryId", "القسم الرئيسي", "Category", ReadParameterTypes.Integer,
+                    required: true, defaultValue: categoryId),
+                Param("subCategoryId", "القسم الفرعي", "Sub category", ReadParameterTypes.Integer,
+                    required: true, defaultValue: subCategoryId)
+            ],
+            queryParameters:
+            [
+                Param("search", "بحث باسم المعلن", "Advertiser search", ReadParameterTypes.String,
+                    max: AdvertiserLookupParams.MaxSearchLength),
+                Param("pageIndex", "رقم الصفحة", "Page index", ReadParameterTypes.Integer,
+                    defaultValue: 1, min: 1),
+                Param("pageSize", "حجم الصفحة", "Page size", ReadParameterTypes.Integer,
+                    defaultValue: AdvertiserLookupParams.DefaultPageSize, min: 1,
+                    max: Shared.DTOs.Common.PaginationParams.MaxPageSize)
+            ]);
 
     public static ReadOperationDto WorkshopTypes() =>
         Operation(ReadOperationKeys.WorkshopTypes, "أنواع الورش", "Workshop types",

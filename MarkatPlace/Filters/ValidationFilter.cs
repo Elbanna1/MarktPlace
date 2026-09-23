@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Shared.Constants;
+using Shared.DTOs.Common;
 using Shared.Responses;
 
 namespace MarkatPlace.Filters;
@@ -30,6 +32,12 @@ public class ValidationFilter : IAsyncActionFilter
                 return;
             }
 
+            if (argument is PaginationParams { IsPageIndexOutOfRange: true })
+            {
+                context.Result = Unprocessable([UserMessages.Errors.PageIndexOutOfRange]);
+                return;
+            }
+
             var validatorType = typeof(IValidator<>).MakeGenericType(argument.GetType());
 
             if (context.HttpContext.RequestServices.GetService(validatorType) is not IValidator validator)
@@ -41,16 +49,16 @@ public class ValidationFilter : IAsyncActionFilter
             if (result.IsValid)
                 continue;
 
-            var errors = result.Errors.Select(e => e.ErrorMessage).ToList();
-            var response = ApiResponse.Fail("فيه بيانات ناقصة أو مش صحيحة.", errors);
-
-            context.Result = new ObjectResult(response)
-            {
-                StatusCode = StatusCodes.Status422UnprocessableEntity
-            };
+            context.Result = Unprocessable(result.Errors.Select(e => e.ErrorMessage).ToList());
             return;
         }
 
         await next();
     }
+
+    private static ObjectResult Unprocessable(List<string> errors) =>
+        new(ApiResponse.Fail("فيه بيانات ناقصة أو مش صحيحة.", errors))
+        {
+            StatusCode = StatusCodes.Status422UnprocessableEntity
+        };
 }

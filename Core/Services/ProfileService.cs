@@ -231,8 +231,8 @@ public class ProfileService : IProfileService
         var now = DateTime.UtcNow;
         var counts = await _userListingRepository.GetStatusCountsAsync(userId, now, cancellationToken);
 
-        var ownedKeys = await _userListingRepository.GetOwnedKeysAsync(userId, now, cancellationToken);
-        var (totalViews, totalFavorites) = await _interactions.GetOwnerTotalsAsync(ownedKeys, cancellationToken);
+        var (totalViews, totalFavorites) =
+            await _userListingRepository.GetOwnerTotalsAsync(userId, now, cancellationToken);
 
         var byType = counts
             .GroupBy(count => count.Type)

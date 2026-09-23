@@ -7,9 +7,6 @@ namespace MarkatPlace.Middleware;
 
 public class GlobalExceptionHandlingMiddleware
 {
-    private static readonly JsonSerializerOptions SerializerOptions =
-        new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
     private static readonly string[] PreservedHeaders =
     [
         "Access-Control-Allow-Origin",
@@ -125,7 +122,7 @@ public class GlobalExceptionHandlingMiddleware
 
         var response = ApiResponse.Fail(message, errors);
 
-        await context.Response.WriteAsync(JsonSerializer.Serialize(response, SerializerOptions));
+        await context.Response.WriteAsync(JsonSerializer.Serialize(response, ApiJson.SerializerOptions));
     }
 }
 

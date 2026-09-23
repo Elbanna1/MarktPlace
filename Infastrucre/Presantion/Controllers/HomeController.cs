@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Filters;
 using ServicesAbstraction;
 using Shared.DTOs.Home;
 using Shared.DTOs.Lookups;
@@ -22,6 +23,7 @@ public class HomeController : ControllerBase
     }
 
     [HttpGet]
+    [HttpCache(MaxAgeSeconds = 60, Scope = HttpCacheScope.Shared)]
     [ProducesResponseType(typeof(ApiResponse<HomeConfigurationDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<HomeConfigurationDto>>> Get()
     {
@@ -45,6 +47,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpGet]
+    [HttpCache(MaxAgeSeconds = 300, Scope = HttpCacheScope.Shared)]
     [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<ProjectDto>>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<ProjectDto>>>> Get(
         [FromQuery] int? centerId)

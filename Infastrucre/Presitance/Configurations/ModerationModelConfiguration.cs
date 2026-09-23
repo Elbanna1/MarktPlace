@@ -19,13 +19,17 @@ public static class ModerationModelConfiguration
     private static readonly string[] PromotionProperties = { "IsPremium", "IsFeatured" };
 
     private static string[] OrderingIndexKey<TEntity>(
-        Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
+        Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity,
+        string? sortColumn = null)
         where TEntity : class
     {
         var key = new List<string> { nameof(IModeratedListing.ModerationStatus) };
 
         if (PromotionProperties.All(name => entity.Metadata.FindProperty(name) is not null))
             key.AddRange(PromotionProperties);
+
+        if (sortColumn is not null)
+            key.Add(sortColumn);
 
         if (entity.Metadata.FindProperty(CreatedAtProperty) is not null)
             key.Add(CreatedAtProperty);
@@ -37,6 +41,43 @@ public static class ModerationModelConfiguration
         }
 
         return key.ToArray();
+    }
+
+    // Sorting by price or by view count reads the same rows as the default feed, in a different
+    // order, so the visibility index cannot serve it: SQL Server can only walk an index forwards or
+    // exactly backwards, and "premium first, then cheapest" is neither direction of
+    // "premium first, then newest". Ascending and descending price each need their own index for
+    // the same reason. Only the modules whose repository offers the sort get one — see
+    // ListingSortIndexCatalog.
+    private static void ConfigureSortIndexes<TEntity>(
+        Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<TEntity> entity)
+        where TEntity : class
+    {
+        if (!ListingSortIndexCatalog.ForEntity.TryGetValue(typeof(TEntity), out var sorts))
+            return;
+
+        var carried = new[] { IsDeletedProperty, ExpireAtProperty }
+            .Where(name => entity.Metadata.FindProperty(name) is not null)
+            .ToArray();
+
+        foreach (var sort in sorts)
+        {
+            if (entity.Metadata.FindProperty(sort.Column) is null)
+                continue;
+
+            var key = OrderingIndexKey(entity, sort.Column);
+
+            var descending = key
+                .Select((name, position) => name == sort.Column ? sort.Descending : position > 0)
+                .ToArray();
+
+            var index = entity
+                .HasIndex(key, $"IX_{entity.Metadata.GetTableName()}_Feed_{sort.Suffix}")
+                .IsDescending(descending);
+
+            if (carried.Length > 0)
+                index.IncludeProperties(carried);
+        }
     }
 
     private static readonly MethodInfo ConfigureMethod =
@@ -94,6 +135,8 @@ public static class ModerationModelConfiguration
 
         if (carried.Length > 0)
             visibility.IncludeProperties(carried);
+
+        ConfigureSortIndexes(entity);
 
         entity.HasQueryFilter(FilterName, x =>
             x.ModerationStatus == ModerationStatus.Approved &&

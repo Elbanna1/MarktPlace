@@ -62,8 +62,6 @@ public static class JobModuleExamples
         {
             Id = details.Id,
             ApplicantName = details.ApplicantName,
-            Phone = details.Phone,
-            WhatsApp = details.WhatsApp,
             JobField = details.JobField,
             JobFieldName = details.JobFieldName,
             JobFieldGroup = details.JobFieldGroup,
@@ -138,8 +136,6 @@ public static class JobModuleExamples
         {
             Id = details.Id,
             EmployerName = details.EmployerName,
-            Phone = details.Phone,
-            WhatsApp = details.WhatsApp,
             JobTitle = details.JobTitle,
             JobField = details.JobField,
             JobFieldName = details.JobFieldName,

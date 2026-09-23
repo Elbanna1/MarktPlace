@@ -22,7 +22,7 @@ public class PublicSettingsController : ControllerBase
     }
 
     [HttpGet]
-    [HttpCache(Revalidate = true)]
+    [HttpCache(Revalidate = true, Scope = HttpCacheScope.Shared)]
     [ProducesResponseType(typeof(ApiResponse<PublicSettingsDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<PublicSettingsDto>>> Get()
     {

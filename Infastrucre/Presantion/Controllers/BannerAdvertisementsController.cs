@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Filters;
 using ServicesAbstraction;
 using Shared.DTOs.BannerBookings;
 using Shared.Enums;
@@ -22,6 +23,7 @@ public class BannerAdvertisementsController : ControllerBase
     }
 
     [HttpGet("home-slider-1")]
+    [HttpCache(MaxAgeSeconds = 60, Scope = HttpCacheScope.Shared)]
     [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<PublishedBannerDto>>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<PublishedBannerDto>>>> GetHomeSlider1()
     {
@@ -32,6 +34,7 @@ public class BannerAdvertisementsController : ControllerBase
     }
 
     [HttpGet("home-slider-2")]
+    [HttpCache(MaxAgeSeconds = 60, Scope = HttpCacheScope.Shared)]
     [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<PublishedBannerDto>>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<PublishedBannerDto>>>> GetHomeSlider2()
     {
@@ -42,6 +45,7 @@ public class BannerAdvertisementsController : ControllerBase
     }
 
     [HttpGet("sub-category")]
+    [HttpCache(MaxAgeSeconds = 60, Scope = HttpCacheScope.Shared)]
     [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<PublishedBannerDto>>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -55,6 +59,7 @@ public class BannerAdvertisementsController : ControllerBase
     }
 
     [HttpGet("active")]
+    [HttpCache(MaxAgeSeconds = 60, Scope = HttpCacheScope.Shared)]
     [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<PublishedBannerDto>>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<PublishedBannerDto>>>> GetActive(
         [FromQuery] BannerLocation? location,

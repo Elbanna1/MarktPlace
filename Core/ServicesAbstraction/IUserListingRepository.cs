@@ -18,6 +18,11 @@ public interface IUserListingRepository
         DateTime utcNow,
         CancellationToken cancellationToken = default);
 
+    Task<(int TotalViews, int TotalFavorites)> GetOwnerTotalsAsync(
+        string ownerId,
+        DateTime utcNow,
+        CancellationToken cancellationToken = default);
+
     Task<UserListingRow?> GetByKeyAsync(
         ListingModuleType type, Guid listingId, DateTime utcNow,
         CancellationToken cancellationToken = default,

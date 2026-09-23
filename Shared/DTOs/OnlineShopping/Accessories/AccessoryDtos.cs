@@ -152,8 +152,6 @@ public class AccessoryListItemDto : IListingStats
     public Guid Id { get; set; }
 
     public string StoreName { get; set; } = default!;
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
     public string? LogoUrl { get; set; }
 
     public AccessoryType AccessoryType { get; set; }
@@ -178,7 +176,6 @@ public class AccessoryListItemDto : IListingStats
 
     public string? PrimaryImageUrl { get; set; }
     public List<AccessoryImageDto> Images { get; set; } = new();
-    public string? VideoUrl { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

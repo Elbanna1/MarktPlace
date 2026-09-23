@@ -1,4 +1,5 @@
-﻿using Shared.Constants;
+﻿using Services.Lookups;
+using Shared.Constants;
 using Shared.DTOs.Lookups.Forms;
 using Shared.DTOs.Lookups.Read;
 using Shared.Enums;
@@ -724,7 +725,8 @@ public static class ReadConfigCatalog
         var queryParameters = new List<ReadParameterDto>
         {
             Param("search", "بحث", "Search", ReadParameterTypes.String),
-            Param("sellerName", "اسم البائع", "Seller name", ReadParameterTypes.String)
+            Param("sellerName", "اسم البائع", "Seller name", ReadParameterTypes.String,
+                optionsSource: ReadOperationKeys.Advertisers, optionsValue: ReadOptionsValues.Name)
         };
 
         queryParameters.AddRange(filters);
@@ -1029,7 +1031,8 @@ public static class ReadConfigCatalog
         var queryParameters = new List<ReadParameterDto>
         {
             Param("search", "بحث", "Search", ReadParameterTypes.String),
-            Param("sellerName", "اسم البائع", "Seller name", ReadParameterTypes.String)
+            Param("sellerName", "اسم البائع", "Seller name", ReadParameterTypes.String,
+                optionsSource: ReadOperationKeys.Advertisers, optionsValue: ReadOptionsValues.Name)
         };
 
         queryParameters.AddRange(filters);
@@ -2078,6 +2081,9 @@ public static class ReadConfigCatalog
 
     private static IEnumerable<ReadOperationDto> SharedTail(int categoryId, int subCategoryId)
     {
+        if (AdvertiserLookupCatalog.Supports(subCategoryId))
+            yield return Advertisers(categoryId, subCategoryId);
+
         yield return Governorates();
         yield return Centers();
         yield return Categories();

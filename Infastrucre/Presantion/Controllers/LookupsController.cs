@@ -20,21 +20,27 @@ public class LookupsController : ControllerBase
 {
     private const int ReferenceDataMaxAgeSeconds = 300;
 
+    private const int AdvertiserOptionsMaxAgeSeconds = 60;
+
     private readonly ILookupService _lookupService;
     private readonly ICreateAdFormService _createAdFormService;
     private readonly IReadConfigService _readConfigService;
+    private readonly IAdvertiserLookupService _advertiserLookupService;
 
     public LookupsController(
         ILookupService lookupService,
         ICreateAdFormService createAdFormService,
-        IReadConfigService readConfigService)
+        IReadConfigService readConfigService,
+        IAdvertiserLookupService advertiserLookupService)
     {
         _lookupService = lookupService;
         _createAdFormService = createAdFormService;
         _readConfigService = readConfigService;
+        _advertiserLookupService = advertiserLookupService;
     }
 
     [HttpGet("create-ad-form/{categoryId:int}/{subCategoryId:int?}")]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds, Scope = HttpCacheScope.Shared)]
     [ProducesResponseType(typeof(ApiResponse<CreateAdFormDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -47,7 +53,7 @@ public class LookupsController : ControllerBase
     }
 
     [HttpGet("read-config/{categoryId:int}/{subCategoryId:int?}")]
-    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds)]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds, Scope = HttpCacheScope.Shared)]
     [ProducesResponseType(typeof(ApiResponse<ReadConfigDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -59,7 +65,23 @@ public class LookupsController : ControllerBase
         return Ok(ApiResponse<ReadConfigDto>.Ok(result, UserMessages.Lookups.ReadConfigLoaded));
     }
 
+    [HttpGet("advertisers/{categoryId:int}/{subCategoryId:int}")]
+    [HttpCache(MaxAgeSeconds = AdvertiserOptionsMaxAgeSeconds, Scope = HttpCacheScope.Shared)]
+    [ProducesResponseType(typeof(ApiResponse<PaginatedResult<AdvertiserOptionDto>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApiResponse<PaginatedResult<AdvertiserOptionDto>>>> GetAdvertisers(
+        int categoryId, int subCategoryId, [FromQuery] AdvertiserLookupParams parameters)
+    {
+        var result = await _advertiserLookupService.GetAdvertisersAsync(
+            categoryId, subCategoryId, parameters, HttpContext.RequestAborted);
+
+        return Ok(ApiResponse<PaginatedResult<AdvertiserOptionDto>>.Ok(
+            result, UserMessages.Lookups.Loaded));
+    }
+
     [HttpGet("categories")]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds, Scope = HttpCacheScope.Shared)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<CategoryDto>>>> GetCategories()
     {
         var result = await _lookupService.GetCategoriesAsync(HttpContext.RequestAborted);
@@ -67,7 +89,7 @@ public class LookupsController : ControllerBase
     }
 
     [HttpGet("categories-tree")]
-    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds)]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds, Scope = HttpCacheScope.Shared)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<CategoryTreeDto>>>> GetCategoriesTree()
     {
         var result = await _lookupService.GetCategoriesTreeAsync(HttpContext.RequestAborted);
@@ -75,6 +97,7 @@ public class LookupsController : ControllerBase
     }
 
     [HttpGet("subcategories/{categoryId:int}")]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds, Scope = HttpCacheScope.Shared)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<SubCategoryDto>>>> GetSubCategories(int categoryId)
     {
         var result = await _lookupService.GetSubCategoriesAsync(categoryId, HttpContext.RequestAborted);
@@ -82,6 +105,7 @@ public class LookupsController : ControllerBase
     }
 
     [HttpGet("features")]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds, Scope = HttpCacheScope.Shared)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<FeatureDto>>>> GetFeatures(
         [FromQuery] int? subCategoryId = null)
     {
@@ -90,6 +114,7 @@ public class LookupsController : ControllerBase
     }
 
     [HttpGet("listing-types")]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds, Scope = HttpCacheScope.Shared)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<ListingTypeDto>>>> GetListingTypes()
     {
         var result = await _lookupService.GetListingTypesAsync(HttpContext.RequestAborted);
@@ -97,6 +122,7 @@ public class LookupsController : ControllerBase
     }
 
     [HttpGet("governorates")]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds, Scope = HttpCacheScope.Shared)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<GovernorateDto>>>> GetGovernorates()
     {
         var result = await _lookupService.GetGovernoratesAsync(HttpContext.RequestAborted);
@@ -104,6 +130,7 @@ public class LookupsController : ControllerBase
     }
 
     [HttpGet("centers/{governorateId:int}")]
+    [HttpCache(MaxAgeSeconds = ReferenceDataMaxAgeSeconds, Scope = HttpCacheScope.Shared)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<CenterDto>>>> GetCenters(int governorateId)
     {
         var result = await _lookupService.GetCentersAsync(governorateId, HttpContext.RequestAborted);

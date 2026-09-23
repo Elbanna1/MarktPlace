@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Filters;
 using ServicesAbstraction;
 using Shared.DTOs.Banners;
 using Shared.Responses;
@@ -21,6 +22,7 @@ public class BannersController : ControllerBase
     }
 
     [HttpGet]
+    [HttpCache(MaxAgeSeconds = 60, Scope = HttpCacheScope.Shared)]
     [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<BannerDto>>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<IReadOnlyList<BannerDto>>>> GetActive()
     {

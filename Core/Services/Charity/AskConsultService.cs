@@ -362,7 +362,7 @@ public class AskConsultService : IAskConsultService
         return dto;
     }
 
-    private TDto Map<TDto>(AskConsult entity) where TDto : CharityDetailsDtoBase
+    private TDto Map<TDto>(AskConsult entity) where TDto : CharityListItemDtoBase
     {
         var dto = _mapper.Map<TDto>(entity);
 

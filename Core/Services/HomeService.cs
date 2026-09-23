@@ -8,16 +8,26 @@ namespace Services;
 
 public class HomeService : IHomeService
 {
+    private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(5);
+
+    private const string CacheKey = "home:configuration";
+
     private readonly IAdminHomeRepository _repository;
     private readonly ILookupService _lookups;
+    private readonly IPublicResponseCache _cache;
 
-    public HomeService(IAdminHomeRepository repository, ILookupService lookups)
+    public HomeService(
+        IAdminHomeRepository repository, ILookupService lookups, IPublicResponseCache cache)
     {
         _repository = repository;
         _lookups = lookups;
+        _cache = cache;
     }
 
-    public async Task<HomeConfigurationDto> GetAsync(CancellationToken cancellationToken = default)
+    public Task<HomeConfigurationDto> GetAsync(CancellationToken cancellationToken = default) =>
+        _cache.GetOrCreateAsync(CacheKey, CacheDuration, LoadAsync, cancellationToken);
+
+    private async Task<HomeConfigurationDto> LoadAsync(CancellationToken cancellationToken)
     {
         var sections = await _repository.GetSectionsAsync(cancellationToken);
 

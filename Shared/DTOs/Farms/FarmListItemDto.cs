@@ -16,9 +16,6 @@ public class FarmListItemDto : IListingStats
 
     public string Address { get; set; } = default!;
 
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
-
     public decimal? AreaInFeddan { get; set; }
     public string? AvailableQuantity { get; set; }
     public AvailabilitySeason? AvailabilitySeason { get; set; }

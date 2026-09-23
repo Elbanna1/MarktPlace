@@ -374,9 +374,31 @@ Real-time delivery: [ARCHITECTURE § Real-time](ARCHITECTURE.md#real-time-notifi
 | `GET /categories-tree` | Every category and sub-category — the module inventory |
 | `GET /create-ad-form/{categoryId}/{subCategoryId?}` | The whole create form: fields, conditions, lookups, submit endpoint, **breadcrumb** and **upload limits** |
 | `GET /read-config/{categoryId}/{subCategoryId?}` | Every read route for that selection, with `query` pinning ids |
+| `GET /advertisers/{categoryId}/{subCategoryId}` | A searchable, paginated page of advertiser names for that selection |
 | `GET /governorates`, `/centers`, `/listing-types` | Reference data |
 
 All anonymous. These two endpoints are why the frontend holds no business logic.
+
+### Advertiser options — `GET /advertisers/{categoryId}/{subCategoryId}`
+
+Feeds the advertiser autocomplete on a sub-category feed. Query parameters: `search` (optional,
+max 150 characters — the column length), `pageIndex` (default 1), `pageSize` (default **20**, capped
+at 50). `Cache-Control: public, max-age=60`, with an `ETag`.
+
+```json
+{ "success": true, "message": "تم تحميل قائمة الاختيارات.", "data": {
+    "items": [ { "id": "محمد للطيور", "name": "محمد للطيور", "listingsCount": 3 } ],
+    "pageIndex": 1, "pageSize": 20, "totalCount": 1207, "totalPages": 61,
+    "hasPrevious": false, "hasNext": true } }
+```
+
+`id` is the advertiser name, because that is what the listing filter matches — see D-35. Pick an
+option, then send its `name` back to the feed as `?sellerName=...`; nothing else about the advertiser
+is exposed.
+
+Available on the 14 sub-categories whose feed has a `sellerName` filter — الحيوانات (17-25) and
+التحف والأنتيكات (26-30). Any other sub-category answers `400`, and `read-config` omits the
+`advertisers` operation for it, so the frontend never has to hard-code the list.
 
 ### Where am I? — `breadcrumb`
 

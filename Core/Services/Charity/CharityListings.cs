@@ -27,7 +27,7 @@ internal static class CharityListings
     }
 
     public static void ApplyClassification(
-        CharityDetailsDtoBase dto, ListingModuleType module, IFileService fileService, string ownerName)
+        CharityListItemDtoBase dto, ListingModuleType module, IFileService fileService, string ownerName)
     {
         var subCategory = ListingModuleCatalog.SubCategoryOf(module);
         var category = ListingModuleCatalog.CategoryOf(module);

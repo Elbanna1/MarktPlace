@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Domain.Entities;
 using ServicesAbstraction;
 using Shared.Constants;
@@ -179,7 +179,7 @@ public class RescueService : IRescueService
         return Map<RescueDetailsDto>(entity);
     }
 
-    private TDto Map<TDto>(Rescue entity) where TDto : CharityDetailsDtoBase
+    private TDto Map<TDto>(Rescue entity) where TDto : CharityListItemDtoBase
     {
         var dto = _mapper.Map<TDto>(entity);
 

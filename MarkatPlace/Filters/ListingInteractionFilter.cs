@@ -34,21 +34,31 @@ public class ListingInteractionFilter : IAsyncActionFilter
 
         try
         {
-            var interactions = context.HttpContext.RequestServices
-                .GetRequiredService<IListingInteractionService>();
-
             if (HttpMethods.IsGet(method))
             {
-                await interactions.RecordViewAsync(
-                    module, listingId,
-                    context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier),
-                    context.HttpContext.Connection.RemoteIpAddress?.ToString(),
-                    context.HttpContext.RequestAborted);
+                // A read must stay a read. The view is handed to an in-process queue that a hosted
+                // service drains in coalesced batches, so a details GET no longer costs two reads
+                // and up to three writes of its own. Views therefore land within seconds rather
+                // than inside the request, which is why the caller's own response is not expected
+                // to show its own view.
+                context.HttpContext.RequestServices
+                    .GetRequiredService<IListingViewRecorder>()
+                    .Record(new ListingViewEvent(
+                        module,
+                        listingId,
+                        context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                        context.HttpContext.Connection.RemoteIpAddress?.ToString(),
+                        IncrementModuleCounter: true,
+                        DateTime.UtcNow));
+
+                return;
             }
-            else if (HttpMethods.IsDelete(method))
+
+            if (HttpMethods.IsDelete(method))
             {
-                await interactions.PurgeListingAsync(
-                    module, listingId, context.HttpContext.RequestAborted);
+                await context.HttpContext.RequestServices
+                    .GetRequiredService<IListingInteractionService>()
+                    .PurgeListingAsync(module, listingId, context.HttpContext.RequestAborted);
             }
         }
         catch (OperationCanceledException)

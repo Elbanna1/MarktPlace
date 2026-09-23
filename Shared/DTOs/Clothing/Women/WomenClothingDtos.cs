@@ -206,15 +206,11 @@ public class WomenClothingListItemDto : IListingStats
     public string Governorate { get; set; } = default!;
     public string Center { get; set; } = default!;
 
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
-
     public string Title { get; set; } = default!;
     public string Description { get; set; } = default!;
 
     public string? PrimaryImageUrl { get; set; }
     public List<WomenClothingImageDto> Images { get; set; } = new();
-    public string? VideoUrl { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

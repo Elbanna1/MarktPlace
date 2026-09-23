@@ -80,8 +80,6 @@ public class JobOpportunityListItemDto : IListingStats
     public Guid Id { get; set; }
 
     public string EmployerName { get; set; } = default!;
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
 
     public string JobTitle { get; set; } = default!;
 

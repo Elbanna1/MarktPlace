@@ -20,9 +20,6 @@ public class WholesaleTraderListItemDto : IListingStats
 
     public string SaleTypeName { get; set; } = default!;
 
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
-
     public string Title { get; set; } = default!;
     public string Description { get; set; } = default!;
 

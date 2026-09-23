@@ -19,6 +19,7 @@ public static class ReadOperationKeys
     public const string Centers = "centers";
     public const string ListingTypes = "listingTypes";
     public const string Features = "features";
+    public const string Advertisers = "advertisers";
     public const string WorkshopTypes = "workshopTypes";
     public const string Specializations = "specializations";
     public const string ExperienceLevels = "experienceLevels";

@@ -136,8 +136,6 @@ public class HomeKitchenListItemDto : IListingStats
     public Guid Id { get; set; }
 
     public string StoreName { get; set; } = default!;
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
 
     public HomeKitchenSection Section { get; set; }
     public string SectionName { get; set; } = default!;
@@ -158,7 +156,6 @@ public class HomeKitchenListItemDto : IListingStats
 
     public string? PrimaryImageUrl { get; set; }
     public List<HomeKitchenImageDto> Images { get; set; } = new();
-    public string? VideoUrl { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

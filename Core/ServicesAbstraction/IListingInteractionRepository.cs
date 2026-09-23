@@ -20,6 +20,9 @@ public interface IListingInteractionRepository
         ListingModuleType type, Guid listingId, int delta, DateTime viewedAt,
         CancellationToken cancellationToken = default);
 
+    Task<int> IncrementModuleViewCountAsync(
+        ListingModuleType type, Guid listingId, int delta, CancellationToken cancellationToken = default);
+
     Task TrimRecentlyViewedAsync(string userId, int keep, CancellationToken cancellationToken = default);
 
     Task<(IReadOnlyList<(ListingModuleType Type, Guid ListingId, DateTime LastViewedAt)> Items, int TotalCount)>
@@ -51,10 +54,6 @@ public interface IListingInteractionRepository
     Task<IReadOnlyDictionary<(ListingModuleType Type, Guid ListingId), ListingCountersDto>> GetCountersAsync(
         IReadOnlyCollection<(ListingModuleType Type, Guid ListingId)> keys,
         string? userId,
-        CancellationToken cancellationToken = default);
-
-    Task<(int TotalViews, int TotalFavorites)> GetOwnerTotalsAsync(
-        IReadOnlyCollection<(ListingModuleType Type, Guid ListingId)> ownedKeys,
         CancellationToken cancellationToken = default);
 
     Task<ListingReport?> GetReportAsync(

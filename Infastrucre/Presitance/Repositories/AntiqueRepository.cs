@@ -106,7 +106,6 @@ public class AntiqueRepository : IAntiqueRepository
             filter.PageSize,
             keyed => keyed
                 .Include(x => x.Images)
-                .Include(x => x.Video)
                 .AsSplitQuery(),
             cancellationToken);
 

@@ -34,21 +34,20 @@ public class AccountService : IAccountService
     public async Task<DeactivatedAccountDto> DeactivateAsync(
         string userId, DeactivateAccountRequest request, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(userId)
-            ?? throw new UnauthorizedException(UserMessages.Account.UnknownAccount);
-
-        if (user.Status == UserAccountStatus.Deactivated)
-            throw new ConflictException(UserMessages.Account.AlreadyDeactivated);
-
-        await EnsureNotAnAdministratorAsync(user);
-
-        await EnsurePasswordConfirmedAsync(user, request.Password);
-
-        AccountClosureResult closure;
-
-        await using (var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken))
+        var (user, closure) = await _unitOfWork.ExecuteInTransactionAsync(
+            async (transaction, token) =>
         {
-            closure = await _closure.CloseAsync(user.Id, cancellationToken);
+            var user = await _userManager.FindByIdAsync(userId)
+                ?? throw new UnauthorizedException(UserMessages.Account.UnknownAccount);
+
+            if (user.Status == UserAccountStatus.Deactivated)
+                throw new ConflictException(UserMessages.Account.AlreadyDeactivated);
+
+            await EnsureNotAnAdministratorAsync(user);
+
+            await EnsurePasswordConfirmedAsync(user, request.Password);
+
+            var closure = await _closure.CloseAsync(user.Id, token);
 
             var now = DateTime.UtcNow;
 
@@ -71,7 +70,7 @@ public class AccountService : IAccountService
 
             if (!update.Succeeded)
             {
-                await transaction.RollbackAsync(cancellationToken);
+                await transaction.RollbackAsync(token);
 
                 if (update.Errors.Any(error =>
                         string.Equals(error.Code, "ConcurrencyFailure", StringComparison.Ordinal)))
@@ -82,8 +81,10 @@ public class AccountService : IAccountService
                     update.Errors.Select(error => error.Description).ToList());
             }
 
-            await transaction.CommitAsync(cancellationToken);
-        }
+            await transaction.CommitAsync(token);
+
+            return (user, closure);
+        }, cancellationToken);
 
         _accessState.Invalidate(user.Id);
 

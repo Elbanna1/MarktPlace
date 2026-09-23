@@ -43,7 +43,7 @@ public class CreateAdvertisementRequestValidator : AbstractValidator<CreateAdver
             .WithMessage("من فضلك اكتب رقم موبايل مصري صحيح (مثال: 01012345678).");
 
         RuleFor(x => x.FeatureIds)
-            .Must(ids => ids == null || ids.Count <= 100)
+            .Must(ids => ids == null || ids.Count <= AdvertisementConstants.MaxFeatureSelection)
             .WithMessage("اخترت مميزات أكتر من المسموح.");
 
         RuleFor(x => x.Images)

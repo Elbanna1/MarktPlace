@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Shared.Enums;
 
 namespace Shared.DTOs.Charity;
@@ -26,7 +26,7 @@ public class RescueDetailsDto : CharityDetailsDtoBase
     public override ListingModuleType StatsListingType => ListingModuleType.Rescue;
 }
 
-public class RescueListItemDto : CharityDetailsDtoBase
+public class RescueListItemDto : CharityListItemDtoBase
 {
     public string RescuerName { get; set; } = default!;
     public string Address { get; set; } = default!;

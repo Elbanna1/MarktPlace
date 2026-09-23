@@ -257,6 +257,22 @@ wiped after a successful reset.
 **Fix.** Send `multipart/form-data`. A create with no files must still be multipart — in Python
 `requests`, put every field in `files=` as `(name, (None, value))`.
 
+### A cacheable GET ignores its query string and keeps answering the first page
+
+**Symptom.** `GET /api/lookups/features?subCategoryId=5` returns the body that
+`?subCategoryId=1` returned. `GET /api/lookups/advertisers/6/21?search=محمد` returns the unsearched
+first page. A hard refresh does not help; `Cache-Control: no-cache` on the *request* does.
+
+**Cause.** `UseResponseCaching` builds its cache key from method + scheme + host + path. **The query
+string is not in it.** Any endpoint whose response depends on the query string and is marked
+`public` gets one shared entry for every query.
+
+**Fix (already applied).** `HttpCacheAttribute` sets
+`IResponseCachingFeature.VaryByQueryKeys = ["*"]`, which is the same mechanism
+`[ResponseCache(VaryByQueryKeys = …)]` uses. Asserted by
+`CachingAndViewQueueTests.A_cached_response_is_keyed_on_its_query_string`. If you add a new caching
+path, this is the failure mode to check for first — it is silent, and it looks like a stale browser.
+
 ### HTTP 422 with an `errors` array
 
 Validation failure. **Not 400** — the built-in ModelState 400 is deliberately suppressed. The

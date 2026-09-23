@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Persistence.Data;
 using Persistence.Listings;
 using ServicesAbstraction;
 using Shared.Constants;
@@ -10,10 +11,12 @@ namespace Persistence.Repositories;
 public class UserListingRepository : IUserListingRepository
 {
     private readonly IReadOnlyList<IUserListingSource> _sources;
+    private readonly AppDbContext _context;
 
-    public UserListingRepository(IEnumerable<IUserListingSource> sources)
+    public UserListingRepository(IEnumerable<IUserListingSource> sources, AppDbContext context)
     {
         _sources = sources.ToList();
+        _context = context;
         SupportedModules = _sources.Select(source => source.Type).ToHashSet();
     }
 
@@ -42,12 +45,45 @@ public class UserListingRepository : IUserListingRepository
         return (items, totalCount);
     }
 
+    // The owner's totals used to be answered by reading every key he owns into memory, sending
+    // them back as two enormous IN lists and counting the rows in C#. Both aggregates are now a
+    // single grouped query each: the 49-way union of owned keys is joined to the shared counter and
+    // favourite tables inside SQL, and only the two scalars travel back.
+    public async Task<(int TotalViews, int TotalFavorites)> GetOwnerTotalsAsync(
+        string ownerId,
+        DateTime utcNow,
+        CancellationToken cancellationToken = default)
+    {
+        var owned = BuildKeyQuery(ownerId, utcNow);
+
+        if (owned is null)
+            return (0, 0);
+
+        var totalViews = await owned
+            .Join(
+                _context.ListingViewCounters.AsNoTracking(),
+                key => new { key.Type, key.Id },
+                counter => new { Type = counter.ListingType, Id = counter.ListingId },
+                (_, counter) => (int?)counter.TotalViews)
+            .SumAsync(cancellationToken) ?? 0;
+
+        var totalFavorites = await owned
+            .Join(
+                _context.ListingFavorites.AsNoTracking(),
+                key => new { key.Type, key.Id },
+                favorite => new { Type = favorite.ListingType, Id = favorite.ListingId },
+                (_, favorite) => favorite.ListingId)
+            .CountAsync(cancellationToken);
+
+        return (totalViews, totalFavorites);
+    }
+
     public async Task<IReadOnlyList<UserListingStatusCount>> GetStatusCountsAsync(
         string userId,
         DateTime utcNow,
         CancellationToken cancellationToken = default)
     {
-        var query = BuildQuery(userId, type: null, status: null, utcNow);
+        var query = BuildStatusQuery(userId, utcNow);
 
         if (query is null)
             return Array.Empty<UserListingStatusCount>();
@@ -222,16 +258,46 @@ public class UserListingRepository : IUserListingRepository
     public async Task<IReadOnlyList<(ListingModuleType Type, Guid ListingId)>> GetOwnedKeysAsync(
         string userId, DateTime utcNow, CancellationToken cancellationToken = default)
     {
-        var query = BuildQuery(userId, type: null, status: null, utcNow);
+        var query = BuildKeyQuery(userId, utcNow);
 
         if (query is null)
             return Array.Empty<(ListingModuleType, Guid)>();
 
-        var rows = await query
-            .Select(row => new { row.Type, row.Id })
-            .ToListAsync(cancellationToken);
+        var rows = await query.ToListAsync(cancellationToken);
 
         return rows.Select(row => (row.Type, row.Id)).ToList();
+    }
+
+    // Counting and key lookups never read a listing's title, price or images, so they union a
+    // two- or three-column projection instead of the full sixteen-column row.
+    private IQueryable<ListingKeyRow>? BuildKeyQuery(string ownerId, DateTime utcNow)
+    {
+        IQueryable<ListingKeyRow>? combined = null;
+
+        foreach (var source in _sources)
+        {
+            var query = source.Query(ownerId, utcNow)
+                .Select(row => new ListingKeyRow { Type = row.Type, Id = row.Id });
+
+            combined = combined is null ? query : combined.Concat(query);
+        }
+
+        return combined;
+    }
+
+    private IQueryable<UserListingStatusRow>? BuildStatusQuery(string ownerId, DateTime utcNow)
+    {
+        IQueryable<UserListingStatusRow>? combined = null;
+
+        foreach (var source in _sources)
+        {
+            var query = source.Query(ownerId, utcNow)
+                .Select(row => new UserListingStatusRow { Type = row.Type, Status = row.Status });
+
+            combined = combined is null ? query : combined.Concat(query);
+        }
+
+        return combined;
     }
 
     private IQueryable<UserListingRow>? BuildQuery(

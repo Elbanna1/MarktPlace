@@ -87,13 +87,10 @@ public static class ClothingModuleExamples
             DeliveryAvailable = details.DeliveryAvailable,
             Governorate = details.Governorate,
             Center = details.Center,
-            Phone = details.Phone,
-            WhatsApp = details.WhatsApp,
             Title = details.Title,
             Description = details.Description,
             PrimaryImageUrl = details.Images[0].Url,
             Images = details.Images,
-            VideoUrl = details.VideoUrl,
             CreatedAt = details.CreatedAt
         };
     }
@@ -174,13 +171,10 @@ public static class ClothingModuleExamples
             DeliveryAvailable = details.DeliveryAvailable,
             Governorate = details.Governorate,
             Center = details.Center,
-            Phone = details.Phone,
-            WhatsApp = details.WhatsApp,
             Title = details.Title,
             Description = details.Description,
             PrimaryImageUrl = details.Images[0].Url,
             Images = details.Images,
-            VideoUrl = details.VideoUrl,
             CreatedAt = details.CreatedAt
         };
     }
@@ -262,13 +256,10 @@ public static class ClothingModuleExamples
             DeliveryAvailable = details.DeliveryAvailable,
             Governorate = details.Governorate,
             Center = details.Center,
-            Phone = details.Phone,
-            WhatsApp = details.WhatsApp,
             Title = details.Title,
             Description = details.Description,
             PrimaryImageUrl = details.Images[0].Url,
             Images = details.Images,
-            VideoUrl = details.VideoUrl,
             CreatedAt = details.CreatedAt
         };
     }

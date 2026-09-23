@@ -35,12 +35,10 @@ public sealed class AdvertisementCardRow
     public string OwnerId { get; set; } = default!;
     public string? OwnerFirstName { get; set; }
     public string? OwnerSecondName { get; set; }
-    public string? OwnerPhoneNumber { get; set; }
     public string? OwnerGovernorate { get; set; }
     public string? OwnerCenter { get; set; }
     public string? OwnerProfileImageUrl { get; set; }
     public DateTime OwnerCreatedAt { get; set; }
 
     public List<AdvertisementImageDto> Images { get; set; } = new();
-    public List<FeatureDto> Features { get; set; } = new();
 }

@@ -42,7 +42,8 @@ public class BeeConfiguration : IEntityTypeConfiguration<Bee>
         builder.HasQueryFilter(QueryFilterNames.SoftDelete, x => !x.IsDeleted);
 
         builder.HasIndex(x => x.CreatedAt);
-        builder.HasIndex(x => x.SellerName);
+        builder.HasIndex(x => new { x.ModerationStatus, x.SellerName }, "IX_Bees_Advertisers")
+            .IncludeProperties(x => new { x.IsDeleted, x.ExpireAt });
         builder.HasIndex(x => x.AnimalType);
         builder.HasIndex(x => x.Purpose);
         builder.HasIndex(x => x.HealthStatus);

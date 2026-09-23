@@ -9,8 +9,6 @@ public class JobRequestListItemDto : IListingStats
     public Guid Id { get; set; }
 
     public string ApplicantName { get; set; } = default!;
-    public string Phone { get; set; } = default!;
-    public string WhatsApp { get; set; } = default!;
 
     public JobField JobField { get; set; }
 

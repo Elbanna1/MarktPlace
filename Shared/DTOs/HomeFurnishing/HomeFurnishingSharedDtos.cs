@@ -111,8 +111,6 @@ public abstract class HomeFurnishingListItemDtoBase : IListingStats
     public Guid Id { get; set; }
 
     public string SellerName { get; set; } = default!;
-    public string Phone { get; set; } = default!;
-    public string? WhatsApp { get; set; }
 
     public string ProductName { get; set; } = default!;
     public decimal Price { get; set; }
@@ -127,8 +125,6 @@ public abstract class HomeFurnishingListItemDtoBase : IListingStats
     public string? PrimaryImageUrl { get; set; }
 
     public List<HomeFurnishingImageDto> Images { get; set; } = new();
-
-    public string? VideoUrl { get; set; }
 
     public bool IsFeatured { get; set; }
     public bool IsPremium { get; set; }
