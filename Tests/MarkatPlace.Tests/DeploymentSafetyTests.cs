@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Shared.Constants;
 using Xunit;
@@ -21,6 +22,24 @@ public class DeploymentSafetyTests
         var settings = RepositoryRoot.ReadFile("MarkatPlace/appsettings.Production.json");
 
         Assert.DoesNotContain("\"SecretKey\"", settings);
+    }
+
+    [Fact]
+    public void The_committed_configuration_carries_no_SMTP_password()
+    {
+        foreach (var file in new[] { "appsettings.json", "appsettings.Production.json" })
+        {
+            using var document = JsonDocument.Parse(
+                RepositoryRoot.ReadFile($"MarkatPlace/{file}"));
+
+            if (!document.RootElement.TryGetProperty("EmailSettings", out var emailSettings))
+                continue;
+
+            Assert.False(emailSettings.TryGetProperty("Password", out _),
+                $"{file} declares EmailSettings:Password. The SMTP credential must come from the " +
+                "environment variable 'EmailSettings__Password' and never be committed. Do not " +
+                "re-add the key as an empty string either: an empty value overrides the environment.");
+        }
     }
 
     [Fact]

@@ -10,7 +10,9 @@ public class EmailSettings
 
     public string Email { get; set; } = default!;
 
-    public string DisplayName { get; set; } = "MarkatPlace";
+    public string DisplayName { get; set; } = "Shopiklopik";
+
+    public string? LogoUrl { get; set; }
 
     public string Password { get; set; } = default!;
 
