@@ -2491,7 +2491,7 @@ public static class AdFormSchemaCatalog
     {
         foreach (var field in fields)
         {
-            if (optionalFields.Contains(field.Name))
+            if (optionalFields.Contains(field.Name) || IsAlwaysOptional(field.Name))
                 continue;
 
             if (field.ReadOnly == true)
@@ -2570,6 +2570,14 @@ public static class AdFormSchemaCatalog
 
     private static FormFieldDto YesNo(string name, string label, string labelEn, string section) =>
         Checkbox(name, label, labelEn, section);
+
+    private static FormFieldDto UnansweredYesNo(
+        string name, string label, string labelEn, string section)
+    {
+        var field = Checkbox(name, label, labelEn, section);
+        field.DefaultValue = null;
+        return field;
+    }
 
     private static FormFieldDto YesNoWhen(
         string name, string label, string labelEn, string section,
@@ -2940,7 +2948,7 @@ public static class AdFormSchemaCatalog
                     required: false, min: 1)
                 .VisibleOnlyWhen("FloorType", ApartmentFloorTypeValues),
 
-            YesNo("HasElevator", "يوجد أسانسير", "Has an elevator", SectionApartment),
+            UnansweredYesNo("HasElevator", "يوجد أسانسير", "Has an elevator", SectionApartment),
 
             LookupSelect("FurnishedStatus", "مفروشة", "Furnished", SectionApartment,
                 AdFormLookupKeys.ApartmentFurnishedStatuses, required: false),
@@ -3084,10 +3092,16 @@ public static class AdFormSchemaCatalog
 
         "Negotiable",
 
-        "HasElevator", "HasMaintenanceDeposit",
+        "HasMaintenanceDeposit",
 
         "Features", "District", "GoogleMaps", "WhatsApp", "Email", "Notes"
     ];
+
+    private static readonly HashSet<string> AlwaysOptional =
+        new(StringComparer.OrdinalIgnoreCase) { "HasElevator" };
+
+    public static bool IsAlwaysOptional(string? fieldName) =>
+        fieldName is not null && AlwaysOptional.Contains(fieldName);
 
     private static AdFormSchema Shops()
     {
