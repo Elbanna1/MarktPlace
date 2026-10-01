@@ -196,6 +196,10 @@ public class AdminFormService : IAdminFormService
                 throw new BadRequestException(
                     $"الحقل '{field.FieldName}' إجباري في المنصة ولا يمكن جعله اختياريًا.");
 
+            if (isRequired && AdFormSchemaCatalog.IsAlwaysOptional(field.FieldName))
+                throw new BadRequestException(
+                    $"الحقل '{field.FieldName}' اختياري في المنصة ولا يمكن جعله إجباريًا.");
+
             field.IsRequired = isRequired;
         }
 
@@ -245,6 +249,10 @@ public class AdminFormService : IAdminFormService
 
             if (request.RequiredWhenField is not null)
             {
+                if (AdFormSchemaCatalog.IsAlwaysOptional(field.FieldName))
+                    throw new BadRequestException(
+                        $"الحقل '{field.FieldName}' اختياري في المنصة ولا يمكن ربطه بشرط إجباري.");
+
                 field.RequiredWhenField = Normalize(request.RequiredWhenField);
                 field.RequiredWhenValues = AdFormOverrideApplier.SerializeValues(request.RequiredWhenValues);
             }

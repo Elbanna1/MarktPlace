@@ -65,7 +65,9 @@ public static class AdFormOverrideApplier
         if (edit.SortOrder is { } order)
             result.Order = order;
 
-        result.Required = field.Required || edit.IsRequired == true;
+        var alwaysOptional = AdFormSchemaCatalog.IsAlwaysOptional(field.Name);
+
+        result.Required = !alwaysOptional && (field.Required || edit.IsRequired == true);
 
         result.MinLength = Stricter(field.MinLength, edit.MinLength, takeLarger: true);
         result.MaxLength = Stricter(field.MaxLength, edit.MaxLength, takeLarger: false);
@@ -90,7 +92,7 @@ public static class AdFormOverrideApplier
         if (!string.IsNullOrWhiteSpace(edit.VisibleWhenField))
             result.VisibleWhen = BuildCondition(edit.VisibleWhenField, edit.VisibleWhenValues);
 
-        if (!string.IsNullOrWhiteSpace(edit.RequiredWhenField))
+        if (!alwaysOptional && !string.IsNullOrWhiteSpace(edit.RequiredWhenField))
             result.RequiredWhen = BuildCondition(edit.RequiredWhenField, edit.RequiredWhenValues);
 
         return result;
