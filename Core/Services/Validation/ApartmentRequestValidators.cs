@@ -90,9 +90,6 @@ internal static class ApartmentValidationRules
             .WithMessage("رقم الدور لا يمكن أن يتجاوز إجمالي عدد الأدوار.")
             .When(x => x.FloorNumber.HasValue && x.TotalFloors.HasValue);
 
-        validator.RuleFor(x => x.HasElevator)
-            .NotNull().WithMessage("من فضلك حدد وجود أسانسير.");
-
         validator.RuleFor(x => x.FurnishedStatus)
             .NotNull().WithMessage("حالة الفرش مطلوبة.")
             .IsInEnum().WithMessage("من فضلك اختار حالة فرش صحيحة.");
@@ -170,10 +167,6 @@ internal static class ApartmentValidationRules
             .NotNull().WithMessage("جهة التقسيط مطلوبة عند اختيار التقسيط.")
             .IsInEnum().WithMessage("من فضلك اختار جهة تقسيط صحيحة.")
             .When(IsInstallments);
-
-        validator.RuleFor(x => x.HasMaintenanceDeposit)
-            .NotNull().WithMessage("من فضلك حدد وجود وديعة صيانة.")
-            .When(IsSale);
 
         validator.RuleFor(x => x.MaintenanceDepositAmount)
             .NotNull().WithMessage("من فضلك اكتب قيمة وديعة الصيانة.")

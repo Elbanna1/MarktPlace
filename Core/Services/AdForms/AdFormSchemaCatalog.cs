@@ -3084,6 +3084,8 @@ public static class AdFormSchemaCatalog
 
         "Negotiable",
 
+        "HasElevator", "HasMaintenanceDeposit",
+
         "Features", "District", "GoogleMaps", "WhatsApp", "Email", "Notes"
     ];
 

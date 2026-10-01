@@ -330,6 +330,97 @@ public class ApartmentOptionalFieldsTests
     }
 
     [Fact]
+    public void An_apartment_that_does_not_answer_the_elevator_question_is_accepted()
+    {
+        var result = Validate(request => request.HasElevator = null);
+        Assert.True(result.IsValid, Failures(result));
+    }
+
+    [Fact]
+    public void A_sale_that_does_not_answer_the_maintenance_deposit_question_is_accepted()
+    {
+        var result = Validate(request =>
+        {
+            request.ListingType = RealEstateListingType.Sale;
+            request.HasMaintenanceDeposit = null;
+        });
+
+        Assert.True(result.IsValid, Failures(result));
+    }
+
+    [Fact]
+    public void An_edit_that_drops_both_answers_is_accepted()
+    {
+        var update = ValidUpdate();
+        update.HasElevator = null;
+        update.HasMaintenanceDeposit = null;
+
+        var result = UpdateValidator.Validate(update);
+        Assert.True(result.IsValid, Failures(result));
+    }
+
+    [Fact]
+    public void A_sale_that_still_says_it_has_a_maintenance_deposit_must_price_it()
+    {
+        var result = Validate(request =>
+        {
+            request.HasMaintenanceDeposit = true;
+            request.MaintenanceDepositAmount = null;
+        });
+
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Errors,
+            e => e.PropertyName == nameof(CreateApartmentRequest.MaintenanceDepositAmount));
+    }
+
+    [Theory]
+    [InlineData("HasElevator")]
+    [InlineData("HasMaintenanceDeposit")]
+    public void The_published_apartment_form_marks_both_yes_no_answers_optional(string name)
+    {
+        var field = Field(name);
+
+        Assert.False(field.Required, $"the apartment form still publishes '{name}' as required");
+        Assert.Null(field.RequiredWhen);
+        Assert.Equal(FormFieldTypes.Checkbox, field.Type);
+    }
+
+    [Fact]
+    public void The_elevator_question_is_still_shown_on_every_apartment_form()
+    {
+        var field = Field("HasElevator");
+
+        Assert.True(field.Visible);
+        Assert.Null(field.VisibleWhen);
+    }
+
+    [Fact]
+    public void The_maintenance_deposit_question_is_still_shown_for_a_sale_only()
+    {
+        var field = Field("HasMaintenanceDeposit");
+
+        Assert.NotNull(field.VisibleWhen);
+        Assert.Equal("ListingType", field.VisibleWhen!.Field);
+        Assert.Equal<object>([(int)RealEstateListingType.Sale], field.VisibleWhen.Values);
+    }
+
+    [Fact]
+    public void The_two_optional_answers_are_an_apartments_only_change()
+    {
+        foreach (var subCategory in new[] { SubCategoryType.Lands, SubCategoryType.Shops })
+        {
+            var schema = AdFormSchemaCatalog.GetSchema(RealEstateCategoryId, (int)subCategory);
+            Assert.NotNull(schema);
+
+            foreach (var name in new[] { "HasElevator", "HasMaintenanceDeposit" })
+            {
+                Assert.DoesNotContain(schema!.Fields,
+                    f => f.Name == name && (f.Required || f.RequiredWhen is not null));
+            }
+        }
+    }
+
+    [Fact]
     public void Apartments_is_the_only_form_that_promotes_every_field_to_required()
     {
         var source = RepositoryRoot.ReadFile("Core/Services/AdForms/AdFormSchemaCatalog.cs");
