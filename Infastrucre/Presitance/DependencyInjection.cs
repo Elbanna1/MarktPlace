@@ -194,6 +194,7 @@ public static class DependencyInjection
         services.AddScoped<IFarmRepository, FarmRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IFileService, FileService>();
+        services.AddScoped<IUploadsDiagnostics, UploadsDiagnostics>();
 
         services.AddScoped<IUserListingSource, AdvertisementListingSource>();
         services.AddScoped<IUserListingSource, CraftsmanListingSource>();

@@ -45,10 +45,6 @@ public class UserListingRepository : IUserListingRepository
         return (items, totalCount);
     }
 
-    // The owner's totals used to be answered by reading every key he owns into memory, sending
-    // them back as two enormous IN lists and counting the rows in C#. Both aggregates are now a
-    // single grouped query each: the 49-way union of owned keys is joined to the shared counter and
-    // favourite tables inside SQL, and only the two scalars travel back.
     public async Task<(int TotalViews, int TotalFavorites)> GetOwnerTotalsAsync(
         string ownerId,
         DateTime utcNow,
@@ -59,21 +55,26 @@ public class UserListingRepository : IUserListingRepository
         if (owned is null)
             return (0, 0);
 
-        var totalViews = await owned
-            .Join(
-                _context.ListingViewCounters.AsNoTracking(),
-                key => new { key.Type, key.Id },
-                counter => new { Type = counter.ListingType, Id = counter.ListingId },
-                (_, counter) => (int?)counter.TotalViews)
-            .SumAsync(cancellationToken) ?? 0;
+        var views = owned.Join(
+            _context.ListingViewCounters.AsNoTracking(),
+            key => new { key.Type, key.Id },
+            counter => new { Type = counter.ListingType, Id = counter.ListingId },
+            (_, counter) => new OwnerTotalRow { Kind = 0, Value = counter.TotalViews });
 
-        var totalFavorites = await owned
-            .Join(
-                _context.ListingFavorites.AsNoTracking(),
-                key => new { key.Type, key.Id },
-                favorite => new { Type = favorite.ListingType, Id = favorite.ListingId },
-                (_, favorite) => favorite.ListingId)
-            .CountAsync(cancellationToken);
+        var favorites = owned.Join(
+            _context.ListingFavorites.AsNoTracking(),
+            key => new { key.Type, key.Id },
+            favorite => new { Type = favorite.ListingType, Id = favorite.ListingId },
+            (_, _) => new OwnerTotalRow { Kind = 1, Value = 1 });
+
+        var totals = await views
+            .Concat(favorites)
+            .GroupBy(row => row.Kind)
+            .Select(group => new { Kind = group.Key, Total = group.Sum(row => row.Value) })
+            .ToListAsync(cancellationToken);
+
+        var totalViews = totals.FirstOrDefault(row => row.Kind == 0)?.Total ?? 0;
+        var totalFavorites = totals.FirstOrDefault(row => row.Kind == 1)?.Total ?? 0;
 
         return (totalViews, totalFavorites);
     }
@@ -320,4 +321,11 @@ public class UserListingRepository : IUserListingRepository
 
         return combined;
     }
+}
+
+internal sealed class OwnerTotalRow
+{
+    public int Kind { get; set; }
+
+    public int Value { get; set; }
 }

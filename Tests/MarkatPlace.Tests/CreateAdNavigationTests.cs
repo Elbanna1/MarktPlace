@@ -160,7 +160,7 @@ public class CreateAdNavigationTests
             (int)CategoryType.WorkshopsAndCraftsmen, (int)SubCategoryType.Workshops);
 
         Assert.Equal(
-            ["الرئيسية", "الورش والحرفيين", "الورش", "إنشاء إعلان"],
+            ["الرئيسية", "دليل محافظتي", "الورش", "إنشاء إعلان"],
             trail.Select(step => step.NameAr));
     }
 

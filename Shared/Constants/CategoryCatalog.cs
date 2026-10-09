@@ -11,7 +11,7 @@ public static class CategoryCatalog
     public static readonly IReadOnlyList<CategoryEntry> Categories =
     [
         new(CategoryType.Cars, "Cars", "سيارات"),
-        new(CategoryType.WorkshopsAndCraftsmen, "Workshops & Craftsmen", "الورش والحرفيين"),
+        new(CategoryType.WorkshopsAndCraftsmen, "Workshops & Craftsmen", "دليل محافظتي"),
         new(CategoryType.LostAndFound, "Lost & Found", "المفقودات"),
         new(CategoryType.Business, "Business", "رجال أعمال"),
         new(CategoryType.Jobs, "Jobs", "الوظائف"),
@@ -42,7 +42,7 @@ public static class CategoryCatalog
         new(SubCategoryType.FoundItems, CategoryType.LostAndFound, "Found", "لقيت"),
 
         new(SubCategoryType.Factories, CategoryType.Business, "Factories", "المصانع"),
-        new(SubCategoryType.Farms, CategoryType.Business, "Farms", "المزارع"),
+        new(SubCategoryType.Farms, CategoryType.Business, "Farms", "مزارع ومحاصيل"),
         new(SubCategoryType.Companies, CategoryType.Business, "Companies", "الشركات"),
         new(SubCategoryType.Suppliers, CategoryType.Business, "Suppliers", "الموردون"),
         new(SubCategoryType.WholesaleTraders, CategoryType.Business, "Wholesale Traders", "تجار الجملة"),

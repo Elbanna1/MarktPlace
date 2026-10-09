@@ -169,6 +169,12 @@ Files that cannot be found anywhere are gone; the listings keep their rows and t
 shows «تعذّر تحميل الصورة» for them (see [FRONTEND_REALTIME_AND_IMAGES](FRONTEND_REALTIME_AND_IMAGES.md)).
 Every request for a missing upload is logged as `Uploaded file not found on disk: /uploads/...`.
 
+`GET /api/v2/admin/diagnostics/uploads` (SuperAdmin only, read-only) compares every image path in the
+database with the configured uploads root and returns totals, missing counts per folder, up to 20
+sample missing paths, and whether the root is still inside the application directory. Run it after
+every deployment: `missingImages` must be `0`. It issues one query per image table (~60), so it is a
+diagnostic, not a dashboard call.
+
 ---
 
 ## Migrations

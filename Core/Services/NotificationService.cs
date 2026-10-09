@@ -292,12 +292,26 @@ public class NotificationService : INotificationService
     private async Task PushManyAsync(
         IReadOnlyList<Notification> notifications, CancellationToken cancellationToken)
     {
+        IReadOnlyDictionary<string, int> unreadCounts;
+
         try
         {
             var userIds = notifications.Select(n => n.UserId).Distinct().ToList();
-            var unreadCounts = await _repository.CountUnreadAsync(userIds, cancellationToken);
+            unreadCounts = await _repository.CountUnreadAsync(userIds, cancellationToken);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            _logger.LogWarning(exception,
+                "Counting unread notifications for a batch of {Count} failed; they are stored and will still be listed.",
+                notifications.Count);
+            return;
+        }
 
-            foreach (var notification in notifications)
+        var failed = 0;
+
+        foreach (var notification in notifications)
+        {
+            try
             {
                 var dto = _mapper.Map<NotificationDto>(notification);
 
@@ -307,12 +321,18 @@ public class NotificationService : INotificationService
                     unreadCounts.GetValueOrDefault(notification.UserId),
                     cancellationToken);
             }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                failed++;
+                _logger.LogDebug(exception, "Real-time delivery to user {UserId} failed.", notification.UserId);
+            }
         }
-        catch (Exception exception)
+
+        if (failed > 0)
         {
-            _logger.LogWarning(exception,
-                "Real-time delivery of a batch of {Count} notifications failed; they are stored and will still be listed.",
-                notifications.Count);
+            _logger.LogWarning(
+                "Real-time delivery failed for {Failed} of {Count} notifications; they are stored and will still be listed.",
+                failed, notifications.Count);
         }
     }
 

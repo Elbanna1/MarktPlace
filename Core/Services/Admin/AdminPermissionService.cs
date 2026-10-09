@@ -13,17 +13,20 @@ public class AdminPermissionService : IAdminPermissionService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUserRepository _users;
     private readonly IAdminAccountRepository _repository;
+    private readonly IUserAccessStateCache? _accessState;
 
     private (string UserId, AdminContext Context)? _cached;
 
     public AdminPermissionService(
         UserManager<ApplicationUser> userManager,
         IUserRepository users,
-        IAdminAccountRepository repository)
+        IAdminAccountRepository repository,
+        IUserAccessStateCache? accessState = null)
     {
         _userManager = userManager;
         _users = users;
         _repository = repository;
+        _accessState = accessState;
     }
 
     public async Task<AdminAccessResult> AuthorizeAsync(
@@ -42,7 +45,7 @@ public class AdminPermissionService : IAdminPermissionService
             return AdminAccessResult.Denied();
 
         var mask = (AdminPermission)await _repository.GetPermissionMaskAsync(
-            context.User.Id, pageKey, cancellationToken);
+            context.UserId, pageKey, cancellationToken);
 
         if ((mask & permission) == permission)
             return AdminAccessResult.Allow();
@@ -133,6 +136,21 @@ public class AdminPermissionService : IAdminPermissionService
         if (_cached is { } cached && string.Equals(cached.UserId, userId, StringComparison.Ordinal))
             return (AdminAccessResult.Allow(), cached.Context);
 
+        if (_accessState is not null && _accessState.TryGet(userId, out var state) && state.Exists)
+        {
+            if (!state.Roles.Contains(AppRoles.Admin, StringComparer.OrdinalIgnoreCase))
+                return (AdminAccessResult.Denied(), null);
+
+            if (state.Status == UserAccountStatus.Active)
+            {
+                var fresh = new AdminContext(
+                    userId, state.Roles.Contains(AppRoles.SuperAdmin, StringComparer.OrdinalIgnoreCase));
+
+                _cached = (userId, fresh);
+                return (AdminAccessResult.Allow(), fresh);
+            }
+        }
+
         var user = await _userManager.FindByIdAsync(userId);
 
         if (user is null)
@@ -153,7 +171,7 @@ public class AdminPermissionService : IAdminPermissionService
         }
 
         var context = new AdminContext(
-            user, roles.Contains(AppRoles.SuperAdmin, StringComparer.OrdinalIgnoreCase));
+            user.Id, roles.Contains(AppRoles.SuperAdmin, StringComparer.OrdinalIgnoreCase));
 
         _cached = (userId, context);
 
@@ -201,5 +219,5 @@ public class AdminPermissionService : IAdminPermissionService
     private static string BuildName(ApplicationUser user) =>
         $"{user.FirstName} {user.SecondName}".Trim();
 
-    private sealed record AdminContext(ApplicationUser User, bool IsSuperAdmin);
+    private sealed record AdminContext(string UserId, bool IsSuperAdmin);
 }

@@ -136,7 +136,7 @@ public class HomeSectionConfiguration : IEntityTypeConfiguration<HomeSection>
         (CategoryType.Jobs, "category-jobs", "فرص العمل", "Jobs"),
         (CategoryType.Animals, "category-animals", "الحيوانات", "Animals"),
         (CategoryType.Business, "category-business", "رجال أعمال", "Business"),
-        (CategoryType.WorkshopsAndCraftsmen, "category-workshops", "الورش والحرفيين", "Workshops & Craftsmen"),
+        (CategoryType.WorkshopsAndCraftsmen, "category-workshops", "دليل محافظتي", "Workshops & Craftsmen"),
         (CategoryType.Clothing, "category-clothing", "الملابس", "Clothing"),
         (CategoryType.OnlineShopping, "category-online-shopping", "التسوق أونلاين", "Online Shopping"),
         (CategoryType.HomeFurnishing, "category-home-furnishing", "افرش بيتك", "Home Furnishing"),

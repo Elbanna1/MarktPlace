@@ -6679,7 +6679,7 @@ namespace Presitance.Migrations
                             Id = 2,
                             IsActive = true,
                             Name = "Workshops & Craftsmen",
-                            NameAr = "الورش والحرفيين",
+                            NameAr = "دليل محافظتي",
                             SortOrder = 0
                         },
                         new
@@ -15002,7 +15002,7 @@ namespace Presitance.Migrations
                             ItemCount = 8,
                             Key = "category-workshops",
                             SortOrder = 15,
-                            Title = "الورش والحرفيين",
+                            Title = "دليل محافظتي",
                             TitleEn = "Workshops & Craftsmen",
                             Type = 6
                         },
@@ -28695,7 +28695,7 @@ namespace Presitance.Migrations
                             CategoryId = 4,
                             IsActive = true,
                             Name = "Farms",
-                            NameAr = "المزارع",
+                            NameAr = "مزارع ومحاصيل",
                             SortOrder = 0
                         },
                         new

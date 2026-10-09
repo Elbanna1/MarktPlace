@@ -29,7 +29,32 @@ public abstract class DirectoryRepository<TListing, TImage, TFilter> : IDirector
     private DbSet<TListing> Set => Context.Set<TListing>();
 
     private static IQueryable<TListing> Include(IQueryable<TListing> query) =>
-        query.Include(x => x.Images).Include(x => x.User);
+        query.Include(x => x.Images);
+
+    private static async Task<List<TListing>> ReadAsync(IQueryable<TListing> query, CancellationToken cancellationToken)
+    {
+        var rows = await query
+            .Select(x => new
+            {
+                Listing = x,
+                Images = x.Images.OrderBy(image => image.SortOrder).ToList(),
+                x.User.FirstName,
+                x.User.SecondName
+            })
+            .ToListAsync(cancellationToken);
+
+        return rows.Select(row =>
+        {
+            row.Listing.Images = row.Images;
+            row.Listing.User = new ApplicationUser
+            {
+                Id = row.Listing.UserId,
+                FirstName = row.FirstName,
+                SecondName = row.SecondName
+            };
+            return row.Listing;
+        }).ToList();
+    }
 
     protected virtual IQueryable<TListing> Filter(IQueryable<TListing> query, TFilter filter) => query;
 
@@ -40,16 +65,16 @@ public abstract class DirectoryRepository<TListing, TImage, TFilter> : IDirector
             EF.Functions.Like(x.Description, pattern, EscapeCharacter) ||
             EF.Functions.Like(x.Address, pattern, EscapeCharacter));
 
-    public Task<TListing?> GetByIdAsync(
+    public async Task<TListing?> GetByIdAsync(
         Guid id, bool asNoTracking = false, CancellationToken cancellationToken = default,
         bool includeUnmoderated = false)
     {
-        var query = Include(Set).VisibleToViewer(includeUnmoderated, Context.ViewerUserId);
+        var visible = Set.VisibleToViewer(includeUnmoderated, Context.ViewerUserId).Where(x => x.Id == id);
 
-        if (asNoTracking)
-            query = query.AsNoTracking();
+        if (!asNoTracking)
+            return await Include(visible).FirstOrDefaultAsync(cancellationToken);
 
-        return query.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return (await ReadAsync(visible.AsNoTracking().Take(1), cancellationToken)).FirstOrDefault();
     }
 
     public Task<TListing?> GetOwnedAsync(Guid id, string userId, CancellationToken cancellationToken = default) =>
@@ -84,11 +109,10 @@ public abstract class DirectoryRepository<TListing, TImage, TFilter> : IDirector
         if (total == 0)
             return (Array.Empty<TListing>(), 0);
 
-        var items = await Include(Sort(query, filter.SortBy))
-            .Skip((filter.PageIndex - 1) * filter.PageSize)
-            .Take(filter.PageSize)
-            .AsSplitQuery()
-            .ToListAsync(cancellationToken);
+        var skip = (int)Math.Clamp((long)(filter.PageIndex - 1) * filter.PageSize, 0, int.MaxValue);
+
+        var items = await ReadAsync(
+            Sort(query, filter.SortBy).Skip(skip).Take(filter.PageSize), cancellationToken);
 
         return (items, total);
     }
@@ -97,7 +121,8 @@ public abstract class DirectoryRepository<TListing, TImage, TFilter> : IDirector
         sortBy switch
         {
             DirectorySortBy.Oldest => query.OrderBy(x => x.CreatedAt).ThenBy(x => x.Id),
-            DirectorySortBy.MostViewed => query.OrderByDescending(x => x.ViewCount).ThenByDescending(x => x.CreatedAt),
+            DirectorySortBy.MostViewed => query.OrderByDescending(x => x.ViewCount)
+                .ThenByDescending(x => x.CreatedAt).ThenByDescending(x => x.Id),
             _ => query.OrderByDescending(x => x.CreatedAt).ThenByDescending(x => x.Id)
         };
 

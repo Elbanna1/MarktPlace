@@ -410,7 +410,7 @@ can show the user's position without knowing a single category name or id:
 ```json
 "breadcrumb": [
   { "level": "home",        "name": "Home",                 "nameAr": "الرئيسية",        "path": "/",                  "isCurrent": false },
-  { "level": "category",    "id": 2, "name": "Workshops & Craftsmen", "nameAr": "الورش والحرفيين", "path": "/create-product/2",   "isCurrent": false },
+  { "level": "category",    "id": 2, "name": "Workshops & Craftsmen", "nameAr": "دليل محافظتي", "path": "/create-product/2",   "isCurrent": false },
   { "level": "subCategory", "id": 5, "name": "Workshops",   "nameAr": "الورش",           "path": "/create-product/2/5", "isCurrent": false },
   { "level": "form",        "name": "Create Advertisement", "nameAr": "إنشاء إعلان",     "path": "/create-product/2/5", "isCurrent": true  }
 ]

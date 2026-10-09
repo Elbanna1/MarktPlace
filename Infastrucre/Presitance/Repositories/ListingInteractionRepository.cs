@@ -210,83 +210,63 @@ public class ListingInteractionRepository : IListingInteractionRepository
         var types = keys.Select(k => k.Type).Distinct().ToList();
         var wanted = keys.ToHashSet();
 
-        var views = await _context.ListingViewCounters
+        IQueryable<CounterRow> rows = _context.ListingViewCounters
             .AsNoTracking()
             .Where(c => types.Contains(c.ListingType) && ids.Contains(c.ListingId))
-            .Select(c => new { c.ListingType, c.ListingId, c.TotalViews })
-            .ToListAsync(cancellationToken);
+            .Select(c => new CounterRow { Kind = CounterKind.Views, ListingType = c.ListingType, ListingId = c.ListingId, Count = c.TotalViews, Total = 0d });
 
-        foreach (var row in views)
-        {
-            var key = (row.ListingType, row.ListingId);
-            if (wanted.Contains(key))
-                result[key].Views = row.TotalViews;
-        }
-
-        var favoriteCounts = await _context.ListingFavorites
+        rows = rows.Concat(_context.ListingFavorites
             .AsNoTracking()
             .Where(f => types.Contains(f.ListingType) && ids.Contains(f.ListingId))
             .GroupBy(f => new { f.ListingType, f.ListingId })
-            .Select(g => new { g.Key.ListingType, g.Key.ListingId, Count = g.Count() })
-            .ToListAsync(cancellationToken);
+            .Select(g => new CounterRow { Kind = CounterKind.Favorites, ListingType = g.Key.ListingType, ListingId = g.Key.ListingId, Count = g.Count(), Total = 0d }));
 
-        foreach (var row in favoriteCounts)
-        {
-            var key = (row.ListingType, row.ListingId);
-            if (wanted.Contains(key))
-                result[key].FavoriteCount = row.Count;
-        }
-
-        var ratings = await _context.ListingRatings
+        rows = rows.Concat(_context.ListingRatings
             .AsNoTracking()
             .Where(r => types.Contains(r.ListingType) && ids.Contains(r.ListingId))
             .GroupBy(r => new { r.ListingType, r.ListingId })
-            .Select(g => new
-            {
-                g.Key.ListingType,
-                g.Key.ListingId,
-                Count = g.Count(),
-                Average = g.Average(r => (double)r.Rating)
-            })
-            .ToListAsync(cancellationToken);
+            .Select(g => new CounterRow { Kind = CounterKind.Ratings, ListingType = g.Key.ListingType, ListingId = g.Key.ListingId, Count = g.Count(), Total = g.Sum(r => (double)r.Rating) }));
 
-        foreach (var row in ratings)
+        if (!string.IsNullOrEmpty(userId))
+        {
+            rows = rows.Concat(_context.ListingFavorites
+                .AsNoTracking()
+                .Where(f => f.UserId == userId && types.Contains(f.ListingType) && ids.Contains(f.ListingId))
+                .Select(f => new CounterRow { Kind = CounterKind.MyFavorite, ListingType = f.ListingType, ListingId = f.ListingId, Count = 1, Total = 0d }));
+
+            rows = rows.Concat(_context.ListingRatings
+                .AsNoTracking()
+                .Where(r => r.ReviewerUserId == userId && types.Contains(r.ListingType) && ids.Contains(r.ListingId))
+                .Select(r => new CounterRow { Kind = CounterKind.MyRating, ListingType = r.ListingType, ListingId = r.ListingId, Count = r.Rating, Total = 0d }));
+        }
+
+        foreach (var row in await rows.ToListAsync(cancellationToken))
         {
             var key = (row.ListingType, row.ListingId);
 
             if (!wanted.Contains(key))
                 continue;
 
-            result[key].RatingsCount = row.Count;
-            result[key].AverageRating = Math.Round((decimal)row.Average, 1, MidpointRounding.AwayFromZero);
-        }
+            var counters = result[key];
 
-        if (!string.IsNullOrEmpty(userId))
-        {
-            var mine = await _context.ListingFavorites
-                .AsNoTracking()
-                .Where(f => f.UserId == userId && types.Contains(f.ListingType) && ids.Contains(f.ListingId))
-                .Select(f => new { f.ListingType, f.ListingId })
-                .ToListAsync(cancellationToken);
-
-            foreach (var row in mine)
+            switch (row.Kind)
             {
-                var key = (row.ListingType, row.ListingId);
-                if (wanted.Contains(key))
-                    result[key].IsFavorite = true;
-            }
-
-            var myRatings = await _context.ListingRatings
-                .AsNoTracking()
-                .Where(r => r.ReviewerUserId == userId && types.Contains(r.ListingType) && ids.Contains(r.ListingId))
-                .Select(r => new { r.ListingType, r.ListingId, r.Rating })
-                .ToListAsync(cancellationToken);
-
-            foreach (var row in myRatings)
-            {
-                var key = (row.ListingType, row.ListingId);
-                if (wanted.Contains(key))
-                    result[key].MyRating = row.Rating;
+                case CounterKind.Views:
+                    counters.Views = row.Count;
+                    break;
+                case CounterKind.Favorites:
+                    counters.FavoriteCount = row.Count;
+                    break;
+                case CounterKind.Ratings when row.Count > 0:
+                    counters.RatingsCount = row.Count;
+                    counters.AverageRating = Math.Round((decimal)(row.Total / row.Count), 1, MidpointRounding.AwayFromZero);
+                    break;
+                case CounterKind.MyFavorite:
+                    counters.IsFavorite = true;
+                    break;
+                case CounterKind.MyRating:
+                    counters.MyRating = row.Count;
+                    break;
             }
         }
 
@@ -514,4 +494,26 @@ public class ListingInteractionRepository : IListingInteractionRepository
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         _context.SaveChangesAsync(cancellationToken);
+}
+
+internal static class CounterKind
+{
+    public const int Views = 0;
+    public const int Favorites = 1;
+    public const int Ratings = 2;
+    public const int MyFavorite = 3;
+    public const int MyRating = 4;
+}
+
+internal sealed class CounterRow
+{
+    public int Kind { get; set; }
+
+    public ListingModuleType ListingType { get; set; }
+
+    public Guid ListingId { get; set; }
+
+    public int Count { get; set; }
+
+    public double Total { get; set; }
 }

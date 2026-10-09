@@ -30,7 +30,7 @@ public static class ReadConfigExamples
             CategoryType.LostAndFound, SubCategoryType.FoundItems),
         Create("business-factories", "Business → Factories (رجال أعمال → المصانع)",
             CategoryType.Business, SubCategoryType.Factories),
-        Create("business-farms", "Business → Farms (رجال أعمال → المزارع)",
+        Create("business-farms", "Business → Farms (رجال أعمال → مزارع ومحاصيل)",
             CategoryType.Business, SubCategoryType.Farms),
         Create("business-companies", "Business → Companies (رجال أعمال → الشركات)",
             CategoryType.Business, SubCategoryType.Companies),

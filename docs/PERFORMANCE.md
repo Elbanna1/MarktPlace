@@ -323,6 +323,31 @@ explicitly — the old `SumAsync(...) ?? 0m` behaviour is preserved.
 
 ---
 
+## 2026-10-09 — round trips on the listing, profile and admin paths
+
+Measured with `X-Sql-Count` on LocalDB (120 seeded listings, 360 images); response bodies were
+byte-identical before and after. Local wall-clock times are not representative of the remote host.
+
+| Endpoint | Before | After |
+| --- | --- | --- |
+| Directory list (restaurants, hospitals, offices…), anonymous / signed-in | 6 / 9 | 3 / 4 |
+| Directory details, anonymous / signed-in | 4 / 7 | 2 / 3 |
+| `GET /api/profile` | 4 | 3 |
+| `GET /api/profile/my-listings` | 5 | 3 |
+| Listing actions | 7 | 3 |
+| Admin ads / pending list | 11 | 5 |
+| Admin pending count | 4 | 2 |
+
+- **Stats counters** (`ListingInteractionRepository.GetCountersAsync`): views, favourites, ratings and
+  the viewer's own favourite/rating were five queries; now one `UNION ALL`.
+- **Directory reads** (`DirectoryRepository`): images and the owner's name come in one projection
+  instead of split includes of the whole user row; `MostViewed` gained an `Id` tie-break so paging is
+  stable.
+- **Admin permission checks** reuse the roles/status the claims transformation already loaded for the
+  request (`IUserAccessStateCache`) instead of re-reading the user and roles; a non-active admin still
+  takes the database path so the refusal carries the status reason.
+- **Owner totals**: views sum and favourites count are one grouped `UNION ALL`.
+
 ## Rules for performance work
 
 1. **Measure before and after, on the same data**, with the same warm-up.
