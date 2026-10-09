@@ -35,7 +35,9 @@ public enum CategoryType
 
     RealEstate = 11,
 
-    Charity = 12
+    Charity = 12,
+
+    Sehhaty = 13
 }
 
 public enum SubCategoryType
@@ -142,7 +144,36 @@ public enum SubCategoryType
 
     BloodRequests = 51,
 
-    AskConsults = 52
+    AskConsults = 52,
+
+    Doctors = 53,
+
+    MedicalLaboratories = 54,
+
+    DentalLaboratories = 55,
+
+    RadiologyLaboratories = 56,
+
+    MedicalCenters = 57,
+
+    Hospitals = 58
+}
+
+public static class SehhatySubCategories
+{
+    public static readonly IReadOnlySet<SubCategoryType> All = new HashSet<SubCategoryType>
+    {
+        SubCategoryType.Doctors,
+        SubCategoryType.MedicalLaboratories,
+        SubCategoryType.DentalLaboratories,
+        SubCategoryType.RadiologyLaboratories,
+        SubCategoryType.MedicalCenters,
+        SubCategoryType.Hospitals
+    };
+
+    public static bool Contains(int subCategoryId) =>
+        Enum.IsDefined(typeof(SubCategoryType), subCategoryId) &&
+        All.Contains((SubCategoryType)subCategoryId);
 }
 
 public static class CharitySubCategories

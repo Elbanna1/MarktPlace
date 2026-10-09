@@ -88,7 +88,12 @@ public static class CreateAdFormExamples
         Create("clothing-women", "Clothing → Women Clothing (الملابس → ملابس حريمي)",
             CategoryType.Clothing, SubCategoryType.WomenClothing),
         Create("clothing-kids", "Clothing → Kids Clothing (الملابس → ملابس أطفال)",
-            CategoryType.Clothing, SubCategoryType.KidsClothing)
+            CategoryType.Clothing, SubCategoryType.KidsClothing),
+
+        Create("sehhaty-doctors", "Sehhaty → Doctors (صحتي → الأطباء)",
+            CategoryType.Sehhaty, SubCategoryType.Doctors),
+        Create("sehhaty-hospitals", "Sehhaty → Hospitals (صحتي → مستشفيات)",
+            CategoryType.Sehhaty, SubCategoryType.Hospitals)
     ];
 
     private static Example Create(string key, string summary, CategoryType category, SubCategoryType subCategory)
@@ -297,69 +302,26 @@ public static class CreateAdFormExamples
         return lookups;
     }
 
-    public static CategoryDto CategoryExample(CategoryType category) => category switch
+    public static CategoryDto CategoryExample(CategoryType category)
     {
-        CategoryType.Cars => new CategoryDto { Id = 1, Name = "Cars", NameAr = "سيارات" },
-        CategoryType.WorkshopsAndCraftsmen =>
-            new CategoryDto { Id = 2, Name = "Workshops & Craftsmen", NameAr = "الورش والحرفيين" },
-        CategoryType.Business => new CategoryDto { Id = 4, Name = "Business", NameAr = "رجال أعمال" },
-        CategoryType.Jobs => new CategoryDto { Id = 5, Name = "Jobs", NameAr = "الوظائف" },
-        CategoryType.Animals => new CategoryDto { Id = 6, Name = "Animals", NameAr = "الحيوانات" },
-        CategoryType.Antiques => new CategoryDto { Id = 7, Name = "Antiques", NameAr = "التحف والأنتيكات" },
-        CategoryType.Clothing => new CategoryDto { Id = 8, Name = "Clothing", NameAr = "الملابس" },
-        CategoryType.Charity => new CategoryDto { Id = 12, Name = "Charity", NameAr = "بوابة الخيرات" },
-        _ => new CategoryDto { Id = 3, Name = "Lost & Found", NameAr = "المفقودات" }
-    };
+        var entry = CategoryCatalog.FindCategory(category)
+            ?? throw new ArgumentOutOfRangeException(nameof(category), category, "Unknown category.");
+
+        return new CategoryDto { Id = (int)entry.Id, Name = entry.Name, NameAr = entry.NameAr };
+    }
 
     public static SubCategoryDto SubCategoryExample(CategoryType category, SubCategoryType subCategory)
     {
-        var (name, nameAr) = subCategory switch
-        {
-            SubCategoryType.Private => ("Private", "ملاكي"),
-            SubCategoryType.Taxi => ("Taxi", "أجرة"),
-            SubCategoryType.Motorcycles => ("Motorcycles", "موتوسيكلات"),
-            SubCategoryType.HeavyEquipment => ("Heavy Equipment", "لوادر ومعدات ثقيلة"),
-            SubCategoryType.Workshops => ("Workshops", "الورش"),
-            SubCategoryType.Craftsmen => ("Craftsmen", "الحرفيين"),
-            SubCategoryType.LostItems => ("Lost", "ضايع مني"),
-            SubCategoryType.FoundItems => ("Found", "لقيت"),
-            SubCategoryType.Factories => ("Factories", "المصانع"),
-            SubCategoryType.Farms => ("Farms", "المزارع"),
-            SubCategoryType.Companies => ("Companies", "الشركات"),
-            SubCategoryType.Suppliers => ("Suppliers", "الموردون"),
-            SubCategoryType.WholesaleTraders => ("Wholesale Traders", "تجار الجملة"),
-            SubCategoryType.Rescues => ("Rescues", "الاستغاثة"),
-            SubCategoryType.BloodRequests => ("Blood Requests", "فصائل الدم"),
-            SubCategoryType.AskConsults => ("Ask & Consult", "اسأل واستشير"),
-            SubCategoryType.JobRequests => ("Job Requests", "طلبات عمل"),
-            SubCategoryType.JobOpportunities => ("Job Opportunities", "فرص عمل"),
-            SubCategoryType.Livestock => ("Livestock", "المواشي"),
-            SubCategoryType.SheepAndGoats => ("Sheep & Goats", "الأغنام والماعز"),
-            SubCategoryType.Horses => ("Horses", "الخيول"),
-            SubCategoryType.Camels => ("Camels", "الإبل"),
-            SubCategoryType.Birds => ("Birds", "الطيور"),
-            SubCategoryType.Pets => ("Pets", "الحيوانات الأليفة"),
-            SubCategoryType.Fish => ("Fish", "الأسماك"),
-            SubCategoryType.Bees => ("Bees", "النحل"),
-            SubCategoryType.OtherAnimals => ("Other Animals", "حيوانات أخرى"),
-            SubCategoryType.DecorAntiques => ("Antiques Decor", "تحف"),
-            SubCategoryType.Antiques => ("Antiques", "أنتيكات"),
-            SubCategoryType.Paintings => ("Paintings", "لوحات فنية"),
-            SubCategoryType.Handmade => ("Handmade", "أعمال يدوية"),
-            SubCategoryType.CoinsAndStamps => ("Coins & Stamps", "عملات وطوابع"),
-            SubCategoryType.MenClothing => ("Men Clothing", "ملابس رجالي"),
-            SubCategoryType.WomenClothing => ("Women Clothing", "ملابس حريمي"),
-            SubCategoryType.KidsClothing => ("Kids Clothing", "ملابس أطفال"),
-            _ => ("Fruit & Vegetable Traders", "تجار خضر وفاكهة")
-        };
+        var entry = CategoryCatalog.FindSubCategory(subCategory)
+            ?? throw new ArgumentOutOfRangeException(nameof(subCategory), subCategory, "Unknown sub-category.");
 
         var categoryDto = CategoryExample(category);
 
         return new SubCategoryDto
         {
-            Id = (int)subCategory,
-            Name = name,
-            NameAr = nameAr,
+            Id = (int)entry.Id,
+            Name = entry.Name,
+            NameAr = entry.NameAr,
             CategoryId = categoryDto.Id,
             CategoryName = categoryDto.Name
         };

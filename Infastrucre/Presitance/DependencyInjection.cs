@@ -11,6 +11,7 @@ using Persistence.Repositories;
 using Persistence.Interceptors;
 using Persistence.Services;
 using ServicesAbstraction;
+using Shared.DTOs.Sehhaty;
 using Shared.Settings;
 
 namespace Persistence;
@@ -165,6 +166,17 @@ public static class DependencyInjection
         services.AddScoped<IBloodRequestRepository, BloodRequestRepository>();
         services.AddScoped<IAskConsultRepository, AskConsultRepository>();
 
+        services.AddScoped<ISehhatyRepository<Doctor, DoctorImage, DoctorFilterParams>, DoctorRepository>();
+        services.AddScoped<ISehhatyRepository<MedicalLaboratory, MedicalLaboratoryImage, MedicalLaboratoryFilterParams>,
+            MedicalLaboratoryRepository>();
+        services.AddScoped<ISehhatyRepository<DentalLaboratory, DentalLaboratoryImage, DentalLaboratoryFilterParams>,
+            DentalLaboratoryRepository>();
+        services.AddScoped<ISehhatyRepository<RadiologyLaboratory, RadiologyLaboratoryImage, RadiologyLaboratoryFilterParams>,
+            RadiologyLaboratoryRepository>();
+        services.AddScoped<ISehhatyRepository<MedicalCenter, MedicalCenterImage, MedicalCenterFilterParams>,
+            MedicalCenterRepository>();
+        services.AddScoped<ISehhatyRepository<Hospital, HospitalImage, HospitalFilterParams>, HospitalRepository>();
+
         services.AddScoped<IFactoryRepository, FactoryRepository>();
         services.AddScoped<IFarmRepository, FarmRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
@@ -227,6 +239,13 @@ public static class DependencyInjection
         services.AddScoped<IUserListingSource, RescueListingSource>();
         services.AddScoped<IUserListingSource, BloodRequestListingSource>();
         services.AddScoped<IUserListingSource, AskConsultListingSource>();
+
+        services.AddScoped<IUserListingSource, DoctorListingSource>();
+        services.AddScoped<IUserListingSource, MedicalLaboratoryListingSource>();
+        services.AddScoped<IUserListingSource, DentalLaboratoryListingSource>();
+        services.AddScoped<IUserListingSource, RadiologyLaboratoryListingSource>();
+        services.AddScoped<IUserListingSource, MedicalCenterListingSource>();
+        services.AddScoped<IUserListingSource, HospitalListingSource>();
 
         services.AddScoped<IUserListingRepository, UserListingRepository>();
 

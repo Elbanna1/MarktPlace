@@ -85,7 +85,7 @@ graph TD
 
 | Area | What it does |
 | --- | --- |
-| **48 listing modules** | 12 categories → 52 sub-categories. Cars, Workshops & Craftsmen, Lost & Found, Business, Jobs, Animals, Antiques, Clothing, Online Shopping, Home Furnishing, Real Estate, Charity |
+| **54 listing modules** | 13 categories → 58 sub-categories. Cars, Workshops & Craftsmen, Lost & Found, Business, Jobs, Animals, Antiques, Clothing, Online Shopping, Home Furnishing, Real Estate, Charity, Sehhaty (صحتي) |
 | **Dynamic forms** | `GET /api/lookups/create-ad-form/{cat}/{sub}` returns fields, conditional rules, lookups and the submit endpoint. The frontend holds **zero** business logic |
 | **Moderation** | Every listing created pending; approve / reject / suspend; edits return to review automatically |
 | **Publication window** | 30 days from approval; expiry is derived from `ExpireAt`, not from a status column |

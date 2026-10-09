@@ -63,6 +63,13 @@ public static class ListingModuleCatalog
             [ListingModuleType.BloodRequest] = SubCategoryType.BloodRequests,
             [ListingModuleType.AskConsult] = SubCategoryType.AskConsults,
 
+            [ListingModuleType.Doctor] = SubCategoryType.Doctors,
+            [ListingModuleType.MedicalLaboratory] = SubCategoryType.MedicalLaboratories,
+            [ListingModuleType.DentalLaboratory] = SubCategoryType.DentalLaboratories,
+            [ListingModuleType.RadiologyLaboratory] = SubCategoryType.RadiologyLaboratories,
+            [ListingModuleType.MedicalCenter] = SubCategoryType.MedicalCenters,
+            [ListingModuleType.Hospital] = SubCategoryType.Hospitals,
+
             [ListingModuleType.LostItem] = SubCategoryType.LostItems,
             [ListingModuleType.FoundItem] = SubCategoryType.FoundItems
         };
@@ -77,72 +84,7 @@ public static class ListingModuleCatalog
     public static bool IsIsolated(ListingModuleType type) => IsolatedModules.Contains(type);
 
     private static readonly IReadOnlyDictionary<SubCategoryType, CategoryType> Categories =
-        new Dictionary<SubCategoryType, CategoryType>
-        {
-            [SubCategoryType.Private] = CategoryType.Cars,
-            [SubCategoryType.Taxi] = CategoryType.Cars,
-            [SubCategoryType.Motorcycles] = CategoryType.Cars,
-            [SubCategoryType.HeavyEquipment] = CategoryType.Cars,
-
-            [SubCategoryType.Workshops] = CategoryType.WorkshopsAndCraftsmen,
-            [SubCategoryType.Craftsmen] = CategoryType.WorkshopsAndCraftsmen,
-
-            [SubCategoryType.LostItems] = CategoryType.LostAndFound,
-            [SubCategoryType.FoundItems] = CategoryType.LostAndFound,
-
-            [SubCategoryType.Rescues] = CategoryType.Charity,
-            [SubCategoryType.BloodRequests] = CategoryType.Charity,
-            [SubCategoryType.AskConsults] = CategoryType.Charity,
-
-            [SubCategoryType.Factories] = CategoryType.Business,
-            [SubCategoryType.Farms] = CategoryType.Business,
-            [SubCategoryType.Companies] = CategoryType.Business,
-            [SubCategoryType.Suppliers] = CategoryType.Business,
-            [SubCategoryType.WholesaleTraders] = CategoryType.Business,
-            [SubCategoryType.FruitAndVegetableTraders] = CategoryType.Business,
-
-            [SubCategoryType.JobRequests] = CategoryType.Jobs,
-            [SubCategoryType.JobOpportunities] = CategoryType.Jobs,
-
-            [SubCategoryType.Livestock] = CategoryType.Animals,
-            [SubCategoryType.SheepAndGoats] = CategoryType.Animals,
-            [SubCategoryType.Horses] = CategoryType.Animals,
-            [SubCategoryType.Camels] = CategoryType.Animals,
-            [SubCategoryType.Birds] = CategoryType.Animals,
-            [SubCategoryType.Pets] = CategoryType.Animals,
-            [SubCategoryType.Fish] = CategoryType.Animals,
-            [SubCategoryType.Bees] = CategoryType.Animals,
-            [SubCategoryType.OtherAnimals] = CategoryType.Animals,
-
-            [SubCategoryType.DecorAntiques] = CategoryType.Antiques,
-            [SubCategoryType.Antiques] = CategoryType.Antiques,
-            [SubCategoryType.Paintings] = CategoryType.Antiques,
-            [SubCategoryType.Handmade] = CategoryType.Antiques,
-            [SubCategoryType.CoinsAndStamps] = CategoryType.Antiques,
-
-            [SubCategoryType.MenClothing] = CategoryType.Clothing,
-            [SubCategoryType.WomenClothing] = CategoryType.Clothing,
-            [SubCategoryType.KidsClothing] = CategoryType.Clothing,
-
-            [SubCategoryType.Accessories] = CategoryType.OnlineShopping,
-            [SubCategoryType.Cosmetics] = CategoryType.OnlineShopping,
-            [SubCategoryType.HomeAndKitchen] = CategoryType.OnlineShopping,
-            [SubCategoryType.ShoppingElectronics] = CategoryType.OnlineShopping,
-            [SubCategoryType.GiftsAndToys] = CategoryType.OnlineShopping,
-            [SubCategoryType.HomemadeFood] = CategoryType.OnlineShopping,
-
-            [SubCategoryType.Furniture] = CategoryType.HomeFurnishing,
-            [SubCategoryType.FurnishingsAndCurtains] = CategoryType.HomeFurnishing,
-            [SubCategoryType.LightingAndDecor] = CategoryType.HomeFurnishing,
-            [SubCategoryType.KitchenTools] = CategoryType.HomeFurnishing,
-            [SubCategoryType.HomeAppliances] = CategoryType.HomeFurnishing,
-            [SubCategoryType.BathroomSupplies] = CategoryType.HomeFurnishing,
-            [SubCategoryType.PlantsAndOrnaments] = CategoryType.HomeFurnishing,
-
-            [SubCategoryType.Lands] = CategoryType.RealEstate,
-            [SubCategoryType.Apartments] = CategoryType.RealEstate,
-            [SubCategoryType.Shops] = CategoryType.RealEstate
-        };
+        CategoryCatalog.SubCategories.ToDictionary(entry => entry.Id, entry => entry.Category);
 
     private static readonly IReadOnlyDictionary<SubCategoryType, ListingModuleType> Modules =
         BuildModules();

@@ -140,4 +140,22 @@ public static class FileUploadConstants
     {
         RescuesFolder, BloodRequestsFolder, AskConsultsFolder
     };
+
+    public const string DoctorsFolder = "doctors";
+
+    public const string MedicalLaboratoriesFolder = "medical-laboratories";
+
+    public const string DentalLaboratoriesFolder = "dental-laboratories";
+
+    public const string RadiologyLaboratoriesFolder = "radiology-laboratories";
+
+    public const string MedicalCentersFolder = "medical-centers";
+
+    public const string HospitalsFolder = "hospitals";
+
+    public static readonly string[] SehhatyFolders =
+    {
+        DoctorsFolder, MedicalLaboratoriesFolder, DentalLaboratoriesFolder,
+        RadiologyLaboratoriesFolder, MedicalCentersFolder, HospitalsFolder
+    };
 }

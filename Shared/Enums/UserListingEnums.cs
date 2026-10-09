@@ -98,7 +98,19 @@ public enum ListingModuleType
 
     LostItem = 70,
 
-    FoundItem = 71
+    FoundItem = 71,
+
+    Doctor = 80,
+
+    MedicalLaboratory = 81,
+
+    DentalLaboratory = 82,
+
+    RadiologyLaboratory = 83,
+
+    MedicalCenter = 84,
+
+    Hospital = 85
 }
 
 public enum ListingStatus

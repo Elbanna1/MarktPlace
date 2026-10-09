@@ -66,6 +66,13 @@ public static class ModerationModuleRegistry
             [ListingModuleType.BloodRequest] = typeof(BloodRequest),
             [ListingModuleType.AskConsult] = typeof(AskConsult),
 
+            [ListingModuleType.Doctor] = typeof(Doctor),
+            [ListingModuleType.MedicalLaboratory] = typeof(MedicalLaboratory),
+            [ListingModuleType.DentalLaboratory] = typeof(DentalLaboratory),
+            [ListingModuleType.RadiologyLaboratory] = typeof(RadiologyLaboratory),
+            [ListingModuleType.MedicalCenter] = typeof(MedicalCenter),
+            [ListingModuleType.Hospital] = typeof(Hospital),
+
             [ListingModuleType.LostItem] = typeof(LostFoundPost),
             [ListingModuleType.FoundItem] = typeof(LostFoundPost)
         };

@@ -121,16 +121,10 @@ public static class ReadConfigCatalog
     private const string BathroomSupplyRoute = "/" + HomeFurnishingRoutes.BathroomSupplies;
     private const string PlantOrnamentRoute = "/" + HomeFurnishingRoutes.PlantsOrnaments;
 
-    public static ReadConfigSchema? GetSchema(int categoryId, int? subCategoryId)
-    {
-        if (subCategoryId is { } id && Enum.IsDefined(typeof(SubCategoryType), id))
-            return GetSubCategorySchema(categoryId, (SubCategoryType)id);
-
-        return categoryId switch
-        {
-            _ => null
-        };
-    }
+    public static ReadConfigSchema? GetSchema(int categoryId, int? subCategoryId) =>
+        CatalogSelection.TryResolve(categoryId, subCategoryId, out var subCategory)
+            ? GetSubCategorySchema(categoryId, subCategory)
+            : null;
 
     private static ReadConfigSchema? GetSubCategorySchema(int categoryId, SubCategoryType subCategory) =>
         subCategory switch
@@ -197,6 +191,10 @@ public static class ReadConfigCatalog
             SubCategoryType.Rescues => Rescues(categoryId, subCategory),
             SubCategoryType.BloodRequests => BloodRequests(categoryId, subCategory),
             SubCategoryType.AskConsults => AskConsults(categoryId, subCategory),
+
+            SubCategoryType.Doctors or SubCategoryType.MedicalLaboratories or SubCategoryType.DentalLaboratories
+                or SubCategoryType.RadiologyLaboratories or SubCategoryType.MedicalCenters
+                or SubCategoryType.Hospitals => Sehhaty(categoryId, SehhatyCatalog.ModuleOf(subCategory)!),
 
             _ => null
         };
@@ -2079,6 +2077,54 @@ public static class ReadConfigCatalog
                     $"{AskConsultsRoute}/categories")
             ]);
 
+    private static ReadConfigSchema Sehhaty(int categoryId, SehhatyModule module)
+    {
+        var isDoctor = module.Type == ListingModuleType.Doctor;
+
+        var queryParameters = new List<ReadParameterDto>
+        {
+            Param("search", "بحث", "Search", ReadParameterTypes.String),
+            Param("name", module.NameLabel, module.NameLabelEn, ReadParameterTypes.String,
+                optionsSource: ReadOperationKeys.Advertisers, optionsValue: ReadOptionsValues.Name)
+        };
+
+        if (isDoctor)
+        {
+            queryParameters.Add(Param("specialty", SehhatyCatalog.SpecialtyLabel, "Specialty",
+                ReadParameterTypes.Enum,
+                optionsSource: ReadOperationKeys.DoctorSpecialties, optionsValue: ReadOptionsValues.Id));
+        }
+
+        queryParameters.Add(Param("sortBy", "الترتيب", "Sort by", ReadParameterTypes.Enum,
+            defaultValue: (int)SehhatySortBy.Newest,
+            options: SehhatyCatalog.SortOptions
+                .Select(option => new FormFieldOptionDto((int)option.Id, option.Name, option.NameEn))
+                .ToList()));
+
+        queryParameters.AddRange(Paging());
+
+        var operations = new List<ReadOperationDto>
+        {
+            Operation(ReadOperationKeys.List, module.ListLabel, module.ListLabelEn,
+                module.PublicRoute, paginated: true, queryParameters: queryParameters),
+
+            Operation(ReadOperationKeys.Details, module.DetailsLabel, module.DetailsLabelEn,
+                $"{module.PublicRoute}/{{id}}", routeParameters: IdRoute()),
+
+            UnifiedMyListings(module.Type, module.MyListingsLabel, module.MyListingsLabelEn)
+        };
+
+        if (isDoctor)
+        {
+            operations.Add(Operation(ReadOperationKeys.DoctorSpecialties, "تخصصات الأطباء", "Doctor specialties",
+                $"{module.PublicRoute}/specialties"));
+        }
+
+        operations.AddRange(SharedTail(categoryId, (int)module.SubCategory));
+
+        return new ReadConfigSchema(module.Key, operations);
+    }
+
     private static IEnumerable<ReadOperationDto> SharedTail(int categoryId, int subCategoryId)
     {
         if (AdvertiserLookupCatalog.Supports(subCategoryId))
@@ -2179,7 +2225,13 @@ public static class ReadConfigCatalog
                         (ListingModuleType.BloodRequest, "فصائل الدم", "Blood requests"),
                         (ListingModuleType.AskConsult, "اسأل واستشير", "Ask & consult"),
                         (ListingModuleType.LostItem, "ضايع مني", "Lost items"),
-                        (ListingModuleType.FoundItem, "لقيت", "Found items"))),
+                        (ListingModuleType.FoundItem, "لقيت", "Found items"),
+                        (ListingModuleType.Doctor, "الأطباء", "Doctors"),
+                        (ListingModuleType.MedicalLaboratory, "معامل التحاليل الطبية", "Medical laboratories"),
+                        (ListingModuleType.DentalLaboratory, "معامل الأسنان", "Dental laboratories"),
+                        (ListingModuleType.RadiologyLaboratory, "معامل الأشعة", "Radiology laboratories"),
+                        (ListingModuleType.MedicalCenter, "مراكز طبية", "Medical centers"),
+                        (ListingModuleType.Hospital, "مستشفيات", "Hospitals"))),
                 Param("status", "الحالة", "Status", ReadParameterTypes.Enum,
                     options: EnumOptions(
                         (ListingStatus.Pending, "قيد المراجعة", "Pending"),

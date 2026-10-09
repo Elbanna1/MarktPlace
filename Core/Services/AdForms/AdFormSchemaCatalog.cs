@@ -1,3 +1,4 @@
+using Services.Lookups;
 using Shared.Constants;
 using Shared.DTOs.Lookups.Forms;
 using Shared.Enums;
@@ -61,16 +62,10 @@ public static class AdFormSchemaCatalog
     private static readonly CreateAdFormSubmitDto BathroomSupplySubmit = new($"/{HomeFurnishingRoutes.BathroomSupplies}");
     private static readonly CreateAdFormSubmitDto PlantOrnamentSubmit = new($"/{HomeFurnishingRoutes.PlantsOrnaments}");
 
-    public static AdFormSchema? GetSchema(int categoryId, int? subCategoryId)
-    {
-        if (subCategoryId is { } id && Enum.IsDefined(typeof(SubCategoryType), id))
-            return GetSubCategorySchema((SubCategoryType)id);
-
-        return categoryId switch
-        {
-            _ => null
-        };
-    }
+    public static AdFormSchema? GetSchema(int categoryId, int? subCategoryId) =>
+        CatalogSelection.TryResolve(categoryId, subCategoryId, out var subCategory)
+            ? GetSubCategorySchema(subCategory)
+            : null;
 
     private static AdFormSchema? GetSubCategorySchema(SubCategoryType subCategory) => subCategory switch
     {
@@ -132,6 +127,10 @@ public static class AdFormSchemaCatalog
         SubCategoryType.Lands => Lands(),
         SubCategoryType.Apartments => Apartments(),
         SubCategoryType.Shops => Shops(),
+
+        SubCategoryType.Doctors or SubCategoryType.MedicalLaboratories or SubCategoryType.DentalLaboratories
+            or SubCategoryType.RadiologyLaboratories or SubCategoryType.MedicalCenters
+            or SubCategoryType.Hospitals => SehhatyFormSchemas.For(subCategory),
 
         _ => null
     };

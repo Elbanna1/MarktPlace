@@ -448,6 +448,19 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<AskConsultLike> AskConsultLikes => Set<AskConsultLike>();
     public DbSet<AskConsultComment> AskConsultComments => Set<AskConsultComment>();
 
+    public DbSet<Doctor> Doctors => Set<Doctor>();
+    public DbSet<DoctorImage> DoctorImages => Set<DoctorImage>();
+    public DbSet<MedicalLaboratory> MedicalLaboratories => Set<MedicalLaboratory>();
+    public DbSet<MedicalLaboratoryImage> MedicalLaboratoryImages => Set<MedicalLaboratoryImage>();
+    public DbSet<DentalLaboratory> DentalLaboratories => Set<DentalLaboratory>();
+    public DbSet<DentalLaboratoryImage> DentalLaboratoryImages => Set<DentalLaboratoryImage>();
+    public DbSet<RadiologyLaboratory> RadiologyLaboratories => Set<RadiologyLaboratory>();
+    public DbSet<RadiologyLaboratoryImage> RadiologyLaboratoryImages => Set<RadiologyLaboratoryImage>();
+    public DbSet<MedicalCenter> MedicalCenters => Set<MedicalCenter>();
+    public DbSet<MedicalCenterImage> MedicalCenterImages => Set<MedicalCenterImage>();
+    public DbSet<Hospital> Hospitals => Set<Hospital>();
+    public DbSet<HospitalImage> HospitalImages => Set<HospitalImage>();
+
     public DbSet<Referral> Referrals => Set<Referral>();
 
     public DbSet<ReferralLinkEvent> ReferralLinkEvents => Set<ReferralLinkEvent>();

@@ -2,7 +2,7 @@
 
 [← README](../README.md) · Related: [API](API.md) · [BUSINESS_RULES](BUSINESS_RULES.md) · [DATABASE](DATABASE.md)
 
-12 categories → 52 sub-categories → **48 concrete listing types**. This document explains how a
+13 categories → 58 sub-categories → **54 concrete listing types**. This document explains how a
 module actually works, starting with the pattern they all share.
 
 ---
@@ -289,6 +289,48 @@ one repository file for three modules.
 - **اسأل واستشير has no location** — governorate, مركز, latitude and longitude were removed from six
   layers. Rescue and Blood Requests keep theirs. The columns remain for old rows.
 - `approvedAt` is `PublishedAt`.
+
+---
+
+## Category 13 — صحتي (Sehhaty) · subs 53–58
+
+| Sub | Endpoint | Entity | Module type | Name field label |
+| --- | --- | --- | --- | --- |
+| 53 | `/api/doctors` | `Doctor` | 80 | اسم الطبيب |
+| 54 | `/api/medical-laboratories` | `MedicalLaboratory` | 81 | اسم المعمل |
+| 55 | `/api/dental-laboratories` | `DentalLaboratory` | 82 | اسم معمل الأسنان |
+| 56 | `/api/radiology-laboratories` | `RadiologyLaboratory` | 83 | اسم معمل الأشعة |
+| 57 | `/api/medical-centers` | `MedicalCenter` | 84 | اسم المركز الطبي |
+| 58 | `/api/hospitals` | `Hospital` | 85 | اسم المستشفى |
+
+Six independent tables (each with its own `*Images` table) sharing the abstract `SehhatyListing` /
+`SehhatyListing<TImage>` base, one generic repository (`SehhatyRepository<,,>`), one generic service
+(`SehhatyListingService<…>`) and one generic controller base. A module class only names its
+`SehhatyModule` descriptor — **`SehhatyCatalog` is the only place a Sehhaty label, placeholder,
+route, image folder or message lives**, and the forms, read-config, notifications and validators all
+read it.
+
+**Shape.** Every module: `Name` (labelled per module), `Title`, `Description`, `Address` (required),
+`GoogleMapsUrl` (optional, http/https), `Phone` (required, Egyptian mobile), `WhatsApp` and `Email`
+(optional), images **required** (1–10, `SehhatyCatalog.ImagesRequired`). There is no governorate /
+مركز block — the spec asks for an address and a maps link only.
+
+**Doctors** add `Specialty` (56 options, `DoctorSpecialty`, `أخرى` = 99) and `OtherSpecialty`,
+which is shown and required only for `أخرى` (`visibleWhen` + `requiredWhen` in the form, the same
+condition in `AddDoctorRules`) and nulled server-side for any other specialty, so the column never
+holds an answer to a question the form no longer asks. `displaySpecialty` in the response is the
+custom text for `أخرى`, otherwise the catalogue label.
+
+**Filters.** `name` (contains, wildcard-escaped; its options come from
+`/api/lookups/advertisers/13/{sub}` — the name *is* the advertiser for this category), `search`
+(name/title/description/address, plus `OtherSpecialty` for doctors), `sortBy` (الأحدث / الأقدم /
+الأكثر مشاهدة) and, for doctors, `specialty` (options from `GET /api/doctors/specialties`).
+
+**Indexes.** `IX_<Table>_Advertisers (ModerationStatus, Name) INCLUDE (IsDeleted, ExpireAt)` on all
+six, plus `(ModerationStatus, Specialty, CreatedAt)` on `Doctors`.
+
+Migration `AddSehhatyCategoryModules`: 12 tables, 43 indexes, and a **guarded** seed of category 13
+and subs 53–58 (see [DECISIONS § D-36](DECISIONS.md#d-36--one-catalog-for-category-identity-and-a-parent-check-in-every-lookup)).
 
 ---
 

@@ -149,6 +149,13 @@ public static class DependencyInjection
         services.AddScoped<IBloodRequestService, Services.Charity.BloodRequestService>();
         services.AddScoped<IAskConsultService, Services.Charity.AskConsultService>();
 
+        services.AddScoped<IDoctorService, Services.Sehhaty.DoctorService>();
+        services.AddScoped<IMedicalLaboratoryService, Services.Sehhaty.MedicalLaboratoryService>();
+        services.AddScoped<IDentalLaboratoryService, Services.Sehhaty.DentalLaboratoryService>();
+        services.AddScoped<IRadiologyLaboratoryService, Services.Sehhaty.RadiologyLaboratoryService>();
+        services.AddScoped<IMedicalCenterService, Services.Sehhaty.MedicalCenterService>();
+        services.AddScoped<IHospitalService, Services.Sehhaty.HospitalService>();
+
         var mapperConfiguration = new MapperConfiguration(
             cfg =>
             {
@@ -211,6 +218,8 @@ public static class DependencyInjection
                 cfg.AddProfile<ShopMappingProfile>();
 
                 cfg.AddProfile<CharityMappingProfile>();
+
+                cfg.AddProfile<SehhatyMappingProfile>();
             },
             NullLoggerFactory.Instance);
 

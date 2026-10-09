@@ -4,36 +4,46 @@ namespace Services.Lookups;
 
 public static class AdvertiserLookupCatalog
 {
-    private static readonly IReadOnlyDictionary<SubCategoryType, string> Modules =
+    public const string SellerNameParameter = "sellerName";
+
+    public const string NameParameter = "name";
+
+    private static readonly IReadOnlyDictionary<SubCategoryType, string> FilterParameters =
         new Dictionary<SubCategoryType, string>
         {
-            [SubCategoryType.Livestock] = "livestock",
-            [SubCategoryType.SheepAndGoats] = "sheepGoats",
-            [SubCategoryType.Horses] = "horses",
-            [SubCategoryType.Camels] = "camels",
-            [SubCategoryType.Birds] = "birds",
-            [SubCategoryType.Pets] = "pets",
-            [SubCategoryType.Fish] = "fish",
-            [SubCategoryType.Bees] = "bees",
-            [SubCategoryType.OtherAnimals] = "otherAnimals",
+            [SubCategoryType.Livestock] = SellerNameParameter,
+            [SubCategoryType.SheepAndGoats] = SellerNameParameter,
+            [SubCategoryType.Horses] = SellerNameParameter,
+            [SubCategoryType.Camels] = SellerNameParameter,
+            [SubCategoryType.Birds] = SellerNameParameter,
+            [SubCategoryType.Pets] = SellerNameParameter,
+            [SubCategoryType.Fish] = SellerNameParameter,
+            [SubCategoryType.Bees] = SellerNameParameter,
+            [SubCategoryType.OtherAnimals] = SellerNameParameter,
 
-            [SubCategoryType.DecorAntiques] = "decorAntiques",
-            [SubCategoryType.Antiques] = "antiques",
-            [SubCategoryType.Paintings] = "paintings",
-            [SubCategoryType.Handmade] = "handmade",
-            [SubCategoryType.CoinsAndStamps] = "coinsStamps"
+            [SubCategoryType.DecorAntiques] = SellerNameParameter,
+            [SubCategoryType.Antiques] = SellerNameParameter,
+            [SubCategoryType.Paintings] = SellerNameParameter,
+            [SubCategoryType.Handmade] = SellerNameParameter,
+            [SubCategoryType.CoinsAndStamps] = SellerNameParameter,
+
+            [SubCategoryType.Doctors] = NameParameter,
+            [SubCategoryType.MedicalLaboratories] = NameParameter,
+            [SubCategoryType.DentalLaboratories] = NameParameter,
+            [SubCategoryType.RadiologyLaboratories] = NameParameter,
+            [SubCategoryType.MedicalCenters] = NameParameter,
+            [SubCategoryType.Hospitals] = NameParameter
         };
 
-    public const string FilterParameter = "sellerName";
-
-    public static IReadOnlyCollection<SubCategoryType> SupportedSubCategories => (IReadOnlyCollection<SubCategoryType>)Modules.Keys;
+    public static IReadOnlyCollection<SubCategoryType> SupportedSubCategories =>
+        (IReadOnlyCollection<SubCategoryType>)FilterParameters.Keys;
 
     public static bool Supports(int subCategoryId) =>
         Enum.IsDefined(typeof(SubCategoryType), subCategoryId) &&
-        Modules.ContainsKey((SubCategoryType)subCategoryId);
+        FilterParameters.ContainsKey((SubCategoryType)subCategoryId);
 
-    public static bool Supports(SubCategoryType subCategory) => Modules.ContainsKey(subCategory);
+    public static bool Supports(SubCategoryType subCategory) => FilterParameters.ContainsKey(subCategory);
 
-    public static string? Module(SubCategoryType subCategory) =>
-        Modules.TryGetValue(subCategory, out var module) ? module : null;
+    public static string? FilterParameterOf(SubCategoryType subCategory) =>
+        FilterParameters.TryGetValue(subCategory, out var parameter) ? parameter : null;
 }

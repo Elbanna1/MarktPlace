@@ -66,6 +66,13 @@ public static class ListingSortIndexCatalog
             // CharitySortBy — most-viewed only.
             [typeof(Rescue)] = ByViews,
             [typeof(BloodRequest)] = ByViews,
-            [typeof(AskConsult)] = ByViews
+            [typeof(AskConsult)] = ByViews,
+
+            [typeof(Doctor)] = ByViews,
+            [typeof(MedicalLaboratory)] = ByViews,
+            [typeof(DentalLaboratory)] = ByViews,
+            [typeof(RadiologyLaboratory)] = ByViews,
+            [typeof(MedicalCenter)] = ByViews,
+            [typeof(Hospital)] = ByViews
         };
 }

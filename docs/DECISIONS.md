@@ -646,8 +646,8 @@ rather than hidden — **two accounts that type the same seller name are one opt
 are one result set in the feed.** Making them distinguishable is a listing-filter change first and a
 lookup change second, in that order.
 
-**Scope.** Only the 14 sub-categories whose feed actually has a `sellerName` filter — الحيوانات and
-التحف والأنتيكات. `AdvertiserLookupCatalog` is the single place that says so; `SharedTail` reads it to
+**Scope.** Only the sub-categories whose feed actually has an advertiser-name filter — الحيوانات and
+التحف والأنتيكات (`sellerName`), and since D-36 the six صحتي modules (`name`). `AdvertiserLookupCatalog` is the single place that says so; `SharedTail` reads it to
 decide whether `read-config` publishes the `advertisers` operation, and the `sellerName` filter
 parameter points at that operation through the existing `optionsSource` mechanism. افرش بيتك and
 عقارات store an advertiser name but their feeds have no such filter, so offering options there would
@@ -664,3 +664,44 @@ covers the two remaining predicates so there are no key lookups. Measured on 1,2
 expires, so the long `max-age=300` used for genuine reference data would be wrong; a minute is short
 enough that a new advertiser appears promptly and long enough to absorb the burst a combobox
 generates while someone types.
+
+---
+
+## D-36 — One catalog for category identity, and a parent check in every lookup
+
+**Problem.** Adding صحتي exposed four places that each restated which sub-category belongs to which
+category, by hand: the `HasData` seed in `CategoryConfiguration` / `SubCategoryConfiguration`, the
+`sub → category` map in `ListingModuleCatalog`, and the Swagger example builders in
+`CreateAdFormExamples` — whose `switch` had already gone stale (categories 9–11 fell through to
+"Lost & Found"). Separately, `AdFormSchemaCatalog.GetSchema` and `ReadConfigCatalog.GetSchema`
+ignored `categoryId` entirely (a dead `categoryId switch { _ => null }`), so only the
+`CategorySelectionResolver` in front of them stopped a sub-category being served under the wrong
+parent. And the advertisers endpoint kept its list of supported sub-categories in the catalog and,
+separately, a hand-written `switch` in the repository, held together by a test that grepped the
+source for `SubCategoryType.X =>`.
+
+**Decision.**
+
+- `Shared/Constants/CategoryCatalog.cs` is the **only** list of category / sub-category ids, English
+  names and Arabic names. The seed, the `sub → category` map and the examples read it. Moving the
+  seed onto it produced **no migration diff** for the existing 12 categories and 52 sub-categories —
+  proof the values were carried over byte for byte.
+- `Services.Lookups.CatalogSelection.TryResolve` checks the parent before either catalog builds a
+  schema, so the static catalogs refuse `(12, 53)` themselves rather than relying on every caller.
+- `AdvertiserLookupCatalog` states, per sub-category, **which list filter** its options feed
+  (`sellerName` for الحيوانات / التحف, `name` for صحتي). The repository is one registration table
+  (`SubCategoryType → IQueryable<string>`) that exposes its keys, and the tests compare the two sets,
+  compare each read-config filter that takes `optionsSource: advertisers` against the catalog, and
+  check the covering index from the EF model instead of grepping configuration files.
+- `LookupRouteIntegrityTests` walks **every seeded sub-category** and asserts: a form and a read-config
+  exist; the submit endpoint is a real `POST`; every advertised read operation is a real `GET`
+  (via `ApiRouteIndex`, built by reflection over the controllers); the list and submit endpoints
+  agree; and the module route in `NotificationCatalog` is the list route.
+
+**The صحتي seed is guarded, not blind.** Admins can create categories with `Max(Id) + 1`
+(`AdminCatalogRepository.NextCategoryIdAsync`), so a database somewhere may already own id 13. The
+migration therefore inserts each seeded row only if it is missing, and **aborts with `THROW 51000`
+(rolling the whole migration back) if the id is held by a different category or sub-category**.
+Verified on LocalDB: fresh apply, re-run (no-op), `Down`, and a pre-existing foreign id 13 (aborts,
+no tables created).
+

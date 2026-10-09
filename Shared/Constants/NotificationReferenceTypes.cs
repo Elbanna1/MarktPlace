@@ -72,4 +72,11 @@ public static class NotificationReferenceTypes
     public const string Rescue = "Rescue";
     public const string BloodRequest = "BloodRequest";
     public const string AskConsult = "AskConsult";
+
+    public const string Doctor = "Doctor";
+    public const string MedicalLaboratory = "MedicalLaboratory";
+    public const string DentalLaboratory = "DentalLaboratory";
+    public const string RadiologyLaboratory = "RadiologyLaboratory";
+    public const string MedicalCenter = "MedicalCenter";
+    public const string Hospital = "Hospital";
 }

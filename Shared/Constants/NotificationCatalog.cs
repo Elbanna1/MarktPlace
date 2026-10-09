@@ -138,9 +138,19 @@ public static class NotificationCatalog
             [ListingModuleType.BloodRequest] = new(NotificationReferenceTypes.BloodRequest, "طلب فصيلة الدم", "🩸", "/blood-requests"),
             [ListingModuleType.AskConsult] = new(NotificationReferenceTypes.AskConsult, "السؤال", "❓", "/ask-consults"),
 
+            [ListingModuleType.Doctor] = Sehhaty(NotificationReferenceTypes.Doctor, SehhatyCatalog.Doctors),
+            [ListingModuleType.MedicalLaboratory] = Sehhaty(NotificationReferenceTypes.MedicalLaboratory, SehhatyCatalog.MedicalLaboratories),
+            [ListingModuleType.DentalLaboratory] = Sehhaty(NotificationReferenceTypes.DentalLaboratory, SehhatyCatalog.DentalLaboratories),
+            [ListingModuleType.RadiologyLaboratory] = Sehhaty(NotificationReferenceTypes.RadiologyLaboratory, SehhatyCatalog.RadiologyLaboratories),
+            [ListingModuleType.MedicalCenter] = Sehhaty(NotificationReferenceTypes.MedicalCenter, SehhatyCatalog.MedicalCenters),
+            [ListingModuleType.Hospital] = Sehhaty(NotificationReferenceTypes.Hospital, SehhatyCatalog.Hospitals),
+
             [ListingModuleType.LostItem] = LostItem,
             [ListingModuleType.FoundItem] = FoundItem
         };
+
+    private static NotificationSubject Sehhaty(string referenceType, SehhatyModule module) =>
+        new(referenceType, module.EntityName, module.Icon, "/" + module.Route["api/".Length..]);
 
     public static NotificationSubject For(ListingModuleType module) =>
         Subjects.TryGetValue(module, out var subject)

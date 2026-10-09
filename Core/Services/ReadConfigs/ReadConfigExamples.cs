@@ -90,6 +90,11 @@ public static class ReadConfigExamples
         Create("charity-ask-consults", "Charity → Ask & Consult (بوابة الخيرات → اسأل واستشير)",
             CategoryType.Charity, SubCategoryType.AskConsults),
 
+        Create("sehhaty-doctors", "Sehhaty → Doctors (صحتي → الأطباء)",
+            CategoryType.Sehhaty, SubCategoryType.Doctors),
+        Create("sehhaty-medical-laboratories", "Sehhaty → Medical Laboratories (صحتي → معامل التحاليل الطبية)",
+            CategoryType.Sehhaty, SubCategoryType.MedicalLaboratories),
+
         SubCategoryStep("sub-category-step", "Category only → sub category still to be chosen (رجال أعمال)",
             CategoryType.Business)
     ];

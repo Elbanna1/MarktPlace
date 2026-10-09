@@ -1,10 +1,12 @@
-using System.Text.RegularExpressions;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Persistence.Listings;
 using Persistence.Data;
 using Persistence.Repositories;
 using Services.Lookups;
 using Services.ReadConfigs;
+using Shared.Constants;
 using Shared.DTOs.Lookups;
 using Shared.DTOs.Lookups.Read;
 using Shared.Enums;
@@ -270,29 +272,42 @@ public class AdvertiserLookupTests
     }
 
     [Fact]
-    public void The_catalog_covers_exactly_the_modules_whose_list_endpoint_filters_on_the_advertiser()
+    public void The_catalog_covers_exactly_the_list_filters_that_take_their_options_from_the_advertisers()
     {
-        var filtered = RepositoryRoot.SourceFiles()
-            .Where(file => file.Contains("/Shared/DTOs/", StringComparison.Ordinal))
-            .Where(file => file.EndsWith("FilterParams.cs", StringComparison.Ordinal))
-            .Count(file => File.ReadAllText(file)
-                .Contains("public string? SellerName", StringComparison.Ordinal));
+        var published = new HashSet<SubCategoryType>();
 
-        Assert.Equal(AdvertiserLookupCatalog.SupportedSubCategories.Count, filtered);
+        foreach (var sub in Enum.GetValues<SubCategoryType>())
+        {
+            if (ListingModuleCatalog.CategoryOf(sub) is not { } category)
+                continue;
+
+            var list = ReadConfigCatalog.GetSchema((int)category, (int)sub)?.Find(ReadOperationKeys.List);
+
+            var fed = list?.QueryParameters?
+                .Where(parameter => parameter.OptionsSource == ReadOperationKeys.Advertisers)
+                .ToList() ?? [];
+
+            if (fed.Count == 0)
+                continue;
+
+            published.Add(sub);
+
+            var parameter = Assert.Single(fed);
+            Assert.Equal(AdvertiserLookupCatalog.FilterParameterOf(sub), parameter.Name);
+            Assert.Equal(ReadOptionsValues.Name, parameter.OptionsValue);
+        }
+
+        Assert.Equal(
+            AdvertiserLookupCatalog.SupportedSubCategories.OrderBy(sub => sub),
+            published.OrderBy(sub => sub));
     }
 
     [Fact]
     public void Every_supported_sub_category_is_dispatched_by_the_repository()
     {
-        var source = RepositoryRoot.ReadFile(
-            "Infastrucre/Presitance/Repositories/AdvertiserLookupRepository.cs");
-
-        var missing = AdvertiserLookupCatalog.SupportedSubCategories
-            .Where(sub => !source.Contains($"SubCategoryType.{sub} =>", StringComparison.Ordinal))
-            .ToArray();
-
-        Assert.True(missing.Length == 0,
-            "AdvertiserLookupRepository does not dispatch: " + string.Join(", ", missing));
+        Assert.Equal(
+            AdvertiserLookupCatalog.SupportedSubCategories.OrderBy(sub => sub),
+            AdvertiserLookupRepository.SupportedSubCategories.OrderBy(sub => sub));
     }
 
     [Fact]
@@ -369,22 +384,36 @@ public class AdvertiserLookupTests
     [Fact]
     public void Every_advertiser_filtering_table_carries_the_covering_index()
     {
-        var configurations = RepositoryRoot.SourceFiles()
-            .Where(file => file.Contains("/Presitance/Configurations/", StringComparison.Ordinal))
-            .Select(file => (File: file, Source: File.ReadAllText(file)))
-            .Where(entry => entry.Source.Contains("x.SellerName", StringComparison.Ordinal))
-            .ToArray();
+        var model = SqlServerModel();
 
-        Assert.Equal(AdvertiserLookupCatalog.SupportedSubCategories.Count, configurations.Length);
-
-        foreach (var (file, source) in configurations)
+        foreach (var sub in AdvertiserLookupCatalog.SupportedSubCategories)
         {
-            Assert.True(
-                Regex.IsMatch(
-                    source,
-                    @"HasIndex\(x => new \{ x\.ModerationStatus, x\.SellerName \}, ""IX_\w+_Advertisers""\)\s*\r?\n\s*\.IncludeProperties\(x => new \{ x\.IsDeleted, x\.ExpireAt \}\);"),
-                RepositoryRoot.Relative(file) +
-                " must index (ModerationStatus, SellerName) INCLUDE (IsDeleted, ExpireAt).");
+            var module = ListingModuleCatalog.ModuleOf(sub)!.Value;
+            var entity = model.FindEntityType(ModerationModuleRegistry.EntityTypes[module])!;
+
+            var index = entity.GetIndexes()
+                .SingleOrDefault(candidate =>
+                    candidate.GetDatabaseName()?.EndsWith("_Advertisers", StringComparison.Ordinal) == true);
+
+            Assert.True(index is not null, $"{entity.GetTableName()} has no IX_*_Advertisers index.");
+
+            Assert.Equal("ModerationStatus", index!.Properties[0].Name);
+            Assert.Equal(2, index.Properties.Count);
+
+            Assert.Equal(
+                new[] { "ExpireAt", "IsDeleted" },
+                (index.GetIncludeProperties() ?? []).OrderBy(name => name, StringComparer.Ordinal));
         }
+    }
+
+    private static Microsoft.EntityFrameworkCore.Metadata.IModel SqlServerModel()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseSqlServer("Server=localhost;Database=ModelOnly;Trusted_Connection=True;")
+            .Options;
+
+        using var context = new AppDbContext(options);
+
+        return context.GetService<Microsoft.EntityFrameworkCore.Metadata.IDesignTimeModel>().Model;
     }
 }

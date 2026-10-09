@@ -28,6 +28,8 @@ public static class ReadOperationKeys
 
     public const string AskConsultCategories = "askConsultCategories";
 
+    public const string DoctorSpecialties = "doctorSpecialties";
+
     public const string CreateForm = "createForm";
 
     public const string ReadConfig = "readConfig";

@@ -1,4 +1,3 @@
-using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using ServicesAbstraction;
@@ -18,59 +17,54 @@ public class AdvertiserLookupRepository : IAdvertiserLookupRepository
         _context = context;
     }
 
+    private static readonly IReadOnlyDictionary<SubCategoryType, Func<AppDbContext, IQueryable<string>>> Sources =
+        new Dictionary<SubCategoryType, Func<AppDbContext, IQueryable<string>>>
+        {
+            [SubCategoryType.Livestock] = context => context.Livestock.Select(x => x.SellerName),
+            [SubCategoryType.SheepAndGoats] = context => context.SheepGoats.Select(x => x.SellerName),
+            [SubCategoryType.Horses] = context => context.Horses.Select(x => x.SellerName),
+            [SubCategoryType.Camels] = context => context.Camels.Select(x => x.SellerName),
+            [SubCategoryType.Birds] = context => context.Birds.Select(x => x.SellerName),
+            [SubCategoryType.Pets] = context => context.Pets.Select(x => x.SellerName),
+            [SubCategoryType.Fish] = context => context.Fishes.Select(x => x.SellerName),
+            [SubCategoryType.Bees] = context => context.Bees.Select(x => x.SellerName),
+            [SubCategoryType.OtherAnimals] = context => context.OtherAnimals.Select(x => x.SellerName),
+
+            [SubCategoryType.DecorAntiques] = context => context.DecorAntiques.Select(x => x.SellerName),
+            [SubCategoryType.Antiques] = context => context.Antiques.Select(x => x.SellerName),
+            [SubCategoryType.Paintings] = context => context.Paintings.Select(x => x.SellerName),
+            [SubCategoryType.Handmade] = context => context.Handmades.Select(x => x.SellerName),
+            [SubCategoryType.CoinsAndStamps] = context => context.CoinStamps.Select(x => x.SellerName),
+
+            [SubCategoryType.Doctors] = context => context.Doctors.Select(x => x.Name),
+            [SubCategoryType.MedicalLaboratories] = context => context.MedicalLaboratories.Select(x => x.Name),
+            [SubCategoryType.DentalLaboratories] = context => context.DentalLaboratories.Select(x => x.Name),
+            [SubCategoryType.RadiologyLaboratories] = context => context.RadiologyLaboratories.Select(x => x.Name),
+            [SubCategoryType.MedicalCenters] = context => context.MedicalCenters.Select(x => x.Name),
+            [SubCategoryType.Hospitals] = context => context.Hospitals.Select(x => x.Name)
+        };
+
+    public static IReadOnlyCollection<SubCategoryType> SupportedSubCategories =>
+        (IReadOnlyCollection<SubCategoryType>)Sources.Keys;
+
     public Task<(IReadOnlyList<AdvertiserOptionDto> Items, int TotalCount)> GetPagedAsync(
         SubCategoryType subCategory,
         string? search,
         int pageIndex,
         int pageSize,
         CancellationToken cancellationToken = default) =>
-        subCategory switch
-        {
-            SubCategoryType.Livestock =>
-                QueryAsync(_context.Livestock, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.SheepAndGoats =>
-                QueryAsync(_context.SheepGoats, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.Horses =>
-                QueryAsync(_context.Horses, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.Camels =>
-                QueryAsync(_context.Camels, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.Birds =>
-                QueryAsync(_context.Birds, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.Pets =>
-                QueryAsync(_context.Pets, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.Fish =>
-                QueryAsync(_context.Fishes, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.Bees =>
-                QueryAsync(_context.Bees, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.OtherAnimals =>
-                QueryAsync(_context.OtherAnimals, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
+        Sources.TryGetValue(subCategory, out var source)
+            ? QueryAsync(source(_context), search, pageIndex, pageSize, cancellationToken)
+            : Task.FromResult<(IReadOnlyList<AdvertiserOptionDto>, int)>(
+                (Array.Empty<AdvertiserOptionDto>(), 0));
 
-            SubCategoryType.DecorAntiques =>
-                QueryAsync(_context.DecorAntiques, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.Antiques =>
-                QueryAsync(_context.Antiques, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.Paintings =>
-                QueryAsync(_context.Paintings, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.Handmade =>
-                QueryAsync(_context.Handmades, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-            SubCategoryType.CoinsAndStamps =>
-                QueryAsync(_context.CoinStamps, x => x.SellerName, search, pageIndex, pageSize, cancellationToken),
-
-            _ => Task.FromResult<(IReadOnlyList<AdvertiserOptionDto>, int)>(
-                (Array.Empty<AdvertiserOptionDto>(), 0))
-        };
-
-    private static async Task<(IReadOnlyList<AdvertiserOptionDto> Items, int TotalCount)> QueryAsync<TEntity>(
-        IQueryable<TEntity> set,
-        System.Linq.Expressions.Expression<Func<TEntity, string>> advertiser,
+    private static async Task<(IReadOnlyList<AdvertiserOptionDto> Items, int TotalCount)> QueryAsync(
+        IQueryable<string> names,
         string? search,
         int pageIndex,
         int pageSize,
         CancellationToken cancellationToken)
-        where TEntity : class
     {
-        var names = set.AsNoTracking().Select(advertiser);
-
         if (!string.IsNullOrEmpty(search))
         {
             var pattern = $"%{Escape(search)}%";
