@@ -60,6 +60,7 @@ public sealed class AdvertisementListingSource : IUserListingSource
                 CreatedAt = a.CreatedAt,
                 PublishedAt = a.PublishedAt,
                 ExpireAt = a.ExpireAt,
+                RepublishCount = a.RepublishCount,
                 SupportsRepublish = true
             });
 }

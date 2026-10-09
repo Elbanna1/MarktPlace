@@ -38,7 +38,9 @@ public static class AdvertiserLookupCatalog
             [SubCategoryType.EngineeringConsultancyOffices] = NameParameter,
             [SubCategoryType.Contractors] = NameParameter,
             [SubCategoryType.IndustrialConsultancyOffices] = NameParameter,
-            [SubCategoryType.AccountantOffices] = NameParameter
+            [SubCategoryType.AccountantOffices] = NameParameter,
+
+            [SubCategoryType.RestaurantsAndCafes] = NameParameter
         };
 
     public static IReadOnlyCollection<SubCategoryType> SupportedSubCategories =>

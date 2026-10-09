@@ -55,6 +55,7 @@ public sealed class WholesaleTraderListingSource : IUserListingSource
                 CreatedAt = t.CreatedAt,
                 PublishedAt = t.PublishedAt,
                 ExpireAt = t.ExpireAt,
+                RepublishCount = t.RepublishCount,
                 SupportsRepublish = true
             });
 }

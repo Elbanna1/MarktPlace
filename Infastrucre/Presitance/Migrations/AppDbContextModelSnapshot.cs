@@ -6777,6 +6777,14 @@ namespace Presitance.Migrations
                             Name = "Offices",
                             NameAr = "مكاتب",
                             SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 15,
+                            IsActive = true,
+                            Name = "Restaurants & Cafes",
+                            NameAr = "مطاعم وكافيهات",
+                            SortOrder = 0
                         });
                 });
 
@@ -25790,6 +25798,166 @@ namespace Presitance.Migrations
                     b.ToTable("RescueImages", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.RestaurantAndCafe", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FirstPublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GoogleMapsUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModeratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModeratedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModerationNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ModerationStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RejectionReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepublishCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpireAt");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("ModerationStatus", "CreatedAt", "Id")
+                        .IsDescending(false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_RestaurantsAndCafes_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_RestaurantsAndCafes_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_RestaurantsAndCafes_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_RestaurantsAndCafes_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.ToTable("RestaurantsAndCafes", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.RestaurantAndCafeImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("RestaurantAndCafeImages", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.SalaryTypeLookup", b =>
                 {
                     b.Property<int>("Id")
@@ -29005,6 +29173,15 @@ namespace Presitance.Migrations
                             IsActive = true,
                             Name = "Certified Public Accountant Offices",
                             NameAr = "مكاتب محاسبين قانونيين",
+                            SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 64,
+                            CategoryId = 15,
+                            IsActive = true,
+                            Name = "Restaurants & Cafes",
+                            NameAr = "مطاعم وكافيهات",
                             SortOrder = 0
                         });
                 });
@@ -33490,6 +33667,28 @@ namespace Presitance.Migrations
                     b.Navigation("Rescue");
                 });
 
+            modelBuilder.Entity("Domain.Entities.RestaurantAndCafe", b =>
+                {
+                    b.HasOne("Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RestaurantAndCafeImage", b =>
+                {
+                    b.HasOne("Domain.Entities.RestaurantAndCafe", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
+                });
+
             modelBuilder.Entity("Domain.Entities.SheepGoat", b =>
                 {
                     b.HasOne("Domain.Entities.ApplicationUser", "User")
@@ -34139,6 +34338,11 @@ namespace Presitance.Migrations
                 });
 
             modelBuilder.Entity("Domain.Entities.Rescue", b =>
+                {
+                    b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("Domain.Entities.RestaurantAndCafe", b =>
                 {
                     b.Navigation("Images");
                 });

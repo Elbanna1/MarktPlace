@@ -54,6 +54,7 @@ public sealed class LandListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -106,6 +107,7 @@ public sealed class ApartmentListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -158,6 +160,7 @@ public sealed class ShopListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }

@@ -55,6 +55,7 @@ public sealed class JobOpportunityListingSource : IUserListingSource
                 CreatedAt = j.CreatedAt,
                 PublishedAt = j.PublishedAt,
                 ExpireAt = j.ExpireAt,
+                RepublishCount = j.RepublishCount,
                 SupportsRepublish = true
             });
 }

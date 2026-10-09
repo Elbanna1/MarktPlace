@@ -37,8 +37,14 @@ public class SilentProxy<T> : DispatchProxy where T : class
 {
     public static T Create() => DispatchProxy.Create<T, SilentProxy<T>>();
 
+    public static SilentProxy<T> Of(T proxy) => (SilentProxy<T>)(object)proxy;
+
+    public List<(string Method, object?[] Args)> Calls { get; } = new();
+
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
     {
+        Calls.Add((targetMethod!.Name, args ?? []));
+
         var returnType = targetMethod!.ReturnType;
 
         if (returnType == typeof(Task))

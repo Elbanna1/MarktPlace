@@ -55,6 +55,7 @@ public sealed class BirdListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }

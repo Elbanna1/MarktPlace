@@ -10,6 +10,10 @@ public class CategoryTreeDto
 
     public int SortOrder { get; set; }
 
+    public bool OpensFormDirectly { get; set; }
+
+    public int? DirectSubCategoryId { get; set; }
+
     public List<CategoryTreeSubCategoryDto> SubCategories { get; set; } = new();
 }
 

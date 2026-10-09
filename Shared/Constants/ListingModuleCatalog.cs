@@ -76,6 +76,8 @@ public static class ListingModuleCatalog
             [ListingModuleType.IndustrialConsultancyOffice] = SubCategoryType.IndustrialConsultancyOffices,
             [ListingModuleType.AccountantOffice] = SubCategoryType.AccountantOffices,
 
+            [ListingModuleType.RestaurantAndCafe] = SubCategoryType.RestaurantsAndCafes,
+
             [ListingModuleType.LostItem] = SubCategoryType.LostItems,
             [ListingModuleType.FoundItem] = SubCategoryType.FoundItems
         };

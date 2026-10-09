@@ -55,6 +55,7 @@ public sealed class WorkshopListingSource : IUserListingSource
                 CreatedAt = w.CreatedAt,
                 PublishedAt = w.PublishedAt,
                 ExpireAt = w.ExpireAt,
+                RepublishCount = w.RepublishCount,
                 SupportsRepublish = true
             });
 }

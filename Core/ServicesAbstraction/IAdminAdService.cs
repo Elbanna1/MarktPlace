@@ -32,5 +32,8 @@ public interface IAdminAdService
         ListingModuleType type, Guid id, string adminUserId,
         SuspendListingRequest request, CancellationToken cancellationToken = default);
 
+    Task<AdminRepublishResultDto> RepublishAsync(
+        ListingModuleType type, Guid id, string adminUserId, CancellationToken cancellationToken = default);
+
     Task<AdminAdMetadataDto> GetMetadataAsync(CancellationToken cancellationToken = default);
 }

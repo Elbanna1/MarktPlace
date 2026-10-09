@@ -24,7 +24,10 @@ public sealed record DirectoryModule(
     string MyListingsLabelEn,
     string NotFoundMessage,
     bool ImagesRequired = true,
-    bool NameFilterIsExact = false)
+    bool NameFilterIsExact = false,
+    string? AdSection = null,
+    string? AddressPlaceholder = null,
+    string? GoogleMapsPlaceholder = null)
 {
     public string PublicRoute => "/" + Route;
 

@@ -39,7 +39,9 @@ public enum CategoryType
 
     Sehhaty = 13,
 
-    Offices = 14
+    Offices = 14,
+
+    RestaurantsAndCafes = 15
 }
 
 public enum SubCategoryType
@@ -168,7 +170,9 @@ public enum SubCategoryType
 
     IndustrialConsultancyOffices = 62,
 
-    AccountantOffices = 63
+    AccountantOffices = 63,
+
+    RestaurantsAndCafes = 64
 }
 
 public static class OfficesSubCategories

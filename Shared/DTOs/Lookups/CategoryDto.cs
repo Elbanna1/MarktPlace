@@ -9,4 +9,8 @@ public class CategoryDto
     public string? Icon { get; set; }
 
     public int SortOrder { get; set; }
+
+    public bool OpensFormDirectly { get; set; }
+
+    public int? DirectSubCategoryId { get; set; }
 }

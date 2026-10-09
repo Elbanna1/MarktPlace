@@ -370,6 +370,25 @@ public class AdminAdRepository : IAdminAdRepository
             if (filter.ToDate is { } toDate)
                 query = query.Where(row => row.CreatedAt <= toDate);
 
+            if (filter.ExpiringWithinDays is { } days)
+            {
+                var until = utcNow.AddDays(days);
+                query = query.Where(row =>
+                    row.Status == ListingStatus.Active && row.ExpireAt != null && row.ExpireAt <= until);
+            }
+
+            if (filter.RepublishDue == true)
+            {
+                var until = utcNow.AddDays(AdminRepublishPolicy.WarningDays);
+                query = query.Where(row =>
+                    row.ModerationStatus == ModerationStatus.Approved && row.ExpireAt != null && row.ExpireAt <= until);
+            }
+
+            if (filter.Republished is { } republished)
+                query = republished
+                    ? query.Where(row => row.RepublishCount > 0)
+                    : query.Where(row => row.RepublishCount == 0);
+
             if (!string.IsNullOrWhiteSpace(search))
                 query = query.Where(row =>
                     EF.Functions.Like(row.Title, $"%{search}%") ||

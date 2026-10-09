@@ -180,6 +180,8 @@ public static class ImageConstants
 
         FileUploadConstants.LawyerOfficesFolder, FileUploadConstants.EngineeringConsultancyOfficesFolder,
         FileUploadConstants.ContractorsFolder, FileUploadConstants.IndustrialConsultancyOfficesFolder,
-        FileUploadConstants.AccountantOfficesFolder
+        FileUploadConstants.AccountantOfficesFolder,
+
+        FileUploadConstants.RestaurantsAndCafesFolder
     };
 }

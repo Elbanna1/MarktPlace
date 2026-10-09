@@ -96,6 +96,8 @@ public static class ReadConfigExamples
             CategoryType.Sehhaty, SubCategoryType.MedicalLaboratories),
         Create("offices-accountant-offices", "Offices → Accountant Offices (مكاتب → مكاتب محاسبين قانونيين)",
             CategoryType.Offices, SubCategoryType.AccountantOffices),
+        Create("restaurants-and-cafes", "Restaurants & Cafes (مطاعم وكافيهات) — opens directly",
+            CategoryType.RestaurantsAndCafes, SubCategoryType.RestaurantsAndCafes),
 
         SubCategoryStep("sub-category-step", "Category only → sub category still to be chosen (رجال أعمال)",
             CategoryType.Business)

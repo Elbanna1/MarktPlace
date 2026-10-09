@@ -1,5 +1,6 @@
 using Domain.Entities;
 using ServicesAbstraction;
+using Shared.Constants;
 using Shared.Exceptions;
 
 namespace Services.Lookups;
@@ -28,6 +29,13 @@ public sealed class CategorySelectionResolver
             ?? throw new NotFoundException($"القسم {categoryId} مش موجود.");
 
         var subCategories = category.SubCategories.OrderBy(s => s.Id).ToList();
+
+        if (subCategoryId is null &&
+            subCategories.Count == 1 &&
+            CategoryCatalog.DirectSubCategoryOf(category.Id) == subCategories[0].Id)
+        {
+            return new CategorySelection(category, subCategories, subCategories[0], RequiresSubCategory: false);
+        }
 
         if (subCategoryId is null && subCategories.Count > 0)
             return new CategorySelection(category, subCategories, null, RequiresSubCategory: true);

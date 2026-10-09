@@ -29,6 +29,8 @@ public class ReadConfigService : IReadConfigService
                 selection,
                 requiresSubCategory: true);
 
+        subCategoryId = selection.SubCategory?.Id ?? subCategoryId;
+
         var schema = ReadConfigCatalog.GetSchema(categoryId, subCategoryId)
             ?? throw new BadRequestException(
                 "مفيش إعدادات عرض متاحة للقسم اللي اخترته.");

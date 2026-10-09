@@ -1,5 +1,6 @@
 using AutoMapper;
 using Domain.Entities;
+using Shared.Constants;
 using Shared.DTOs.Lookups;
 
 namespace Services.Mapping;
@@ -8,9 +9,13 @@ public class LookupMappingProfile : Profile
 {
     public LookupMappingProfile()
     {
-        CreateMap<Category, CategoryDto>();
+        CreateMap<Category, CategoryDto>()
+            .ForMember(d => d.OpensFormDirectly, o => o.MapFrom(s => CategoryCatalog.OpensFormDirectly(s.Id)))
+            .ForMember(d => d.DirectSubCategoryId, o => o.MapFrom(s => CategoryCatalog.DirectSubCategoryOf(s.Id)));
 
-        CreateMap<Category, CategoryTreeDto>();
+        CreateMap<Category, CategoryTreeDto>()
+            .ForMember(d => d.OpensFormDirectly, o => o.MapFrom(s => CategoryCatalog.OpensFormDirectly(s.Id)))
+            .ForMember(d => d.DirectSubCategoryId, o => o.MapFrom(s => CategoryCatalog.DirectSubCategoryOf(s.Id)));
         CreateMap<SubCategory, CategoryTreeSubCategoryDto>();
 
         CreateMap<SubCategory, SubCategoryDto>()

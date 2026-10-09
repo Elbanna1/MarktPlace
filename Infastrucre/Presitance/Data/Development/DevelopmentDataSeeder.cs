@@ -44,6 +44,8 @@ public static class DevelopmentDataSeeder
         public int PostsCreated { get; init; }
         public int PostsIllustrated { get; init; }
 
+        public int RestaurantsAndCafesCreated { get; init; }
+
         public int TotalImagesLinked { get; init; }
     }
 
@@ -113,6 +115,14 @@ public static class DevelopmentDataSeeder
         var craftsmenIllustrated = await IllustrateCraftsmenAsync(db, pools, cancellationToken);
         var postsIllustrated = await IllustratePostsAsync(db, pools, cancellationToken);
 
+        var restaurantImages = Pool(pools, DemoImageCatalog.Names.RestaurantCafe)
+            .Take(MinImagesPerItem)
+            .Select(image => new DemoSeedImage(image.FileName, image.RelativePath, image.Url))
+            .ToList();
+
+        var restaurantsCreated = await RestaurantAndCafeDemoSeed.SeedAsync(
+            db, users[0], restaurantImages, DateTime.UtcNow, cancellationToken) ? 1 : 0;
+
         var totalLinked =
             await db.AdvertisementImages.CountAsync(cancellationToken) +
             await db.WorkshopImages.CountAsync(cancellationToken) +
@@ -136,6 +146,7 @@ public static class DevelopmentDataSeeder
             CraftsmenIllustrated = craftsmenIllustrated,
             PostsCreated = postsCreated,
             PostsIllustrated = postsIllustrated,
+            RestaurantsAndCafesCreated = restaurantsCreated,
             TotalImagesLinked = totalLinked
         };
     }

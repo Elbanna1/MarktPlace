@@ -39,16 +39,28 @@ public class OfficesCategoryTests
 
     private const int Accountants = 63;
 
-    public static TheoryData<int, string, string, string, string, string> Modules() => new()
+    public static TheoryData<int, string, string, string, string> Forms() => new()
     {
-        { 59, "lawyerOffices", "/api/lawyer-offices", "LawyerOffices", "مكاتب محامين", "اسم المكتب أو المحامي" },
-        { 60, "engineeringConsultancyOffices", "/api/engineering-consultancy-offices", "EngineeringConsultancyOffices", "مكاتب استشارية هندسية", "اسم المكتب الهندسي" },
-        { 61, "contractors", "/api/contractors", "Contractors", "مقاولين (هدم وبناء)", "اسم المكتب أو المقاول" },
-        { 62, "industrialConsultancyOffices", "/api/industrial-consultancy-offices", "IndustrialConsultancyOffices", "مكاتب استشارية صناعية", "اسم مكتب الاستشارة الصناعية" },
-        { 63, "accountantOffices", "/api/accountant-offices", "AccountantOffices", "مكاتب محاسبين قانونيين", "اسم مكتب المحاسب القانوني أو اسم المحاسب القانوني" }
+        { 59, "lawyerOffices", "/api/lawyer-offices", "مكاتب محامين", "اسم المكتب أو المحامي" },
+        { 60, "engineeringConsultancyOffices", "/api/engineering-consultancy-offices", "مكاتب استشارية هندسية", "اسم المكتب الهندسي" },
+        { 61, "contractors", "/api/contractors", "مقاولين (هدم وبناء)", "اسم المكتب أو المقاول" },
+        { 62, "industrialConsultancyOffices", "/api/industrial-consultancy-offices", "مكاتب استشارية صناعية", "اسم مكتب الاستشارة الصناعية" },
+        { 63, "accountantOffices", "/api/accountant-offices", "مكاتب محاسبين قانونيين", "اسم مكتب المحاسب القانوني أو اسم المحاسب القانوني" }
     };
 
     public static TheoryData<int> SubCategories() => new() { 59, 60, 61, 62, 63 };
+
+    public static TheoryData<string> Routes() => new()
+    {
+        "/api/lawyer-offices", "/api/engineering-consultancy-offices", "/api/contractors",
+        "/api/industrial-consultancy-offices", "/api/accountant-offices"
+    };
+
+    public static TheoryData<int, string> Tables() => new()
+    {
+        { 59, "LawyerOffices" }, { 60, "EngineeringConsultancyOffices" }, { 61, "Contractors" },
+        { 62, "IndustrialConsultancyOffices" }, { 63, "AccountantOffices" }
+    };
 
     private static AppDbContext NewContext()
     {
@@ -152,9 +164,8 @@ public class OfficesCategoryTests
     }
 
     [Theory]
-    [MemberData(nameof(Modules))]
-    public void Every_CRUD_endpoint_has_a_real_controller_action(
-        int subCategoryId, string key, string route, string table, string subName, string nameLabel)
+    [MemberData(nameof(Routes))]
+    public void Every_CRUD_endpoint_has_a_real_controller_action(string route)
     {
         Assert.True(ApiRouteIndex.Exists("POST", route));
         Assert.True(ApiRouteIndex.Exists("GET", route));
@@ -164,9 +175,8 @@ public class OfficesCategoryTests
     }
 
     [Theory]
-    [MemberData(nameof(Modules))]
-    public void The_entity_maps_to_its_own_tables_with_the_expected_columns(
-        int subCategoryId, string key, string route, string table, string subName, string nameLabel)
+    [MemberData(nameof(Tables))]
+    public void The_entity_maps_to_its_own_tables_with_the_expected_columns(int subCategoryId, string table)
     {
         var model = SqlServerModel();
         var module = ModuleOf(subCategoryId);
@@ -201,9 +211,9 @@ public class OfficesCategoryTests
     }
 
     [Theory]
-    [MemberData(nameof(Modules))]
+    [MemberData(nameof(Forms))]
     public async Task Create_ad_form_returns_the_module_schema_in_the_specified_order(
-        int subCategoryId, string key, string route, string table, string subName, string nameLabel)
+        int subCategoryId, string key, string route, string subName, string nameLabel)
     {
         using var context = NewContext();
 
@@ -246,15 +256,16 @@ public class OfficesCategoryTests
     }
 
     [Theory]
-    [MemberData(nameof(Modules))]
+    [MemberData(nameof(Forms))]
     public async Task Read_config_publishes_the_list_and_a_searchable_name_select(
-        int subCategoryId, string key, string route, string table, string subName, string nameLabel)
+        int subCategoryId, string key, string route, string subName, string nameLabel)
     {
         using var context = NewContext();
 
         var config = await ReadService(context).GetReadConfigAsync(Offices, subCategoryId);
 
         Assert.Equal(key, config.Module);
+        Assert.Equal(subName, config.SubCategory!.NameAr);
         Assert.Equal(route, config.List!.Endpoint);
         Assert.Equal(route + "/{id}", config.Details!.Endpoint);
 

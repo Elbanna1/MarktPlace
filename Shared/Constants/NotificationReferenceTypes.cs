@@ -85,4 +85,6 @@ public static class NotificationReferenceTypes
     public const string Contractor = "Contractor";
     public const string IndustrialConsultancyOffice = "IndustrialConsultancyOffice";
     public const string AccountantOffice = "AccountantOffice";
+
+    public const string RestaurantAndCafe = "RestaurantAndCafe";
 }

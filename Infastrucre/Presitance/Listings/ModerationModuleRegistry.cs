@@ -79,6 +79,8 @@ public static class ModerationModuleRegistry
             [ListingModuleType.IndustrialConsultancyOffice] = typeof(IndustrialConsultancyOffice),
             [ListingModuleType.AccountantOffice] = typeof(AccountantOffice),
 
+            [ListingModuleType.RestaurantAndCafe] = typeof(RestaurantAndCafe),
+
             [ListingModuleType.LostItem] = typeof(LostFoundPost),
             [ListingModuleType.FoundItem] = typeof(LostFoundPost)
         };

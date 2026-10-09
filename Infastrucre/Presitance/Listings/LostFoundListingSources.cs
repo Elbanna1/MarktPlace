@@ -79,6 +79,7 @@ internal static class LostFoundListingQuery
                 CreatedAt = p.CreatedAt,
                 PublishedAt = p.PublishedAt,
                 ExpireAt = p.ExpireAt,
+                RepublishCount = p.RepublishCount,
                 SupportsRepublish = true
             });
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ServicesAbstraction;
 using Shared.Constants;
+using Shared.DTOs.Realtime;
 using Shared.Enums;
 
 namespace Persistence.BackgroundServices;
@@ -77,7 +78,9 @@ public class ListingLifecycleService : BackgroundService
 
         var now = DateTime.UtcNow;
 
-        await ProcessGenericModulesAsync(lifecycle, notifications, now, cancellationToken);
+        var publishers = scope.ServiceProvider.GetServices<IListingEventPublisher>().ToList();
+
+        await ProcessGenericModulesAsync(lifecycle, notifications, publishers, now, cancellationToken);
 
         await SendExpiryWarningsAsync(repository, notifications, now);
 
@@ -148,16 +151,19 @@ public class ListingLifecycleService : BackgroundService
     private async Task ProcessGenericModulesAsync(
         IListingLifecycleRepository lifecycle,
         INotificationService notifications,
+        IReadOnlyList<IListingEventPublisher> publishers,
         DateTime now,
         CancellationToken cancellationToken)
     {
-        await NotifyGenericAsync(
+        var expired = await NotifyGenericAsync(
             lifecycle, notifications, now.AddHours(-2), now,
             (subject, _) => (NotificationType.AdvertisementExpired,
                              "انتهاء مدة الإعلان",
                              "⌛ انتهت مدة إعلانك. أعد نشره ليظهر مرة أخرى.",
                              "⌛"),
             cancellationToken);
+
+        await PublishExpiredAsync(publishers, expired, now, cancellationToken);
 
         foreach (var days in AdvertisementConstants.ExpiryWarningDays)
         {
@@ -175,7 +181,50 @@ public class ListingLifecycleService : BackgroundService
         }
     }
 
-    private async Task NotifyGenericAsync(
+    private async Task PublishExpiredAsync(
+        IReadOnlyList<IListingEventPublisher> publishers,
+        IReadOnlyList<ExpiringListingRow> rows,
+        DateTime now,
+        CancellationToken cancellationToken)
+    {
+        if (rows.Count == 0 || publishers.Count == 0)
+            return;
+
+        var changes = rows
+            .Select(row => new ListingChange(row.OwnerId, new ListingChangedEventDto
+            {
+                Id = row.Id,
+                Type = row.Type,
+                TypeName = row.Type.ToString(),
+                Route = ListingModuleCatalog.RouteOf(row.Type),
+                CategoryId = (int?)ListingModuleCatalog.CategoryOf(row.Type),
+                SubCategoryId = (int?)ListingModuleCatalog.SubCategoryOf(row.Type),
+                Change = ListingChangeKinds.Expired,
+                Status = ListingStatus.Expired,
+                ModerationStatus = ModerationStatus.Approved,
+                IsPublic = false,
+                WasPublic = true,
+                PublishedAt = row.PublishedAt,
+                ExpireAt = row.ExpireAt,
+                RemainingDays = 0,
+                OccurredAt = now
+            }))
+            .ToList();
+
+        foreach (var publisher in publishers)
+        {
+            try
+            {
+                await publisher.PublishAsync(changes, cancellationToken);
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                _logger.LogWarning(exception, "Publishing {Count} expiry event(s) failed.", changes.Count);
+            }
+        }
+    }
+
+    private async Task<IReadOnlyList<ExpiringListingRow>> NotifyGenericAsync(
         IListingLifecycleRepository lifecycle,
         INotificationService notifications,
         DateTime from,
@@ -187,35 +236,44 @@ public class ListingLifecycleService : BackgroundService
         var rows = await lifecycle.GetWindowsClosingBetweenAsync(from, to, cancellationToken);
 
         if (rows.Count == 0)
-            return;
+            return Array.Empty<ExpiringListingRow>();
 
-        var sent = 0;
+        var notified = new List<ExpiringListingRow>();
 
         foreach (var row in rows)
         {
             var subject = NotificationCatalog.For(row.Type);
             var (type, title, message, icon) = content(subject, offsetDays);
 
+            var notice = new NotificationContent(
+                    title,
+                    $"{message} ({row.Title})",
+                    icon,
+                    type,
+                    subject.ReferenceType,
+                    subject.EntityName,
+                    $"{subject.Route}/{row.Id}")
+                .WithListing(
+                    listingType: row.Type,
+                    categoryId: (int?)ListingModuleCatalog.CategoryOf(row.Type),
+                    subCategoryId: (int?)ListingModuleCatalog.SubCategoryOf(row.Type));
+
             var created = await notifications.CreateIfNotExistsAsync(
                 row.OwnerId,
-                title,
-                $"{message} ({row.Title})",
-                type,
+                notice,
                 row.Id,
-                subject.ReferenceType,
-
                 createdAfterUtc: row.PublishedAt,
                 action: NotificationAction.Expired,
-                icon: icon,
-                entityName: subject.EntityName,
-                deepLink: $"{subject.Route}/{row.Id}");
+                cancellationToken: cancellationToken);
 
             if (created)
-                sent++;
+                notified.Add(row);
         }
 
-        if (sent > 0)
-            _logger.LogInformation("Sent {Count} lifecycle notice(s) across the generic modules.", sent);
+        if (notified.Count > 0)
+            _logger.LogInformation("Sent {Count} lifecycle notice(s) across the generic modules.", notified.Count);
+
+        return notified;
     }
 
     private async Task SendExpiryWarningsAsync(

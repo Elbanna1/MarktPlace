@@ -162,6 +162,8 @@ public static class DependencyInjection
         services.AddScoped<IIndustrialConsultancyOfficeService, Services.Offices.IndustrialConsultancyOfficeService>();
         services.AddScoped<IAccountantOfficeService, Services.Offices.AccountantOfficeService>();
 
+        services.AddScoped<IRestaurantAndCafeService, Services.RestaurantsAndCafes.RestaurantAndCafeService>();
+
         var mapperConfiguration = new MapperConfiguration(
             cfg =>
             {
@@ -228,6 +230,8 @@ public static class DependencyInjection
                 cfg.AddProfile<SehhatyMappingProfile>();
 
                 cfg.AddProfile<OfficesMappingProfile>();
+
+                cfg.AddProfile<RestaurantsAndCafesMappingProfile>();
             },
             NullLoggerFactory.Instance);
 

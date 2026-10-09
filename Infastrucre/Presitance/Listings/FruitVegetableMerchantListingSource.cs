@@ -55,6 +55,7 @@ public sealed class FruitVegetableMerchantListingSource : IUserListingSource
                 CreatedAt = m.CreatedAt,
                 PublishedAt = m.PublishedAt,
                 ExpireAt = m.ExpireAt,
+                RepublishCount = m.RepublishCount,
                 SupportsRepublish = true
             });
 }

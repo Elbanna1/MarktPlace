@@ -54,6 +54,7 @@ public sealed class FurnitureListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }

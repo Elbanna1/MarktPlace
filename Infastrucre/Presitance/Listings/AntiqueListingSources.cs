@@ -55,6 +55,7 @@ public sealed class DecorAntiqueListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -108,6 +109,7 @@ public sealed class AntiqueListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -161,6 +163,7 @@ public sealed class PaintingListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -214,6 +217,7 @@ public sealed class HandmadeListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -267,6 +271,7 @@ public sealed class CoinStampListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }

@@ -133,7 +133,7 @@ classes. Two marker interfaces carry the cross-cutting behaviour:
 | `IModeratedListing` | Has moderation columns; the visibility filter is applied automatically |
 | `IExpiringListing` | Has a publication window (`PublishedAt`, `ExpireAt`, `FirstPublishedAt`, `RepublishCount`) |
 
-**59 concrete types implement `IModeratedListing`; 58 also implement `IExpiringListing`.** The
+**60 concrete types implement `IModeratedListing`; 59 also implement `IExpiringListing`.** The
 exception is `Advertisement` (سيارات), which had a richer window of its own first.
 
 ### Validation — `Core/Services/Validation`

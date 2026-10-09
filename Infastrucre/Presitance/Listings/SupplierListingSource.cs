@@ -55,6 +55,7 @@ public sealed class SupplierListingSource : IUserListingSource
                 CreatedAt = s.CreatedAt,
                 PublishedAt = s.PublishedAt,
                 ExpireAt = s.ExpireAt,
+                RepublishCount = s.RepublishCount,
                 SupportsRepublish = true
             });
 }

@@ -40,7 +40,7 @@ internal static class SehhatyFormSchemas
                 .MandatoryWhen("Specialty", (int)DoctorSpecialty.Other)
         };
 
-        fields.AddRange(DirectoryFormSchemas.LocationFields());
+        fields.AddRange(DirectoryFormSchemas.LocationFields(module));
         fields.AddRange(DirectoryFormSchemas.ContactFields());
         fields.AddRange(DirectoryFormSchemas.AdvertisementFields(module));
 

@@ -55,6 +55,7 @@ public sealed class AccessoryListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -108,6 +109,7 @@ public sealed class CosmeticListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -161,6 +163,7 @@ public sealed class HomeKitchenListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -214,6 +217,7 @@ public sealed class ShoppingElectronicListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -267,6 +271,7 @@ public sealed class GiftToyListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -320,6 +325,7 @@ public sealed class HomemadeFoodListingSource : IUserListingSource
                 CreatedAt = x.CreatedAt,
                 PublishedAt = x.PublishedAt,
                 ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
                 SupportsRepublish = true
             });
 }

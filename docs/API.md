@@ -395,11 +395,11 @@ at 50). `Cache-Control: public, max-age=60`, with an `ETag`.
 `id` is the advertiser name, because that is what the listing filter matches — see D-35. Pick an
 option, then send its `name` back to the feed as the filter parameter that `read-config` points at
 this operation — `?sellerName=...` for الحيوانات (17-25) and التحف والأنتيكات (26-30), `?name=...` for
-صحتي (53-58) and مكاتب (59-63), where the doctor / laboratory / office / contractor name *is* the
-advertiser. For مكاتب the feed matches `name` **exactly**, so the select behaves as a select. Nothing
-else about the advertiser is exposed.
+صحتي (53-58), مكاتب (59-63) and مطاعم وكافيهات (64), where the doctor / laboratory / office /
+restaurant name *is* the advertiser. For مكاتب and مطاعم وكافيهات the feed matches `name` **exactly**, so
+the select behaves as a select. Nothing else about the advertiser is exposed.
 
-Available on those 25 sub-categories only. Any other sub-category answers `400`, and `read-config`
+Available on those 26 sub-categories only. Any other sub-category answers `400`, and `read-config`
 omits the `advertisers` operation for it, so the frontend never has to hard-code the list.
 
 ### Where am I? — `breadcrumb`
@@ -463,6 +463,7 @@ Every route requires the `Admin` role **and** the specific page permission. See
 | `PATCH` | `/ads/{type}/{id}/approve` | Approve → **opens the 30-day window** |
 | `PATCH` | `/ads/{type}/{id}/reject` | Reject with a reason |
 | `PATCH` | `/ads/{type}/{id}/suspend` | Suspend |
+| `PATCH` | `/ads/{type}/{id}/republish` | **Admin republish**: restart the 30-day window (approved listings, ≤ 5 days left or expired, modules in `AdminRepublishPolicy` only) |
 | `DELETE` | `/ads/{type}/{id}` | Delete any listing |
 | `GET` | `/moderation/overview` | |
 | `PATCH` | `/payments/{id}/approve`, `/reject` | Manual payment decisions |
@@ -472,7 +473,26 @@ Every route requires the `Admin` role **and** the specific page permission. See
 `{type}` is a `ListingModuleType` integer (e.g. Land = 60, LostItem = 70, FoundItem = 71).
 
 > **`AdminAdService.OpenWindow` is the only place a publication window opens**, for all modules.
-> Republish (both paths) nulls the window and returns the listing to Pending.
+> The owner republish paths null the window and return the listing to Pending. The **admin** republish
+> (`/ads/{type}/{id}/republish`) instead restarts the window at once and keeps the listing Approved —
+> see [MODULES § Admin republish](MODULES.md#admin-republish-the-30-day-cycle).
+>
+> `/ads` also filters on `expiringWithinDays`, `republishDue` and `republished`, and each row carries
+> `isExpired`, `isExpiringSoon`, `canRepublish` and `republishCount`.
+
+### Real-time events — `/hubs/notifications`
+
+One SignalR hub. Anonymous connections are accepted (they receive public events only); a JWT in
+`access_token` identifies the user. Events are pushed only after the database save succeeded.
+
+| Event | Audience | Purpose |
+| --- | --- | --- |
+| `ReceiveNotification`, `UnreadCountChanged` | the recipient | Notifications (unchanged) |
+| `ListingChanged` | the listing's owner + admins | Any state change of a listing: created, updated, approved, rejected, suspended, returnedToReview, republished, expired, deleted — with status, visibility and window |
+| `PublicListingChanged` | everyone | A listing became or stopped being public (id, module, category, sub-category only) |
+| `ModerationQueueChanged` | admins | The review queue changed |
+
+Client wiring: [FRONTEND_REALTIME_AND_IMAGES](FRONTEND_REALTIME_AND_IMAGES.md).
 
 > Admin probes must send **typed** path parameters. A GUID where an `int` is expected 404s at routing
 > *before* authorization, so such a probe proves nothing about access control.

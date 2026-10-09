@@ -730,3 +730,70 @@ has-pending-model-changes` reported no change, and the full suite (2,758 tests) 
 equality match. مكاتب uses it because its name filter is a select whose options are the published
 names (from the advertisers lookup), so choosing «مكتب أحمد» must not also return «مكتب أحمد وشركاه».
 صحتي keeps substring matching, as released.
+
+---
+
+## D-38 — A category that opens its form directly keeps one hidden sub-category
+
+**Problem.** مطاعم وكافيهات must open its create form the moment the category is chosen, with no
+sub-category step. But every listing module in the platform is identified by its sub-category:
+`ListingModuleCatalog`, moderation, notifications, interests, the admin filters and both lookup
+catalogs all key on it. A category with zero sub-categories would have needed a parallel identity
+path through all of them.
+
+**Decision.** The category has exactly one sub-category (64) and its `CategoryCatalog` entry carries
+`OpensFormDirectly`. `CategorySelectionResolver` — the single gate in front of `create-ad-form`,
+`read-config` and `advertisers` — resolves a category-only request for such a category to its one
+sub-category, and the categories APIs publish `opensFormDirectly` / `directSubCategoryId` so the
+client never shows a picker. Everything downstream sees an ordinary sub-category.
+
+**Scope.** Opt-in per category, so no existing category (or admin-created one) changes behaviour.
+Admin form-field overrides for this form are stored under `(15, 64)`; edit them through the
+sub-category, which is what the create form reads.
+
+## D-39 — Admin republish is a generic action with a per-module allow-list
+
+**Problem.** مطاعم وكافيهات needed an administrator to restart a listing's 30-day window from five days
+before it ends, or after it has ended. The platform already had the window, the derived countdown and an
+owner-side republish (expired only, back to review) — but nothing an admin could use.
+
+**Decision.** `AdminAdService.RepublishAsync` works for any `IExpiringListing` module but only runs for
+modules listed in `AdminRepublishPolicy` (today: مطاعم وكافيهات). Enabling it elsewhere is one line;
+not enabling it means no other module's behaviour changed. It reuses the existing columns
+(`PublishedAt`, `ExpireAt`, `RepublishCount`, `FirstPublishedAt`) — **no schema change** — the existing
+audit log and the existing `Republished` notification. Unlike the owner path it keeps the listing
+Approved: the administrator *is* the reviewer.
+
+**The admin list learned the cycle for every module** (`isExpired`, `isExpiringSoon`, `canRepublish`,
+`republishCount`, and the `expiringWithinDays` / `republishDue` / `republished` filters), because those
+are read-only facts about any expiring listing; only the action itself is gated.
+
+---
+
+## D-40 — Listing state changes are pushed from one SaveChanges interceptor
+
+**Problem.** After an administrator approved a listing nothing told any open screen: the only
+real-time messages were per-user notifications, the client refreshed only its notification queries on
+them, and anonymous visitors were not connected at all. Public feeds, the owner's my-listings and the
+admin queue stayed stale until a manual refresh.
+
+**Decision.** `ListingRealtimeInterceptor` (registered after `ListingEditModerationInterceptor`, so it
+sees the review state that interceptor sets) snapshots every added / modified / deleted
+`IModeratedListing` in `SavingChanges` and publishes in `SavedChanges` — **only after the save
+succeeded**; `SaveChangesFailed` discards the snapshot. One place covers all 60 modules and every
+path (owner create/edit/delete, admin approve/reject/suspend/delete, both republish paths). The
+time-based expiry, which writes nothing, is published by `ListingLifecycleService` when it creates the
+(de-duplicated) expiry notice.
+
+The existing hub is reused: it now accepts anonymous connections for `PublicListingChanged`, puts
+admins in an `admins` group on connect, and sends `ListingChanged` only to the owner (`Clients.User`)
+and admins. The public payload carries identifiers only.
+
+**Also fixed here.** A repeated approve / reject / suspend of a listing already in that state no
+longer notifies the owner again (an approval that reopens an expired window still does). Expiry
+notices now carry `listingType` / `categoryId` / `subCategoryId` like every other listing notification.
+
+**Uploads.** The uploads root is configurable (`FileStorage__UploadsRootPath`) because the hard-coded
+`<app>/wwwroot/uploads` could not survive a deployment that replaces the application directory —
+which is what production shows. See DEPLOYMENT § Uploads directory.
+

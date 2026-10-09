@@ -3,7 +3,7 @@
 [← README](../README.md) · Related: [ARCHITECTURE](ARCHITECTURE.md) · [PERFORMANCE](PERFORMANCE.md) · [DEVELOPMENT_GUIDE](DEVELOPMENT_GUIDE.md)
 
 **SQL Server** with **EF Core 10**, code-first. `AppDbContext` extends
-`IdentityDbContext<ApplicationUser>` and exposes **391 `DbSet`s** across **61 migrations**.
+`IdentityDbContext<ApplicationUser>` and exposes **393 `DbSet`s** across **62 migrations**.
 
 ---
 
@@ -155,7 +155,7 @@ the sort back — measured at 353 logical reads / 39 ms versus 3 reads / < 1 ms.
 
 ## Migrations
 
-Located in `Infastrucre/Presitance/Migrations/` — 61 migrations plus `AppDbContextModelSnapshot.cs`.
+Located in `Infastrucre/Presitance/Migrations/` — 62 migrations plus `AppDbContextModelSnapshot.cs`.
 Roughly 1.64 M generated lines; **never edit them by hand**.
 
 Applied automatically on start-up (`db.Database.MigrateAsync()` in `Program.cs`).

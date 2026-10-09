@@ -137,6 +137,9 @@ public static class AdFormSchemaCatalog
             or SubCategoryType.AccountantOffices =>
             DirectoryFormSchemas.Facility(OfficesCatalog.ModuleOf(subCategory)!, locationBeforeContact: true),
 
+        SubCategoryType.RestaurantsAndCafes =>
+            DirectoryFormSchemas.Facility(RestaurantsAndCafesCatalog.RestaurantsAndCafes, locationBeforeContact: true),
+
         _ => null
     };
 

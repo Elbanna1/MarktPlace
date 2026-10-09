@@ -2,7 +2,7 @@
 
 [← README](../README.md) · Related: [API](API.md) · [BUSINESS_RULES](BUSINESS_RULES.md) · [DATABASE](DATABASE.md)
 
-14 categories → 63 sub-categories → **59 concrete listing types**. This document explains how a
+15 categories → 64 sub-categories → **60 concrete listing types**. This document explains how a
 module actually works, starting with the pattern they all share.
 
 ---
@@ -356,6 +356,67 @@ return «مكتب أحمد وشركاه». Free-text matching stays available th
 مكاتب محاسبين قانونيين and applied to all five, since the name is the only filterable field each has.
 
 Migration `AddOfficesCategoryModules`: 10 tables, 35 indexes, guarded seed of 14 / 59–63.
+
+---
+
+## Category 15 — مطاعم وكافيهات (Restaurants & Cafes) · sub 64
+
+| Sub | Endpoint | Entity | Module type |
+| --- | --- | --- | --- |
+| 64 مطاعم وكافيهات | `/api/restaurants-and-cafes` | `RestaurantAndCafe` (table `RestaurantsAndCafes`) | 100 |
+
+**The category opens its form directly.** It has exactly one sub-category (every module in the
+platform is keyed by its sub-category — moderation, notifications, interests, admin), and its
+`CategoryCatalog` entry carries `OpensFormDirectly`. `CategorySelectionResolver` therefore resolves
+`create-ad-form/15` and `read-config/15` straight to sub 64 with `requiresSubCategory: false`, and
+`categories` / `categories-tree` publish `opensFormDirectly: true` and `directSubCategoryId: 64` so the
+client can route the category tile straight to the form. `…/15/64` keeps working. Other categories
+are unaffected (they still answer `requiresSubCategory: true`).
+
+Form (all in «بيانات المطعم أو الكافيه», then «الموقع», then «بيانات التواصل»): `Name` (اسم المطعم أو
+الكافيه), `Title`, `Description`, `Images` (required, 1–10), `Address`, `GoogleMapsUrl` (optional,
+http/https), `Phone` (required), `WhatsApp`, `Email`. `RestaurantsAndCafesCatalog` owns the wording and
+placeholders. The `name` filter is an **exact-match** searchable select fed by
+`/api/lookups/advertisers/15/64`, like مكاتب.
+
+**Admin republish** is enabled for this module (see
+[Admin republish](#admin-republish-the-30-day-cycle)).
+
+**Demo seed:** exactly one listing, `RestaurantAndCafeDemoSeed` (fixed id
+`7e5a1c0f-64aa-4c1b-9e15-000000000064`), seeded only by the Development demo seeder, approved with
+`ExpireAt = seed time + 1 day` — **one day remaining at the moment it is seeded** (the baseline). It is
+never re-created or re-dated, so on later days it shows 0 / منتهي and the republish action.
+
+Migration `AddRestaurantsAndCafesModule`: 2 tables, 7 indexes, guarded seed of 15 / 64.
+
+---
+
+## Admin republish (the 30-day cycle)
+
+The 30-day window is the platform's existing one: approval opens it (`AdminAdService.OpenWindow`,
+`ExpireAt = PublishedAt + 30 days`), public feeds hide a listing once `ExpireAt` passes (the moderation
+query filter), and every remaining-days figure is computed from `ExpireAt` at read time
+(`ListingLifecycle.RemainingDays`) — nothing is decremented or stored.
+
+On top of it, `PATCH /api/v2/admin/ads/{type}/{id}/republish` lets an administrator restart the window
+**without** sending the listing back to review:
+
+- **Who:** `Admin` role + the `Approve` permission on the ads page (same as approval). Audited as
+  `RepublishAd` (old and new `ExpireAt`); the owner is notified («تمت إعادة نشر …»).
+- **Which modules:** only those in `AdminRepublishPolicy` — currently **مطاعم وكافيهات** only. Any other
+  `{type}` answers `400`, an id that is not in that module's table `404`.
+- **When:** the listing must be approved and its `ExpireAt` at most **5 days** away, or already past.
+  Earlier → `400` with the days left.
+- **Effect:** `PublishedAt = now`, `ExpireAt = now + 30 days`, `RepublishCount + 1`, `ModeratedAt/By`
+  stamped; `FirstPublishedAt` unchanged. It stays `Approved`, so it is public again immediately.
+
+The owner-side `POST /api/advertisements/{id}/republish` (expired only, back to Pending) is unchanged.
+
+**Admin list support** (all modules): every row now carries `isExpired`, `isExpiringSoon` (≤ 5 days),
+`canRepublish` and `republishCount`, and `/api/v2/admin/ads` accepts `expiringWithinDays` (1–30),
+`republishDue=true` (approved and ≤ 5 days left or expired) and `republished=true|false`, beside the
+existing `status=Expired`. `republishCount` was added to the shared `UserListingRow` projection of
+every module for this.
 
 ---
 

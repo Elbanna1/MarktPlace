@@ -93,6 +93,21 @@ public class AdminAdsV2Controller : AdminApiController
         return Ok(ApiResponse<AdminModerationResultDto>.Ok(result, "تمت الموافقة على الإعلان."));
     }
 
+    [RequireAdminPermission(AdminPermission.Approve)]
+    [HttpPatch("{type}/{id:guid}/republish")]
+    [ProducesResponseType(typeof(ApiResponse<AdminRepublishResultDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApiResponse<AdminRepublishResultDto>>> Republish(
+        ListingModuleType type, Guid id)
+    {
+        var result = await _ads.RepublishAsync(type, id, CurrentAdminId, RequestAborted);
+
+        return Ok(ApiResponse<AdminRepublishResultDto>.Ok(result, UserMessages.Listings.Republished));
+    }
+
     [RequireAdminPermission(AdminPermission.Reject)]
     [HttpPatch("{type}/{id:guid}/reject")]
     [ProducesResponseType(typeof(ApiResponse<AdminModerationResultDto>), StatusCodes.Status200OK)]

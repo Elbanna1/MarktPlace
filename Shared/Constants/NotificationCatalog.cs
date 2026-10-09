@@ -151,6 +151,8 @@ public static class NotificationCatalog
             [ListingModuleType.IndustrialConsultancyOffice] = DirectorySubject(NotificationReferenceTypes.IndustrialConsultancyOffice, OfficesCatalog.IndustrialConsultancyOffices),
             [ListingModuleType.AccountantOffice] = DirectorySubject(NotificationReferenceTypes.AccountantOffice, OfficesCatalog.AccountantOffices),
 
+            [ListingModuleType.RestaurantAndCafe] = DirectorySubject(NotificationReferenceTypes.RestaurantAndCafe, RestaurantsAndCafesCatalog.RestaurantsAndCafes),
+
             [ListingModuleType.LostItem] = LostItem,
             [ListingModuleType.FoundItem] = FoundItem
         };

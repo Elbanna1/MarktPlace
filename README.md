@@ -85,7 +85,8 @@ graph TD
 
 | Area | What it does |
 | --- | --- |
-| **59 listing modules** | 14 categories → 63 sub-categories. Cars, Workshops & Craftsmen, Lost & Found, Business, Jobs, Animals, Antiques, Clothing, Online Shopping, Home Furnishing, Real Estate, Charity, Sehhaty (صحتي), Offices (مكاتب) |
+| **Real-time** | One SignalR hub: notifications, live listing state for owners/admins, public listing changes for everyone — see [FRONTEND_REALTIME_AND_IMAGES](docs/FRONTEND_REALTIME_AND_IMAGES.md) |
+| **60 listing modules** | 15 categories → 64 sub-categories. Cars, Workshops & Craftsmen, Lost & Found, Business, Jobs, Animals, Antiques, Clothing, Online Shopping, Home Furnishing, Real Estate, Charity, Sehhaty (صحتي), Offices (مكاتب), Restaurants & Cafes (مطاعم وكافيهات) |
 | **Dynamic forms** | `GET /api/lookups/create-ad-form/{cat}/{sub}` returns fields, conditional rules, lookups and the submit endpoint. The frontend holds **zero** business logic |
 | **Moderation** | Every listing created pending; approve / reject / suspend; edits return to review automatically |
 | **Publication window** | 30 days from approval; expiry is derived from `ExpireAt`, not from a status column |

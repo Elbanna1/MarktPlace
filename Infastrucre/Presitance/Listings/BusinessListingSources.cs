@@ -55,6 +55,7 @@ public sealed class FactoryListingSource : IUserListingSource
                 CreatedAt = f.CreatedAt,
                 PublishedAt = f.PublishedAt,
                 ExpireAt = f.ExpireAt,
+                RepublishCount = f.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -107,6 +108,7 @@ public sealed class FarmListingSource : IUserListingSource
                 CreatedAt = f.CreatedAt,
                 PublishedAt = f.PublishedAt,
                 ExpireAt = f.ExpireAt,
+                RepublishCount = f.RepublishCount,
                 SupportsRepublish = true
             });
 }
@@ -160,6 +162,7 @@ public sealed class CompanyListingSource : IUserListingSource
                 CreatedAt = c.CreatedAt,
                 PublishedAt = c.PublishedAt,
                 ExpireAt = c.ExpireAt,
+                RepublishCount = c.RepublishCount,
                 SupportsRepublish = true
             });
 }

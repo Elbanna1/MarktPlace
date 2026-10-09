@@ -472,6 +472,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<AccountantOffice> AccountantOffices => Set<AccountantOffice>();
     public DbSet<AccountantOfficeImage> AccountantOfficeImages => Set<AccountantOfficeImage>();
 
+    public DbSet<RestaurantAndCafe> RestaurantsAndCafes => Set<RestaurantAndCafe>();
+    public DbSet<RestaurantAndCafeImage> RestaurantAndCafeImages => Set<RestaurantAndCafeImage>();
+
     public DbSet<Referral> Referrals => Set<Referral>();
 
     public DbSet<ReferralLinkEvent> ReferralLinkEvents => Set<ReferralLinkEvent>();

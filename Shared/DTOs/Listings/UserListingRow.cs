@@ -30,6 +30,8 @@ public class UserListingRow
 
     public bool SupportsRepublish { get; set; }
 
+    public int RepublishCount { get; set; }
+
     public ModerationStatus ModerationStatus { get; set; }
 
     public ListingRejectionReason? RejectionReason { get; set; }

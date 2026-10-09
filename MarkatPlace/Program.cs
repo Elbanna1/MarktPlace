@@ -24,8 +24,7 @@ using Shared.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var uploadsPhysicalRoot = Path.GetFullPath(
-    Path.Combine(builder.Environment.ContentRootPath, "wwwroot", ImageConstants.UploadsRootFolder));
+var uploadsPhysicalRoot = UploadsStorage.ResolveRoot(builder.Configuration, builder.Environment.ContentRootPath);
 
 foreach (var uploadFolder in ImageConstants.AllFolders)
     Directory.CreateDirectory(Path.Combine(uploadsPhysicalRoot, uploadFolder));
@@ -62,10 +61,12 @@ builder.Services.AddHealthChecks()
     .AddDbContextCheck<AppDbContext>(
         name: "database",
         failureStatus: HealthStatus.Unhealthy,
-        tags: ["ready"]);
+        tags: ["ready"])
+    .AddCheck("uploads", new UploadsStorageHealthCheck(uploadsPhysicalRoot), HealthStatus.Unhealthy, ["ready"]);
 
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IRealtimeNotifier, SignalRRealtimeNotifier>();
+builder.Services.AddScoped<IListingEventPublisher, SignalRListingEventPublisher>();
 
 builder.Services
     .AddControllers(options =>
@@ -238,6 +239,31 @@ app.UseStaticFiles(new StaticFileOptions
 
         headers["Content-Security-Policy"] = "default-src 'none'; sandbox";
     }
+});
+
+var uploadsLogger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("MarkatPlace.Uploads");
+
+uploadsLogger.LogInformation("Uploaded files are stored in {UploadsRoot}.", uploadsPhysicalRoot);
+
+if (!app.Environment.IsDevelopment() &&
+    UploadsStorage.IsInside(uploadsPhysicalRoot, app.Environment.ContentRootPath))
+{
+    uploadsLogger.LogWarning(
+        "Uploaded files are stored inside the application directory ({UploadsRoot}). A deployment that " +
+        "replaces that directory deletes every uploaded image while the database still points at them. " +
+        "Set {Setting} to a folder outside the application directory.",
+        uploadsPhysicalRoot, "FileStorage__UploadsRootPath");
+}
+
+app.Use(async (context, next) =>
+{
+    if ((HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method)) &&
+        context.Request.Path.StartsWithSegments($"/{ImageConstants.UploadsRootFolder}"))
+    {
+        uploadsLogger.LogWarning("Uploaded file not found on disk: {UploadPath}", context.Request.Path.Value);
+    }
+
+    await next();
 });
 
 app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = uploadContentTypes });

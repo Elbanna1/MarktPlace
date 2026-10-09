@@ -10,6 +10,8 @@ public enum AdminAuditAction
 
     DeleteAd = 4,
 
+    RepublishAd = 5,
+
     ApproveBannerPayment = 10,
 
     RejectBannerPayment = 11,

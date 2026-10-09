@@ -70,7 +70,15 @@ runs hourly — so the stored status can lag the real window by up to an hour. *
 
 Republishing resets `CreatedAt`, nulls the window and returns the listing to `Pending`.
 `FirstPublishedAt` is the anchor that survives, so the free window can be measured from the first
-publication. Both republish paths behave identically.
+publication. Both **owner** republish paths behave identically.
+
+### R2.5a — Admin republish restarts the window in place
+
+`PATCH /api/v2/admin/ads/{type}/{id}/republish` (Admin + `Approve` permission, modules in
+`AdminRepublishPolicy` only — today مطاعم وكافيهات) is allowed from **5 days before** `ExpireAt` and at
+any time after it, for approved listings only. It sets `PublishedAt = now`, `ExpireAt = now + 30 days`,
+increments `RepublishCount`, keeps the listing Approved and `FirstPublishedAt` unchanged, writes an
+audit entry and notifies the owner.
 
 ### R2.6 — "No window" ≠ "expired"
 
@@ -298,6 +306,7 @@ Enforced by three test suites, including a source-wide scan that fails the build
 | عقارات | `RealEstateListings.Keep` nulls a conditional field once its condition stops holding |
 | افرش بيتك | `PlantOrnament` alone has no colours or material |
 | التسوق أونلاين | No location block; warranty→electronics, expiry→cosmetics, delivery areas→homemade food |
+| مطاعم وكافيهات | Opens its form directly from the category (single sub-category, `OpensFormDirectly`); images required; exact-match `name` select; admin republish enabled |
 | مكاتب | Images required; the `name` filter matches the chosen name **exactly** (searchable select fed by the advertisers lookup); `search` is the free-text match |
 | صحتي | Images required; `OtherSpecialty` required only when `Specialty = أخرى (99)` and nulled otherwise; phone required, WhatsApp/email/maps link optional |
 

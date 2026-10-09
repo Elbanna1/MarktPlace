@@ -55,6 +55,7 @@ public sealed class CraftsmanListingSource : IUserListingSource
                 CreatedAt = c.CreatedAt,
                 PublishedAt = c.PublishedAt,
                 ExpireAt = c.ExpireAt,
+                RepublishCount = c.RepublishCount,
                 SupportsRepublish = true
             });
 }

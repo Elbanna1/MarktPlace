@@ -2,7 +2,7 @@ using Shared.Enums;
 
 namespace Shared.Constants;
 
-public sealed record CategoryEntry(CategoryType Id, string Name, string NameAr);
+public sealed record CategoryEntry(CategoryType Id, string Name, string NameAr, bool OpensFormDirectly = false);
 
 public sealed record SubCategoryEntry(SubCategoryType Id, CategoryType Category, string Name, string NameAr);
 
@@ -23,7 +23,9 @@ public static class CategoryCatalog
         new(CategoryType.RealEstate, "Real Estate", "عقارات"),
         new(CategoryType.Charity, "Charity", "بوابة الخيرات"),
         new(CategoryType.Sehhaty, "Sehhaty", SehhatyCatalog.CategoryName),
-        new(CategoryType.Offices, "Offices", OfficesCatalog.CategoryName)
+        new(CategoryType.Offices, "Offices", OfficesCatalog.CategoryName),
+        new(CategoryType.RestaurantsAndCafes, "Restaurants & Cafes", RestaurantsAndCafesCatalog.CategoryName,
+            OpensFormDirectly: true)
     ];
 
     public static readonly IReadOnlyList<SubCategoryEntry> SubCategories =
@@ -103,7 +105,9 @@ public static class CategoryCatalog
         new(SubCategoryType.EngineeringConsultancyOffices, CategoryType.Offices, "Engineering Consultancy Offices", "مكاتب استشارية هندسية"),
         new(SubCategoryType.Contractors, CategoryType.Offices, "Demolition & Construction Contractors", "مقاولين (هدم وبناء)"),
         new(SubCategoryType.IndustrialConsultancyOffices, CategoryType.Offices, "Industrial Consultancy Offices", "مكاتب استشارية صناعية"),
-        new(SubCategoryType.AccountantOffices, CategoryType.Offices, "Certified Public Accountant Offices", "مكاتب محاسبين قانونيين")
+        new(SubCategoryType.AccountantOffices, CategoryType.Offices, "Certified Public Accountant Offices", "مكاتب محاسبين قانونيين"),
+
+        new(SubCategoryType.RestaurantsAndCafes, CategoryType.RestaurantsAndCafes, "Restaurants & Cafes", RestaurantsAndCafesCatalog.CategoryName)
     ];
 
     public static CategoryEntry? FindCategory(CategoryType category) =>
@@ -111,4 +115,17 @@ public static class CategoryCatalog
 
     public static SubCategoryEntry? FindSubCategory(SubCategoryType subCategory) =>
         SubCategories.FirstOrDefault(entry => entry.Id == subCategory);
+
+    public static bool OpensFormDirectly(int categoryId) =>
+        Categories.Any(entry => (int)entry.Id == categoryId && entry.OpensFormDirectly);
+
+    public static int? DirectSubCategoryOf(int categoryId)
+    {
+        if (!OpensFormDirectly(categoryId))
+            return null;
+
+        var subCategories = SubCategories.Where(entry => (int)entry.Category == categoryId).ToList();
+
+        return subCategories.Count == 1 ? (int)subCategories[0].Id : null;
+    }
 }

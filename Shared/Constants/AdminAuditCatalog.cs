@@ -57,6 +57,7 @@ public static class AdminAuditCatalog
             [AdminAuditAction.RejectAd] = "رفض إعلان",
             [AdminAuditAction.SuspendAd] = "إيقاف إعلان",
             [AdminAuditAction.DeleteAd] = "حذف إعلان",
+            [AdminAuditAction.RepublishAd] = "إعادة نشر إعلان",
 
             [AdminAuditAction.ApproveBannerPayment] = "تأكيد دفع بانر",
             [AdminAuditAction.RejectBannerPayment] = "رفض دفع بانر",

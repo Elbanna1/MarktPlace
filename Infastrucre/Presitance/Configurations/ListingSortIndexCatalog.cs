@@ -79,6 +79,8 @@ public static class ListingSortIndexCatalog
             [typeof(EngineeringConsultancyOffice)] = ByViews,
             [typeof(Contractor)] = ByViews,
             [typeof(IndustrialConsultancyOffice)] = ByViews,
-            [typeof(AccountantOffice)] = ByViews
+            [typeof(AccountantOffice)] = ByViews,
+
+            [typeof(RestaurantAndCafe)] = ByViews
         };
 }

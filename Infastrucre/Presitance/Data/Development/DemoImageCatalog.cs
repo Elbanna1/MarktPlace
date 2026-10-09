@@ -1,3 +1,5 @@
+using Shared.Constants;
+
 namespace Persistence.Data.Development;
 
 internal static class DemoImageCatalog
@@ -43,6 +45,7 @@ internal static class DemoImageCatalog
         public const string WorkshopWelding = "WorkshopWelding";
         public const string AvatarMale = "AvatarMale";
         public const string AvatarFemale = "AvatarFemale";
+        public const string RestaurantCafe = "RestaurantCafe";
     }
 
     public static readonly IReadOnlyDictionary<string, Topic> Topics = new Dictionary<string, Topic>
@@ -425,7 +428,16 @@ internal static class DemoImageCatalog
         }),
 
         [Names.AvatarMale] = new("profile", Portraits("male", 20)),
-        [Names.AvatarFemale] = new("profile", Portraits("female", 20))
+        [Names.AvatarFemale] = new("profile", Portraits("female", 20)),
+
+        [Names.RestaurantCafe] = new(FileUploadConstants.RestaurantsAndCafesFolder, new[]
+        {
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Abu_tariq_koshari.jpg/1280px-Abu_tariq_koshari.jpg",
+            "https://upload.wikimedia.org/wikipedia/commons/d/d7/02010_%C3%84gyptisches_Restaurant.jpg",
+            "https://upload.wikimedia.org/wikipedia/commons/5/5e/Felafel_in_Hurghada.jpg",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Kebdet_El_Prince_restrunt_-_%D9%85%D8%B7%D8%B9%D9%85_%D9%83%D8%A8%D8%AF%D9%87_%D8%A7%D9%84%D8%A8%D8%B1%D9%86%D8%B3.JPG/1280px-Kebdet_El_Prince_restrunt_-_%D9%85%D8%B7%D8%B9%D9%85_%D9%83%D8%A8%D8%AF%D9%87_%D8%A7%D9%84%D8%A8%D8%B1%D9%86%D8%B3.JPG",
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Design_of_a_restaurant.jpg/1280px-Design_of_a_restaurant.jpg"
+        })
     };
 
     private static string[] Portraits(string gender, int count) =>

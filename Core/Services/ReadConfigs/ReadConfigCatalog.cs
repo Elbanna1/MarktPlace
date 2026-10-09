@@ -201,6 +201,9 @@ public static class ReadConfigCatalog
                 or SubCategoryType.AccountantOffices =>
                 DirectoryModuleSchema(categoryId, OfficesCatalog.ModuleOf(subCategory)!, [], []),
 
+            SubCategoryType.RestaurantsAndCafes =>
+                DirectoryModuleSchema(categoryId, RestaurantsAndCafesCatalog.RestaurantsAndCafes, [], []),
+
             _ => null
         };
 
@@ -2244,7 +2247,8 @@ public static class ReadConfigCatalog
                         (ListingModuleType.EngineeringConsultancyOffice, "مكاتب استشارية هندسية", "Engineering consultancy offices"),
                         (ListingModuleType.Contractor, "مقاولين (هدم وبناء)", "Contractors"),
                         (ListingModuleType.IndustrialConsultancyOffice, "مكاتب استشارية صناعية", "Industrial consultancy offices"),
-                        (ListingModuleType.AccountantOffice, "مكاتب محاسبين قانونيين", "Accountant offices"))),
+                        (ListingModuleType.AccountantOffice, "مكاتب محاسبين قانونيين", "Accountant offices"),
+                        (ListingModuleType.RestaurantAndCafe, "مطاعم وكافيهات", "Restaurants & cafes"))),
                 Param("status", "الحالة", "Status", ReadParameterTypes.Enum,
                     options: EnumOptions(
                         (ListingStatus.Pending, "قيد المراجعة", "Pending"),

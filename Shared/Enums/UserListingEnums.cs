@@ -120,7 +120,9 @@ public enum ListingModuleType
 
     IndustrialConsultancyOffice = 93,
 
-    AccountantOffice = 94
+    AccountantOffice = 94,
+
+    RestaurantAndCafe = 100
 }
 
 public enum ListingStatus

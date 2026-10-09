@@ -53,6 +53,14 @@ public class AdminAdListItemDto : IListingStats
 
     public int? RemainingDays { get; set; }
 
+    public bool IsExpired { get; set; }
+
+    public bool IsExpiringSoon { get; set; }
+
+    public bool CanRepublish { get; set; }
+
+    public int RepublishCount { get; set; }
+
     [JsonIgnore]
     public ListingModuleType StatsListingType => TypeId;
 
@@ -85,6 +93,12 @@ public class AdminAdFilterParams : PaginationParams
     public DateTime? ToDate { get; set; }
 
     public string? OwnerId { get; set; }
+
+    public int? ExpiringWithinDays { get; set; }
+
+    public bool? RepublishDue { get; set; }
+
+    public bool? Republished { get; set; }
 }
 
 public class AdminAdDetailsDto : IListingStats
@@ -134,6 +148,14 @@ public class AdminAdDetailsDto : IListingStats
     public DateTime? ExpireAt { get; set; }
 
     public int? RemainingDays { get; set; }
+
+    public bool IsExpired { get; set; }
+
+    public bool IsExpiringSoon { get; set; }
+
+    public bool CanRepublish { get; set; }
+
+    public int RepublishCount { get; set; }
 
     public IReadOnlyList<string> ImageUrls { get; set; } = Array.Empty<string>();
 

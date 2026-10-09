@@ -14,13 +14,13 @@ internal static class DirectoryFormSchemas
 
         if (locationBeforeContact)
         {
-            fields.AddRange(LocationFields());
+            fields.AddRange(LocationFields(module));
             fields.AddRange(ContactFields());
         }
         else
         {
             fields.AddRange(ContactFields());
-            fields.AddRange(LocationFields());
+            fields.AddRange(LocationFields(module));
         }
 
         return new AdFormSchema(module.Key, Submit(module), Array.Empty<string>(), Order(fields));
@@ -32,11 +32,16 @@ internal static class DirectoryFormSchemas
         Text("Name", module.NameLabel, module.NameLabelEn, module.Section,
             required: true, maxLength: DirectoryListingRules.MaxNameLength, placeholder: module.NamePlaceholder);
 
-    public static IEnumerable<FormFieldDto> LocationFields() =>
-    [
-        Address(),
-        GoogleMapsUrl()
-    ];
+    public static IEnumerable<FormFieldDto> LocationFields(DirectoryModule module)
+    {
+        var address = Address();
+        address.Placeholder = module.AddressPlaceholder ?? address.Placeholder;
+
+        var googleMaps = GoogleMapsUrl();
+        googleMaps.Placeholder = module.GoogleMapsPlaceholder ?? googleMaps.Placeholder;
+
+        return [address, googleMaps];
+    }
 
     public static IEnumerable<FormFieldDto> ContactFields()
     {
@@ -51,15 +56,23 @@ internal static class DirectoryFormSchemas
 
     public static IEnumerable<FormFieldDto> AdvertisementFields(DirectoryModule module)
     {
+        var section = module.AdSection ?? SectionAd;
+
         var title = Title();
         title.Placeholder = module.TitlePlaceholder;
+        title.Section = section;
 
-        var description = TextArea("Description", "وصف الإعلان", "Advertisement description", SectionAd,
+        var description = TextArea("Description", "وصف الإعلان", "Advertisement description", section,
             required: true, maxLength: DirectoryListingRules.MaxDescriptionLength,
             placeholder: module.DescriptionPlaceholder);
         description.HelpText = module.DescriptionPlaceholder;
 
-        return [title, description, module.ImagesRequired ? RequiredImages() : Images()];
+        var images = module.ImagesRequired ? RequiredImages() : Images();
+
+        if (module.AdSection is not null)
+            images.Section = module.AdSection;
+
+        return [title, description, images];
     }
 
     public static IReadOnlyList<FormFieldDto> Order(List<FormFieldDto> fields)

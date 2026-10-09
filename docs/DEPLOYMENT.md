@@ -140,6 +140,35 @@ URLs — the exact URL stored in the database.
 **The uploads folder must persist across deployments.** Publishing over it without preserving it
 deletes every uploaded image. Back it up, or place it on separate storage.
 
+#### Keep uploads outside the application directory (production)
+
+`FileStorage__UploadsRootPath` moves the uploads root anywhere; when it is unset the root stays
+`<content root>/wwwroot/uploads`. The same path is used for writing, for the application's own static
+serving, for the `uploads` readiness check (`/health`) and for start-up logging. Outside Development
+the application **logs a warning at start-up** if the root is inside the application directory.
+
+> **Observed 2026-10-09:** every sampled production image URL (10/10, including two-day-old uploads)
+> answered 404 from the application while the database still referenced them — the signature of an
+> application directory replaced by a deployment. Recover and move them once:
+
+```bash
+# 1. find the files (old release folder, backup, or the current app dir)
+sudo find / -path /proc -prune -o -name '9fbaa19ca81e40bb8a05a6845aa34b45.heic' -print 2>/dev/null
+# 2. move them to permanent storage
+sudo mkdir -p /var/www/markatplace-data
+sudo rsync -a /var/www/markatplace/wwwroot/uploads/ /var/www/markatplace-data/uploads/   # or the backup found above
+sudo chown -R www-data:www-data /var/www/markatplace-data    # the service user
+# 3. point the app at it (systemd unit or environment file)
+Environment=FileStorage__UploadsRootPath=/var/www/markatplace-data/uploads
+# 4. point Nginx at the same place: in the /uploads/ regex location
+root /var/www/markatplace-data;
+# 5. reload and check: one known image URL must answer 200 image/*, and /health must show uploads Healthy
+```
+
+Files that cannot be found anywhere are gone; the listings keep their rows and the corrected frontend
+shows «تعذّر تحميل الصورة» for them (see [FRONTEND_REALTIME_AND_IMAGES](FRONTEND_REALTIME_AND_IMAGES.md)).
+Every request for a missing upload is logged as `Uploaded file not found on disk: /uploads/...`.
+
 ---
 
 ## Migrations

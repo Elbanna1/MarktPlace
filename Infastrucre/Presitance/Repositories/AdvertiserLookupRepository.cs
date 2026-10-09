@@ -47,7 +47,9 @@ public class AdvertiserLookupRepository : IAdvertiserLookupRepository
             [SubCategoryType.EngineeringConsultancyOffices] = context => context.EngineeringConsultancyOffices.Select(x => x.Name),
             [SubCategoryType.Contractors] = context => context.Contractors.Select(x => x.Name),
             [SubCategoryType.IndustrialConsultancyOffices] = context => context.IndustrialConsultancyOffices.Select(x => x.Name),
-            [SubCategoryType.AccountantOffices] = context => context.AccountantOffices.Select(x => x.Name)
+            [SubCategoryType.AccountantOffices] = context => context.AccountantOffices.Select(x => x.Name),
+
+            [SubCategoryType.RestaurantsAndCafes] = context => context.RestaurantsAndCafes.Select(x => x.Name)
         };
 
     public static IReadOnlyCollection<SubCategoryType> SupportedSubCategories =>

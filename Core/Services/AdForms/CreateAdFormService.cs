@@ -56,6 +56,8 @@ public class CreateAdFormService : ICreateAdFormService
         if (selection.RequiresSubCategory)
             return BuildSubCategorySelectionForm(selection.Category, selection.SubCategories);
 
+        subCategoryId = selection.SubCategory?.Id ?? subCategoryId;
+
         var schema = AdFormSchemaCatalog.GetSchema(categoryId, subCategoryId)
             ?? throw new BadRequestException(
                 "مفيش نموذج إضافة إعلان متاح للقسم اللي اخترته.");
