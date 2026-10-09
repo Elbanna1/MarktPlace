@@ -298,6 +298,7 @@ Enforced by three test suites, including a source-wide scan that fails the build
 | عقارات | `RealEstateListings.Keep` nulls a conditional field once its condition stops holding |
 | افرش بيتك | `PlantOrnament` alone has no colours or material |
 | التسوق أونلاين | No location block; warranty→electronics, expiry→cosmetics, delivery areas→homemade food |
+| مكاتب | Images required; the `name` filter matches the chosen name **exactly** (searchable select fed by the advertisers lookup); `search` is the free-text match |
 | صحتي | Images required; `OtherSpecialty` required only when `Specialty = أخرى (99)` and nulled otherwise; phone required, WhatsApp/email/maps link optional |
 
 ---

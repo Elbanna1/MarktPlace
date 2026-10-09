@@ -395,10 +395,11 @@ at 50). `Cache-Control: public, max-age=60`, with an `ETag`.
 `id` is the advertiser name, because that is what the listing filter matches — see D-35. Pick an
 option, then send its `name` back to the feed as the filter parameter that `read-config` points at
 this operation — `?sellerName=...` for الحيوانات (17-25) and التحف والأنتيكات (26-30), `?name=...` for
-صحتي (53-58), where the doctor / laboratory / centre / hospital name *is* the advertiser. Nothing else
-about the advertiser is exposed.
+صحتي (53-58) and مكاتب (59-63), where the doctor / laboratory / office / contractor name *is* the
+advertiser. For مكاتب the feed matches `name` **exactly**, so the select behaves as a select. Nothing
+else about the advertiser is exposed.
 
-Available on those 20 sub-categories only. Any other sub-category answers `400`, and `read-config`
+Available on those 25 sub-categories only. Any other sub-category answers `400`, and `read-config`
 omits the `advertisers` operation for it, so the frontend never has to hard-code the list.
 
 ### Where am I? — `breadcrumb`

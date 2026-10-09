@@ -94,6 +94,8 @@ public static class ReadConfigExamples
             CategoryType.Sehhaty, SubCategoryType.Doctors),
         Create("sehhaty-medical-laboratories", "Sehhaty → Medical Laboratories (صحتي → معامل التحاليل الطبية)",
             CategoryType.Sehhaty, SubCategoryType.MedicalLaboratories),
+        Create("offices-accountant-offices", "Offices → Accountant Offices (مكاتب → مكاتب محاسبين قانونيين)",
+            CategoryType.Offices, SubCategoryType.AccountantOffices),
 
         SubCategoryStep("sub-category-step", "Category only → sub category still to be chosen (رجال أعمال)",
             CategoryType.Business)

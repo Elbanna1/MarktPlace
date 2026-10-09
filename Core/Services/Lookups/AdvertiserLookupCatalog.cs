@@ -32,7 +32,13 @@ public static class AdvertiserLookupCatalog
             [SubCategoryType.DentalLaboratories] = NameParameter,
             [SubCategoryType.RadiologyLaboratories] = NameParameter,
             [SubCategoryType.MedicalCenters] = NameParameter,
-            [SubCategoryType.Hospitals] = NameParameter
+            [SubCategoryType.Hospitals] = NameParameter,
+
+            [SubCategoryType.LawyerOffices] = NameParameter,
+            [SubCategoryType.EngineeringConsultancyOffices] = NameParameter,
+            [SubCategoryType.Contractors] = NameParameter,
+            [SubCategoryType.IndustrialConsultancyOffices] = NameParameter,
+            [SubCategoryType.AccountantOffices] = NameParameter
         };
 
     public static IReadOnlyCollection<SubCategoryType> SupportedSubCategories =>

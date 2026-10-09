@@ -461,6 +461,17 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Hospital> Hospitals => Set<Hospital>();
     public DbSet<HospitalImage> HospitalImages => Set<HospitalImage>();
 
+    public DbSet<LawyerOffice> LawyerOffices => Set<LawyerOffice>();
+    public DbSet<LawyerOfficeImage> LawyerOfficeImages => Set<LawyerOfficeImage>();
+    public DbSet<EngineeringConsultancyOffice> EngineeringConsultancyOffices => Set<EngineeringConsultancyOffice>();
+    public DbSet<EngineeringConsultancyOfficeImage> EngineeringConsultancyOfficeImages => Set<EngineeringConsultancyOfficeImage>();
+    public DbSet<Contractor> Contractors => Set<Contractor>();
+    public DbSet<ContractorImage> ContractorImages => Set<ContractorImage>();
+    public DbSet<IndustrialConsultancyOffice> IndustrialConsultancyOffices => Set<IndustrialConsultancyOffice>();
+    public DbSet<IndustrialConsultancyOfficeImage> IndustrialConsultancyOfficeImages => Set<IndustrialConsultancyOfficeImage>();
+    public DbSet<AccountantOffice> AccountantOffices => Set<AccountantOffice>();
+    public DbSet<AccountantOfficeImage> AccountantOfficeImages => Set<AccountantOfficeImage>();
+
     public DbSet<Referral> Referrals => Set<Referral>();
 
     public DbSet<ReferralLinkEvent> ReferralLinkEvents => Set<ReferralLinkEvent>();

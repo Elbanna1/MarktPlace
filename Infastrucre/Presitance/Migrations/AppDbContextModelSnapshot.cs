@@ -521,6 +521,166 @@ namespace Presitance.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Domain.Entities.AccountantOffice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FirstPublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GoogleMapsUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModeratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModeratedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModerationNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ModerationStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RejectionReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepublishCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpireAt");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("ModerationStatus", "CreatedAt", "Id")
+                        .IsDescending(false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_AccountantOffices_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_AccountantOffices_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_AccountantOffices_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_AccountantOffices_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.ToTable("AccountantOffices", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AccountantOfficeImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("AccountantOfficeImages", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.AdFormFieldOption", b =>
                 {
                     b.Property<Guid>("Id")
@@ -6609,6 +6769,14 @@ namespace Presitance.Migrations
                             Name = "Sehhaty",
                             NameAr = "صحتي",
                             SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 14,
+                            IsActive = true,
+                            Name = "Offices",
+                            NameAr = "مكاتب",
+                            SortOrder = 0
                         });
                 });
 
@@ -7698,6 +7866,166 @@ namespace Presitance.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("CompanyImages");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Contractor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FirstPublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GoogleMapsUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModeratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModeratedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModerationNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ModerationStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RejectionReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepublishCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpireAt");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("ModerationStatus", "CreatedAt", "Id")
+                        .IsDescending(false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_Contractors_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_Contractors_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_Contractors_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_Contractors_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.ToTable("Contractors", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.ContractorImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("ContractorImages", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.Cosmetic", b =>
@@ -9348,6 +9676,166 @@ namespace Presitance.Migrations
                             Name = "أخرى",
                             NameEn = "Other"
                         });
+                });
+
+            modelBuilder.Entity("Domain.Entities.EngineeringConsultancyOffice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FirstPublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GoogleMapsUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModeratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModeratedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModerationNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ModerationStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RejectionReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepublishCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpireAt");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("ModerationStatus", "CreatedAt", "Id")
+                        .IsDescending(false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_EngineeringConsultancyOffices_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_EngineeringConsultancyOffices_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_EngineeringConsultancyOffices_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_EngineeringConsultancyOffices_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.ToTable("EngineeringConsultancyOffices", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.EngineeringConsultancyOfficeImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("EngineeringConsultancyOfficeImages", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.ExperienceLevelLookup", b =>
@@ -15673,6 +16161,166 @@ namespace Presitance.Migrations
                     b.ToTable("HospitalImages", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.IndustrialConsultancyOffice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FirstPublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GoogleMapsUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModeratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModeratedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModerationNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ModerationStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RejectionReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepublishCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpireAt");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("ModerationStatus", "CreatedAt", "Id")
+                        .IsDescending(false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_IndustrialConsultancyOffices_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_IndustrialConsultancyOffices_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_IndustrialConsultancyOffices_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_IndustrialConsultancyOffices_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.ToTable("IndustrialConsultancyOffices", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.IndustrialConsultancyOfficeImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("IndustrialConsultancyOfficeImages", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.JobExperienceLevelLookup", b =>
                 {
                     b.Property<int>("Id")
@@ -19231,6 +19879,166 @@ namespace Presitance.Migrations
                     b.HasIndex("Utility");
 
                     b.ToTable("LandUtilitySelections", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.LawyerOffice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FirstPublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GoogleMapsUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModeratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModeratedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModerationNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ModerationStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RejectionReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepublishCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpireAt");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("ModerationStatus", "CreatedAt", "Id")
+                        .IsDescending(false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_LawyerOffices_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_LawyerOffices_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_LawyerOffices_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_LawyerOffices_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.ToTable("LawyerOffices", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.LawyerOfficeImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("LawyerOfficeImages", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.LightingDecor", b =>
@@ -28153,6 +28961,51 @@ namespace Presitance.Migrations
                             Name = "Hospitals",
                             NameAr = "مستشفيات",
                             SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 59,
+                            CategoryId = 14,
+                            IsActive = true,
+                            Name = "Lawyer Offices",
+                            NameAr = "مكاتب محامين",
+                            SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 60,
+                            CategoryId = 14,
+                            IsActive = true,
+                            Name = "Engineering Consultancy Offices",
+                            NameAr = "مكاتب استشارية هندسية",
+                            SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 61,
+                            CategoryId = 14,
+                            IsActive = true,
+                            Name = "Demolition & Construction Contractors",
+                            NameAr = "مقاولين (هدم وبناء)",
+                            SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 62,
+                            CategoryId = 14,
+                            IsActive = true,
+                            Name = "Industrial Consultancy Offices",
+                            NameAr = "مكاتب استشارية صناعية",
+                            SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 63,
+                            CategoryId = 14,
+                            IsActive = true,
+                            Name = "Certified Public Accountant Offices",
+                            NameAr = "مكاتب محاسبين قانونيين",
+                            SortOrder = 0
                         });
                 });
 
@@ -30892,6 +31745,28 @@ namespace Presitance.Migrations
                     b.Navigation("Accessory");
                 });
 
+            modelBuilder.Entity("Domain.Entities.AccountantOffice", b =>
+                {
+                    b.HasOne("Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AccountantOfficeImage", b =>
+                {
+                    b.HasOne("Domain.Entities.AccountantOffice", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
+                });
+
             modelBuilder.Entity("Domain.Entities.AdFormFieldOption", b =>
                 {
                     b.HasOne("Domain.Entities.AdFormFieldOverride", "FieldOverride")
@@ -31383,6 +32258,28 @@ namespace Presitance.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Contractor", b =>
+                {
+                    b.HasOne("Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ContractorImage", b =>
+                {
+                    b.HasOne("Domain.Entities.Contractor", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
+                });
+
             modelBuilder.Entity("Domain.Entities.Cosmetic", b =>
                 {
                     b.HasOne("Domain.Entities.ApplicationUser", "User")
@@ -31496,6 +32393,28 @@ namespace Presitance.Migrations
             modelBuilder.Entity("Domain.Entities.DoctorImage", b =>
                 {
                     b.HasOne("Domain.Entities.Doctor", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
+                });
+
+            modelBuilder.Entity("Domain.Entities.EngineeringConsultancyOffice", b =>
+                {
+                    b.HasOne("Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.EngineeringConsultancyOfficeImage", b =>
+                {
+                    b.HasOne("Domain.Entities.EngineeringConsultancyOffice", "Listing")
                         .WithMany("Images")
                         .HasForeignKey("ListingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -31906,6 +32825,28 @@ namespace Presitance.Migrations
                     b.Navigation("Listing");
                 });
 
+            modelBuilder.Entity("Domain.Entities.IndustrialConsultancyOffice", b =>
+                {
+                    b.HasOne("Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IndustrialConsultancyOfficeImage", b =>
+                {
+                    b.HasOne("Domain.Entities.IndustrialConsultancyOffice", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
+                });
+
             modelBuilder.Entity("Domain.Entities.JobOpportunity", b =>
                 {
                     b.HasOne("Domain.Entities.ApplicationUser", "User")
@@ -32058,6 +32999,28 @@ namespace Presitance.Migrations
                         .IsRequired();
 
                     b.Navigation("Land");
+                });
+
+            modelBuilder.Entity("Domain.Entities.LawyerOffice", b =>
+                {
+                    b.HasOne("Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.LawyerOfficeImage", b =>
+                {
+                    b.HasOne("Domain.Entities.LawyerOffice", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
                 });
 
             modelBuilder.Entity("Domain.Entities.LightingDecor", b =>
@@ -32827,6 +33790,11 @@ namespace Presitance.Migrations
                     b.Navigation("Images");
                 });
 
+            modelBuilder.Entity("Domain.Entities.AccountantOffice", b =>
+                {
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("Domain.Entities.AdFormFieldOverride", b =>
                 {
                     b.Navigation("Options");
@@ -32927,6 +33895,11 @@ namespace Presitance.Migrations
                     b.Navigation("Images");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Contractor", b =>
+                {
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("Domain.Entities.Cosmetic", b =>
                 {
                     b.Navigation("Images");
@@ -32950,6 +33923,11 @@ namespace Presitance.Migrations
                 });
 
             modelBuilder.Entity("Domain.Entities.Doctor", b =>
+                {
+                    b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("Domain.Entities.EngineeringConsultancyOffice", b =>
                 {
                     b.Navigation("Images");
                 });
@@ -33048,6 +34026,11 @@ namespace Presitance.Migrations
                     b.Navigation("Images");
                 });
 
+            modelBuilder.Entity("Domain.Entities.IndustrialConsultancyOffice", b =>
+                {
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("Domain.Entities.JobOpportunity", b =>
                 {
                     b.Navigation("Images");
@@ -33076,6 +34059,11 @@ namespace Presitance.Migrations
                     b.Navigation("RentInclusions");
 
                     b.Navigation("Utilities");
+                });
+
+            modelBuilder.Entity("Domain.Entities.LawyerOffice", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Domain.Entities.LightingDecor", b =>

@@ -2,6 +2,11 @@
 
 Date: 2026-10-09 · Branch: `main` (uncommitted working tree) · Baseline commit: `6149fb7`
 
+> **Later change (مكاتب, category 14):** the صحتي generic base classes named below (`SehhatyListing`,
+> `SehhatyRepository`, `SehhatyListingService`, `SehhatyModule`, …) were renamed to the category-neutral
+> `Directory*` types and are now shared with مكاتب. Behaviour and schema are unchanged — see
+> `docs/DECISIONS.md` D-37.
+
 ---
 
 ## A. Executive Summary

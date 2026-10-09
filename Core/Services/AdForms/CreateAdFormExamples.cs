@@ -93,7 +93,9 @@ public static class CreateAdFormExamples
         Create("sehhaty-doctors", "Sehhaty → Doctors (صحتي → الأطباء)",
             CategoryType.Sehhaty, SubCategoryType.Doctors),
         Create("sehhaty-hospitals", "Sehhaty → Hospitals (صحتي → مستشفيات)",
-            CategoryType.Sehhaty, SubCategoryType.Hospitals)
+            CategoryType.Sehhaty, SubCategoryType.Hospitals),
+        Create("offices-accountant-offices", "Offices → Accountant Offices (مكاتب → مكاتب محاسبين قانونيين)",
+            CategoryType.Offices, SubCategoryType.AccountantOffices)
     ];
 
     private static Example Create(string key, string summary, CategoryType category, SubCategoryType subCategory)

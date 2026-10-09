@@ -23,6 +23,7 @@ using Shared.DTOs.Advertisements;
 using Shared.DTOs.Lookups;
 using Shared.DTOs.Lookups.Forms;
 using Shared.DTOs.Lookups.Read;
+using Shared.DTOs.Directory;
 using Shared.DTOs.Sehhaty;
 using Shared.Enums;
 using Shared.Exceptions;
@@ -215,7 +216,7 @@ public class SehhatyCategoryTests
         Assert.Equal(subCategoryId, form.SubCategory!.Id);
         Assert.Equal(subCategoryName, form.SubCategory.NameAr);
         Assert.Equal(module, form.Module);
-        Assert.Equal(submit, form.Submit.Endpoint);
+        Assert.Equal(submit, form.Submit!.Endpoint);
 
         var fields = form.Fields.ToDictionary(field => field.Name);
 
@@ -660,7 +661,7 @@ public class SehhatyCategoryTests
         var errors = validator.Validate(new ValidationContext<object>(request)).Errors;
 
         var error = Assert.Single(errors);
-        Assert.Equal(nameof(CreateSehhatyListingRequest.Name), error.PropertyName);
+        Assert.Equal(nameof(CreateDirectoryListingRequest.Name), error.PropertyName);
         Assert.Equal(message, error.ErrorMessage);
     }
 
@@ -857,10 +858,10 @@ public class SehhatyCategoryTests
             Images = [Image()]
         };
 
-    private static CreateSehhatyListingRequest InstanceFor(IValidator validator)
+    private static CreateDirectoryListingRequest InstanceFor(IValidator validator)
     {
         var requestType = validator.GetType().BaseType!.GetGenericArguments()[0];
-        var request = (CreateSehhatyListingRequest)Activator.CreateInstance(requestType)!;
+        var request = (CreateDirectoryListingRequest)Activator.CreateInstance(requestType)!;
 
         request.Name = "اسم";
         request.Title = "عنوان";
@@ -910,7 +911,7 @@ public class SehhatyCategoryTests
     }
 
     private static T Facility<T>(string owner, string name, ModerationStatus status = ModerationStatus.Approved)
-        where T : SehhatyListing, new() =>
+        where T : DirectoryListing, new() =>
         new()
         {
             Id = Guid.NewGuid(),
@@ -927,57 +928,4 @@ public class SehhatyCategoryTests
 
     private static DoctorService DoctorService(AppDbContext context) =>
         new(new DoctorRepository(context), new StubFileService(), Mapper(), SilentProxy<INotificationService>.Create());
-
-    private sealed class StubFileService : IFileService
-    {
-        public Task<StoredFile> SaveAsync(UploadImageModel file, string folder, CancellationToken cancellationToken = default) =>
-            Task.FromResult(Stored(file, folder));
-
-        public Task<IReadOnlyList<StoredFile>> SaveImagesAsync(
-            IReadOnlyList<UploadImageModel> files, string folder, int existingCount = 0,
-            CancellationToken cancellationToken = default) =>
-            Task.FromResult<IReadOnlyList<StoredFile>>(files.Select(file => Stored(file, folder)).ToList());
-
-        public Task<StoredFile> SaveDocumentAsync(UploadImageModel file, string folder, CancellationToken cancellationToken = default) =>
-            Task.FromResult(Stored(file, folder));
-
-        public Task<StoredFile> SaveVideoAsync(UploadImageModel file, string folder, CancellationToken cancellationToken = default) =>
-            Task.FromResult(Stored(file, folder));
-
-        public void Delete(string relativePath)
-        {
-        }
-
-        public string BuildPublicUrl(string relativePath) => "https://example.test" + relativePath;
-
-        private static StoredFile Stored(UploadImageModel file, string folder)
-        {
-            var path = $"/uploads/{folder}/{Guid.NewGuid():N}.jpg";
-            return new StoredFile { FileName = file.FileName, RelativePath = path, Url = "https://example.test" + path };
-        }
-    }
-
-    public class SilentProxy<T> : DispatchProxy where T : class
-    {
-        public static T Create() => DispatchProxy.Create<T, SilentProxy<T>>();
-
-        protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
-        {
-            var returnType = targetMethod!.ReturnType;
-
-            if (returnType == typeof(Task))
-                return Task.CompletedTask;
-
-            if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))
-            {
-                var result = returnType.GetGenericArguments()[0];
-
-                return typeof(Task).GetMethod(nameof(Task.FromResult))!
-                    .MakeGenericMethod(result)
-                    .Invoke(null, [result.IsValueType ? Activator.CreateInstance(result) : null]);
-            }
-
-            return returnType.IsValueType && returnType != typeof(void) ? Activator.CreateInstance(returnType) : null;
-        }
-    }
 }

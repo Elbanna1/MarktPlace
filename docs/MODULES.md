@@ -2,7 +2,7 @@
 
 [← README](../README.md) · Related: [API](API.md) · [BUSINESS_RULES](BUSINESS_RULES.md) · [DATABASE](DATABASE.md)
 
-13 categories → 58 sub-categories → **54 concrete listing types**. This document explains how a
+14 categories → 63 sub-categories → **59 concrete listing types**. This document explains how a
 module actually works, starting with the pattern they all share.
 
 ---
@@ -303,16 +303,15 @@ one repository file for three modules.
 | 57 | `/api/medical-centers` | `MedicalCenter` | 84 | اسم المركز الطبي |
 | 58 | `/api/hospitals` | `Hospital` | 85 | اسم المستشفى |
 
-Six independent tables (each with its own `*Images` table) sharing the abstract `SehhatyListing` /
-`SehhatyListing<TImage>` base, one generic repository (`SehhatyRepository<,,>`), one generic service
-(`SehhatyListingService<…>`) and one generic controller base. A module class only names its
-`SehhatyModule` descriptor — **`SehhatyCatalog` is the only place a Sehhaty label, placeholder,
+Six independent tables (each with its own `*Images` table) built on the shared **directory-listing
+base** (see [The directory-listing base](#the-directory-listing-base)). A module class only names its
+`DirectoryModule` descriptor — **`SehhatyCatalog` is the only place a Sehhaty label, placeholder,
 route, image folder or message lives**, and the forms, read-config, notifications and validators all
 read it.
 
 **Shape.** Every module: `Name` (labelled per module), `Title`, `Description`, `Address` (required),
 `GoogleMapsUrl` (optional, http/https), `Phone` (required, Egyptian mobile), `WhatsApp` and `Email`
-(optional), images **required** (1–10, `SehhatyCatalog.ImagesRequired`). There is no governorate /
+(optional), images **required** (1–10, `DirectoryModule.ImagesRequired`). There is no governorate /
 مركز block — the spec asks for an address and a maps link only.
 
 **Doctors** add `Specialty` (56 options, `DoctorSpecialty`, `أخرى` = 99) and `OtherSpecialty`,
@@ -331,6 +330,45 @@ six, plus `(ModerationStatus, Specialty, CreatedAt)` on `Doctors`.
 
 Migration `AddSehhatyCategoryModules`: 12 tables, 43 indexes, and a **guarded** seed of category 13
 and subs 53–58 (see [DECISIONS § D-36](DECISIONS.md#d-36--one-catalog-for-category-identity-and-a-parent-check-in-every-lookup)).
+
+---
+
+## Category 14 — مكاتب (Offices) · subs 59–63
+
+| Sub | Endpoint | Entity | Module type | Name field label |
+| --- | --- | --- | --- | --- |
+| 59 مكاتب محامين | `/api/lawyer-offices` | `LawyerOffice` | 90 | اسم المكتب أو المحامي |
+| 60 مكاتب استشارية هندسية | `/api/engineering-consultancy-offices` | `EngineeringConsultancyOffice` | 91 | اسم المكتب الهندسي |
+| 61 مقاولين (هدم وبناء) | `/api/contractors` | `Contractor` | 92 | اسم المكتب أو المقاول |
+| 62 مكاتب استشارية صناعية | `/api/industrial-consultancy-offices` | `IndustrialConsultancyOffice` | 93 | اسم مكتب الاستشارة الصناعية |
+| 63 مكاتب محاسبين قانونيين | `/api/accountant-offices` | `AccountantOffice` | 94 | اسم مكتب المحاسب القانوني أو اسم المحاسب القانوني |
+
+Five independent modules — each its own table, `*Images` table, entity, DTOs, validators, service
+class + interface, repository, listing source, controller and route — built on the directory-listing
+base. `OfficesCatalog` owns their wording. Fields: name, `Title`, `Description`, images (required),
+`Address` (required), `GoogleMapsUrl`, `Phone` (required), `WhatsApp`, `Email`; the form lists
+location **before** contact, as specified.
+
+**The name filter is a searchable select with exact matching** (`NameFilterIsExact`). Its options come
+from `/api/lookups/advertisers/14/{sub}` (each published name once, with a count); choosing one sends
+`?name=…` and the feed returns only listings whose name **equals** it — «مكتب أحمد» does not also
+return «مكتب أحمد وشركاه». Free-text matching stays available through `search`. This was asked for
+مكاتب محاسبين قانونيين and applied to all five, since the name is the only filterable field each has.
+
+Migration `AddOfficesCategoryModules`: 10 tables, 35 indexes, guarded seed of 14 / 59–63.
+
+---
+
+## The directory-listing base
+
+صحتي and مكاتب share one category-neutral base for "a named business with an address, contacts and a
+gallery": `DirectoryListing` / `DirectoryListing<TImage>` / `DirectoryListingImage` (entities, not
+mapped themselves), `DirectoryRepository<,,>`, `DirectoryListingService<…>`, `DirectoryControllerBase<…>`,
+`DirectoryListingSource<,>`, `DirectoryListingMapping`, `DirectoryFormSchemas`,
+`ReadConfigCatalog.DirectoryModuleSchema`, `DirectoryValidationRules` and the `MapDirectoryListing`
+AutoMapper helper. Behaviour that differs per module is data on its `DirectoryModule` descriptor
+(labels, route, folder, `ImagesRequired`, `NameFilterIsExact`) or an override (doctors' specialty).
+See [DECISIONS § D-37](DECISIONS.md#d-37--a-shared-directory-listing-base-for-name--address--contact-modules).
 
 ---
 

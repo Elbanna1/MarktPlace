@@ -79,4 +79,10 @@ public static class NotificationReferenceTypes
     public const string RadiologyLaboratory = "RadiologyLaboratory";
     public const string MedicalCenter = "MedicalCenter";
     public const string Hospital = "Hospital";
+
+    public const string LawyerOffice = "LawyerOffice";
+    public const string EngineeringConsultancyOffice = "EngineeringConsultancyOffice";
+    public const string Contractor = "Contractor";
+    public const string IndustrialConsultancyOffice = "IndustrialConsultancyOffice";
+    public const string AccountantOffice = "AccountantOffice";
 }

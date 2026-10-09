@@ -138,18 +138,24 @@ public static class NotificationCatalog
             [ListingModuleType.BloodRequest] = new(NotificationReferenceTypes.BloodRequest, "طلب فصيلة الدم", "🩸", "/blood-requests"),
             [ListingModuleType.AskConsult] = new(NotificationReferenceTypes.AskConsult, "السؤال", "❓", "/ask-consults"),
 
-            [ListingModuleType.Doctor] = Sehhaty(NotificationReferenceTypes.Doctor, SehhatyCatalog.Doctors),
-            [ListingModuleType.MedicalLaboratory] = Sehhaty(NotificationReferenceTypes.MedicalLaboratory, SehhatyCatalog.MedicalLaboratories),
-            [ListingModuleType.DentalLaboratory] = Sehhaty(NotificationReferenceTypes.DentalLaboratory, SehhatyCatalog.DentalLaboratories),
-            [ListingModuleType.RadiologyLaboratory] = Sehhaty(NotificationReferenceTypes.RadiologyLaboratory, SehhatyCatalog.RadiologyLaboratories),
-            [ListingModuleType.MedicalCenter] = Sehhaty(NotificationReferenceTypes.MedicalCenter, SehhatyCatalog.MedicalCenters),
-            [ListingModuleType.Hospital] = Sehhaty(NotificationReferenceTypes.Hospital, SehhatyCatalog.Hospitals),
+            [ListingModuleType.Doctor] = DirectorySubject(NotificationReferenceTypes.Doctor, SehhatyCatalog.Doctors),
+            [ListingModuleType.MedicalLaboratory] = DirectorySubject(NotificationReferenceTypes.MedicalLaboratory, SehhatyCatalog.MedicalLaboratories),
+            [ListingModuleType.DentalLaboratory] = DirectorySubject(NotificationReferenceTypes.DentalLaboratory, SehhatyCatalog.DentalLaboratories),
+            [ListingModuleType.RadiologyLaboratory] = DirectorySubject(NotificationReferenceTypes.RadiologyLaboratory, SehhatyCatalog.RadiologyLaboratories),
+            [ListingModuleType.MedicalCenter] = DirectorySubject(NotificationReferenceTypes.MedicalCenter, SehhatyCatalog.MedicalCenters),
+            [ListingModuleType.Hospital] = DirectorySubject(NotificationReferenceTypes.Hospital, SehhatyCatalog.Hospitals),
+
+            [ListingModuleType.LawyerOffice] = DirectorySubject(NotificationReferenceTypes.LawyerOffice, OfficesCatalog.LawyerOffices),
+            [ListingModuleType.EngineeringConsultancyOffice] = DirectorySubject(NotificationReferenceTypes.EngineeringConsultancyOffice, OfficesCatalog.EngineeringConsultancyOffices),
+            [ListingModuleType.Contractor] = DirectorySubject(NotificationReferenceTypes.Contractor, OfficesCatalog.Contractors),
+            [ListingModuleType.IndustrialConsultancyOffice] = DirectorySubject(NotificationReferenceTypes.IndustrialConsultancyOffice, OfficesCatalog.IndustrialConsultancyOffices),
+            [ListingModuleType.AccountantOffice] = DirectorySubject(NotificationReferenceTypes.AccountantOffice, OfficesCatalog.AccountantOffices),
 
             [ListingModuleType.LostItem] = LostItem,
             [ListingModuleType.FoundItem] = FoundItem
         };
 
-    private static NotificationSubject Sehhaty(string referenceType, SehhatyModule module) =>
+    private static NotificationSubject DirectorySubject(string referenceType, DirectoryModule module) =>
         new(referenceType, module.EntityName, module.Icon, "/" + module.Route["api/".Length..]);
 
     public static NotificationSubject For(ListingModuleType module) =>

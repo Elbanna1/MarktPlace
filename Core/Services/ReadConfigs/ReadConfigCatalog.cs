@@ -196,6 +196,11 @@ public static class ReadConfigCatalog
                 or SubCategoryType.RadiologyLaboratories or SubCategoryType.MedicalCenters
                 or SubCategoryType.Hospitals => Sehhaty(categoryId, SehhatyCatalog.ModuleOf(subCategory)!),
 
+            SubCategoryType.LawyerOffices or SubCategoryType.EngineeringConsultancyOffices
+                or SubCategoryType.Contractors or SubCategoryType.IndustrialConsultancyOffices
+                or SubCategoryType.AccountantOffices =>
+                DirectoryModuleSchema(categoryId, OfficesCatalog.ModuleOf(subCategory)!, [], []),
+
             _ => null
         };
 
@@ -2077,10 +2082,23 @@ public static class ReadConfigCatalog
                     $"{AskConsultsRoute}/categories")
             ]);
 
-    private static ReadConfigSchema Sehhaty(int categoryId, SehhatyModule module)
-    {
-        var isDoctor = module.Type == ListingModuleType.Doctor;
+    private static ReadConfigSchema Sehhaty(int categoryId, DirectoryModule module) =>
+        module.Type == ListingModuleType.Doctor
+            ? DirectoryModuleSchema(categoryId, module,
+            [
+                Param("specialty", SehhatyCatalog.SpecialtyLabel, "Specialty", ReadParameterTypes.Enum,
+                    optionsSource: ReadOperationKeys.DoctorSpecialties, optionsValue: ReadOptionsValues.Id)
+            ],
+            [
+                Operation(ReadOperationKeys.DoctorSpecialties, "تخصصات الأطباء", "Doctor specialties",
+                    $"{module.PublicRoute}/specialties")
+            ])
+            : DirectoryModuleSchema(categoryId, module, [], []);
 
+    private static ReadConfigSchema DirectoryModuleSchema(
+        int categoryId, DirectoryModule module,
+        IEnumerable<ReadParameterDto> extraFilters, IEnumerable<ReadOperationDto> extraOperations)
+    {
         var queryParameters = new List<ReadParameterDto>
         {
             Param("search", "بحث", "Search", ReadParameterTypes.String),
@@ -2088,16 +2106,11 @@ public static class ReadConfigCatalog
                 optionsSource: ReadOperationKeys.Advertisers, optionsValue: ReadOptionsValues.Name)
         };
 
-        if (isDoctor)
-        {
-            queryParameters.Add(Param("specialty", SehhatyCatalog.SpecialtyLabel, "Specialty",
-                ReadParameterTypes.Enum,
-                optionsSource: ReadOperationKeys.DoctorSpecialties, optionsValue: ReadOptionsValues.Id));
-        }
+        queryParameters.AddRange(extraFilters);
 
         queryParameters.Add(Param("sortBy", "الترتيب", "Sort by", ReadParameterTypes.Enum,
-            defaultValue: (int)SehhatySortBy.Newest,
-            options: SehhatyCatalog.SortOptions
+            defaultValue: (int)DirectorySortBy.Newest,
+            options: DirectoryListingRules.SortOptions
                 .Select(option => new FormFieldOptionDto((int)option.Id, option.Name, option.NameEn))
                 .ToList()));
 
@@ -2114,12 +2127,7 @@ public static class ReadConfigCatalog
             UnifiedMyListings(module.Type, module.MyListingsLabel, module.MyListingsLabelEn)
         };
 
-        if (isDoctor)
-        {
-            operations.Add(Operation(ReadOperationKeys.DoctorSpecialties, "تخصصات الأطباء", "Doctor specialties",
-                $"{module.PublicRoute}/specialties"));
-        }
-
+        operations.AddRange(extraOperations);
         operations.AddRange(SharedTail(categoryId, (int)module.SubCategory));
 
         return new ReadConfigSchema(module.Key, operations);
@@ -2231,7 +2239,12 @@ public static class ReadConfigCatalog
                         (ListingModuleType.DentalLaboratory, "معامل الأسنان", "Dental laboratories"),
                         (ListingModuleType.RadiologyLaboratory, "معامل الأشعة", "Radiology laboratories"),
                         (ListingModuleType.MedicalCenter, "مراكز طبية", "Medical centers"),
-                        (ListingModuleType.Hospital, "مستشفيات", "Hospitals"))),
+                        (ListingModuleType.Hospital, "مستشفيات", "Hospitals"),
+                        (ListingModuleType.LawyerOffice, "مكاتب محامين", "Lawyer offices"),
+                        (ListingModuleType.EngineeringConsultancyOffice, "مكاتب استشارية هندسية", "Engineering consultancy offices"),
+                        (ListingModuleType.Contractor, "مقاولين (هدم وبناء)", "Contractors"),
+                        (ListingModuleType.IndustrialConsultancyOffice, "مكاتب استشارية صناعية", "Industrial consultancy offices"),
+                        (ListingModuleType.AccountantOffice, "مكاتب محاسبين قانونيين", "Accountant offices"))),
                 Param("status", "الحالة", "Status", ReadParameterTypes.Enum,
                     options: EnumOptions(
                         (ListingStatus.Pending, "قيد المراجعة", "Pending"),

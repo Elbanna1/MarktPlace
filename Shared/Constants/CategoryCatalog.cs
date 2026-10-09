@@ -22,7 +22,8 @@ public static class CategoryCatalog
         new(CategoryType.HomeFurnishing, "Home Furnishing", "افرش بيتك"),
         new(CategoryType.RealEstate, "Real Estate", "عقارات"),
         new(CategoryType.Charity, "Charity", "بوابة الخيرات"),
-        new(CategoryType.Sehhaty, "Sehhaty", SehhatyCatalog.CategoryName)
+        new(CategoryType.Sehhaty, "Sehhaty", SehhatyCatalog.CategoryName),
+        new(CategoryType.Offices, "Offices", OfficesCatalog.CategoryName)
     ];
 
     public static readonly IReadOnlyList<SubCategoryEntry> SubCategories =
@@ -96,7 +97,13 @@ public static class CategoryCatalog
         new(SubCategoryType.DentalLaboratories, CategoryType.Sehhaty, "Dental Laboratories", "معامل الأسنان"),
         new(SubCategoryType.RadiologyLaboratories, CategoryType.Sehhaty, "Radiology Laboratories", "معامل الأشعة"),
         new(SubCategoryType.MedicalCenters, CategoryType.Sehhaty, "Medical Centers", "مراكز طبية"),
-        new(SubCategoryType.Hospitals, CategoryType.Sehhaty, "Hospitals", "مستشفيات")
+        new(SubCategoryType.Hospitals, CategoryType.Sehhaty, "Hospitals", "مستشفيات"),
+
+        new(SubCategoryType.LawyerOffices, CategoryType.Offices, "Lawyer Offices", "مكاتب محامين"),
+        new(SubCategoryType.EngineeringConsultancyOffices, CategoryType.Offices, "Engineering Consultancy Offices", "مكاتب استشارية هندسية"),
+        new(SubCategoryType.Contractors, CategoryType.Offices, "Demolition & Construction Contractors", "مقاولين (هدم وبناء)"),
+        new(SubCategoryType.IndustrialConsultancyOffices, CategoryType.Offices, "Industrial Consultancy Offices", "مكاتب استشارية صناعية"),
+        new(SubCategoryType.AccountantOffices, CategoryType.Offices, "Certified Public Accountant Offices", "مكاتب محاسبين قانونيين")
     ];
 
     public static CategoryEntry? FindCategory(CategoryType category) =>

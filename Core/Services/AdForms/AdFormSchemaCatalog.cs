@@ -132,6 +132,11 @@ public static class AdFormSchemaCatalog
             or SubCategoryType.RadiologyLaboratories or SubCategoryType.MedicalCenters
             or SubCategoryType.Hospitals => SehhatyFormSchemas.For(subCategory),
 
+        SubCategoryType.LawyerOffices or SubCategoryType.EngineeringConsultancyOffices
+            or SubCategoryType.Contractors or SubCategoryType.IndustrialConsultancyOffices
+            or SubCategoryType.AccountantOffices =>
+            DirectoryFormSchemas.Facility(OfficesCatalog.ModuleOf(subCategory)!, locationBeforeContact: true),
+
         _ => null
     };
 

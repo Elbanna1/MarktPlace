@@ -36,7 +36,7 @@ DTOs, business logic, validation. `[NotMapped]` is the only attribute used.
 | Folder | Contents |
 | --- | --- |
 | `Entities/` | Cars, business, jobs, workshops, notifications, payments, banners, referrals, admin |
-| `Entities/Animals` `Antiques` `Charity` `Clothing` `HomeFurnishing` `OnlineShopping` `RealEstate` `Sehhaty` | One file per module (`Charity` and `Sehhaty`: one file per category) |
+| `Entities/Animals` `Antiques` `Charity` `Clothing` `HomeFurnishing` `OnlineShopping` `RealEstate` `Sehhaty` `Offices` `Directory` | One file per module (`Charity`, `Sehhaty`, `Offices`: one file per category; `Directory`: the shared base) |
 | `Entities/Listings` | Cross-module interaction entities (views, favourites, ratings, reports) |
 
 **Interacts with.** Referenced by every other project. References only `Shared` (for enums).
@@ -74,7 +74,7 @@ without knowing their implementation: `IFileService`, `IEmailService`, `ITokenSe
 | `Listings/` | `ListingInteractionService` — views, favourites, ratings, reports, recently viewed | |
 | `Notifications/` | Interest subscriptions, fan-out, listing context resolution | |
 | `Admin/` | Admin dashboard services | |
-| `Animals/` `AnimalModules/` `Antiques/` `AntiqueModules/` `BusinessModules/` `Charity/` `Clothing/` `ClothingModules/` `HomeFurnishing/` `JobModules/` `OnlineShopping/` `RealEstate/` `Sehhaty/` | Per-category module services | `*Modules` folders hold Swagger example builders |
+| `Animals/` `AnimalModules/` `Antiques/` `AntiqueModules/` `BusinessModules/` `Charity/` `Clothing/` `ClothingModules/` `HomeFurnishing/` `JobModules/` `OnlineShopping/` `RealEstate/` `Sehhaty/` `Offices/` `Directory/` | Per-category module services | `*Modules` folders hold Swagger example builders |
 | `BannerBookings/` `Referrals/` `Settings/` `Lookups/` | Feature services | |
 
 **Belongs here.** Business rules, orchestration, validation, mapping, catalogues.
@@ -93,7 +93,7 @@ without knowing their implementation: `IFileService`, `IEmailService`, `ITokenSe
 | `Data/` | `AppDbContext` (369 `DbSet`s), `AppDbContextFactory`, `IdentityDataSeeder`, `RequestSqlCounter` |
 | `Data/Development/` | `DevelopmentDataSeeder`, `DemoImageCatalog` — Development only |
 | `Configurations/` | `IEntityTypeConfiguration<T>` classes + the model-wide seams |
-| `Configurations/{Animals,Antiques,Charity,Clothing,HomeFurnishing,Listings,OnlineShopping,RealEstate,Sehhaty}` | Per-category configurations |
+| `Configurations/{Animals,Antiques,Charity,Clothing,HomeFurnishing,Listings,OnlineShopping,RealEstate,Sehhaty,Offices,Directory}` | Per-category configurations |
 | `Repositories/` | 71 repositories + `PagedListingQuery` |
 | `Listings/` | `IUserListingSource` providers — the cross-module read model |
 | `Interceptors/` | `ListingEditModerationInterceptor`, `SqlCountInterceptor` |

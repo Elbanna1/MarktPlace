@@ -9,14 +9,14 @@ internal static class SehhatyFormSchemas
 {
     public static AdFormSchema? For(SubCategoryType subCategory) =>
         SehhatyCatalog.ModuleOf(subCategory) is { } module
-            ? module.Type == ListingModuleType.Doctor ? Doctors(module) : Facility(module)
+            ? module.Type == ListingModuleType.Doctor ? Doctors(module) : DirectoryFormSchemas.Facility(module)
             : null;
 
-    private static AdFormSchema Doctors(SehhatyModule module)
+    private static AdFormSchema Doctors(DirectoryModule module)
     {
         var fields = new List<FormFieldDto>
         {
-            NameField(module),
+            DirectoryFormSchemas.NameField(module),
 
             new FormFieldDto
                 {
@@ -40,65 +40,10 @@ internal static class SehhatyFormSchemas
                 .MandatoryWhen("Specialty", (int)DoctorSpecialty.Other)
         };
 
-        fields.AddRange(LocationFields());
-        fields.AddRange(ContactFields());
-        fields.AddRange(AdvertisementFields(module));
+        fields.AddRange(DirectoryFormSchemas.LocationFields());
+        fields.AddRange(DirectoryFormSchemas.ContactFields());
+        fields.AddRange(DirectoryFormSchemas.AdvertisementFields(module));
 
-        return new AdFormSchema(module.Key, Submit(module), Array.Empty<string>(), Order(fields));
-    }
-
-    private static AdFormSchema Facility(SehhatyModule module)
-    {
-        var fields = new List<FormFieldDto> { NameField(module) };
-
-        fields.AddRange(AdvertisementFields(module));
-        fields.AddRange(ContactFields());
-        fields.AddRange(LocationFields());
-
-        return new AdFormSchema(module.Key, Submit(module), Array.Empty<string>(), Order(fields));
-    }
-
-    private static CreateAdFormSubmitDto Submit(SehhatyModule module) => new(module.PublicRoute);
-
-    private static FormFieldDto NameField(SehhatyModule module) =>
-        Text("Name", module.NameLabel, module.NameLabelEn, module.Section,
-            required: true, maxLength: SehhatyCatalog.MaxNameLength, placeholder: module.NamePlaceholder);
-
-    private static IEnumerable<FormFieldDto> LocationFields() =>
-    [
-        Address(),
-        GoogleMapsUrl()
-    ];
-
-    private static IEnumerable<FormFieldDto> ContactFields()
-    {
-        var whatsApp = PhoneNumber("WhatsApp", "رقم الواتساب", "WhatsApp number", required: false);
-        whatsApp.HelpText = "اختياري.";
-
-        var email = Email();
-        email.HelpText = "اختياري.";
-
-        return [PhoneNumber("Phone"), whatsApp, email];
-    }
-
-    private static IEnumerable<FormFieldDto> AdvertisementFields(SehhatyModule module)
-    {
-        var title = Title();
-        title.Placeholder = module.TitlePlaceholder;
-
-        var description = TextArea("Description", "وصف الإعلان", "Advertisement description", SectionAd,
-            required: true, maxLength: SehhatyCatalog.MaxDescriptionLength,
-            placeholder: module.DescriptionPlaceholder);
-        description.HelpText = module.DescriptionPlaceholder;
-
-        return [title, description, SehhatyCatalog.ImagesRequired ? RequiredImages() : Images()];
-    }
-
-    private static IReadOnlyList<FormFieldDto> Order(List<FormFieldDto> fields)
-    {
-        for (var position = 0; position < fields.Count; position++)
-            fields[position].Order = position + 1;
-
-        return fields;
+        return new AdFormSchema(module.Key, DirectoryFormSchemas.Submit(module), Array.Empty<string>(), DirectoryFormSchemas.Order(fields));
     }
 }

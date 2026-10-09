@@ -176,6 +176,10 @@ public static class ImageConstants
 
         FileUploadConstants.DoctorsFolder, FileUploadConstants.MedicalLaboratoriesFolder,
         FileUploadConstants.DentalLaboratoriesFolder, FileUploadConstants.RadiologyLaboratoriesFolder,
-        FileUploadConstants.MedicalCentersFolder, FileUploadConstants.HospitalsFolder
+        FileUploadConstants.MedicalCentersFolder, FileUploadConstants.HospitalsFolder,
+
+        FileUploadConstants.LawyerOfficesFolder, FileUploadConstants.EngineeringConsultancyOfficesFolder,
+        FileUploadConstants.ContractorsFolder, FileUploadConstants.IndustrialConsultancyOfficesFolder,
+        FileUploadConstants.AccountantOfficesFolder
     };
 }

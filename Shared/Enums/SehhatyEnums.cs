@@ -114,12 +114,3 @@ public enum DoctorSpecialty
 
     Other = 99
 }
-
-public enum SehhatySortBy
-{
-    Newest = 1,
-
-    Oldest = 2,
-
-    MostViewed = 3
-}

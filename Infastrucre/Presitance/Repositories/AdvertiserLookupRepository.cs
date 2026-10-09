@@ -41,7 +41,13 @@ public class AdvertiserLookupRepository : IAdvertiserLookupRepository
             [SubCategoryType.DentalLaboratories] = context => context.DentalLaboratories.Select(x => x.Name),
             [SubCategoryType.RadiologyLaboratories] = context => context.RadiologyLaboratories.Select(x => x.Name),
             [SubCategoryType.MedicalCenters] = context => context.MedicalCenters.Select(x => x.Name),
-            [SubCategoryType.Hospitals] = context => context.Hospitals.Select(x => x.Name)
+            [SubCategoryType.Hospitals] = context => context.Hospitals.Select(x => x.Name),
+
+            [SubCategoryType.LawyerOffices] = context => context.LawyerOffices.Select(x => x.Name),
+            [SubCategoryType.EngineeringConsultancyOffices] = context => context.EngineeringConsultancyOffices.Select(x => x.Name),
+            [SubCategoryType.Contractors] = context => context.Contractors.Select(x => x.Name),
+            [SubCategoryType.IndustrialConsultancyOffices] = context => context.IndustrialConsultancyOffices.Select(x => x.Name),
+            [SubCategoryType.AccountantOffices] = context => context.AccountantOffices.Select(x => x.Name)
         };
 
     public static IReadOnlyCollection<SubCategoryType> SupportedSubCategories =>

@@ -70,6 +70,12 @@ public static class ListingModuleCatalog
             [ListingModuleType.MedicalCenter] = SubCategoryType.MedicalCenters,
             [ListingModuleType.Hospital] = SubCategoryType.Hospitals,
 
+            [ListingModuleType.LawyerOffice] = SubCategoryType.LawyerOffices,
+            [ListingModuleType.EngineeringConsultancyOffice] = SubCategoryType.EngineeringConsultancyOffices,
+            [ListingModuleType.Contractor] = SubCategoryType.Contractors,
+            [ListingModuleType.IndustrialConsultancyOffice] = SubCategoryType.IndustrialConsultancyOffices,
+            [ListingModuleType.AccountantOffice] = SubCategoryType.AccountantOffices,
+
             [ListingModuleType.LostItem] = SubCategoryType.LostItems,
             [ListingModuleType.FoundItem] = SubCategoryType.FoundItems
         };

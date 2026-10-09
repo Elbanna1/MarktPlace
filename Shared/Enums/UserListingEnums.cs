@@ -110,7 +110,17 @@ public enum ListingModuleType
 
     MedicalCenter = 84,
 
-    Hospital = 85
+    Hospital = 85,
+
+    LawyerOffice = 90,
+
+    EngineeringConsultancyOffice = 91,
+
+    Contractor = 92,
+
+    IndustrialConsultancyOffice = 93,
+
+    AccountantOffice = 94
 }
 
 public enum ListingStatus

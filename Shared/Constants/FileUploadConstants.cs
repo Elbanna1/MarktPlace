@@ -153,6 +153,22 @@ public static class FileUploadConstants
 
     public const string HospitalsFolder = "hospitals";
 
+    public const string LawyerOfficesFolder = "lawyer-offices";
+
+    public const string EngineeringConsultancyOfficesFolder = "engineering-consultancy-offices";
+
+    public const string ContractorsFolder = "contractors";
+
+    public const string IndustrialConsultancyOfficesFolder = "industrial-consultancy-offices";
+
+    public const string AccountantOfficesFolder = "accountant-offices";
+
+    public static readonly string[] OfficesFolders =
+    {
+        LawyerOfficesFolder, EngineeringConsultancyOfficesFolder, ContractorsFolder,
+        IndustrialConsultancyOfficesFolder, AccountantOfficesFolder
+    };
+
     public static readonly string[] SehhatyFolders =
     {
         DoctorsFolder, MedicalLaboratoriesFolder, DentalLaboratoriesFolder,

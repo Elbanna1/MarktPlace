@@ -11,6 +11,7 @@ using Persistence.Repositories;
 using Persistence.Interceptors;
 using Persistence.Services;
 using ServicesAbstraction;
+using Shared.DTOs.Offices;
 using Shared.DTOs.Sehhaty;
 using Shared.Settings;
 
@@ -166,16 +167,22 @@ public static class DependencyInjection
         services.AddScoped<IBloodRequestRepository, BloodRequestRepository>();
         services.AddScoped<IAskConsultRepository, AskConsultRepository>();
 
-        services.AddScoped<ISehhatyRepository<Doctor, DoctorImage, DoctorFilterParams>, DoctorRepository>();
-        services.AddScoped<ISehhatyRepository<MedicalLaboratory, MedicalLaboratoryImage, MedicalLaboratoryFilterParams>,
+        services.AddScoped<IDirectoryRepository<Doctor, DoctorImage, DoctorFilterParams>, DoctorRepository>();
+        services.AddScoped<IDirectoryRepository<MedicalLaboratory, MedicalLaboratoryImage, MedicalLaboratoryFilterParams>,
             MedicalLaboratoryRepository>();
-        services.AddScoped<ISehhatyRepository<DentalLaboratory, DentalLaboratoryImage, DentalLaboratoryFilterParams>,
+        services.AddScoped<IDirectoryRepository<DentalLaboratory, DentalLaboratoryImage, DentalLaboratoryFilterParams>,
             DentalLaboratoryRepository>();
-        services.AddScoped<ISehhatyRepository<RadiologyLaboratory, RadiologyLaboratoryImage, RadiologyLaboratoryFilterParams>,
+        services.AddScoped<IDirectoryRepository<RadiologyLaboratory, RadiologyLaboratoryImage, RadiologyLaboratoryFilterParams>,
             RadiologyLaboratoryRepository>();
-        services.AddScoped<ISehhatyRepository<MedicalCenter, MedicalCenterImage, MedicalCenterFilterParams>,
+        services.AddScoped<IDirectoryRepository<MedicalCenter, MedicalCenterImage, MedicalCenterFilterParams>,
             MedicalCenterRepository>();
-        services.AddScoped<ISehhatyRepository<Hospital, HospitalImage, HospitalFilterParams>, HospitalRepository>();
+        services.AddScoped<IDirectoryRepository<Hospital, HospitalImage, HospitalFilterParams>, HospitalRepository>();
+
+        services.AddScoped<IDirectoryRepository<LawyerOffice, LawyerOfficeImage, LawyerOfficeFilterParams>, LawyerOfficeRepository>();
+        services.AddScoped<IDirectoryRepository<EngineeringConsultancyOffice, EngineeringConsultancyOfficeImage, EngineeringConsultancyOfficeFilterParams>, EngineeringConsultancyOfficeRepository>();
+        services.AddScoped<IDirectoryRepository<Contractor, ContractorImage, ContractorFilterParams>, ContractorRepository>();
+        services.AddScoped<IDirectoryRepository<IndustrialConsultancyOffice, IndustrialConsultancyOfficeImage, IndustrialConsultancyOfficeFilterParams>, IndustrialConsultancyOfficeRepository>();
+        services.AddScoped<IDirectoryRepository<AccountantOffice, AccountantOfficeImage, AccountantOfficeFilterParams>, AccountantOfficeRepository>();
 
         services.AddScoped<IFactoryRepository, FactoryRepository>();
         services.AddScoped<IFarmRepository, FarmRepository>();
@@ -246,6 +253,12 @@ public static class DependencyInjection
         services.AddScoped<IUserListingSource, RadiologyLaboratoryListingSource>();
         services.AddScoped<IUserListingSource, MedicalCenterListingSource>();
         services.AddScoped<IUserListingSource, HospitalListingSource>();
+
+        services.AddScoped<IUserListingSource, LawyerOfficeListingSource>();
+        services.AddScoped<IUserListingSource, EngineeringConsultancyOfficeListingSource>();
+        services.AddScoped<IUserListingSource, ContractorListingSource>();
+        services.AddScoped<IUserListingSource, IndustrialConsultancyOfficeListingSource>();
+        services.AddScoped<IUserListingSource, AccountantOfficeListingSource>();
 
         services.AddScoped<IUserListingRepository, UserListingRepository>();
 

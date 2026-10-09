@@ -5,62 +5,11 @@ namespace Shared.Constants;
 public sealed record SehhatyLookupEntry<TEnum>(TEnum Id, string Name, string NameEn)
     where TEnum : struct, Enum;
 
-public sealed record SehhatyModule(
-    ListingModuleType Type,
-    SubCategoryType SubCategory,
-    string Route,
-    string Key,
-    string ImagesFolder,
-    string EntityName,
-    string Icon,
-    string NameLabel,
-    string NameLabelEn,
-    string NamePlaceholder,
-    string Section,
-    string TitlePlaceholder,
-    string DescriptionPlaceholder,
-    string ListLabel,
-    string ListLabelEn,
-    string DetailsLabel,
-    string DetailsLabelEn,
-    string MyListingsLabel,
-    string MyListingsLabelEn,
-    string NotFoundMessage)
-{
-    public string PublicRoute => "/" + Route;
-}
-
 public static class SehhatyCatalog
 {
     public const string CategoryName = "صحتي";
 
-    public const bool ImagesRequired = true;
-
-    public const int MaxNameLength = 150;
-
-    public const int MaxTitleLength = 150;
-
-    public const int MaxDescriptionLength = 4000;
-
-    public const int MaxAddressLength = 300;
-
-    public const int MaxGoogleMapsUrlLength = 1000;
-
     public const int MaxOtherSpecialtyLength = 150;
-
-    public const int MaxEmailLength = 256;
-
-    public const int MaxPhoneLength = 20;
-
-    public const string AddressPlaceholder = "الشارع، العلامة المميزة…";
-
-    public const string GoogleMapsPlaceholder = "https://maps.google.com/…";
-
-    public const string TitlePlaceholder = "اكتب عنوانًا واضحًا ومختصرًا";
-
-    public const string GoogleMapsUrlMessage = "لينك خرائط جوجل لازم يبدأ بـ http أو https.";
-
-    public const string EmailMessage = "من فضلك اكتب بريد إلكتروني صحيح.";
 
     public const string SpecialtyLabel = "تخصص الطبيب";
 
@@ -68,89 +17,87 @@ public static class SehhatyCatalog
 
     public const string OtherSpecialtyRequiredMessage = "من فضلك اكتب تخصص الطبيب لما تختار «أخرى».";
 
-    public static readonly SehhatyModule Doctors = new(
+    public static readonly DirectoryModule Doctors = new(
         ListingModuleType.Doctor, SubCategoryType.Doctors, SehhatyRoutes.Doctors, "doctors",
         FileUploadConstants.DoctorsFolder, "إعلان الطبيب", "🩺",
         "اسم الطبيب", "Doctor name", "مثال: د. أحمد محمود", "بيانات الطبيب",
-        TitlePlaceholder,
+        DirectoryListingRules.TitlePlaceholder,
         "اذكر في الوصف: • معلومات إضافية • الخدمات اللي بتقدمها • مواعيد الكشف",
         "قائمة الأطباء", "Doctors list", "تفاصيل إعلان الطبيب", "Doctor details",
         "إعلانات الأطباء المضافة بواسطتي", "My doctor listings",
         "إعلان الطبيب غير موجود.");
 
-    public static readonly SehhatyModule MedicalLaboratories = new(
+    public static readonly DirectoryModule MedicalLaboratories = new(
         ListingModuleType.MedicalLaboratory, SubCategoryType.MedicalLaboratories,
         SehhatyRoutes.MedicalLaboratories, "medicalLaboratories",
         FileUploadConstants.MedicalLaboratoriesFolder, "إعلان معمل التحاليل", "🧪",
         "اسم المعمل", "Laboratory name", "مثال: معمل الشفاء للتحاليل الطبية", "بيانات المعمل",
-        TitlePlaceholder,
+        DirectoryListingRules.TitlePlaceholder,
         "اذكر في الوصف: • التحاليل المتاحة • مواعيد العمل • خدمة سحب العينات من البيت لو متاحة",
         "قائمة معامل التحاليل الطبية", "Medical laboratories list",
         "تفاصيل إعلان معمل التحاليل", "Medical laboratory details",
         "إعلانات معامل التحاليل المضافة بواسطتي", "My medical laboratory listings",
         "إعلان معمل التحاليل غير موجود.");
 
-    public static readonly SehhatyModule DentalLaboratories = new(
+    public static readonly DirectoryModule DentalLaboratories = new(
         ListingModuleType.DentalLaboratory, SubCategoryType.DentalLaboratories,
         SehhatyRoutes.DentalLaboratories, "dentalLaboratories",
         FileUploadConstants.DentalLaboratoriesFolder, "إعلان معمل الأسنان", "🦷",
         "اسم معمل الأسنان", "Dental laboratory name", "مثال: معمل النور للأسنان", "بيانات معمل الأسنان",
-        TitlePlaceholder,
+        DirectoryListingRules.TitlePlaceholder,
         "اذكر في الوصف: • التركيبات والخدمات اللي بتقدمها • الخامات المستخدمة • مدة التسليم",
         "قائمة معامل الأسنان", "Dental laboratories list",
         "تفاصيل إعلان معمل الأسنان", "Dental laboratory details",
         "إعلانات معامل الأسنان المضافة بواسطتي", "My dental laboratory listings",
         "إعلان معمل الأسنان غير موجود.");
 
-    public static readonly SehhatyModule RadiologyLaboratories = new(
+    public static readonly DirectoryModule RadiologyLaboratories = new(
         ListingModuleType.RadiologyLaboratory, SubCategoryType.RadiologyLaboratories,
         SehhatyRoutes.RadiologyLaboratories, "radiologyLaboratories",
         FileUploadConstants.RadiologyLaboratoriesFolder, "إعلان معمل الأشعة", "🩻",
         "اسم معمل الأشعة", "Radiology laboratory name", "مثال: مركز الأمل للأشعة", "بيانات معمل الأشعة",
-        TitlePlaceholder,
+        DirectoryListingRules.TitlePlaceholder,
         "اذكر في الوصف: • أنواع الأشعة المتاحة • مواعيد العمل • مدة تسليم النتائج",
         "قائمة معامل الأشعة", "Radiology laboratories list",
         "تفاصيل إعلان معمل الأشعة", "Radiology laboratory details",
         "إعلانات معامل الأشعة المضافة بواسطتي", "My radiology laboratory listings",
         "إعلان معمل الأشعة غير موجود.");
 
-    public static readonly SehhatyModule MedicalCenters = new(
+    public static readonly DirectoryModule MedicalCenters = new(
         ListingModuleType.MedicalCenter, SubCategoryType.MedicalCenters,
         SehhatyRoutes.MedicalCenters, "medicalCenters",
         FileUploadConstants.MedicalCentersFolder, "إعلان المركز الطبي", "🏥",
         "اسم المركز الطبي", "Medical center name", "مثال: مركز الرحمة الطبي", "بيانات المركز الطبي",
-        TitlePlaceholder,
+        DirectoryListingRules.TitlePlaceholder,
         "اذكر في الوصف: • العيادات والتخصصات المتاحة • مواعيد العمل • الخدمات الإضافية",
         "قائمة المراكز الطبية", "Medical centers list",
         "تفاصيل إعلان المركز الطبي", "Medical center details",
         "إعلانات المراكز الطبية المضافة بواسطتي", "My medical center listings",
         "إعلان المركز الطبي غير موجود.");
 
-    public static readonly SehhatyModule Hospitals = new(
+    public static readonly DirectoryModule Hospitals = new(
         ListingModuleType.Hospital, SubCategoryType.Hospitals,
         SehhatyRoutes.Hospitals, "hospitals",
         FileUploadConstants.HospitalsFolder, "إعلان المستشفى", "🏨",
         "اسم المستشفى", "Hospital name", "مثال: مستشفى الفيوم التخصصي", "بيانات المستشفى",
-        TitlePlaceholder,
+        DirectoryListingRules.TitlePlaceholder,
         "اذكر في الوصف: • الأقسام والتخصصات المتاحة • خدمة الطوارئ • الخدمات الإضافية",
         "قائمة المستشفيات", "Hospitals list",
         "تفاصيل إعلان المستشفى", "Hospital details",
         "إعلانات المستشفيات المضافة بواسطتي", "My hospital listings",
         "إعلان المستشفى غير موجود.");
 
-    public static readonly IReadOnlyList<SehhatyModule> Modules =
+    public static readonly IReadOnlyList<DirectoryModule> Modules =
     [
         Doctors, MedicalLaboratories, DentalLaboratories, RadiologyLaboratories, MedicalCenters, Hospitals
     ];
 
-    public static SehhatyModule? ModuleOf(SubCategoryType subCategory) =>
+    public static DirectoryModule? ModuleOf(SubCategoryType subCategory) =>
         Modules.FirstOrDefault(module => module.SubCategory == subCategory);
 
-    public static SehhatyModule For(ListingModuleType type) =>
+    public static DirectoryModule For(ListingModuleType type) =>
         Modules.FirstOrDefault(module => module.Type == type)
         ?? throw new ArgumentOutOfRangeException(nameof(type), type, "Not a Sehhaty listing module.");
-
-    public static string NameRequiredMessage(SehhatyModule module) => $"{module.NameLabel} مطلوب.";
 
     public static readonly IReadOnlyList<SehhatyLookupEntry<DoctorSpecialty>> Specialties =
         new List<SehhatyLookupEntry<DoctorSpecialty>>
@@ -213,14 +160,6 @@ public static class SehhatyCatalog
             new(DoctorSpecialty.Other, "أخرى", "Other")
         };
 
-    public static readonly IReadOnlyList<SehhatyLookupEntry<SehhatySortBy>> SortOptions =
-        new List<SehhatyLookupEntry<SehhatySortBy>>
-        {
-            new(SehhatySortBy.Newest, "الأحدث", "Newest"),
-            new(SehhatySortBy.Oldest, "الأقدم", "Oldest"),
-            new(SehhatySortBy.MostViewed, "الأكثر مشاهدة", "Most viewed")
-        };
-
     public static string GetSpecialtyName(DoctorSpecialty value) =>
         Specialties.FirstOrDefault(entry => entry.Id == value)?.Name ?? value.ToString();
 
@@ -228,9 +167,4 @@ public static class SehhatyCatalog
         value == DoctorSpecialty.Other && !string.IsNullOrWhiteSpace(otherSpecialty)
             ? otherSpecialty.Trim()
             : GetSpecialtyName(value);
-
-    public static bool IsHttpUrl(string? value) =>
-        string.IsNullOrWhiteSpace(value) ||
-        (Uri.TryCreate(value.Trim(), UriKind.Absolute, out var uri) &&
-         (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps));
 }

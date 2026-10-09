@@ -156,6 +156,12 @@ public static class DependencyInjection
         services.AddScoped<IMedicalCenterService, Services.Sehhaty.MedicalCenterService>();
         services.AddScoped<IHospitalService, Services.Sehhaty.HospitalService>();
 
+        services.AddScoped<ILawyerOfficeService, Services.Offices.LawyerOfficeService>();
+        services.AddScoped<IEngineeringConsultancyOfficeService, Services.Offices.EngineeringConsultancyOfficeService>();
+        services.AddScoped<IContractorService, Services.Offices.ContractorService>();
+        services.AddScoped<IIndustrialConsultancyOfficeService, Services.Offices.IndustrialConsultancyOfficeService>();
+        services.AddScoped<IAccountantOfficeService, Services.Offices.AccountantOfficeService>();
+
         var mapperConfiguration = new MapperConfiguration(
             cfg =>
             {
@@ -220,6 +226,8 @@ public static class DependencyInjection
                 cfg.AddProfile<CharityMappingProfile>();
 
                 cfg.AddProfile<SehhatyMappingProfile>();
+
+                cfg.AddProfile<OfficesMappingProfile>();
             },
             NullLoggerFactory.Instance);
 

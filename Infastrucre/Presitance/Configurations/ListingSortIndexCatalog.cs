@@ -73,6 +73,12 @@ public static class ListingSortIndexCatalog
             [typeof(DentalLaboratory)] = ByViews,
             [typeof(RadiologyLaboratory)] = ByViews,
             [typeof(MedicalCenter)] = ByViews,
-            [typeof(Hospital)] = ByViews
+            [typeof(Hospital)] = ByViews,
+
+            [typeof(LawyerOffice)] = ByViews,
+            [typeof(EngineeringConsultancyOffice)] = ByViews,
+            [typeof(Contractor)] = ByViews,
+            [typeof(IndustrialConsultancyOffice)] = ByViews,
+            [typeof(AccountantOffice)] = ByViews
         };
 }

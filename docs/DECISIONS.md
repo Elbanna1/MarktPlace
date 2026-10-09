@@ -705,3 +705,28 @@ migration therefore inserts each seeded row only if it is missing, and **aborts 
 Verified on LocalDB: fresh apply, re-run (no-op), `Down`, and a pre-existing foreign id 13 (aborts,
 no tables created).
 
+---
+
+## D-37 — A shared directory-listing base for name / address / contact modules
+
+**Problem.** مكاتب asked for five modules whose fields are exactly those of the صحتي facilities: a
+name, ad title and description, a gallery, an address with an optional maps link, and a phone with
+optional WhatsApp and e-mail. The صحتي generic base already implemented that shape end to end, but was
+named and hard-wired for صحتي (it stamped category 13 and «صحتي» on every DTO). Copying it as an
+"Offices" base would have meant ~800 duplicated lines kept in step by hand.
+
+**Decision.** The base was renamed to category-neutral `Directory*` types and its two hard-wirings
+removed — the DTO's category now comes from the module's sub-category via `CategoryCatalog`, and
+"images required" is `DirectoryModule.ImagesRequired`. **Every module is still independent**: its own
+entity, table, image table, DTOs, validators, service class and interface, repository, listing source,
+controller, route and `ListingModuleType`; the base only removes the code they would otherwise
+duplicate. No generic entity or catch-all route exists.
+
+**Proof it was safe.** Only unmapped abstract classes were renamed: `dotnet ef migrations
+has-pending-model-changes` reported no change, and the full suite (2,758 tests) passed before any
+مكاتب code was added. The مكاتب migration touches no existing table.
+
+**Exact name matching is per module.** `DirectoryModule.NameFilterIsExact` makes the `name` filter an
+equality match. مكاتب uses it because its name filter is a select whose options are the published
+names (from the advertisers lookup), so choosing «مكتب أحمد» must not also return «مكتب أحمد وشركاه».
+صحتي keeps substring matching, as released.
