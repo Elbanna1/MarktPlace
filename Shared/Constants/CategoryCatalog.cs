@@ -37,6 +37,9 @@ public static class CategoryCatalog
 
         new(SubCategoryType.Workshops, CategoryType.WorkshopsAndCraftsmen, "Workshops", "الورش"),
         new(SubCategoryType.Craftsmen, CategoryType.WorkshopsAndCraftsmen, "Craftsmen", "الحرفيين"),
+        new(SubCategoryType.CommercialShops, CategoryType.WorkshopsAndCraftsmen, "Commercial Shops", GovernorateGuideCatalog.CommercialShopsName),
+        new(SubCategoryType.GeneralServices, CategoryType.WorkshopsAndCraftsmen, "General Services", GovernorateGuideCatalog.GeneralServicesName),
+        new(SubCategoryType.ResortsHotelsAndAmusement, CategoryType.WorkshopsAndCraftsmen, "Resorts, Hotels & Amusement", GovernorateGuideCatalog.ResortsHotelsAndAmusementName),
 
         new(SubCategoryType.LostItems, CategoryType.LostAndFound, "Lost", "ضايع مني"),
         new(SubCategoryType.FoundItems, CategoryType.LostAndFound, "Found", "لقيت"),

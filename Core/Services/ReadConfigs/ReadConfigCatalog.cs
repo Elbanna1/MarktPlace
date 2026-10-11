@@ -207,6 +207,11 @@ public static class ReadConfigCatalog
             SubCategoryType.RestaurantsAndCafes =>
                 DirectoryModuleSchema(categoryId, RestaurantsAndCafesCatalog.RestaurantsAndCafes, [], []),
 
+            SubCategoryType.CommercialShops or SubCategoryType.GeneralServices
+                or SubCategoryType.ResortsHotelsAndAmusement =>
+                GovernorateGuide(categoryId, GovernorateGuideCatalog.ModuleOf(subCategory)!),
+
+
             _ => null
         };
 
@@ -2159,6 +2164,41 @@ public static class ReadConfigCatalog
             ])
             : DirectoryModuleSchema(categoryId, module, [], []);
 
+    private static ReadConfigSchema GovernorateGuide(int categoryId, DirectoryModule module) =>
+        module.Type switch
+        {
+            ListingModuleType.CommercialShop => DirectoryModuleSchema(categoryId, module,
+            [
+                Param("activityType", GovernorateGuideCatalog.ActivityTypeLabel, "Activity type", ReadParameterTypes.Enum,
+                    options: ShopCatalog.SuitableActivities
+                        .Select(entry => new FormFieldOptionDto((int)entry.Value, entry.Name, entry.NameEn))
+                        .ToList())
+            ],
+            [
+                Operation(ReadOperationKeys.CommercialShopActivityTypes, "أنواع النشاط", "Activity types",
+                    $"{module.PublicRoute}/activity-types")
+            ]),
+
+            ListingModuleType.GeneralService => DirectoryModuleSchema(categoryId, module,
+            [
+                Param("serviceType", GovernorateGuideCatalog.ServiceTypeLabel, "Service type", ReadParameterTypes.Enum,
+                    options: GovernorateGuideCatalog.ServiceTypes
+                        .Select(entry => new FormFieldOptionDto((int)entry.Id, entry.Name, entry.NameEn))
+                        .ToList()),
+                Param("serviceSubtype", "الخدمة", "Service", ReadParameterTypes.Enum,
+                    options: GovernorateGuideCatalog.ServiceSubtypes
+                        .Select(entry => new FormFieldOptionDto((int)entry.Id, entry.Name, entry.NameEn,
+                            GovernorateGuideCatalog.GetServiceTypeName(entry.ServiceType)))
+                        .ToList())
+            ],
+            [
+                Operation(ReadOperationKeys.GeneralServiceTypes, "أنواع الخدمات", "Service types",
+                    $"{module.PublicRoute}/service-types")
+            ]),
+
+            _ => DirectoryModuleSchema(categoryId, module, [], [])
+        };
+
     private static ReadConfigSchema DirectoryModuleSchema(
         int categoryId, DirectoryModule module,
         IEnumerable<ReadParameterDto> extraFilters, IEnumerable<ReadOperationDto> extraOperations)
@@ -2310,7 +2350,10 @@ public static class ReadConfigCatalog
                         (ListingModuleType.Contractor, "مقاولين (هدم وبناء)", "Contractors"),
                         (ListingModuleType.IndustrialConsultancyOffice, "مكاتب استشارية صناعية", "Industrial consultancy offices"),
                         (ListingModuleType.AccountantOffice, "مكاتب محاسبين قانونيين", "Accountant offices"),
-                        (ListingModuleType.RestaurantAndCafe, "مطاعم وكافيهات", "Restaurants & cafes"))),
+                        (ListingModuleType.RestaurantAndCafe, "مطاعم وكافيهات", "Restaurants & cafes"),
+                        (ListingModuleType.CommercialShop, "محلات تجارية", "Commercial shops"),
+                        (ListingModuleType.GeneralService, "خدمات عامة", "General services"),
+                        (ListingModuleType.ResortHotelAmusement, "قرى سياحية وفنادق وملاهي", "Resorts, hotels & amusement"))),
                 Param("status", "الحالة", "Status", ReadParameterTypes.Enum,
                     options: EnumOptions(
                         (ListingStatus.Pending, "قيد المراجعة", "Pending"),

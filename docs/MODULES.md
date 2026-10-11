@@ -99,7 +99,7 @@ Consequences you must know:
 
 ---
 
-## Category 2 — ورش وحرفيين (Workshops & Craftsmen) · subs 5–6
+## Category 2 — دليل محافظتي (internally Workshops & Craftsmen) · subs 5–6, 66–68
 
 | | |
 | --- | --- |
@@ -110,6 +110,25 @@ Consequences you must know:
 
 > **FK rule:** no cascade from `AspNetUsers` (use `NoAction`). 48 cascading relationships into the
 > Identity table produce SQL Server error 1785.
+
+**Directory modules added 2026-10-11** (shared `Directory*` base, `GovernorateGuideCatalog` owns the wording):
+
+| Sub | Name | Endpoint | Entity | Module type | Extra fields |
+| --- | --- | --- | --- | --- | --- |
+| 66 | محلات تجارية | `/api/commercial-shops` | `CommercialShop` | 101 | `ActivityType` (optional, reuses the `ShopSuitableActivity` list), `OtherActivityType` when أخرى |
+| 67 | خدمات عامة | `/api/general-services` | `GeneralService` | 102 | `ServiceType` (ثابتة / متنقلة) + one subtype |
+| 68 | قرى سياحية وفنادق وملاهي | `/api/resorts-hotels-amusement` | `ResortHotelAmusement` | 103 | none — **one** sub-category and **one** module for all three business kinds |
+
+- محلات تجارية is a business-directory listing; it is unrelated to عقارات → محلات (sub 49), which sells or
+  rents a shop *property*.
+- خدمات عامة publishes two subtype selects, `FixedServiceSubtype` (visible/required when `ServiceType = 1`)
+  and `MobileServiceSubtype` (when `= 2`), so the generic form renderer switches lists with no new client
+  logic. Both store into the single `ServiceSubtype` column; the hidden one is ignored. The 16 subtypes and
+  their parent live only in `GovernorateGuideCatalog.ServiceSubtypes` (ids 1–7 fixed, 101–109 mobile).
+  `GET /api/general-services/service-types` returns the tree.
+- Name, title, description, address, phone and at least one image are required (Directory base); the
+  name is the advertiser-lookup key (`?name=` exact match).
+- Migration `AddGovernorateGuideDirectoryModules`: 6 tables, guarded seed of 66–68 under category 2.
 
 ---
 

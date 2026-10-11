@@ -96,7 +96,6 @@ public abstract class DirectoryListingService<TListing, TImage, TCreate, TUpdate
 
         foreach (var image in removed)
         {
-            _fileService.Delete(image.ImagePath);
             _repository.RemoveImage(image);
             entity.Images.Remove(image);
         }

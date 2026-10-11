@@ -30,6 +30,10 @@ public static class ReadOperationKeys
 
     public const string DoctorSpecialties = "doctorSpecialties";
 
+    public const string CommercialShopActivityTypes = "commercialShopActivityTypes";
+
+    public const string GeneralServiceTypes = "generalServiceTypes";
+
     public const string CreateForm = "createForm";
 
     public const string ReadConfig = "readConfig";

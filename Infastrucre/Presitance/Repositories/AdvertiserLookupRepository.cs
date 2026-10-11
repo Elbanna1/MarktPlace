@@ -51,7 +51,11 @@ public class AdvertiserLookupRepository : IAdvertiserLookupRepository
 
             [SubCategoryType.RestaurantsAndCafes] = context => context.RestaurantsAndCafes.Select(x => x.Name),
 
-            [SubCategoryType.Buildings] = context => context.Buildings.Select(x => x.AdvertiserName)
+            [SubCategoryType.Buildings] = context => context.Buildings.Select(x => x.AdvertiserName),
+
+            [SubCategoryType.CommercialShops] = context => context.CommercialShops.Select(x => x.Name),
+            [SubCategoryType.GeneralServices] = context => context.GeneralServices.Select(x => x.Name),
+            [SubCategoryType.ResortsHotelsAndAmusement] = context => context.ResortsHotelsAndAmusement.Select(x => x.Name)
         };
 
     public static IReadOnlyCollection<SubCategoryType> SupportedSubCategories =>

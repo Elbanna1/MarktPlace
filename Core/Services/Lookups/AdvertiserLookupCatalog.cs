@@ -44,6 +44,10 @@ public static class AdvertiserLookupCatalog
 
             [SubCategoryType.RestaurantsAndCafes] = NameParameter,
 
+            [SubCategoryType.CommercialShops] = NameParameter,
+            [SubCategoryType.GeneralServices] = NameParameter,
+            [SubCategoryType.ResortsHotelsAndAmusement] = NameParameter,
+
             [SubCategoryType.Buildings] = AdvertiserNameParameter
         };
 

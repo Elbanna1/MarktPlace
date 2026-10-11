@@ -142,6 +142,9 @@ public static class AdFormSchemaCatalog
         SubCategoryType.RestaurantsAndCafes =>
             DirectoryFormSchemas.Facility(RestaurantsAndCafesCatalog.RestaurantsAndCafes, locationBeforeContact: true),
 
+        SubCategoryType.CommercialShops or SubCategoryType.GeneralServices
+            or SubCategoryType.ResortsHotelsAndAmusement => GovernorateGuideFormSchemas.For(subCategory),
+
         _ => null
     };
 

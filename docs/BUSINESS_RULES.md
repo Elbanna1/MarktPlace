@@ -308,6 +308,8 @@ Enforced by three test suites, including a source-wide scan that fails the build
 | افرش بيتك | `PlantOrnament` alone has no colours or material |
 | التسوق أونلاين | No location block; warranty→electronics, expiry→cosmetics, delivery areas→homemade food |
 | مطاعم وكافيهات | Opens its form directly from the category (single sub-category, `OpensFormDirectly`); images required; exact-match `name` select; admin republish enabled |
+| خدمات عامة | The subtype must belong to the chosen `ServiceType` (catalog check, 422 otherwise); the subtype field of the other type is ignored and never stored |
+| قرى سياحية وفنادق وملاهي | One sub-category / one module for resorts, hotels and amusement — never split into three |
 | مكاتب | Images required; the `name` filter matches the chosen name **exactly** (searchable select fed by the advertisers lookup); `search` is the free-text match |
 | صحتي | Images required; `OtherSpecialty` required only when `Specialty = أخرى (99)` and nulled otherwise; phone required, WhatsApp/email/maps link optional |
 

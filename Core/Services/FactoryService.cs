@@ -81,7 +81,6 @@ public class FactoryService : IFactoryService
             var toRemove = factory.Images.Where(i => request.RemoveImageIds.Contains(i.Id)).ToList();
             foreach (var image in toRemove)
             {
-                _fileService.Delete(image.ImagePath);
                 _repository.RemoveImage(image);
                 factory.Images.Remove(image);
             }

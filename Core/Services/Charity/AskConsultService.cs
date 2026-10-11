@@ -89,7 +89,6 @@ public class AskConsultService : IAskConsultService
 
             foreach (var image in toRemove)
             {
-                _fileService.Delete(image.ImagePath);
                 _repository.RemoveImage(image);
                 entity.Images.Remove(image);
             }

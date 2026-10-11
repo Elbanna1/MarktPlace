@@ -126,7 +126,6 @@ public class JobOpportunityService : IJobOpportunityService
 
             foreach (var image in toRemove)
             {
-                _fileService.Delete(image.ImagePath);
                 _repository.RemoveImage(image);
                 jobOpportunity.Images.Remove(image);
             }

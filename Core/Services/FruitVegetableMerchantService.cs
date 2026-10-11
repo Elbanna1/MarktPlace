@@ -82,7 +82,6 @@ public class FruitVegetableMerchantService : IFruitVegetableMerchantService
             var toRemove = merchant.Images.Where(i => request.RemoveImageIds.Contains(i.Id)).ToList();
             foreach (var image in toRemove)
             {
-                _fileService.Delete(image.ImagePath);
                 _repository.RemoveImage(image);
                 merchant.Images.Remove(image);
             }

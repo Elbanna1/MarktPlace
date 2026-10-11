@@ -88,4 +88,8 @@ public static class NotificationReferenceTypes
     public const string AccountantOffice = "AccountantOffice";
 
     public const string RestaurantAndCafe = "RestaurantAndCafe";
+
+    public const string CommercialShop = "CommercialShop";
+    public const string GeneralService = "GeneralService";
+    public const string ResortHotelAmusement = "ResortHotelAmusement";
 }

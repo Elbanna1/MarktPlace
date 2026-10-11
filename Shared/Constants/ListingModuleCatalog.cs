@@ -78,6 +78,9 @@ public static class ListingModuleCatalog
             [ListingModuleType.AccountantOffice] = SubCategoryType.AccountantOffices,
 
             [ListingModuleType.RestaurantAndCafe] = SubCategoryType.RestaurantsAndCafes,
+            [ListingModuleType.CommercialShop] = SubCategoryType.CommercialShops,
+            [ListingModuleType.GeneralService] = SubCategoryType.GeneralServices,
+            [ListingModuleType.ResortHotelAmusement] = SubCategoryType.ResortsHotelsAndAmusement,
 
             [ListingModuleType.LostItem] = SubCategoryType.LostItems,
             [ListingModuleType.FoundItem] = SubCategoryType.FoundItems

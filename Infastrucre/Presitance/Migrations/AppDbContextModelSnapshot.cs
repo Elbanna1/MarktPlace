@@ -7788,6 +7788,177 @@ namespace Presitance.Migrations
                     b.ToTable("CoinStampVideos", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.CommercialShop", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("ActivityType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FirstPublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GoogleMapsUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModeratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModeratedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModerationNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ModerationStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("OtherActivityType")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RejectionReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepublishCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpireAt");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("ModerationStatus", "ActivityType", "CreatedAt");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "ActivityType", "CreatedAt"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex("ModerationStatus", "CreatedAt", "Id")
+                        .IsDescending(false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_CommercialShops_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_CommercialShops_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_CommercialShops_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_CommercialShops_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.ToTable("CommercialShops", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.CommercialShopImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("CommercialShopImages", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Company", b =>
                 {
                     b.Property<Guid>("Id")
@@ -13377,6 +13548,176 @@ namespace Presitance.Migrations
                             Name = "أخرى",
                             NameEn = "Other"
                         });
+                });
+
+            modelBuilder.Entity("Domain.Entities.GeneralService", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FirstPublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GoogleMapsUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModeratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModeratedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModerationNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ModerationStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RejectionReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepublishCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("ServiceSubtype")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpireAt");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("ModerationStatus", "CreatedAt", "Id")
+                        .IsDescending(false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex("ModerationStatus", "ServiceType", "ServiceSubtype", "CreatedAt");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "ServiceType", "ServiceSubtype", "CreatedAt"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_GeneralServices_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_GeneralServices_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_GeneralServices_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_GeneralServices_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.ToTable("GeneralServices", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.GeneralServiceImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("GeneralServiceImages", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.GiftToy", b =>
@@ -26266,6 +26607,166 @@ namespace Presitance.Migrations
                     b.ToTable("RescueImages", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.ResortHotelAmusement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTime?>("ExpireAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FirstPublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GoogleMapsUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModeratedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModeratedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ModerationNotes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("ModerationStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("RejectionReason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RepublishCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WhatsApp")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpireAt");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("ModerationStatus", "CreatedAt", "Id")
+                        .IsDescending(false, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ModerationStatus", "CreatedAt", "Id"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_ResortsHotelsAndAmusement_Advertisers");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "Name" }, "IX_ResortsHotelsAndAmusement_Advertisers"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_ResortsHotelsAndAmusement_Feed_MostViewed")
+                        .IsDescending(false, true, true, true);
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex(new[] { "ModerationStatus", "ViewCount", "CreatedAt", "Id" }, "IX_ResortsHotelsAndAmusement_Feed_MostViewed"), new[] { "IsDeleted", "ExpireAt" });
+
+                    b.ToTable("ResortsHotelsAndAmusement", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.ResortHotelAmusementImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(260)
+                        .HasColumnType("nvarchar(260)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ListingId", "SortOrder");
+
+                    b.ToTable("ResortHotelAmusementImages", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.RestaurantAndCafe", b =>
                 {
                     b.Property<Guid>("Id")
@@ -29128,6 +29629,33 @@ namespace Presitance.Migrations
                             IsActive = true,
                             Name = "Craftsmen",
                             NameAr = "الحرفيين",
+                            SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 66,
+                            CategoryId = 2,
+                            IsActive = true,
+                            Name = "Commercial Shops",
+                            NameAr = "محلات تجارية",
+                            SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 67,
+                            CategoryId = 2,
+                            IsActive = true,
+                            Name = "General Services",
+                            NameAr = "خدمات عامة",
+                            SortOrder = 0
+                        },
+                        new
+                        {
+                            Id = 68,
+                            CategoryId = 2,
+                            IsActive = true,
+                            Name = "Resorts, Hotels & Amusement",
+                            NameAr = "قرى سياحية وفنادق وملاهي",
                             SortOrder = 0
                         },
                         new
@@ -32934,6 +33462,28 @@ namespace Presitance.Migrations
                     b.Navigation("CoinStamp");
                 });
 
+            modelBuilder.Entity("Domain.Entities.CommercialShop", b =>
+                {
+                    b.HasOne("Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CommercialShopImage", b =>
+                {
+                    b.HasOne("Domain.Entities.CommercialShop", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
+                });
+
             modelBuilder.Entity("Domain.Entities.Company", b =>
                 {
                     b.HasOne("Domain.Entities.ApplicationUser", "User")
@@ -33302,6 +33852,28 @@ namespace Presitance.Migrations
                         .IsRequired();
 
                     b.Navigation("Furniture");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GeneralService", b =>
+                {
+                    b.HasOne("Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GeneralServiceImage", b =>
+                {
+                    b.HasOne("Domain.Entities.GeneralService", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
                 });
 
             modelBuilder.Entity("Domain.Entities.GiftToy", b =>
@@ -34188,6 +34760,28 @@ namespace Presitance.Migrations
                     b.Navigation("Rescue");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ResortHotelAmusement", b =>
+                {
+                    b.HasOne("Domain.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ResortHotelAmusementImage", b =>
+                {
+                    b.HasOne("Domain.Entities.ResortHotelAmusement", "Listing")
+                        .WithMany("Images")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Listing");
+                });
+
             modelBuilder.Entity("Domain.Entities.RestaurantAndCafe", b =>
                 {
                     b.HasOne("Domain.Entities.ApplicationUser", "User")
@@ -34619,6 +35213,11 @@ namespace Presitance.Migrations
                     b.Navigation("Video");
                 });
 
+            modelBuilder.Entity("Domain.Entities.CommercialShop", b =>
+                {
+                    b.Navigation("Images");
+                });
+
             modelBuilder.Entity("Domain.Entities.Company", b =>
                 {
                     b.Navigation("Images");
@@ -34702,6 +35301,11 @@ namespace Presitance.Migrations
                 {
                     b.Navigation("Colors");
 
+                    b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GeneralService", b =>
+                {
                     b.Navigation("Images");
                 });
 
@@ -34868,6 +35472,11 @@ namespace Presitance.Migrations
                 });
 
             modelBuilder.Entity("Domain.Entities.Rescue", b =>
+                {
+                    b.Navigation("Images");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ResortHotelAmusement", b =>
                 {
                     b.Navigation("Images");
                 });

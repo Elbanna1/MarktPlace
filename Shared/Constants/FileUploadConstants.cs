@@ -167,6 +167,12 @@ public static class FileUploadConstants
 
     public const string RestaurantsAndCafesFolder = "restaurants-and-cafes";
 
+    public const string CommercialShopsFolder = "commercial-shops";
+
+    public const string GeneralServicesFolder = "general-services";
+
+    public const string ResortsHotelsAndAmusementFolder = "resorts-hotels-amusement";
+
     public static readonly string[] OfficesFolders =
     {
         LawyerOfficesFolder, EngineeringConsultancyOfficesFolder, ContractorsFolder,

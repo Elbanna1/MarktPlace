@@ -174,7 +174,13 @@ public enum SubCategoryType
 
     RestaurantsAndCafes = 64,
 
-    Buildings = 65
+    Buildings = 65,
+
+    CommercialShops = 66,
+
+    GeneralServices = 67,
+
+    ResortsHotelsAndAmusement = 68
 }
 
 public static class OfficesSubCategories

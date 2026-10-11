@@ -13,6 +13,7 @@ using Persistence.Services;
 using ServicesAbstraction;
 using Shared.DTOs.Offices;
 using Shared.DTOs.RestaurantsAndCafes;
+using Shared.DTOs.GovernorateGuide;
 using Shared.DTOs.Sehhaty;
 using Shared.Settings;
 
@@ -46,6 +47,7 @@ public static class DependencyInjection
 
         services.AddScoped<ListingEditModerationInterceptor>();
         services.AddScoped<ListingRealtimeInterceptor>();
+        services.AddScoped<ListingMediaFileInterceptor>();
 
         services.AddDbContext<AppDbContext>((provider, options) =>
         {
@@ -64,6 +66,7 @@ public static class DependencyInjection
 
             options.AddInterceptors(provider.GetRequiredService<ListingEditModerationInterceptor>());
             options.AddInterceptors(provider.GetRequiredService<ListingRealtimeInterceptor>());
+            options.AddInterceptors(provider.GetRequiredService<ListingMediaFileInterceptor>());
 
             if (sqlCounterEnabled)
                 options.AddInterceptors(provider.GetRequiredService<SqlCountInterceptor>());
@@ -191,6 +194,13 @@ public static class DependencyInjection
         services.AddScoped<IDirectoryRepository<RestaurantAndCafe, RestaurantAndCafeImage, RestaurantAndCafeFilterParams>,
             RestaurantAndCafeRepository>();
 
+        services.AddScoped<IDirectoryRepository<CommercialShop, CommercialShopImage, CommercialShopFilterParams>,
+            CommercialShopRepository>();
+        services.AddScoped<IDirectoryRepository<GeneralService, GeneralServiceImage, GeneralServiceFilterParams>,
+            GeneralServiceRepository>();
+        services.AddScoped<IDirectoryRepository<ResortHotelAmusement, ResortHotelAmusementImage, ResortHotelAmusementFilterParams>,
+            ResortHotelAmusementRepository>();
+
         services.AddScoped<IFactoryRepository, FactoryRepository>();
         services.AddScoped<IFarmRepository, FarmRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
@@ -270,6 +280,10 @@ public static class DependencyInjection
         services.AddScoped<IUserListingSource, AccountantOfficeListingSource>();
 
         services.AddScoped<IUserListingSource, RestaurantAndCafeListingSource>();
+
+        services.AddScoped<IUserListingSource, CommercialShopListingSource>();
+        services.AddScoped<IUserListingSource, GeneralServiceListingSource>();
+        services.AddScoped<IUserListingSource, ResortHotelAmusementListingSource>();
 
         services.AddScoped<IUserListingRepository, UserListingRepository>();
 

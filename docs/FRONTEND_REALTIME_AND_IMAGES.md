@@ -144,3 +144,15 @@ it once the route is mapped to the Buildings query keys.
 
 **Not verified end to end in a browser**: the frontend repository is not in this workspace. The backend
 side (events, payloads, persisted notifications) was verified with a raw SignalR client.
+
+## 5. دليل محافظتي — محلات تجارية / خدمات عامة / قرى سياحية وفنادق وملاهي
+
+Events arrive on the same hub with `type` 101 / 102 / 103, `categoryId: 2`, `subCategoryId` 66 / 67 / 68 and
+`route` `commercial-shops` / `general-services` / `resorts-hotels-amusement`; map those routes to their
+query keys and the §2 handlers cover them. Notification `deepLink` is `/{route}/{id}` — add the three pages.
+
+- Forms come from `create-ad-form/2/66`, `/2/67`, `/2/68`. خدمات عامة needs no custom code: render the
+  `FixedServiceSubtype` / `MobileServiceSubtype` selects by their `visibleWhen` on `ServiceType`.
+- Lists / filters from `read-config/2/{sub}` (`activityType`, `serviceType`, `serviceSubtype`, the `name`
+  select fed by `/api/lookups/advertisers/2/{sub}`).
+- **Not verified in a browser** — the frontend repository is not in this workspace.

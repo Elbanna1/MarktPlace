@@ -80,7 +80,6 @@ public class FarmService : IFarmService
             var toRemove = farm.Images.Where(i => request.RemoveImageIds.Contains(i.Id)).ToList();
             foreach (var image in toRemove)
             {
-                _fileService.Delete(image.ImagePath);
                 _repository.RemoveImage(image);
                 farm.Images.Remove(image);
             }

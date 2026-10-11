@@ -153,6 +153,9 @@ public static class NotificationCatalog
             [ListingModuleType.AccountantOffice] = DirectorySubject(NotificationReferenceTypes.AccountantOffice, OfficesCatalog.AccountantOffices),
 
             [ListingModuleType.RestaurantAndCafe] = DirectorySubject(NotificationReferenceTypes.RestaurantAndCafe, RestaurantsAndCafesCatalog.RestaurantsAndCafes),
+            [ListingModuleType.CommercialShop] = DirectorySubject(NotificationReferenceTypes.CommercialShop, GovernorateGuideCatalog.CommercialShops),
+            [ListingModuleType.GeneralService] = DirectorySubject(NotificationReferenceTypes.GeneralService, GovernorateGuideCatalog.GeneralServices),
+            [ListingModuleType.ResortHotelAmusement] = DirectorySubject(NotificationReferenceTypes.ResortHotelAmusement, GovernorateGuideCatalog.ResortsHotelsAndAmusement),
 
             [ListingModuleType.LostItem] = LostItem,
             [ListingModuleType.FoundItem] = FoundItem

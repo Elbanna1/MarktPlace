@@ -814,3 +814,23 @@ buildings, that is the point to split the lookup.
 `ModelState` for `Features` / `RentInclusions` and answers the standard 422. The other modules still
 drop such values silently; a global fix would change behaviour for existing clients and needs its own
 decision.
+
+## D-42 — Upload files follow the database, not the other way round
+
+**Problem.** 49 update paths deleted a removed image's file *before* `SaveChanges`, and no update path
+removed newly written files when the save failed. A failed save therefore left rows pointing at deleted
+files (a "missing image") or left orphan files on disk.
+
+**Decision.** `ListingMediaFileInterceptor` (scoped, registered after the real-time interceptor) records
+every `IListingImage` / `IListingVideo` row that is being deleted or added. After a successful save it
+deletes the removed rows' files; after a failed save it deletes the added rows' files and keeps the
+removed ones. Services no longer call `_fileService.Delete(image.ImagePath)` before saving — a test
+fails if that line reappears next to `RemoveImage`. Every image-row deletion in the codebase already
+deleted its file, so the interceptor adds no new deletions; it only moves them after the commit.
+Soft-deleted listings keep their files, as before.
+
+## D-43 — The governorate guide's new modules live under category 2
+
+دليل محافظتي is category 2 (internally `WorkshopsAndCraftsmen`), so محلات تجارية (66), خدمات عامة (67) and
+قرى سياحية وفنادق وملاهي (68) are sub-categories of it, not a new top-level category. Existing ids and
+parents are unchanged.

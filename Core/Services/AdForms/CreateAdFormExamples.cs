@@ -99,7 +99,13 @@ public static class CreateAdFormExamples
         Create("restaurants-and-cafes", "Restaurants & Cafes (مطاعم وكافيهات) — opens directly",
             CategoryType.RestaurantsAndCafes, SubCategoryType.RestaurantsAndCafes),
         Create("real-estate-buildings", "Real Estate → Buildings (عقارات → مباني)",
-            CategoryType.RealEstate, SubCategoryType.Buildings)
+            CategoryType.RealEstate, SubCategoryType.Buildings),
+        Create("guide-commercial-shops", "Governorate Guide → Commercial Shops (دليل محافظتي → محلات تجارية)",
+            CategoryType.WorkshopsAndCraftsmen, SubCategoryType.CommercialShops),
+        Create("guide-general-services", "Governorate Guide → General Services (دليل محافظتي → خدمات عامة)",
+            CategoryType.WorkshopsAndCraftsmen, SubCategoryType.GeneralServices),
+        Create("guide-resorts-hotels-amusement", "Governorate Guide → Resorts, Hotels & Amusement (دليل محافظتي → قرى سياحية وفنادق وملاهي)",
+            CategoryType.WorkshopsAndCraftsmen, SubCategoryType.ResortsHotelsAndAmusement)
     ];
 
     private static Example Create(string key, string summary, CategoryType category, SubCategoryType subCategory)

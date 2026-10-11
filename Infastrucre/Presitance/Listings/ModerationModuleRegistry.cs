@@ -82,6 +82,10 @@ public static class ModerationModuleRegistry
 
             [ListingModuleType.RestaurantAndCafe] = typeof(RestaurantAndCafe),
 
+            [ListingModuleType.CommercialShop] = typeof(CommercialShop),
+            [ListingModuleType.GeneralService] = typeof(GeneralService),
+            [ListingModuleType.ResortHotelAmusement] = typeof(ResortHotelAmusement),
+
             [ListingModuleType.LostItem] = typeof(LostFoundPost),
             [ListingModuleType.FoundItem] = typeof(LostFoundPost)
         };

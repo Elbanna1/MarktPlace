@@ -100,6 +100,12 @@ public static class ReadConfigExamples
             CategoryType.RestaurantsAndCafes, SubCategoryType.RestaurantsAndCafes),
         Create("real-estate-buildings", "Real Estate → Buildings (عقارات → مباني)",
             CategoryType.RealEstate, SubCategoryType.Buildings),
+        Create("guide-commercial-shops", "Governorate Guide → Commercial Shops (دليل محافظتي → محلات تجارية)",
+            CategoryType.WorkshopsAndCraftsmen, SubCategoryType.CommercialShops),
+        Create("guide-general-services", "Governorate Guide → General Services (دليل محافظتي → خدمات عامة)",
+            CategoryType.WorkshopsAndCraftsmen, SubCategoryType.GeneralServices),
+        Create("guide-resorts-hotels-amusement", "Governorate Guide → Resorts, Hotels & Amusement (دليل محافظتي → قرى سياحية وفنادق وملاهي)",
+            CategoryType.WorkshopsAndCraftsmen, SubCategoryType.ResortsHotelsAndAmusement),
 
         SubCategoryStep("sub-category-step", "Category only → sub category still to be chosen (رجال أعمال)",
             CategoryType.Business)

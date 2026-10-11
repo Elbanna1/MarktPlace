@@ -165,6 +165,10 @@ public static class DependencyInjection
 
         services.AddScoped<IRestaurantAndCafeService, Services.RestaurantsAndCafes.RestaurantAndCafeService>();
 
+        services.AddScoped<ICommercialShopService, Services.GovernorateGuide.CommercialShopService>();
+        services.AddScoped<IGeneralServiceService, Services.GovernorateGuide.GeneralServiceService>();
+        services.AddScoped<IResortHotelAmusementService, Services.GovernorateGuide.ResortHotelAmusementService>();
+
         var mapperConfiguration = new MapperConfiguration(
             cfg =>
             {
@@ -234,6 +238,7 @@ public static class DependencyInjection
                 cfg.AddProfile<OfficesMappingProfile>();
 
                 cfg.AddProfile<RestaurantsAndCafesMappingProfile>();
+                cfg.AddProfile<GovernorateGuideMappingProfile>();
             },
             NullLoggerFactory.Instance);
 

@@ -184,6 +184,9 @@ public static class ImageConstants
         FileUploadConstants.ContractorsFolder, FileUploadConstants.IndustrialConsultancyOfficesFolder,
         FileUploadConstants.AccountantOfficesFolder,
 
-        FileUploadConstants.RestaurantsAndCafesFolder
+        FileUploadConstants.RestaurantsAndCafesFolder,
+
+        FileUploadConstants.CommercialShopsFolder, FileUploadConstants.GeneralServicesFolder,
+        FileUploadConstants.ResortsHotelsAndAmusementFolder
     };
 }

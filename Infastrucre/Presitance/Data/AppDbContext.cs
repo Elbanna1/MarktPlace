@@ -482,6 +482,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<RestaurantAndCafe> RestaurantsAndCafes => Set<RestaurantAndCafe>();
     public DbSet<RestaurantAndCafeImage> RestaurantAndCafeImages => Set<RestaurantAndCafeImage>();
 
+    public DbSet<CommercialShop> CommercialShops => Set<CommercialShop>();
+    public DbSet<CommercialShopImage> CommercialShopImages => Set<CommercialShopImage>();
+    public DbSet<GeneralService> GeneralServices => Set<GeneralService>();
+    public DbSet<GeneralServiceImage> GeneralServiceImages => Set<GeneralServiceImage>();
+    public DbSet<ResortHotelAmusement> ResortsHotelsAndAmusement => Set<ResortHotelAmusement>();
+    public DbSet<ResortHotelAmusementImage> ResortHotelAmusementImages => Set<ResortHotelAmusementImage>();
+
     public DbSet<Referral> Referrals => Set<Referral>();
 
     public DbSet<ReferralLinkEvent> ReferralLinkEvents => Set<ReferralLinkEvent>();

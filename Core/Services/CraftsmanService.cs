@@ -87,7 +87,6 @@ public class CraftsmanService : ICraftsmanService
             var toRemove = craftsman.Images.Where(i => request.RemoveImageIds.Contains(i.Id)).ToList();
             foreach (var image in toRemove)
             {
-                _fileService.Delete(image.ImagePath);
                 _repository.RemoveImage(image);
                 craftsman.Images.Remove(image);
             }

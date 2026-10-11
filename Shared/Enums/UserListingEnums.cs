@@ -124,7 +124,13 @@ public enum ListingModuleType
 
     AccountantOffice = 94,
 
-    RestaurantAndCafe = 100
+    RestaurantAndCafe = 100,
+
+    CommercialShop = 101,
+
+    GeneralService = 102,
+
+    ResortHotelAmusement = 103
 }
 
 public enum ListingStatus

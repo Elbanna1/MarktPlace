@@ -103,22 +103,21 @@ public class AdvertisementService : IAdvertisementService
 
         foreach (var image in advertisement.Images.ToList())
         {
-            _fileService.Delete(image.ImagePath);
             _repository.RemoveImage(image);
         }
 
-        if (advertisement.VideoPath is { Length: > 0 } videoPath)
-        {
-            _fileService.Delete(videoPath);
-            advertisement.VideoPath = null;
-            advertisement.VideoUrl = null;
-        }
+        var removedVideoPath = advertisement.VideoPath;
+        advertisement.VideoPath = null;
+        advertisement.VideoUrl = null;
 
         advertisement.Status = AdvertisementStatus.Deleted;
         advertisement.DeletedAt = DateTime.UtcNow;
 
         _repository.Update(advertisement);
         await _repository.SaveChangesAsync();
+
+        if (!string.IsNullOrWhiteSpace(removedVideoPath))
+            _fileService.Delete(removedVideoPath);
 
         await _interactions.PurgeListingAsync(ListingModuleType.Advertisement, advertisement.Id);
 
@@ -319,7 +318,6 @@ public class AdvertisementService : IAdvertisementService
         var advertisementId = image.AdvertisementId;
         var wasPrimary = image.IsPrimary;
 
-        _fileService.Delete(image.ImagePath);
         _repository.RemoveImage(image);
         await _repository.SaveChangesAsync();
 
