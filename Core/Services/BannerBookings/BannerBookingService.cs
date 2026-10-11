@@ -65,11 +65,16 @@ public class BannerBookingService : IBannerBookingService
         var slotCount = SlotCount(placement);
         var slots = new List<BannerSlotAvailabilityDto>(slotCount);
 
+        var overlapping = await _repository.GetOverlappingAsync(
+            placement.Location, slotNumber: null, scope.CategoryId, scope.SubCategoryId,
+            startDate, endDate, excludeBookingId: null, cancellationToken);
+
         for (var slotNumber = 1; slotNumber <= slotCount; slotNumber++)
         {
-            var occupying = await _repository.GetOverlappingAsync(
-                placement.Location, slotNumber, scope.CategoryId, scope.SubCategoryId,
-                startDate, endDate, excludeBookingId: null, cancellationToken);
+            var slot = slotNumber;
+            var occupying = placement.Location == BannerLocation.SubCategoryBanner
+                ? overlapping
+                : overlapping.Where(booking => booking.SlotNumber == slot).ToList();
 
             var isAvailable = occupying.Count == 0;
 

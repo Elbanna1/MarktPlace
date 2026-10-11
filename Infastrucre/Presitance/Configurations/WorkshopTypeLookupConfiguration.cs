@@ -21,7 +21,7 @@ public class WorkshopTypeLookupConfiguration : IEntityTypeConfiguration<Workshop
             {
                 Id = (int)kvp.Key,
                 Name = kvp.Value,
-                IsActive = WorkshopCraftsmenCatalog.IsActiveWorkshopType(kvp.Key)
+                IsActive = !WorkshopCraftsmenCatalog.InactiveWorkshopTypeRows.Contains(kvp.Key)
             }));
     }
 }

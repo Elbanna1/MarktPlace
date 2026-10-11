@@ -99,7 +99,7 @@ public class LookupRepository : ILookupRepository
 
     public Task<List<WorkshopTypeLookup>> GetWorkshopTypesAsync(CancellationToken cancellationToken = default) =>
         _context.WorkshopTypes.AsNoTracking()
-            .Where(w => w.IsActive)
+            .Where(w => w.IsActive && !WorkshopCraftsmenCatalog.RetiredWorkshopTypeIds.Contains(w.Id))
             .OrderBy(w => w.Id == (int)WorkshopType.Other)
             .ThenBy(w => w.Id)
             .ToListAsync(cancellationToken);

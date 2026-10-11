@@ -853,3 +853,17 @@ parents are unchanged.
   treated as a rename so existing listings land in the right place.
 
 The merge `UPDATE` is not undone by `Down` — the original split cannot be recovered.
+
+## D-45 — «ورشة ألوميتال» (WorkshopType 3) is retired in code, not in the lookup table
+
+**Context.** After D-44 the form offered both «ورشة ألوميتال» (3) and «ورشة ألوميتال ومطابخ» (7). Only 7 is wanted.
+The change had to avoid any migration or write to existing data.
+
+**Decision.** `WorkshopCraftsmenCatalog.RetiredWorkshopTypes` now contains 3, so create validation (422), the
+service guards (create, and an edit that *switches* to it → 400) and `LookupRepository.GetWorkshopTypesAsync`
+(which feeds `/api/workshops/types`, the create-ad form and read-config filters) all exclude it. The seeded
+`WorkshopTypes` row keeps `IsActive = 1`: seeding reads `InactiveWorkshopTypeRows` (20, 24 only), so the EF model
+is unchanged and no migration exists. Existing listings on 3 keep their id and label, stay filterable and editable.
+
+**Follow-up (optional, needs approval).** Adding 3 to `InactiveWorkshopTypeRows` would scaffold a one-row
+`UpdateData` migration that aligns the table flag; behaviour would not change.

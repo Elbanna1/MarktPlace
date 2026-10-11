@@ -239,7 +239,7 @@ public class AdminAdService : IAdminAdService
 
         await NotifyAsync(
             ownerId,
-            NotificationCatalog.Moderation.Suspended(type, id, title, "تم حذف الإعلان بواسطة الإدارة."),
+            NotificationCatalog.Moderation.DeletedByAdmin(type, id, title),
             NotificationAction.Deleted,
             id,
             type);

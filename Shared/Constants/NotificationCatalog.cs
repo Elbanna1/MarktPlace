@@ -363,6 +363,14 @@ public static class NotificationCatalog
                 type: NotificationType.ListingSuspended,
                 icon: "⏸️");
 
+        public static NotificationContent DeletedByAdmin(
+            ListingModuleType module, Guid listingId, string? listingTitle) =>
+            Content(module, listingId, listingTitle,
+                title: "تم حذف الإعلان",
+                body: $"تم حذف {For(module).EntityName} بواسطة الإدارة.",
+                type: NotificationType.ListingSuspended,
+                icon: "🗑️");
+
         private static NotificationContent Content(
             ListingModuleType module, Guid listingId, string? listingTitle,
             string title, string body, NotificationType type, string icon)

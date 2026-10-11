@@ -24,7 +24,7 @@ namespace MarkatPlace.Tests;
 
 public class WorkshopCraftsmenRestructureTests
 {
-    private static AppDbContext NewContext()
+    internal static AppDbContext NewContext()
     {
         var context = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString()).Options);
@@ -36,19 +36,19 @@ public class WorkshopCraftsmenRestructureTests
         new MapperConfiguration(c => c.AddMaps(typeof(WorkshopMappingProfile).Assembly),
             NullLoggerFactory.Instance).CreateMapper();
 
-    private static LookupService Lookups(AppDbContext context) =>
+    internal static LookupService Lookups(AppDbContext context) =>
         new(new LookupRepository(context), new MemoryCache(new MemoryCacheOptions()), new LookupCache(), Mapper());
 
     private static CraftsmanService Craftsmen(AppDbContext context) =>
         new(new CraftsmanRepository(context), new StubFileService(), Mapper(), SilentProxy<INotificationService>.Create());
 
-    private static WorkshopService Workshops(AppDbContext context) =>
+    internal static WorkshopService Workshops(AppDbContext context) =>
         new(new WorkshopRepository(context), new StubFileService(), Mapper(), SilentProxy<INotificationService>.Create());
 
-    private static Shared.DTOs.Advertisements.UploadImageModel Upload() =>
+    internal static Shared.DTOs.Advertisements.UploadImageModel Upload() =>
         new() { FileName = "photo.jpg", ContentType = "image/jpeg", Length = 3, Content = [1, 2, 3] };
 
-    private static string SeedUser(AppDbContext context)
+    internal static string SeedUser(AppDbContext context)
     {
         var id = Guid.NewGuid().ToString();
         context.Users.Add(new ApplicationUser
@@ -74,13 +74,13 @@ public class WorkshopCraftsmenRestructureTests
         AdTitle = "عنوان", AdDescription = "وصف"
     };
 
-    private static CreateWorkshopRequest WorkshopRequest(WorkshopType type) => new()
+    internal static CreateWorkshopRequest WorkshopRequest(WorkshopType type) => new()
     {
         Name = "ورشة الأمانة", WorkshopType = type, Center = "الفيوم", Address = "شارع الحرية",
         PhoneNumber = "01012345678", WhatsApp = "01012345678", AdTitle = "عنوان", AdDescription = "وصف"
     };
 
-    private static UpdateWorkshopRequest WorkshopUpdate(WorkshopType type) => new()
+    internal static UpdateWorkshopRequest WorkshopUpdate(WorkshopType type) => new()
     {
         Name = "ورشة الأمانة", WorkshopType = type, Center = "الفيوم", Address = "شارع الحرية",
         PhoneNumber = "01012345678", WhatsApp = "01012345678", AdTitle = "عنوان", AdDescription = "وصف"
@@ -88,7 +88,7 @@ public class WorkshopCraftsmenRestructureTests
 
     public static readonly string[] FinalWorkshopTypes =
     [
-        "ورشة باب وشباك", "حداد", "ورشة ألوميتال", "ورشة زجاج", "ورشة رخام وجرانيت", "نجار موبيليا",
+        "ورشة باب وشباك", "حداد", "ورشة زجاج", "ورشة رخام وجرانيت", "نجار موبيليا",
         "ورشة ألوميتال ومطابخ", "ورشة تنجيد إفرنجي", "ورشة خراطة", "ورشة لحام", "مراكز صيانة", "ورشة سمكرة",
         "دوكو سيارات", "ورشة كهرباء سيارات", "ميكانيكا سيارات", "ورشة دراجات نارية", "صيانة أجهزة منزلية",
         "ورشة تكييف وتبريد", "لحام أرجون ومعادن", "مشغل ملابس", "ورشة أحذية", "ورشة جلود", "مطابع ومكتبات",
@@ -111,7 +111,7 @@ public class WorkshopCraftsmenRestructureTests
         var types = await Lookups(context).GetWorkshopTypesAsync();
 
         Assert.Equal(FinalWorkshopTypes, types.Select(t => t.Name));
-        Assert.DoesNotContain(types, t => t.Name is "ورشة تصنيع بلاستيك" or "ورشة تطريز");
+        Assert.DoesNotContain(types, t => t.Name is "ورشة ألوميتال" or "ورشة تصنيع بلاستيك" or "ورشة تطريز");
     }
 
     [Fact]
@@ -218,6 +218,7 @@ public class WorkshopCraftsmenRestructureTests
     }
 
     [Theory]
+    [InlineData(WorkshopType.Aluminum)]
     [InlineData(WorkshopType.PlasticManufacturing)]
     [InlineData(WorkshopType.Embroidery)]
     public void Replaced_workshop_types_are_refused_for_new_listings(WorkshopType retired)

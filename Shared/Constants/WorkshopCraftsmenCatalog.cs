@@ -40,9 +40,19 @@ public static class WorkshopCraftsmenCatalog
 
     public static readonly IReadOnlySet<WorkshopType> RetiredWorkshopTypes = new HashSet<WorkshopType>
     {
+        WorkshopType.Aluminum,
         WorkshopType.PlasticManufacturing,
         WorkshopType.Embroidery
     };
+
+    public static readonly IReadOnlySet<WorkshopType> InactiveWorkshopTypeRows = new HashSet<WorkshopType>
+    {
+        WorkshopType.PlasticManufacturing,
+        WorkshopType.Embroidery
+    };
+
+    public static readonly IReadOnlyList<int> RetiredWorkshopTypeIds =
+        RetiredWorkshopTypes.Select(t => (int)t).Order().ToList();
 
     public const string RetiredChoiceMessage = "الاختيار ده مبقاش متاح للإعلانات الجديدة، من فضلك اختار نوع تاني.";
 
