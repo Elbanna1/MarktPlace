@@ -9162,6 +9162,9 @@ namespace Presitance.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -9176,222 +9179,280 @@ namespace Presitance.Migrations
                         {
                             Id = 1,
                             GroupName = "النجارة",
+                            IsActive = true,
                             Name = "نجار أثاث"
                         },
                         new
                         {
                             Id = 2,
                             GroupName = "النجارة",
+                            IsActive = true,
                             Name = "نجار أبواب"
                         },
                         new
                         {
                             Id = 3,
                             GroupName = "النجارة",
+                            IsActive = true,
                             Name = "نجار مطابخ"
                         },
                         new
                         {
                             Id = 4,
                             GroupName = "السباكة",
-                            Name = "سباك"
+                            IsActive = true,
+                            Name = "سباكة"
                         },
                         new
                         {
                             Id = 5,
                             GroupName = "السباكة",
+                            IsActive = false,
                             Name = "تأسيس سباكة"
                         },
                         new
                         {
                             Id = 6,
                             GroupName = "السباكة",
+                            IsActive = false,
                             Name = "صيانة سباكة"
                         },
                         new
                         {
                             Id = 7,
                             GroupName = "الكهرباء",
-                            Name = "كهربائي منازل"
+                            IsActive = true,
+                            Name = "كهربائي منازل و3 فاز"
                         },
                         new
                         {
                             Id = 8,
                             GroupName = "الكهرباء",
+                            IsActive = false,
                             Name = "كهربائي صناعي"
                         },
                         new
                         {
                             Id = 9,
                             GroupName = "الدهانات",
+                            IsActive = true,
                             Name = "نقاش"
                         },
                         new
                         {
                             Id = 10,
                             GroupName = "الدهانات",
+                            IsActive = false,
                             Name = "دهانات ديكورية"
                         },
                         new
                         {
                             Id = 11,
                             GroupName = "الأرضيات",
-                            Name = "سيراميك"
+                            IsActive = true,
+                            Name = "سيراميك وبورسلين"
                         },
                         new
                         {
                             Id = 12,
                             GroupName = "الأرضيات",
+                            IsActive = false,
                             Name = "بورسلين"
                         },
                         new
                         {
                             Id = 13,
                             GroupName = "الأرضيات",
-                            Name = "رخام"
+                            IsActive = true,
+                            Name = "رخام وجرانيت"
                         },
                         new
                         {
                             Id = 14,
                             GroupName = "الأرضيات",
+                            IsActive = false,
                             Name = "جرانيت"
                         },
                         new
                         {
                             Id = 15,
                             GroupName = "الأرضيات",
+                            IsActive = true,
                             Name = "باركيه"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            GroupName = "الأرضيات",
+                            IsActive = true,
+                            Name = "إيبوكسي"
                         },
                         new
                         {
                             Id = 16,
                             GroupName = "الجبس",
-                            Name = "جبس بورد"
+                            IsActive = true,
+                            Name = "جبس بورد وبلدي"
                         },
                         new
                         {
                             Id = 17,
                             GroupName = "الجبس",
+                            IsActive = true,
                             Name = "ديكورات جبس"
                         },
                         new
                         {
                             Id = 18,
                             GroupName = "الحدادة",
+                            IsActive = true,
                             Name = "حداد"
                         },
                         new
                         {
                             Id = 19,
                             GroupName = "الحدادة",
+                            IsActive = false,
                             Name = "حداد كريتال"
                         },
                         new
                         {
                             Id = 20,
                             GroupName = "الألوميتال",
+                            IsActive = true,
                             Name = "ألوميتال"
                         },
                         new
                         {
                             Id = 21,
                             GroupName = "الزجاج",
+                            IsActive = true,
                             Name = "زجاج"
                         },
                         new
                         {
                             Id = 22,
                             GroupName = "اللحام",
+                            IsActive = false,
                             Name = "لحام كهرباء"
                         },
                         new
                         {
                             Id = 23,
                             GroupName = "اللحام",
+                            IsActive = true,
                             Name = "لحام أرجون"
                         },
                         new
                         {
                             Id = 24,
                             GroupName = "التكييف",
-                            Name = "فني تكييف"
+                            IsActive = true,
+                            Name = "تكييف وتبريد"
                         },
                         new
                         {
                             Id = 25,
                             GroupName = "التكييف",
+                            IsActive = false,
                             Name = "فني تبريد"
                         },
                         new
                         {
                             Id = 26,
                             GroupName = "الأجهزة المنزلية",
+                            IsActive = false,
                             Name = "صيانة غسالات"
                         },
                         new
                         {
                             Id = 27,
                             GroupName = "الأجهزة المنزلية",
+                            IsActive = false,
                             Name = "صيانة ثلاجات"
                         },
                         new
                         {
                             Id = 28,
                             GroupName = "الأجهزة المنزلية",
+                            IsActive = true,
                             Name = "صيانة بوتاجازات"
                         },
                         new
                         {
                             Id = 29,
                             GroupName = "الأجهزة المنزلية",
+                            IsActive = false,
                             Name = "صيانة سخانات"
                         },
                         new
                         {
                             Id = 30,
                             GroupName = "المطابخ",
+                            IsActive = true,
                             Name = "تركيب مطابخ"
                         },
                         new
                         {
                             Id = 31,
                             GroupName = "الستائر",
+                            IsActive = true,
                             Name = "تركيب ستائر"
                         },
                         new
                         {
                             Id = 32,
                             GroupName = "الطاقة الشمسية",
+                            IsActive = false,
                             Name = "تركيب طاقة شمسية"
                         },
                         new
                         {
                             Id = 33,
                             GroupName = "التنظيف",
+                            IsActive = true,
                             Name = "تنظيف منازل"
                         },
                         new
                         {
                             Id = 34,
                             GroupName = "التنظيف",
+                            IsActive = true,
                             Name = "تنظيف شركات"
                         },
                         new
                         {
                             Id = 35,
                             GroupName = "نقل الأثاث",
+                            IsActive = true,
                             Name = "فك وتركيب أثاث"
                         },
                         new
                         {
                             Id = 36,
                             GroupName = "نقل الأثاث",
+                            IsActive = true,
                             Name = "نقل أثاث"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            GroupName = "النيوماتيك",
+                            IsActive = true,
+                            Name = "نيوماتيك"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            GroupName = "الخزائن والمفاتيح",
+                            IsActive = true,
+                            Name = "فني خزائن ومفاتيح"
                         },
                         new
                         {
                             Id = 37,
                             GroupName = "أخرى",
+                            IsActive = true,
                             Name = "أخرى"
                         });
                 });
@@ -32616,6 +32677,9 @@ namespace Presitance.Migrations
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -32632,131 +32696,175 @@ namespace Presitance.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "ورشة نجارة"
+                            IsActive = true,
+                            Name = "ورشة باب وشباك"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "ورشة حدادة"
+                            IsActive = true,
+                            Name = "حداد"
                         },
                         new
                         {
                             Id = 3,
+                            IsActive = true,
                             Name = "ورشة ألوميتال"
                         },
                         new
                         {
                             Id = 4,
+                            IsActive = true,
                             Name = "ورشة زجاج"
                         },
                         new
                         {
                             Id = 5,
+                            IsActive = true,
                             Name = "ورشة رخام وجرانيت"
                         },
                         new
                         {
                             Id = 6,
-                            Name = "ورشة موبيليا"
+                            IsActive = true,
+                            Name = "نجار موبيليا"
                         },
                         new
                         {
                             Id = 7,
-                            Name = "ورشة مطابخ"
+                            IsActive = true,
+                            Name = "ورشة ألوميتال ومطابخ"
                         },
                         new
                         {
                             Id = 8,
-                            Name = "ورشة تنجيد"
+                            IsActive = true,
+                            Name = "ورشة تنجيد إفرنجي"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            IsActive = true,
+                            Name = "ورشة تنجيد بلدي"
                         },
                         new
                         {
                             Id = 9,
+                            IsActive = true,
                             Name = "ورشة خراطة"
                         },
                         new
                         {
                             Id = 10,
+                            IsActive = true,
                             Name = "ورشة لحام"
                         },
                         new
                         {
                             Id = 11,
-                            Name = "ورشة سيارات"
+                            IsActive = true,
+                            Name = "مراكز صيانة"
                         },
                         new
                         {
                             Id = 12,
+                            IsActive = true,
                             Name = "ورشة سمكرة"
                         },
                         new
                         {
                             Id = 13,
-                            Name = "ورشة دهان سيارات"
+                            IsActive = true,
+                            Name = "دوكو سيارات"
                         },
                         new
                         {
                             Id = 14,
+                            IsActive = true,
                             Name = "ورشة كهرباء سيارات"
                         },
                         new
                         {
                             Id = 15,
-                            Name = "ورشة موتور"
+                            IsActive = true,
+                            Name = "ميكانيكا سيارات"
                         },
                         new
                         {
                             Id = 16,
+                            IsActive = true,
                             Name = "ورشة دراجات نارية"
                         },
                         new
                         {
                             Id = 17,
-                            Name = "ورشة إصلاح أجهزة كهربائية"
+                            IsActive = true,
+                            Name = "صيانة أجهزة منزلية"
                         },
                         new
                         {
                             Id = 18,
+                            IsActive = true,
                             Name = "ورشة تكييف وتبريد"
                         },
                         new
                         {
                             Id = 19,
-                            Name = "ورشة تصنيع معدني"
+                            IsActive = true,
+                            Name = "لحام أرجون ومعادن"
                         },
                         new
                         {
                             Id = 20,
+                            IsActive = false,
                             Name = "ورشة تصنيع بلاستيك"
                         },
                         new
                         {
+                            Id = 28,
+                            IsActive = true,
+                            Name = "الحفر بالكمبيوتر CNC"
+                        },
+                        new
+                        {
                             Id = 21,
-                            Name = "ورشة ملابس"
+                            IsActive = true,
+                            Name = "مشغل ملابس"
                         },
                         new
                         {
                             Id = 22,
+                            IsActive = true,
                             Name = "ورشة أحذية"
                         },
                         new
                         {
                             Id = 23,
+                            IsActive = true,
                             Name = "ورشة جلود"
                         },
                         new
                         {
                             Id = 24,
+                            IsActive = false,
                             Name = "ورشة تطريز"
                         },
                         new
                         {
+                            Id = 29,
+                            IsActive = true,
+                            Name = "ورشة ستائر"
+                        },
+                        new
+                        {
                             Id = 25,
-                            Name = "ورشة طباعة"
+                            IsActive = true,
+                            Name = "مطابع ومكتبات"
                         },
                         new
                         {
                             Id = 26,
+                            IsActive = true,
                             Name = "أخرى"
                         });
                 });

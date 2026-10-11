@@ -7,4 +7,6 @@ public class CraftsmanSpecializationLookup
     public string GroupName { get; set; } = default!;
 
     public string Name { get; set; } = default!;
+
+    public bool IsActive { get; set; } = true;
 }

@@ -52,5 +52,11 @@ public enum WorkshopType
 
     Printing = 25,
 
-    Other = 26
+    Other = 26,
+
+    TraditionalUpholstery = 27,
+
+    CncEngraving = 28,
+
+    Curtains = 29
 }

@@ -37,6 +37,9 @@ public class WorkshopService : IWorkshopService
         if (images.Count == 0)
             throw new BadRequestException("لازم ترفع صورة واحدة على الأقل.");
 
+        if (!WorkshopCraftsmenCatalog.IsActiveWorkshopType(request.WorkshopType))
+            throw new BadRequestException(WorkshopCraftsmenCatalog.RetiredChoiceMessage);
+
         var workshop = _mapper.Map<Workshop>(request);
 
         workshop.Id = Guid.NewGuid();
@@ -68,6 +71,10 @@ public class WorkshopService : IWorkshopService
 
         if (workshop is null)
             throw new NotFoundException("الورشة مش موجودة.");
+
+        if (request.WorkshopType != workshop.WorkshopType &&
+            !WorkshopCraftsmenCatalog.IsActiveWorkshopType(request.WorkshopType))
+            throw new BadRequestException(WorkshopCraftsmenCatalog.RetiredChoiceMessage);
 
         workshop.Name = request.Name;
         workshop.WorkshopType = request.WorkshopType;

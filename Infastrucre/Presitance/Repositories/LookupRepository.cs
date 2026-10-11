@@ -1,3 +1,4 @@
+using Shared.Enums;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
@@ -97,10 +98,18 @@ public class LookupRepository : ILookupRepository
     }
 
     public Task<List<WorkshopTypeLookup>> GetWorkshopTypesAsync(CancellationToken cancellationToken = default) =>
-        _context.WorkshopTypes.AsNoTracking().OrderBy(w => w.Id).ToListAsync(cancellationToken);
+        _context.WorkshopTypes.AsNoTracking()
+            .Where(w => w.IsActive)
+            .OrderBy(w => w.Id == (int)WorkshopType.Other)
+            .ThenBy(w => w.Id)
+            .ToListAsync(cancellationToken);
 
     public Task<List<CraftsmanSpecializationLookup>> GetSpecializationsAsync(CancellationToken cancellationToken = default) =>
-        _context.CraftsmanSpecializations.AsNoTracking().OrderBy(s => s.Id).ToListAsync(cancellationToken);
+        _context.CraftsmanSpecializations.AsNoTracking()
+            .Where(s => s.IsActive)
+            .OrderBy(s => s.Id == (int)CraftsmanSpecialization.Other)
+            .ThenBy(s => s.Id)
+            .ToListAsync(cancellationToken);
 
     public Task<List<ExperienceLevelLookup>> GetExperienceLevelsAsync(CancellationToken cancellationToken = default) =>
         _context.ExperienceLevels.AsNoTracking().OrderBy(e => e.Id).ToListAsync(cancellationToken);

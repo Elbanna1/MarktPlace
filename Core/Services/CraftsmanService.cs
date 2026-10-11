@@ -37,7 +37,11 @@ public class CraftsmanService : ICraftsmanService
         if (images.Count == 0)
             throw new BadRequestException("لازم ترفع صورة واحدة على الأقل.");
 
+        if (!WorkshopCraftsmenCatalog.IsActiveSpecialization(request.Specialization))
+            throw new BadRequestException(WorkshopCraftsmenCatalog.RetiredChoiceMessage);
+
         var craftsman = _mapper.Map<Craftsman>(request);
+        craftsman.Specialization = WorkshopCraftsmenCatalog.CanonicalSpecialization(request.Specialization);
 
         craftsman.Id = Guid.NewGuid();
         craftsman.UserId = userId;
@@ -69,8 +73,14 @@ public class CraftsmanService : ICraftsmanService
         if (craftsman is null)
             throw new NotFoundException("الحرفي مش موجود.");
 
+        var specialization = WorkshopCraftsmenCatalog.CanonicalSpecialization(request.Specialization);
+
+        if (specialization != craftsman.Specialization &&
+            !WorkshopCraftsmenCatalog.IsActiveSpecialization(specialization))
+            throw new BadRequestException(WorkshopCraftsmenCatalog.RetiredChoiceMessage);
+
         craftsman.Name = request.Name;
-        craftsman.Specialization = request.Specialization;
+        craftsman.Specialization = specialization;
         craftsman.OtherSpecialization = request.OtherSpecialization?.Trim();
         craftsman.ExperienceLevel = request.ExperienceLevel;
         craftsman.Center = request.Center;

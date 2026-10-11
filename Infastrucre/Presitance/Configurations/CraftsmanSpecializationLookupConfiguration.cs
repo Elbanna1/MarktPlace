@@ -21,7 +21,8 @@ public class CraftsmanSpecializationLookupConfiguration : IEntityTypeConfigurati
             {
                 Id = (int)s.Value,
                 GroupName = s.Group,
-                Name = s.Name
+                Name = s.Name,
+                IsActive = s.IsActive
             }));
     }
 }

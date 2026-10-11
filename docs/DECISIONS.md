@@ -834,3 +834,22 @@ Soft-deleted listings keep their files, as before.
 دليل محافظتي is category 2 (internally `WorkshopsAndCraftsmen`), so محلات تجارية (66), خدمات عامة (67) and
 قرى سياحية وفنادق وملاهي (68) are sub-categories of it, not a new top-level category. Existing ids and
 parents are unchanged.
+
+## D-44 — Workshop types and craftsman specializations are retired, never deleted
+
+**Context.** The 2026-10-11 restructure renamed, merged, replaced and removed values of `WorkshopType`
+(ids 1–26) and `CraftsmanSpecialization` (ids 1–37). Those are the "categories" of الورش (sub 5) and
+الحرفيين (sub 6); they are enum-backed lookup rows, not sub-categories, and listings store the id.
+
+**Decision.**
+- *Rename* keeps the id; listings follow the new label.
+- *Merge* keeps the target id; migration `RestructureWorkshopTypesAndCraftsmanSpecializations` runs an
+  idempotent `UPDATE Craftsmen SET Specialization = target WHERE Specialization IN (...)`, and the
+  service maps a merged id from an old client to its target on write and in filters.
+- *Remove*, or *replace with an unrelated service*, retires the id (`IsActive = 0` on the lookup row)
+  and, for a replacement, adds a new id. Retired rows vanish from the form schema, read-config filters
+  and `/types` / `/specializations`; listings on them keep their id, label, images and interactions.
+- *Replace with a superset* (ورشة مطابخ → ورشة ألوميتال ومطابخ, ورشة تصنيع معدني → لحام أرجون ومعادن) is
+  treated as a rename so existing listings land in the right place.
+
+The merge `UPDATE` is not undone by `Down` — the original split cannot be recovered.

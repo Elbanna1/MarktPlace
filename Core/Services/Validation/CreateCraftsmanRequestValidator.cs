@@ -14,7 +14,10 @@ public class CreateCraftsmanRequestValidator : AbstractValidator<CreateCraftsman
             .MaximumLength(150);
 
         RuleFor(x => x.Specialization)
-            .IsInEnum().WithMessage("من فضلك اختار التخصص صح.");
+            .Cascade(CascadeMode.Stop)
+            .IsInEnum().WithMessage("من فضلك اختار التخصص صح.")
+            .Must(WorkshopCraftsmenCatalog.IsActiveSpecialization)
+            .WithMessage(WorkshopCraftsmenCatalog.RetiredChoiceMessage);
 
         RuleFor(x => x.OtherSpecialization)
             .NotEmpty().WithMessage("من فضلك اكتب التخصص لما تختار «أخرى».")

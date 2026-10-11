@@ -251,7 +251,7 @@ internal static class DemoRecords
             "جميع أنواع الدهانات البلاستيك والزيت والدهانات الديكورية، معجون وتجهيز الحوائط.",
             "يوسف الصديق، شارع المدرسة", Names.CraftsmanPainter, Names.WorkshopCarpentry),
 
-        new("أسطى إبراهيم اللحام", CraftsmanSpecialization.ElectricWelding, ExperienceLevel.FiveToTenYears,
+        new("أسطى إبراهيم اللحام", CraftsmanSpecialization.ArgonWelding, ExperienceLevel.FiveToTenYears,
             "لحام كهرباء وأرجون لجميع الأعمال",
             "لحام حديد وستانلس، تصنيع وتركيب أبواب وشبابيك ومظلات، خدمة داخل وخارج الورشة.",
             "اطسا، الطريق الرئيسي", Names.CraftsmanWelder, Names.WorkshopWelding),

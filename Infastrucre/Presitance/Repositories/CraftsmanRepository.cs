@@ -1,4 +1,5 @@
-﻿using Persistence.Configurations;
+﻿using Shared.Constants;
+using Persistence.Configurations;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
@@ -50,8 +51,11 @@ public class CraftsmanRepository : ICraftsmanRepository
                 EF.Functions.Like(c.AdDescription, $"%{search}%"));
         }
 
-        if (filter.Specialization is { } specialization)
+        if (filter.Specialization is { } requested)
+        {
+            var specialization = WorkshopCraftsmenCatalog.CanonicalSpecialization(requested);
             query = query.Where(c => c.Specialization == specialization);
+        }
 
         if (filter.ExperienceLevel is { } experience)
             query = query.Where(c => c.ExperienceLevel == experience);

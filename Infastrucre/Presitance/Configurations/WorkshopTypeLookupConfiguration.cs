@@ -17,6 +17,11 @@ public class WorkshopTypeLookupConfiguration : IEntityTypeConfiguration<Workshop
         builder.HasIndex(w => w.Name).IsUnique();
 
         builder.HasData(WorkshopCraftsmenCatalog.WorkshopTypeNames
-            .Select(kvp => new WorkshopTypeLookup { Id = (int)kvp.Key, Name = kvp.Value }));
+            .Select(kvp => new WorkshopTypeLookup
+            {
+                Id = (int)kvp.Key,
+                Name = kvp.Value,
+                IsActive = WorkshopCraftsmenCatalog.IsActiveWorkshopType(kvp.Key)
+            }));
     }
 }

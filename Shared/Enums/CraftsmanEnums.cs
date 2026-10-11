@@ -74,7 +74,13 @@ public enum CraftsmanSpecialization
 
     FurnitureMoving = 36,
 
-    Other = 37
+    Other = 37,
+
+    Pneumatics = 38,
+
+    SafesAndLocksmith = 39,
+
+    Epoxy = 40
 }
 
 public enum ExperienceLevel

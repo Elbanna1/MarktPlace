@@ -14,7 +14,10 @@ public class CreateWorkshopRequestValidator : AbstractValidator<CreateWorkshopRe
             .MaximumLength(150);
 
         RuleFor(x => x.WorkshopType)
-            .IsInEnum().WithMessage("من فضلك اختار نوع الورشة صح.");
+            .Cascade(CascadeMode.Stop)
+            .IsInEnum().WithMessage("من فضلك اختار نوع الورشة صح.")
+            .Must(WorkshopCraftsmenCatalog.IsActiveWorkshopType)
+            .WithMessage(WorkshopCraftsmenCatalog.RetiredChoiceMessage);
 
         RuleFor(x => x.OtherWorkshopType)
             .NotEmpty().WithMessage("من فضلك اكتب نوع الورشة لما تختار «أخرى».")

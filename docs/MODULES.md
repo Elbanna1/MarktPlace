@@ -107,6 +107,7 @@ Consequences you must know:
 | **Entities** | `Workshop`, `Craftsman` (+ images) |
 | **Lookups** | `WorkshopCraftsmenCatalog` — Arabic names and seeding |
 | **Rules** | Images are **required**. Owner-or-admin edit/delete, soft delete |
+| **Types** | `WorkshopType` / `CraftsmanSpecialization` ids never change. Retired values keep their row with `IsActive = 0` (hidden from every choice list, refused for new listings, still displayed on old ones); merged values are remapped to their target (`WorkshopCraftsmenCatalog.MergedSpecializations`). Restructured 2026-10-11 — see D-44 |
 
 > **FK rule:** no cascade from `AspNetUsers` (use `NoAction`). 48 cascading relationships into the
 > Identity table produce SQL Server error 1785.
