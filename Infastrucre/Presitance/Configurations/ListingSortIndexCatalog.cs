@@ -62,6 +62,7 @@ public static class ListingSortIndexCatalog
             [typeof(Land)] = ByTotalPriceAndViews,
             [typeof(Apartment)] = ByPriceAndViews,
             [typeof(Shop)] = ByPriceAndViews,
+            [typeof(Building)] = ByPriceAndViews,
 
             // CharitySortBy — most-viewed only.
             [typeof(Rescue)] = ByViews,

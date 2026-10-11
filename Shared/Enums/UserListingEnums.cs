@@ -90,6 +90,8 @@ public enum ListingModuleType
 
     Shop = 62,
 
+    Building = 63,
+
     Rescue = 65,
 
     BloodRequest = 66,

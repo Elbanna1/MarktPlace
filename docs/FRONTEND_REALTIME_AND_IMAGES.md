@@ -119,3 +119,28 @@ Every listing notification — including the expiry notices — now carries `lis
 and `subCategoryId`. Resolve the target from `(categoryId, subCategoryId, referenceId)` (the existing
 `notificationTarget` "pair" path) rather than from `deepLink`, whose path (`/restaurants-and-cafes/{id}`)
 is an API-style route, not an app route.
+
+## 4. مباني (Buildings) — what the frontend has to add
+
+Nothing about the hub changes: Buildings events arrive on the same `/hubs/notifications` connection
+with `type: 63`, `route: "buildings"`, `categoryId: 11`, `subCategoryId: 65`, so the handlers in §2
+(invalidate the feed for `route`, the details for `id`, my-listings and the admin queue) already cover
+it once the route is mapped to the Buildings query keys.
+
+1. **Form.** Render `GET /api/lookups/create-ad-form/11/65` like شقق. Visibility is driven by
+   `visibleWhen` / `requiredWhen` on `BuildingType` (1 فيلا, 2 بيت, 3 عمارة), `ListingType`
+   (1 بيع, 2 إيجار, 3 بدل), `LegalStatus` (1 مرخصة, 2 تصالح, 3 غير مرخصة), `PaymentMethod`,
+   `HasViolations`, `HasMaintenanceDeposit`, `AcceptsDifferencePayment` and `Center`. Do not hard-code
+   any of these — re-evaluate them on every change. Hidden values may be sent; the server ignores and
+   nulls them. Checkboxes are never required. Lookups: `lookups.buildingTypes` plus the `apartment*`
+   lists.
+2. **Submit.** `POST /api/buildings` (multipart). `Features` and `RentInclusions` repeat the key once
+   per id. Update is `PUT /api/buildings/{id}` with `RemoveImageIds`, `RemoveVideo`.
+3. **Pages.** List `GET /api/buildings` (filters in `read-config/11/65`, including the
+   `advertiserName` select fed by `/api/lookups/advertisers/11/65`), details `GET /api/buildings/{id}`,
+   similar / related / recently-added like شقق. Favorites, recently viewed and listing actions use the
+   shared interaction routes with `type=63`.
+4. **Notification deep link.** `deepLink` is `/buildings/{id}` — add that route.
+
+**Not verified end to end in a browser**: the frontend repository is not in this workspace. The backend
+side (events, payloads, persisted notifications) was verified with a raw SignalR client.

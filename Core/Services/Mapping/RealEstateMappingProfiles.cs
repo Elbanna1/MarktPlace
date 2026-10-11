@@ -230,3 +230,68 @@ internal static class RealEstateMappingExtensions
             .ForMember(d => d.ProjectName,
                 o => o.MapFrom(src => RealEstateCatalog.GetProjectName(project(src))));
 }
+
+public class BuildingMappingProfile : Profile
+{
+    public BuildingMappingProfile()
+    {
+        CreateMap<BuildingImage, RealEstateImageDto>()
+            .ForMember(d => d.Url, o => o.MapFrom(s => s.ImageUrl));
+
+        CreateMap<Building, BuildingListItemDto>()
+            .IncludeCommonRealEstateNames(s => s.ListingType, s => s.Project)
+            .ForMember(d => d.BuildingTypeName,
+                o => o.MapFrom(s => BuildingCatalog.GetBuildingTypeName(s.BuildingType)))
+            .ForMember(d => d.FurnishedStatusName,
+                o => o.MapFrom(s => ApartmentCatalog.GetFurnishedStatusName(s.FurnishedStatus)))
+            .ForMember(d => d.FinishingTypeName,
+                o => o.MapFrom(s => ApartmentCatalog.GetFinishingTypeName(s.FinishingType)))
+            .ForMember(d => d.PropertyAgeName,
+                o => o.MapFrom(s => ApartmentCatalog.GetPropertyAgeName(s.PropertyAge)))
+            .ForMember(d => d.LegalStatusName,
+                o => o.MapFrom(s => ApartmentCatalog.GetLegalStatusName(s.LegalStatus)))
+            .ForMember(d => d.OwnershipDocumentName,
+                o => o.MapFrom(s => ApartmentCatalog.GetOwnershipDocumentName(s.OwnershipDocument)))
+            .ForMember(d => d.Features,
+                o => o.MapFrom(s => ApartmentCatalog.SelectedFeatures(s.Features.Select(x => x.Feature))))
+            .ForMember(d => d.Images, o => o.MapFrom(s => s.Images.OrderBy(i => i.SortOrder)))
+            .ForMember(d => d.PrimaryImageUrl, o => o.MapFrom(s =>
+                s.Images.OrderBy(i => i.SortOrder).Select(i => i.ImageUrl).FirstOrDefault()));
+
+        CreateMap<Building, BuildingDetailsDto>()
+            .IncludeCommonRealEstateNames(s => s.ListingType, s => s.Project)
+            .ForMember(d => d.OwnerId, o => o.MapFrom(s => s.UserId))
+            .ForMember(d => d.ShareUrl, o => o.Ignore())
+            .ForMember(d => d.BuildingTypeName,
+                o => o.MapFrom(s => BuildingCatalog.GetBuildingTypeName(s.BuildingType)))
+            .ForMember(d => d.FurnishedStatusName,
+                o => o.MapFrom(s => ApartmentCatalog.GetFurnishedStatusName(s.FurnishedStatus)))
+            .ForMember(d => d.FinishingTypeName,
+                o => o.MapFrom(s => ApartmentCatalog.GetFinishingTypeName(s.FinishingType)))
+            .ForMember(d => d.PropertyAgeName,
+                o => o.MapFrom(s => ApartmentCatalog.GetPropertyAgeName(s.PropertyAge)))
+            .ForMember(d => d.DirectionName, o => o.MapFrom(s => ApartmentCatalog.GetDirectionName(s.Direction)))
+            .ForMember(d => d.ViewTypeName, o => o.MapFrom(s => ApartmentCatalog.GetViewTypeName(s.ViewType)))
+            .ForMember(d => d.ReceptionPiecesName,
+                o => o.MapFrom(s => ApartmentCatalog.GetReceptionPiecesName(s.ReceptionPieces)))
+            .ForMember(d => d.LegalStatusName,
+                o => o.MapFrom(s => ApartmentCatalog.GetLegalStatusName(s.LegalStatus)))
+            .ForMember(d => d.ReconciliationFormName,
+                o => o.MapFrom(s => ApartmentCatalog.GetReconciliationFormName(s.ReconciliationForm)))
+            .ForMember(d => d.OwnershipDocumentName,
+                o => o.MapFrom(s => ApartmentCatalog.GetOwnershipDocumentName(s.OwnershipDocument)))
+            .ForMember(d => d.PaymentMethodName,
+                o => o.MapFrom(s => ApartmentCatalog.GetPaymentMethodName(s.PaymentMethod)))
+            .ForMember(d => d.InstallmentProviderName,
+                o => o.MapFrom(s => ApartmentCatalog.GetInstallmentProviderName(s.InstallmentProvider)))
+            .ForMember(d => d.RentTypeName, o => o.MapFrom(s => ApartmentCatalog.GetRentTypeName(s.RentType)))
+            .ForMember(d => d.ExchangeWithName,
+                o => o.MapFrom(s => ApartmentCatalog.GetExchangeTargetName(s.ExchangeWith)))
+            .ForMember(d => d.Features,
+                o => o.MapFrom(s => ApartmentCatalog.SelectedFeatures(s.Features.Select(x => x.Feature))))
+            .ForMember(d => d.RentInclusions,
+                o => o.MapFrom(s =>
+                    ApartmentCatalog.SelectedRentInclusions(s.RentInclusions.Select(x => x.Inclusion))))
+            .ForMember(d => d.Images, o => o.MapFrom(s => s.Images.OrderBy(i => i.SortOrder)));
+    }
+}

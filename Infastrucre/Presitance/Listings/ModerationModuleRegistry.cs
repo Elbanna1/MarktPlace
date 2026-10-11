@@ -61,6 +61,7 @@ public static class ModerationModuleRegistry
             [ListingModuleType.Land] = typeof(Land),
             [ListingModuleType.Apartment] = typeof(Apartment),
             [ListingModuleType.Shop] = typeof(Shop),
+            [ListingModuleType.Building] = typeof(Building),
 
             [ListingModuleType.Rescue] = typeof(Rescue),
             [ListingModuleType.BloodRequest] = typeof(BloodRequest),

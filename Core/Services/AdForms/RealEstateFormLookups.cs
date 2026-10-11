@@ -135,6 +135,10 @@ internal static class RealEstateFormLookups
                 lookups.ApartmentExchangeTargets = ApartmentCatalog.ExchangeTargetOptions;
                 return true;
 
+            case AdFormLookupKeys.BuildingTypes:
+                lookups.BuildingTypes = BuildingCatalog.BuildingTypeOptions;
+                return true;
+
             case AdFormLookupKeys.ShopSuitableActivities:
                 lookups.ShopSuitableActivities = ShopCatalog.SuitableActivityOptions;
                 return true;

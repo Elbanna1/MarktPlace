@@ -797,3 +797,20 @@ notices now carry `listingType` / `categoryId` / `subCategoryId` like every othe
 `<app>/wwwroot/uploads` could not survive a deployment that replaces the application directory —
 which is what production shows. See DEPLOYMENT § Uploads directory.
 
+
+## D-41 — مباني reuses the apartment lookups and rejects unbound multi-select values
+
+**Problem.** مباني (sub 65, module 63) asks the same furnishing / finishing / age / direction / view /
+licensing / ownership / payment / rent / exchange questions as شقق, with an amenities list identical to
+the apartment one. A module-owned copy of each lookup (the earlier real-estate convention) would have
+added ~18 duplicate tables whose ids could drift from the apartment ones.
+
+**Decision.** Buildings stores the apartment enums and serves the apartment lookup tables from its own
+routes (`/api/buildings/{key}`); only `BuildingTypes` is new. If a label ever needs to differ for
+buildings, that is the point to split the lookup.
+
+**Also.** `SuppressModelStateInvalidFilter` means a multipart value that fails to bind (e.g.
+`Features=99`) is silently dropped before FluentValidation sees it. `BuildingsController` checks
+`ModelState` for `Features` / `RentInclusions` and answers the standard 422. The other modules still
+drop such values silently; a global fix would change behaviour for existing clients and needs its own
+decision.

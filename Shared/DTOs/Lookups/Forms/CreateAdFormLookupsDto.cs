@@ -596,6 +596,9 @@ public class CreateAdFormLookupsDto
     public IReadOnlyList<RealEstateLookupItemDto>? ApartmentExchangeTargets { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IReadOnlyList<RealEstateLookupItemDto>? BuildingTypes { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IReadOnlyList<RealEstateLookupItemDto>? ShopSuitableActivities { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -934,6 +937,8 @@ public static class AdFormLookupKeys
     public const string ApartmentRentInclusions = "apartmentRentInclusions";
     public const string ApartmentSuitableFor = "apartmentSuitableFor";
     public const string ApartmentExchangeTargets = "apartmentExchangeTargets";
+
+    public const string BuildingTypes = "buildingTypes";
 
     public const string ShopSuitableActivities = "shopSuitableActivities";
     public const string ShopFloorTypes = "shopFloorTypes";

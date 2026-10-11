@@ -304,6 +304,7 @@ Enforced by three test suites, including a source-wide scan that fails the build
 | اسأل واستشير | **No location at all** — removed from six layers. Rescue and Blood Requests keep theirs |
 | Charity (all) | `IsResponsibilityAccepted` must be `true` |
 | عقارات | `RealEstateListings.Keep` nulls a conditional field once its condition stops holding |
+| مباني | Fields of the other building types, transactions and legal statuses are **ignored and stored null** (never validated, never kept); building checkboxes also record the matching amenity; an amenity / rent-inclusion id that does not bind is a 422, not silently dropped |
 | افرش بيتك | `PlantOrnament` alone has no colours or material |
 | التسوق أونلاين | No location block; warranty→electronics, expiry→cosmetics, delivery areas→homemade food |
 | مطاعم وكافيهات | Opens its form directly from the category (single sub-category, `OpensFormDirectly`); images required; exact-match `name` select; admin republish enabled |

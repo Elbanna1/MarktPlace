@@ -68,6 +68,7 @@ public static class NotificationReferenceTypes
     public const string Land = "Land";
     public const string Apartment = "Apartment";
     public const string Shop = "Shop";
+    public const string Building = "Building";
 
     public const string Rescue = "Rescue";
     public const string BloodRequest = "BloodRequest";

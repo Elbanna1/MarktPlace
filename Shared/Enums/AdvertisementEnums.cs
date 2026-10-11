@@ -172,7 +172,9 @@ public enum SubCategoryType
 
     AccountantOffices = 63,
 
-    RestaurantsAndCafes = 64
+    RestaurantsAndCafes = 64,
+
+    Buildings = 65
 }
 
 public static class OfficesSubCategories
@@ -228,7 +230,8 @@ public static class RealEstateSubCategories
     {
         SubCategoryType.Lands,
         SubCategoryType.Apartments,
-        SubCategoryType.Shops
+        SubCategoryType.Shops,
+        SubCategoryType.Buildings
     };
 
     public static bool Contains(int subCategoryId) =>

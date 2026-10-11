@@ -125,9 +125,11 @@ public static class FileUploadConstants
 
     public const string ShopVideoFolder = "shops-video";
 
+    public const string BuildingVideoFolder = "buildings-video";
+
     public static readonly string[] RealEstateVideoFolders =
     {
-        LandVideoFolder, ApartmentVideoFolder, ShopVideoFolder
+        LandVideoFolder, ApartmentVideoFolder, ShopVideoFolder, BuildingVideoFolder
     };
 
     public const string RescuesFolder = "rescues";

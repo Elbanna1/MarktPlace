@@ -78,10 +78,12 @@ public static class ReadConfigCatalog
     private const string LandsModule = "lands";
     private const string ApartmentsModule = "apartments";
     private const string ShopsModule = "shops";
+    private const string BuildingsModule = "buildings";
 
     private const string LandsRoute = "/api/lands";
     private const string ApartmentsRoute = "/api/apartments";
     private const string ShopsRoute = "/api/shops";
+    private const string BuildingsRoute = "/api/buildings";
 
     private const string RescuesModule = "rescues";
     private const string BloodRequestsModule = "bloodRequests";
@@ -187,6 +189,7 @@ public static class ReadConfigCatalog
             SubCategoryType.Lands => Lands(categoryId, subCategory),
             SubCategoryType.Apartments => Apartments(categoryId, subCategory),
             SubCategoryType.Shops => Shops(categoryId, subCategory),
+            SubCategoryType.Buildings => Buildings(categoryId, subCategory),
 
             SubCategoryType.Rescues => Rescues(categoryId, subCategory),
             SubCategoryType.BloodRequests => BloodRequests(categoryId, subCategory),
@@ -1930,6 +1933,64 @@ public static class ReadConfigCatalog
                 RealEstateLookup(ApartmentsRoute, RealEstateLookupKeys.ExchangeTargets, "خيارات البدل", "Exchange targets")
             ]);
 
+    private static ReadConfigSchema Buildings(int categoryId, SubCategoryType subCategory) =>
+        RealEstateModule(categoryId, subCategory, BuildingsModule, BuildingsRoute,
+            "قائمة المباني", "Buildings list",
+            "تفاصيل إعلان المبنى", "Building details",
+            ListingModuleType.Building,
+            "إعلانات المباني المضافة بواسطتي", "My building listings",
+            [
+                Param(AdvertiserLookupCatalog.AdvertiserNameParameter, "اسم المعلن", "Advertiser name",
+                    ReadParameterTypes.String,
+                    optionsSource: ReadOperationKeys.Advertisers, optionsValue: ReadOptionsValues.Name),
+
+                Param("buildingType", "نوع المبنى", "Building type", ReadParameterTypes.Enum,
+                    optionsSource: RealEstateLookupKeys.BuildingTypes, optionsValue: ReadOptionsValues.Id),
+
+                Param("areaFrom", "المساحة من", "Area from", ReadParameterTypes.Decimal, min: 0),
+                Param("areaTo", "المساحة إلى", "Area to", ReadParameterTypes.Decimal, min: 0),
+
+                Param("floorsCount", "عدد الطوابق / الأدوار", "Floors count", ReadParameterTypes.Integer, min: 1),
+                Param("roomsCount", "عدد الغرف", "Rooms count", ReadParameterTypes.Integer, min: 1),
+                Param("bathroomsCount", "عدد الحمامات", "Bathrooms count", ReadParameterTypes.Integer, min: 1),
+
+                Param("finishingType", "التشطيب", "Finishing", ReadParameterTypes.Enum,
+                    optionsSource: RealEstateLookupKeys.FinishingTypes, optionsValue: ReadOptionsValues.Id),
+                Param("furnishedStatus", "مفروشة", "Furnished", ReadParameterTypes.Enum,
+                    optionsSource: RealEstateLookupKeys.FurnishedStatuses, optionsValue: ReadOptionsValues.Id),
+                Param("propertyAge", "عمر العقار", "Property age", ReadParameterTypes.Enum,
+                    optionsSource: RealEstateLookupKeys.PropertyAges, optionsValue: ReadOptionsValues.Id),
+
+                Param("hasElevator", "مصعد", "Elevator", ReadParameterTypes.Boolean),
+                Param("hasGarage", "جراج", "Garage", ReadParameterTypes.Boolean),
+                Param("hasSwimmingPool", "مسبح", "Swimming pool", ReadParameterTypes.Boolean),
+                Param("hasGarden", "حديقة", "Garden", ReadParameterTypes.Boolean),
+
+                Param("legalStatus", "حالة المبنى", "Legal status", ReadParameterTypes.Enum,
+                    optionsSource: RealEstateLookupKeys.LegalStatuses, optionsValue: ReadOptionsValues.Id),
+                Param("ownershipDocument", "مستند الملكية", "Ownership document", ReadParameterTypes.Enum,
+                    optionsSource: RealEstateLookupKeys.OwnershipDocuments,
+                    optionsValue: ReadOptionsValues.Id)
+            ],
+            [
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.BuildingTypes, "أنواع المباني", "Building types"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.ReceptionPieces, "قطع الريسبشن", "Reception pieces"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.FurnishedStatuses, "حالة الفرش", "Furnished statuses"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.FinishingTypes, "أنواع التشطيب", "Finishing types"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.PropertyAges, "عمر العقار", "Property ages"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.Directions, "الاتجاهات", "Directions"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.ViewTypes, "الإطلالة", "View types"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.LegalStatuses, "حالة المبنى", "Legal statuses"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.ReconciliationForms, "نماذج التصالح", "Reconciliation forms"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.OwnershipDocuments, "مستندات الملكية", "Ownership documents"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.Features, "المرافق والمميزات", "Features"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.PaymentMethods, "طرق السداد", "Payment methods"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.InstallmentProviders, "جهات التقسيط", "Installment providers"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.RentTypes, "أنواع الإيجار", "Rent types"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.RentInclusions, "يشمل الإيجار", "Rent inclusions"),
+                RealEstateLookup(BuildingsRoute, RealEstateLookupKeys.ExchangeTargets, "خيارات البدل", "Exchange targets")
+            ]);
+
     private static ReadConfigSchema Shops(int categoryId, SubCategoryType subCategory) =>
         RealEstateModule(categoryId, subCategory, ShopsModule, ShopsRoute,
             "قائمة المحلات", "Shops list",
@@ -2232,6 +2293,7 @@ public static class ReadConfigCatalog
                         (ListingModuleType.Land, "أراضي", "Lands"),
                         (ListingModuleType.Apartment, "شقق", "Apartments"),
                         (ListingModuleType.Shop, "محلات", "Shops"),
+                        (ListingModuleType.Building, "مباني", "Buildings"),
                         (ListingModuleType.Rescue, "الاستغاثة", "Rescues"),
                         (ListingModuleType.BloodRequest, "فصائل الدم", "Blood requests"),
                         (ListingModuleType.AskConsult, "اسأل واستشير", "Ask & consult"),

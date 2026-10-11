@@ -97,7 +97,9 @@ public static class CreateAdFormExamples
         Create("offices-accountant-offices", "Offices → Accountant Offices (مكاتب → مكاتب محاسبين قانونيين)",
             CategoryType.Offices, SubCategoryType.AccountantOffices),
         Create("restaurants-and-cafes", "Restaurants & Cafes (مطاعم وكافيهات) — opens directly",
-            CategoryType.RestaurantsAndCafes, SubCategoryType.RestaurantsAndCafes)
+            CategoryType.RestaurantsAndCafes, SubCategoryType.RestaurantsAndCafes),
+        Create("real-estate-buildings", "Real Estate → Buildings (عقارات → مباني)",
+            CategoryType.RealEstate, SubCategoryType.Buildings)
     ];
 
     private static Example Create(string key, string summary, CategoryType category, SubCategoryType subCategory)

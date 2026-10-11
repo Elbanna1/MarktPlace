@@ -238,7 +238,7 @@ rules apply where relevant.
 
 ---
 
-## Category 11 — عقارات (Real Estate) · subs 47–49
+## Category 11 — عقارات (Real Estate) · subs 47–49, 65
 
 | Sub | Endpoint | Entity | Module type |
 | --- | --- | --- | --- |
@@ -261,6 +261,23 @@ understand what a module can do.
 
 **The `RealEstateListings.Keep` seam** nulls a conditional field once its condition stops holding —
 so a column can never hold an answer to a question the form no longer asks.
+
+**مباني (Buildings) · sub 65 · `/api/buildings` · `Building` · module type 63**
+
+- Added 2026-10-11. `BuildingType` (فيلا / بيت / عمارة) opens one disjoint block: villa → garden area,
+  bathrooms, reception pieces, rooms, swimming pool; house → residential units, independent entrance;
+  عمارة → apartments, shops (0 allowed), elevator, garage. `FloorsCount` serves all three
+  (عدد الطوابق for villa/house, عدد الأدوار for عمارة).
+- Sale / rent / exchange blocks, licensing (مرخصة → licence fields, تصالح → `ReconciliationForm`
+  required, غير مرخصة → nothing extra) and contacts follow شقق exactly.
+- **Reuses the apartment lookup tables** (furnishing, finishing, age, direction, view, legal status,
+  reconciliation forms, ownership documents, the 25 amenities, payment, rent, exchange). Only
+  `BuildingTypes` is new. Selections live in `BuildingFeatureSelections` / `BuildingRentInclusionSelections`.
+- Ticking a building checkbox also records the matching amenity (pool → مسبح, independent entrance →
+  مدخل خاص, elevator → مصعد, garage → جراج), so the amenity filters find it.
+- Video optional and removable; images required (1–10).
+- Advertiser lookup: `advertiserName` (contains-match) fed by `/api/lookups/advertisers/11/65`.
+- Migration `AddBuildingsRealEstateModule`: 5 tables, guarded seed of sub-category 65.
 
 **`IX_Lands_Search`** is a covering index added for search, sorting and price statistics; see
 [PERFORMANCE](PERFORMANCE.md#the-land-search-covering-index).

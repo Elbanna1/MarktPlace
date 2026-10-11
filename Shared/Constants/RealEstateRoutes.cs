@@ -7,4 +7,6 @@ public static class RealEstateRoutes
     public const string Apartments = "api/apartments";
 
     public const string Shops = "api/shops";
+
+    public const string Buildings = "api/buildings";
 }

@@ -144,6 +144,7 @@ public static class DependencyInjection
         services.AddScoped<ILandService, LandService>();
         services.AddScoped<IApartmentService, ApartmentService>();
         services.AddScoped<IShopService, ShopService>();
+        services.AddScoped<IBuildingService, BuildingService>();
 
         services.AddScoped<IRescueService, Services.Charity.RescueService>();
         services.AddScoped<IBloodRequestService, Services.Charity.BloodRequestService>();
@@ -224,6 +225,7 @@ public static class DependencyInjection
                 cfg.AddProfile<LandMappingProfile>();
                 cfg.AddProfile<Services.Mapping.ApartmentMappingProfile>();
                 cfg.AddProfile<ShopMappingProfile>();
+                cfg.AddProfile<BuildingMappingProfile>();
 
                 cfg.AddProfile<CharityMappingProfile>();
 

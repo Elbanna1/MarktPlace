@@ -98,6 +98,8 @@ public static class ReadConfigExamples
             CategoryType.Offices, SubCategoryType.AccountantOffices),
         Create("restaurants-and-cafes", "Restaurants & Cafes (مطاعم وكافيهات) — opens directly",
             CategoryType.RestaurantsAndCafes, SubCategoryType.RestaurantsAndCafes),
+        Create("real-estate-buildings", "Real Estate → Buildings (عقارات → مباني)",
+            CategoryType.RealEstate, SubCategoryType.Buildings),
 
         SubCategoryStep("sub-category-step", "Category only → sub category still to be chosen (رجال أعمال)",
             CategoryType.Business)

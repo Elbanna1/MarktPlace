@@ -141,3 +141,49 @@ public interface IShopService
     Task<IReadOnlyList<RealEstateLookupItemDto>> GetLookupAsync(
         string lookupKey, CancellationToken cancellationToken = default);
 }
+
+public interface IBuildingService
+{
+    Task<BuildingDetailsDto> CreateAsync(
+        string userId, CreateBuildingRequest request,
+        IReadOnlyList<UploadImageModel> images, UploadImageModel? video,
+        CancellationToken cancellationToken = default);
+
+    Task<BuildingDetailsDto> UpdateAsync(
+        string userId, bool isAdmin, Guid id, UpdateBuildingRequest request,
+        IReadOnlyList<UploadImageModel> newImages, UploadImageModel? video,
+        CancellationToken cancellationToken = default);
+
+    Task DeleteAsync(string userId, Guid id, bool isAdmin);
+
+    Task<PaginatedResult<BuildingListItemDto>> GetListAsync(
+        BuildingFilterParams filter, CancellationToken cancellationToken = default);
+
+    Task<BuildingDetailsDto> GetByIdAsync(
+        Guid id, bool countView = false, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<BuildingListItemDto>> GetSimilarAsync(
+        Guid id, int count, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<BuildingListItemDto>> GetRelatedAsync(
+        Guid id, int count, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<BuildingListItemDto>> GetRecentlyAddedAsync(
+        int count, CancellationToken cancellationToken = default);
+
+    Task<RealEstatePriceStatisticsDto> GetPriceStatisticsAsync(
+        BuildingFilterParams filter, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<RealEstateSuggestionDto>> GetSuggestionsAsync(
+        string? term, int count, CancellationToken cancellationToken = default);
+
+    Task<BuildingDetailsDto> ReorderImagesAsync(
+        string userId, bool isAdmin, Guid id,
+        ReorderRealEstateImagesRequest request, CancellationToken cancellationToken = default);
+
+    Task<BuildingDetailsDto> SetPromotionAsync(
+        Guid id, PromoteRealEstateRequest request, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<RealEstateLookupItemDto>> GetLookupAsync(
+        string lookupKey, CancellationToken cancellationToken = default);
+}

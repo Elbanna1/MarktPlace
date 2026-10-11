@@ -53,6 +53,7 @@ public static class AdFormSchemaCatalog
     private static readonly CreateAdFormSubmitDto LandsSubmit = new($"/{RealEstateRoutes.Lands}");
     private static readonly CreateAdFormSubmitDto ApartmentsSubmit = new($"/{RealEstateRoutes.Apartments}");
     private static readonly CreateAdFormSubmitDto ShopsSubmit = new($"/{RealEstateRoutes.Shops}");
+    private static readonly CreateAdFormSubmitDto BuildingsSubmit = new($"/{RealEstateRoutes.Buildings}");
 
     private static readonly CreateAdFormSubmitDto FurnitureSubmit = new($"/{HomeFurnishingRoutes.Furniture}");
     private static readonly CreateAdFormSubmitDto FurnishingCurtainSubmit = new($"/{HomeFurnishingRoutes.FurnishingCurtains}");
@@ -127,6 +128,7 @@ public static class AdFormSchemaCatalog
         SubCategoryType.Lands => Lands(),
         SubCategoryType.Apartments => Apartments(),
         SubCategoryType.Shops => Shops(),
+        SubCategoryType.Buildings => Buildings(),
 
         SubCategoryType.Doctors or SubCategoryType.MedicalLaboratories or SubCategoryType.DentalLaboratories
             or SubCategoryType.RadiologyLaboratories or SubCategoryType.MedicalCenters
@@ -3080,6 +3082,207 @@ public static class AdFormSchemaCatalog
             AdFormLookupKeys.ApartmentRentInclusions,
             AdFormLookupKeys.ApartmentExchangeTargets);
     }
+
+    private static AdFormSchema Buildings()
+    {
+        var villa = (int)BuildingType.Villa;
+        var house = (int)BuildingType.House;
+        var apartmentBuilding = (int)BuildingType.ApartmentBuilding;
+
+        var floorsCount = Number("FloorsCount", "عدد الطوابق / الأدوار", "Floors count", SectionBuildingDetails,
+                required: false, min: 1, max: BuildingCatalog.MaxFloors)
+            .VisibleOnlyWhen("BuildingType", villa, house, apartmentBuilding);
+        floorsCount.HelpText = "للفيلا والبيت: عدد الطوابق. للعمارة: عدد الأدوار.";
+
+        var propertyFields = new List<FormFieldDto>
+        {
+            LookupSelect("BuildingType", "نوع المبنى", "Building type", SectionAd,
+                AdFormLookupKeys.BuildingTypes, required: true),
+
+            RealEstateSalePrice(),
+
+            RealEstateSalePrice("PricePerMeter", "سعر المتر (جنيه)", "Price per meter"),
+
+            Number("Area", "المساحة (م²)", "Area (m²)", SectionBuildingDetails, required: true, min: 0.01m),
+
+            LookupSelect("FurnishedStatus", "مفروشة", "Furnished", SectionBuildingDetails,
+                AdFormLookupKeys.ApartmentFurnishedStatuses, required: false),
+            LookupSelect("FinishingType", "التشطيب", "Finishing", SectionBuildingDetails,
+                AdFormLookupKeys.ApartmentFinishingTypes, required: false),
+            LookupSelect("PropertyAge", "عمر العقار", "Property age", SectionBuildingDetails,
+                AdFormLookupKeys.ApartmentPropertyAges, required: false),
+            LookupSelect("Direction", "الاتجاه", "Direction", SectionBuildingDetails,
+                AdFormLookupKeys.ApartmentDirections, required: false),
+            LookupSelect("ViewType", "تطل على", "View", SectionBuildingDetails,
+                AdFormLookupKeys.ApartmentViewTypes, required: false),
+
+            Number("GardenArea", "مساحة الحديقة (م²)", "Garden area (m²)", SectionBuildingDetails,
+                    required: false, min: 0)
+                .VisibleOnlyWhen("BuildingType", villa),
+
+            floorsCount,
+
+            Number("BathroomsCount", "عدد الحمامات", "Bathrooms count", SectionBuildingDetails,
+                    required: false, min: 1, max: BuildingCatalog.MaxRooms)
+                .VisibleOnlyWhen("BuildingType", villa),
+            LookupSelect("ReceptionPieces", "عدد قطع الريسبشن", "Reception pieces", SectionBuildingDetails,
+                    AdFormLookupKeys.ApartmentReceptionPieces, required: false)
+                .VisibleOnlyWhen("BuildingType", villa),
+            Number("RoomsCount", "عدد الغرف", "Rooms count", SectionBuildingDetails,
+                    required: false, min: 1, max: BuildingCatalog.MaxRooms)
+                .VisibleOnlyWhen("BuildingType", villa),
+            YesNoWhen("HasSwimmingPool", "حمام سباحة", "Swimming pool", SectionBuildingDetails,
+                "BuildingType", villa),
+
+            Number("ResidentialUnitsCount", "عدد الوحدات السكنية", "Residential units count", SectionBuildingDetails,
+                    required: false, min: 1, max: BuildingCatalog.MaxUnits)
+                .VisibleOnlyWhen("BuildingType", house),
+            YesNoWhen("HasIndependentEntrance", "مدخل مستقل", "Independent entrance", SectionBuildingDetails,
+                "BuildingType", house),
+
+            Number("ApartmentsCount", "عدد الشقق", "Apartments count", SectionBuildingDetails,
+                    required: false, min: 1, max: BuildingCatalog.MaxUnits)
+                .VisibleOnlyWhen("BuildingType", apartmentBuilding),
+            Number("ShopsCount", "عدد المحلات التجارية", "Shops count", SectionBuildingDetails,
+                    required: false, min: 0, max: BuildingCatalog.MaxUnits)
+                .VisibleOnlyWhen("BuildingType", apartmentBuilding),
+            YesNoWhen("HasElevator", "وجود مصعد", "Has an elevator", SectionBuildingDetails,
+                "BuildingType", apartmentBuilding),
+            YesNoWhen("HasGarage", "وجود جراج", "Has a garage", SectionBuildingDetails,
+                "BuildingType", apartmentBuilding),
+
+            LookupSelect("LegalStatus", "حالة المبنى", "Legal status", SectionLicensingAndOwnership,
+                AdFormLookupKeys.ApartmentLegalStatuses, required: true)
+        };
+
+        propertyFields.AddRange(
+            RealEstateLicenceFields(SectionLicensingAndOwnership, (int)ApartmentLegalStatus.Licensed));
+
+        propertyFields.AddRange(new[]
+        {
+            Text("LicenseIssuer", "الجهة المصدرة", "License issuer", SectionLicensingAndOwnership,
+                    required: false, maxLength: 150)
+                .VisibleOnlyWhen("LegalStatus", (int)ApartmentLegalStatus.Licensed),
+
+            LookupSelect("ReconciliationForm", "نموذج التصالح", "Reconciliation form",
+                    SectionLicensingAndOwnership, AdFormLookupKeys.ApartmentReconciliationForms,
+                    required: false)
+                .VisibleOnlyWhen("LegalStatus", (int)ApartmentLegalStatus.Reconciliation)
+                .MandatoryWhen("LegalStatus", (int)ApartmentLegalStatus.Reconciliation),
+
+            LookupSelect("OwnershipDocument", "مستند الملكية", "Ownership document",
+                    SectionLicensingAndOwnership, AdFormLookupKeys.ApartmentOwnershipDocuments,
+                    required: true)
+                .AsSearchable(),
+
+            YesNo("IsRegistered", "مسجلة بالشهر العقاري", "Registered", SectionLicensingAndOwnership),
+            YesNo("HasViolations", "عليها مخالفات", "Has violations", SectionLicensingAndOwnership),
+            TextArea("ViolationDetails", "تفاصيل المخالفات", "Violation details",
+                    SectionLicensingAndOwnership, required: false, maxLength: 4000)
+                .VisibleOnlyWhen("HasViolations", true)
+                .MandatoryWhen("HasViolations", true),
+
+            RealEstateMultiSelect("Features", "المرافق والمميزات", "Utilities and features",
+                SectionUtilitiesAndFeatures, AdFormLookupKeys.ApartmentFeatures,
+                ApartmentCatalog.Features.Count)
+        });
+
+        var conditionalFields = new List<FormFieldDto>
+        {
+            LookupSelect("PaymentMethod", "طريقة السداد", "Payment method", SectionSale,
+                    AdFormLookupKeys.ApartmentPaymentMethods, required: false)
+                .VisibleOnlyWhen("ListingType", (int)RealEstateListingType.Sale)
+                .MandatoryWhen("ListingType", (int)RealEstateListingType.Sale),
+
+            Number("DownPayment", "المقدم", "Down payment", SectionSale, required: false, min: 0.01m)
+                .VisibleOnlyWhen("PaymentMethod", (int)ApartmentPaymentMethod.Installments)
+                .MandatoryWhen("PaymentMethod", (int)ApartmentPaymentMethod.Installments),
+            Number("InstallmentAmount", "قيمة القسط", "Installment amount", SectionSale,
+                    required: false, min: 0.01m)
+                .VisibleOnlyWhen("PaymentMethod", (int)ApartmentPaymentMethod.Installments)
+                .MandatoryWhen("PaymentMethod", (int)ApartmentPaymentMethod.Installments),
+            Text("InstallmentPeriod", "مدة التقسيط (بالسنوات أو الأشهر)", "Installment period",
+                    SectionSale, required: false, maxLength: 100, placeholder: "مثال: 5 سنوات")
+                .VisibleOnlyWhen("PaymentMethod", (int)ApartmentPaymentMethod.Installments)
+                .MandatoryWhen("PaymentMethod", (int)ApartmentPaymentMethod.Installments),
+            LookupSelect("InstallmentProvider", "جهة التقسيط", "Installment provider", SectionSale,
+                    AdFormLookupKeys.ApartmentInstallmentProviders, required: false)
+                .VisibleOnlyWhen("PaymentMethod", (int)ApartmentPaymentMethod.Installments)
+                .MandatoryWhen("PaymentMethod", (int)ApartmentPaymentMethod.Installments),
+
+            YesNoWhen("HasMaintenanceDeposit", "يوجد وديعة صيانة", "Has a maintenance deposit",
+                SectionSale, "ListingType", (int)RealEstateListingType.Sale),
+            Number("MaintenanceDepositAmount", "قيمة وديعة الصيانة", "Maintenance deposit amount",
+                    SectionSale, required: false, min: 0.01m)
+                .VisibleOnlyWhen("HasMaintenanceDeposit", true)
+                .MandatoryWhen("HasMaintenanceDeposit", true),
+            Number("MonthlyFees", "رسوم شهرية (صيانة / اتحاد ملاك)", "Monthly fees", SectionSale,
+                    required: false, min: 0)
+                .VisibleOnlyWhen("ListingType", (int)RealEstateListingType.Sale),
+
+            LookupSelect("RentType", "نوع الإيجار", "Rent type", SectionRentDetails,
+                    AdFormLookupKeys.ApartmentRentTypes, required: false)
+                .VisibleOnlyWhen("ListingType", (int)RealEstateListingType.Rent)
+                .MandatoryWhen("ListingType", (int)RealEstateListingType.Rent)
+        };
+
+        conditionalFields.AddRange(
+            RealEstateRentMoneyFields("RentDownPayment", "متاح من", "متاح حتى"));
+
+        conditionalFields.AddRange(new[]
+        {
+            Number("MinimumRentPeriod", "الحد الأدنى لمدة الإيجار", "Minimum rent period",
+                    SectionRentDetails, required: false, min: 1)
+                .VisibleOnlyWhen("ListingType", (int)RealEstateListingType.Rent),
+
+            RealEstateMultiSelect("RentInclusions", "يشمل الإيجار", "Rent includes", SectionRentDetails,
+                    AdFormLookupKeys.ApartmentRentInclusions, ApartmentCatalog.RentInclusions.Count)
+                .VisibleOnlyWhen("ListingType", (int)RealEstateListingType.Rent),
+
+            TextArea("OwnerConditions", "شروط المالك", "Owner conditions", SectionRentDetails,
+                    required: false, maxLength: 4000)
+                .VisibleOnlyWhen("ListingType", (int)RealEstateListingType.Rent)
+        });
+
+        conditionalFields.AddRange(
+            RealEstateExchangeFields(AdFormLookupKeys.ApartmentExchangeTargets));
+
+        return RealEstateSchema("buildings", BuildingsSubmit, propertyFields, conditionalFields,
+            "مثال: فيلا للبيع بحديقة خاصة",
+            "وصف المبنى، مميزاته، الخدمات القريبة، سبب البيع أو الإيجار وأي ملاحظات إضافية.",
+
+            everyFieldRequired: true, BuildingOptionalFields,
+            AdFormLookupKeys.BuildingTypes,
+            AdFormLookupKeys.ApartmentReceptionPieces,
+            AdFormLookupKeys.ApartmentFurnishedStatuses, AdFormLookupKeys.ApartmentFinishingTypes,
+            AdFormLookupKeys.ApartmentPropertyAges, AdFormLookupKeys.ApartmentDirections,
+            AdFormLookupKeys.ApartmentViewTypes, AdFormLookupKeys.ApartmentLegalStatuses,
+            AdFormLookupKeys.ApartmentReconciliationForms, AdFormLookupKeys.ApartmentOwnershipDocuments,
+            AdFormLookupKeys.ApartmentFeatures, AdFormLookupKeys.ApartmentPaymentMethods,
+            AdFormLookupKeys.ApartmentInstallmentProviders, AdFormLookupKeys.ApartmentRentTypes,
+            AdFormLookupKeys.ApartmentRentInclusions,
+            AdFormLookupKeys.ApartmentExchangeTargets);
+    }
+
+    private static readonly HashSet<string> BuildingOptionalFields =
+    [
+        "Video",
+
+        "ViewType", "GardenArea",
+
+        "HasSwimmingPool", "HasIndependentEntrance", "HasElevator", "HasGarage",
+
+        "LicenseNumber", "LicenseIssueDate", "LicenseExpiryDate", "LicenseIssuer",
+        "IsRegistered", "HasViolations",
+
+        "Negotiable",
+
+        "HasMaintenanceDeposit", "MonthlyFees",
+
+        "AcceptsDifferencePayment",
+
+        "Features", "District", "GoogleMaps", "WhatsApp", "Email", "Notes"
+    ];
 
     private static readonly object[] ApartmentFloorTypeValues =
         Enum.GetValues<ApartmentFloorType>()

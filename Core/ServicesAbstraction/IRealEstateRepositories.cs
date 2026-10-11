@@ -143,3 +143,47 @@ public interface IShopRepository : IRealEstateLookupSource
 
     Task<int> SaveChangesAsync();
 }
+
+public interface IBuildingRepository : IRealEstateLookupSource
+{
+    Task<Building?> GetByIdAsync(
+        Guid id, bool asNoTracking = false, CancellationToken cancellationToken = default, bool includeUnmoderated = false);
+
+    Task<Building?> GetOwnedAsync(Guid id, string userId, CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyList<Building> Items, int TotalCount)> GetPagedAsync(
+        BuildingFilterParams filter, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Building>> GetSimilarAsync(
+        Guid id, int count, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Building>> GetRelatedAsync(
+        Guid id, int count, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Building>> GetRecentlyAddedAsync(
+        int count, CancellationToken cancellationToken = default);
+
+    Task<RealEstatePriceStatisticsDto> GetPriceStatisticsAsync(
+        BuildingFilterParams filter, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<RealEstateSuggestionDto>> GetSuggestionsAsync(
+        string term, int count, CancellationToken cancellationToken = default);
+
+    Task AddAsync(Building entity);
+
+    void Update(Building entity);
+
+    void RemoveImage(BuildingImage image);
+
+    Task AddImagesAsync(IEnumerable<BuildingImage> images);
+
+    void RemoveFeatures(IEnumerable<BuildingFeatureSelection> features);
+
+    Task AddFeaturesAsync(IEnumerable<BuildingFeatureSelection> features);
+
+    void RemoveRentInclusions(IEnumerable<BuildingRentInclusionSelection> inclusions);
+
+    Task AddRentInclusionsAsync(IEnumerable<BuildingRentInclusionSelection> inclusions);
+
+    Task<int> SaveChangesAsync();
+}

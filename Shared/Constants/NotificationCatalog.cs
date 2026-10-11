@@ -133,6 +133,7 @@ public static class NotificationCatalog
             [ListingModuleType.Land] = new(NotificationReferenceTypes.Land, "إعلان الأرض", "🏞️", "/lands"),
             [ListingModuleType.Apartment] = new(NotificationReferenceTypes.Apartment, "إعلان الشقة", "🏢", "/apartments"),
             [ListingModuleType.Shop] = new(NotificationReferenceTypes.Shop, "إعلان المحل", "🏪", "/shops"),
+            [ListingModuleType.Building] = new(NotificationReferenceTypes.Building, "إعلان المبنى", "🏘️", "/buildings"),
 
             [ListingModuleType.Rescue] = new(NotificationReferenceTypes.Rescue, "الاستغاثة", "🆘", "/rescues"),
             [ListingModuleType.BloodRequest] = new(NotificationReferenceTypes.BloodRequest, "طلب فصيلة الدم", "🩸", "/blood-requests"),

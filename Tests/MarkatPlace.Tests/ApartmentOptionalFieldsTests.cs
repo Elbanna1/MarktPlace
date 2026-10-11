@@ -421,12 +421,13 @@ public class ApartmentOptionalFieldsTests
     }
 
     [Fact]
-    public void Apartments_is_the_only_form_that_promotes_every_field_to_required()
+    public void Apartments_and_buildings_are_the_only_forms_that_promote_every_field_to_required()
     {
         var source = RepositoryRoot.ReadFile("Core/Services/AdForms/AdFormSchemaCatalog.cs");
 
-        Assert.Equal(1, source.Split("everyFieldRequired: true").Length - 1);
-        Assert.Equal(1, source.Split("ApartmentOptionalFields,").Length - 1);
+        Assert.Equal(2, source.Split("everyFieldRequired: true").Length - 1);
+        Assert.Equal(1, source.Split("everyFieldRequired: true, ApartmentOptionalFields,").Length - 1);
+        Assert.Equal(1, source.Split("everyFieldRequired: true, BuildingOptionalFields,").Length - 1);
 
         var declaration = source[source.IndexOf("HashSet<string> ApartmentOptionalFields")..];
         declaration = declaration[..declaration.IndexOf("];")];

@@ -164,6 +164,7 @@ public static class DependencyInjection
 
         services.AddScoped<ILandRepository, LandRepository>();
         services.AddScoped<IApartmentRepository, ApartmentRepository>();
+        services.AddScoped<IBuildingRepository, BuildingRepository>();
         services.AddScoped<IShopRepository, ShopRepository>();
 
         services.AddScoped<IRescueRepository, RescueRepository>();
@@ -249,6 +250,7 @@ public static class DependencyInjection
         services.AddScoped<IUserListingSource, LandListingSource>();
         services.AddScoped<IUserListingSource, ApartmentListingSource>();
         services.AddScoped<IUserListingSource, ShopListingSource>();
+        services.AddScoped<IUserListingSource, BuildingListingSource>();
 
         services.AddScoped<IUserListingSource, RescueListingSource>();
         services.AddScoped<IUserListingSource, BloodRequestListingSource>();

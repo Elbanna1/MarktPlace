@@ -89,6 +89,7 @@ public static class CategoryCatalog
         new(SubCategoryType.Lands, CategoryType.RealEstate, "Lands", "أراضي"),
         new(SubCategoryType.Apartments, CategoryType.RealEstate, "Apartments", "شقق"),
         new(SubCategoryType.Shops, CategoryType.RealEstate, "Shops", "محلات"),
+        new(SubCategoryType.Buildings, CategoryType.RealEstate, "Buildings", "مباني"),
 
         new(SubCategoryType.Rescues, CategoryType.Charity, "Rescues", "الاستغاثة"),
         new(SubCategoryType.BloodRequests, CategoryType.Charity, "Blood Requests", "فصائل الدم"),

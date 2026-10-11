@@ -58,6 +58,7 @@ public static class ListingModuleCatalog
             [ListingModuleType.Land] = SubCategoryType.Lands,
             [ListingModuleType.Apartment] = SubCategoryType.Apartments,
             [ListingModuleType.Shop] = SubCategoryType.Shops,
+            [ListingModuleType.Building] = SubCategoryType.Buildings,
 
             [ListingModuleType.Rescue] = SubCategoryType.Rescues,
             [ListingModuleType.BloodRequest] = SubCategoryType.BloodRequests,

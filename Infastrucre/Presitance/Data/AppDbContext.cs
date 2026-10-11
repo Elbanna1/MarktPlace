@@ -411,6 +411,13 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ApartmentSuitableForLookup> ApartmentSuitableFors => Set<ApartmentSuitableForLookup>();
     public DbSet<ApartmentExchangeWithLookup> ApartmentExchangeTargets => Set<ApartmentExchangeWithLookup>();
 
+    public DbSet<Building> Buildings => Set<Building>();
+    public DbSet<BuildingImage> BuildingImages => Set<BuildingImage>();
+    public DbSet<BuildingFeatureSelection> BuildingFeatureSelections => Set<BuildingFeatureSelection>();
+    public DbSet<BuildingRentInclusionSelection> BuildingRentInclusionSelections =>
+        Set<BuildingRentInclusionSelection>();
+    public DbSet<BuildingTypeLookup> BuildingTypes => Set<BuildingTypeLookup>();
+
     public DbSet<Shop> Shops => Set<Shop>();
     public DbSet<ShopImage> ShopImages => Set<ShopImage>();
     public DbSet<ShopUtilitySelection> ShopUtilitySelections => Set<ShopUtilitySelection>();

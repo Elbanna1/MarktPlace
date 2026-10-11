@@ -122,6 +122,8 @@ public static class ImageConstants
 
     public const string ShopFolder = "shops";
 
+    public const string BuildingFolder = "buildings";
+
     public static readonly string[] AllFolders =
     {
         AdsFolder, ProfileFolder, LostFoundFolder, WorkshopsFolder, CraftsmenFolder, PaymentsFolder,
@@ -167,9 +169,9 @@ public static class ImageConstants
         FileUploadConstants.HomeApplianceVideoFolder, FileUploadConstants.BathroomSupplyVideoFolder,
         FileUploadConstants.PlantOrnamentVideoFolder,
 
-        LandFolder, ApartmentFolder, ShopFolder,
+        LandFolder, ApartmentFolder, ShopFolder, BuildingFolder,
         FileUploadConstants.LandVideoFolder, FileUploadConstants.ApartmentVideoFolder,
-        FileUploadConstants.ShopVideoFolder,
+        FileUploadConstants.ShopVideoFolder, FileUploadConstants.BuildingVideoFolder,
 
         FileUploadConstants.RescuesFolder, FileUploadConstants.BloodRequestsFolder,
         FileUploadConstants.AskConsultsFolder,

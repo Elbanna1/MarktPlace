@@ -164,3 +164,56 @@ public sealed class ShopListingSource : IUserListingSource
                 SupportsRepublish = true
             });
 }
+
+public sealed class BuildingListingSource : IUserListingSource
+{
+    private readonly AppDbContext _context;
+
+    public BuildingListingSource(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public ListingModuleType Type => ListingModuleType.Building;
+
+    public IQueryable<UserListingRow> Query(string? ownerId, DateTime utcNow, bool includeUnmoderated = false) =>
+        _context.Buildings
+            .AsNoTracking()
+            .IncludingUnmoderatedIf(ownerId is not null || includeUnmoderated)
+            .Where(x => ownerId == null || x.UserId == ownerId)
+            .Select(x => new UserListingRow
+            {
+                Id = x.Id,
+                OwnerId = x.UserId,
+
+                CategoryId = null,
+                SubCategoryId = null,
+                Type = ListingModuleType.Building,
+                Title = x.Title,
+                MainImageUrl = x.Images
+                    .OrderBy(i => i.SortOrder)
+                    .Select(i => i.ImageUrl)
+                    .FirstOrDefault(),
+                Price = x.Price ?? x.RentValue ?? x.DifferenceAmount,
+
+                Status = x.ModerationStatus == ModerationStatus.Approved
+                    ? (x.ExpireAt != null && x.ExpireAt <= utcNow
+                        ? ListingStatus.Expired
+                        : ListingStatus.Active)
+                    : x.ModerationStatus == ModerationStatus.Rejected
+                        ? ListingStatus.Rejected
+                        : x.ModerationStatus == ModerationStatus.Suspended
+                            ? ListingStatus.Suspended
+                            : ListingStatus.Pending,
+
+                ModerationStatus = x.ModerationStatus,
+                RejectionReason = x.RejectionReason,
+                ModerationNotes = x.ModerationNotes,
+                ModeratedAt = x.ModeratedAt,
+                CreatedAt = x.CreatedAt,
+                PublishedAt = x.PublishedAt,
+                ExpireAt = x.ExpireAt,
+                RepublishCount = x.RepublishCount,
+                SupportsRepublish = true
+            });
+}

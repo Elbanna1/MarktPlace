@@ -44,15 +44,21 @@ public static class FormFileExtensions
                 $"{FileUploadConstants.MaxSingleFileSizeBytes / (1024 * 1024)} ميجابايت.");
         }
 
-        using var memoryStream = new MemoryStream();
-        await file.CopyToAsync(memoryStream, cancellationToken);
+        var content = new byte[file.Length];
+        int read;
+
+        await using (var stream = file.OpenReadStream())
+            read = await stream.ReadAtLeastAsync(content, content.Length, throwOnEndOfStream: false, cancellationToken);
+
+        if (read < content.Length)
+            Array.Resize(ref content, read);
 
         return new UploadImageModel
         {
             FileName = file.FileName,
             ContentType = file.ContentType,
             Length = file.Length,
-            Content = memoryStream.ToArray()
+            Content = content
         };
     }
 

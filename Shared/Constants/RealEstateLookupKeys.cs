@@ -79,4 +79,6 @@ public static class RealEstateLookupKeys
     public const string LicenseTypes = "license-types";
 
     public const string RentSuitableActivities = "rent-suitable-activities";
+
+    public const string BuildingTypes = "building-types";
 }

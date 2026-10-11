@@ -421,3 +421,10 @@ public class ShopExchangeWithLookup : IRealEstateLookup
     public string Name { get; set; } = default!;
     public string NameEn { get; set; } = default!;
 }
+
+public class BuildingTypeLookup : IRealEstateLookup
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = default!;
+    public string NameEn { get; set; } = default!;
+}

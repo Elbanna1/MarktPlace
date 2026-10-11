@@ -51,6 +51,7 @@ internal static class AdFormFieldFactory
     public const string SectionLand = "بيانات الأرض";
     public const string SectionApartment = "بيانات الشقة";
     public const string SectionShop = "بيانات المحل";
+    public const string SectionBuildingDetails = "بيانات المبنى";
     public const string SectionLicensing = "التراخيص والحالة القانونية";
     public const string SectionOwnershipDocuments = "مستندات الملكية";
     public const string SectionLicensingAndOwnership = "التراخيص والملكية";

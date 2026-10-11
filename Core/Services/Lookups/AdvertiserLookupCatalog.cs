@@ -8,6 +8,8 @@ public static class AdvertiserLookupCatalog
 
     public const string NameParameter = "name";
 
+    public const string AdvertiserNameParameter = "advertiserName";
+
     private static readonly IReadOnlyDictionary<SubCategoryType, string> FilterParameters =
         new Dictionary<SubCategoryType, string>
         {
@@ -40,7 +42,9 @@ public static class AdvertiserLookupCatalog
             [SubCategoryType.IndustrialConsultancyOffices] = NameParameter,
             [SubCategoryType.AccountantOffices] = NameParameter,
 
-            [SubCategoryType.RestaurantsAndCafes] = NameParameter
+            [SubCategoryType.RestaurantsAndCafes] = NameParameter,
+
+            [SubCategoryType.Buildings] = AdvertiserNameParameter
         };
 
     public static IReadOnlyCollection<SubCategoryType> SupportedSubCategories =>
