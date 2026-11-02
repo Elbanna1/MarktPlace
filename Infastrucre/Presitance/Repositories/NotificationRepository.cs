@@ -107,6 +107,40 @@ public class NotificationRepository : INotificationRepository
             n.ReferenceId == referenceId &&
             (createdAfterUtc == null || n.CreatedAt > createdAfterUtc));
 
+    public async Task<IReadOnlyList<NotificationDelivery>> FindDeliveriesAsync(
+        IReadOnlyCollection<string> userIds,
+        NotificationType type,
+        IReadOnlyCollection<Guid> referenceIds,
+        CancellationToken cancellationToken = default)
+    {
+        var deliveries = new List<NotificationDelivery>();
+
+        if (userIds.Count == 0 || referenceIds.Count == 0)
+            return deliveries;
+
+        foreach (var batch in referenceIds.Chunk(500))
+        {
+            var ids = batch.Select(id => (Guid?)id).ToList();
+
+            var rows = await _context.Notifications
+                .AsNoTracking()
+                .Where(n => userIds.Contains(n.UserId) && n.Type == type && ids.Contains(n.ReferenceId))
+                .GroupBy(n => new { n.UserId, n.ReferenceId })
+                .Select(group => new
+                {
+                    group.Key.UserId,
+                    group.Key.ReferenceId,
+                    LastCreatedAt = group.Max(n => n.CreatedAt)
+                })
+                .ToListAsync(cancellationToken);
+
+            deliveries.AddRange(rows.Select(row =>
+                new NotificationDelivery(row.UserId, row.ReferenceId!.Value, row.LastCreatedAt)));
+        }
+
+        return deliveries;
+    }
+
     public async Task<IReadOnlySet<string>> FindRecipientsWithAsync(
         IReadOnlyCollection<string> userIds,
         NotificationType type,

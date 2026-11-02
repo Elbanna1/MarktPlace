@@ -74,11 +74,28 @@ publication. Both **owner** republish paths behave identically.
 
 ### R2.5a — Admin republish restarts the window in place
 
-`PATCH /api/v2/admin/ads/{type}/{id}/republish` (Admin + `Approve` permission, modules in
-`AdminRepublishPolicy` only — today مطاعم وكافيهات) is allowed from **5 days before** `ExpireAt` and at
-any time after it, for approved listings only. It sets `PublishedAt = now`, `ExpireAt = now + 30 days`,
+`PATCH /api/v2/admin/ads/{type}/{id}/republish` (Admin + `Approve` permission, **every module**) is
+allowed from **5 days before** `ExpireAt` and at any time after it, for approved listings only. It sets
+`PublishedAt = now`, `ExpireAt = now + 30 days`, resets `CreatedAt` so the listing sorts as new,
 increments `RepublishCount`, keeps the listing Approved and `FirstPublishedAt` unchanged, writes an
-audit entry and notifies the owner.
+audit entry and notifies the owner. For سيارات it also returns `Status` to `Active` and clears `ExpiredAt`.
+
+The whole check-and-renew runs under a row lock (`ListingRowOperations.RunExclusiveAsync`), so concurrent
+clicks renew exactly once; the losers receive the ordinary 400. Owner republish uses the same lock.
+
+### R2.5b — Expiry never deletes a listing
+
+A listing stays in the database for as long as it is not explicitly deleted by its owner or an
+administrator. There is no grace period and no automatic removal: the former 15-day hard delete of
+سيارات is gone, and with it the owner's "republish deadline".
+
+### R2.5c — Administrators are alerted once, five days before expiry
+
+`AdminListingExpiring` (58) reaches every Admin-role user once per publication cycle, for every module,
+as soon as the hourly job sees `now < ExpireAt <= now + 5 days`. The band (not a one-day slice) means a
+job outage produces a late alert rather than none. De-duplication is by `(admin, listing, sent after
+PublishedAt)` — a republish starts a new cycle. It links to `/admin/ads/{module}/{id}` and states the
+module, category and expiry date in Egypt time; all calculation stays in UTC.
 
 ### R2.6 — "No window" ≠ "expired"
 

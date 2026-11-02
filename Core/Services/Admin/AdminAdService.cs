@@ -115,7 +115,9 @@ public class AdminAdService : IAdminAdService
                 IsExpiringSoon = row.Status == ListingStatus.Active &&
                                  AdminRepublishPolicy.IsExpiringSoon(row.ExpireAt, utcNow),
                 CanRepublish = AdminRepublishPolicy.CanRepublish(
-                    row.Type, row.ModerationStatus, row.ExpireAt, utcNow),
+                                   row.Type, row.ModerationStatus, row.ExpireAt, utcNow) ||
+                               (row.ModerationStatus == ModerationStatus.Approved &&
+                                row.Status == ListingStatus.Expired),
                 RepublishCount = row.RepublishCount
             };
         }).ToList();
@@ -161,6 +163,10 @@ public class AdminAdService : IAdminAdService
         var publishedAt = ReadDate(values, "PublishedAt");
         var createdAt = ReadDate(values, "CreatedAt") ?? DateTime.UtcNow;
 
+        var isApproved = listing.ModerationStatus == ModerationStatus.Approved;
+        var isExpired = isApproved &&
+                        (ListingLifecycle.HasExpired(expireAt, utcNow) || IsStampedExpired(listing));
+
         return new AdminAdDetailsDto
         {
             Id = id,
@@ -181,7 +187,7 @@ public class AdminAdService : IAdminAdService
             OwnerName = string.IsNullOrWhiteSpace(owner?.Name) ? null : owner!.Name,
             OwnerPhone = owner?.PhoneNumber,
 
-            Status = ResolveStatus(listing.ModerationStatus, expireAt).ToString(),
+            Status = (isExpired ? ListingStatus.Expired : ResolveStatus(listing.ModerationStatus, expireAt)).ToString(),
             Moderation = new ListingModerationDto
             {
                 Status = listing.ModerationStatus.ToString(),
@@ -198,13 +204,13 @@ public class AdminAdService : IAdminAdService
             StartDate = publishedAt,
             EndDate = expireAt,
             ExpireAt = expireAt,
-            RemainingDays = ListingLifecycle.RemainingDays(expireAt, utcNow),
+            RemainingDays = isExpired ? 0 : ListingLifecycle.RemainingDays(expireAt, utcNow),
 
-            IsExpired = listing.ModerationStatus == ModerationStatus.Approved &&
-                        ListingLifecycle.HasExpired(expireAt, utcNow),
-            IsExpiringSoon = listing.ModerationStatus == ModerationStatus.Approved &&
+            IsExpired = isExpired,
+            IsExpiringSoon = isApproved && !isExpired &&
                              AdminRepublishPolicy.IsExpiringSoon(expireAt, utcNow),
-            CanRepublish = AdminRepublishPolicy.CanRepublish(type, listing.ModerationStatus, expireAt, utcNow),
+            CanRepublish = isExpired ||
+                           AdminRepublishPolicy.CanRepublish(type, listing.ModerationStatus, expireAt, utcNow),
             RepublishCount = ReadInt(values, "RepublishCount") ?? 0,
 
             ImageUrls = snapshot.ImageUrls,
@@ -489,46 +495,52 @@ public class AdminAdService : IAdminAdService
         if (!AdminRepublishPolicy.Supports(type))
             throw new BadRequestException("إعادة النشر من الإدارة غير متاحة لهذا القسم.");
 
-        var listing = await LoadAsync(type, id, cancellationToken);
+        var (listing, previousExpireAt, publishedAt, expireAt, republishCount) =
+            await _repository.RunExclusiveAsync(type, id, async () =>
+            {
+                var found = await LoadAsync(type, id, cancellationToken);
 
-        if (listing is not IExpiringListing expiring)
-            throw new BadRequestException("إعادة النشر من الإدارة غير متاحة لهذا القسم.");
+                if (found is Advertisement { Status: AdvertisementStatus.Deleted } or Advertisement { DeletedAt: not null })
+                    throw new NotFoundException("الإعلان غير موجود.");
 
-        if (listing.ModerationStatus != ModerationStatus.Approved)
-            throw new BadRequestException(
-                $"لا يمكن إعادة نشر إعلان حالته «{ModerationCatalog.NameOf(listing.ModerationStatus)}». " +
-                "إعادة النشر متاحة للإعلانات المعتمدة فقط.");
+                if (found.ModerationStatus != ModerationStatus.Approved)
+                    throw new BadRequestException(
+                        $"لا يمكن إعادة نشر إعلان حالته «{ModerationCatalog.NameOf(found.ModerationStatus)}». " +
+                        "إعادة النشر متاحة للإعلانات المعتمدة فقط.");
 
-        var now = DateTime.UtcNow;
-        var previousExpireAt = expiring.ExpireAt;
+                var now = DateTime.UtcNow;
+                var previous = WindowEndOf(found);
 
-        if (previousExpireAt is null)
-            throw new BadRequestException("لم يتم نشر هذا الإعلان بعد، ولذلك لا يحتاج إلى إعادة نشر.");
+                if (previous is null)
+                    throw new BadRequestException("لم يتم نشر هذا الإعلان بعد، ولذلك لا يحتاج إلى إعادة نشر.");
 
-        if (!AdminRepublishPolicy.IsWindowOpen(previousExpireAt, now))
-        {
-            var left = ListingLifecycle.RemainingDays(previousExpireAt, now) ?? 0;
+                if (!AdminRepublishPolicy.IsWindowOpen(previous, now) && !IsStampedExpired(found))
+                {
+                    var left = ListingLifecycle.RemainingDays(previous, now) ?? 0;
 
-            throw new BadRequestException(
-                $"إعادة النشر بتكون متاحة قبل انتهاء الإعلان بـ {AdminRepublishPolicy.WarningDays} أيام أو بعد انتهائه. " +
-                $"الإعلان لسه فاضل له {left} يوم.");
-        }
+                    throw new BadRequestException(
+                        $"إعادة النشر بتكون متاحة قبل انتهاء الإعلان بـ {AdminRepublishPolicy.WarningDays} أيام أو بعد انتهائه. " +
+                        $"الإعلان لسه فاضل له {left} يوم.");
+                }
 
-        expiring.PublishedAt = now;
-        expiring.ExpireAt = ListingLifecycle.EndOf(now);
-        expiring.FirstPublishedAt ??= now;
-        expiring.RepublishCount++;
+                StartWindow(found, now);
+                var count = CountRepublish(found);
 
-        listing.ModeratedAt = now;
-        listing.ModeratedBy = adminUserId;
+                found.ModeratedAt = now;
+                found.ModeratedBy = adminUserId;
 
-        await _repository.SaveModerationAsync(type, cancellationToken);
+                _repository.MarkAsNew(found, now);
+
+                await _repository.SaveModerationAsync(type, cancellationToken);
+
+                return (found, previous.Value, now, WindowEndOf(found)!.Value, count);
+            }, cancellationToken);
 
         await _audit.LogAsync(
             AdminAuditAction.RepublishAd, AdminAuditCatalog.Targets.Advertisement, id.ToString(),
             $"إعادة نشر إعلان: {listing.ListingTitle}",
-            oldValue: previousExpireAt.Value.ToString("O"),
-            newValue: expiring.ExpireAt.Value.ToString("O"),
+            oldValue: previousExpireAt.ToString("O"),
+            newValue: expireAt.ToString("O"),
             adminUserId: adminUserId, cancellationToken: cancellationToken);
 
         await NotifyAsync(
@@ -546,16 +558,15 @@ public class AdminAdService : IAdminAdService
             TypeId = type,
             Type = type.ToString(),
             Title = listing.ListingTitle,
-            PublishedAt = now,
-            ExpireAt = expiring.ExpireAt.Value,
+            PublishedAt = publishedAt,
+            ExpireAt = expireAt,
             PreviousExpireAt = previousExpireAt,
-            RemainingDays = ListingLifecycle.RemainingDays(expiring.ExpireAt, now) ?? 0,
-            RepublishCount = expiring.RepublishCount,
+            RemainingDays = ListingLifecycle.RemainingDays(expireAt, publishedAt) ?? 0,
+            RepublishCount = republishCount,
             Status = ListingStatus.Active.ToString(),
             Moderation = moderation
         };
     }
-
     private static int? ReadInt(IReadOnlyDictionary<string, object?> values, string name) =>
         values.TryGetValue(name, out var value) && value is int number ? number : null;
 
@@ -596,30 +607,46 @@ public class AdminAdService : IAdminAdService
         _ => null
     };
 
+    private static bool IsStampedExpired(IModeratedListing listing) =>
+        listing is Advertisement { Status: AdvertisementStatus.Expired };
+
     private static void OpenWindow(IModeratedListing listing, DateTime now)
+    {
+        if (WindowEndOf(listing) is { } current && current > now && !IsStampedExpired(listing))
+            return;
+
+        StartWindow(listing, now);
+    }
+
+    private static void StartWindow(IModeratedListing listing, DateTime now)
     {
         switch (listing)
         {
             case IExpiringListing expiring:
-                if (expiring.ExpireAt is { } current && current > now)
-                    return;
-
                 expiring.PublishedAt = now;
                 expiring.ExpireAt = ListingLifecycle.EndOf(now);
                 expiring.FirstPublishedAt ??= now;
                 break;
 
             case Advertisement advertisement:
-                if (advertisement.ExpireAt is { } running && running > now)
-                    return;
-
                 advertisement.PublishedAt = now;
                 advertisement.ExpireAt = ListingLifecycle.EndOf(now);
                 advertisement.FirstPublishedAt ??= now;
+
+                if (advertisement.Status == AdvertisementStatus.Expired)
+                    advertisement.Status = AdvertisementStatus.Active;
+
+                advertisement.ExpiredAt = null;
                 break;
         }
     }
 
+    private static int CountRepublish(IModeratedListing listing) => listing switch
+    {
+        IExpiringListing expiring => ++expiring.RepublishCount,
+        Advertisement advertisement => ++advertisement.RepublishCount,
+        _ => 0
+    };
     private static AdminModerationResultDto ToResult(
         ListingModuleType type, Guid id, IModeratedListing listing) => new()
     {

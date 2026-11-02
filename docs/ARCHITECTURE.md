@@ -252,7 +252,7 @@ Both are `BackgroundService` with a `PeriodicTimer`.
 
 | Service | Interval | Start delay | Does |
 | --- | --- | --- | --- |
-| `ListingLifecycleService` | 1 hour | 15 s | Expiry warnings, the "انتهت مدة إعلانك" notice, سيارات' grace-period deletion. It only raises notifications and tidies up — **public visibility is decided by the `ExpireAt` column**, not by this job |
+| `ListingLifecycleService` | 1 hour | 15 s | Calls `IListingLifecycleProcessor`: owner expiry warnings, the 5-day administrator alert, the "انتهت مدة إعلانك" notice and the سيارات `Status` stamp. Every step is isolated, so one failure cannot starve the next. It never deletes a listing — **public visibility is decided by the `ExpireAt` column**, not by this job |
 | `BannerBookingLifecycleService` | 1 hour | 45 s | Publishes scheduled bookings, expires finished ones, sweeps the preview folder (24 h retention) |
 
 They are separate on purpose: different lifecycles over different tables, and a failure in one must

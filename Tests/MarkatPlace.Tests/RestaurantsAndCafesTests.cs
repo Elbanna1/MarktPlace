@@ -449,11 +449,11 @@ public class RestaurantsAndCafesTests
     }
 
     [Fact]
-    public void Republish_is_never_offered_for_other_modules_or_unapproved_listings()
+    public void Republish_is_offered_for_every_module_but_never_for_unapproved_listings()
     {
         var expireAt = Baseline.AddDays(1);
 
-        Assert.False(AdminRepublishPolicy.CanRepublish(ListingModuleType.AccountantOffice, ModerationStatus.Approved, expireAt, Baseline));
+        Assert.True(AdminRepublishPolicy.CanRepublish(ListingModuleType.AccountantOffice, ModerationStatus.Approved, expireAt, Baseline));
         Assert.False(AdminRepublishPolicy.CanRepublish(Module, ModerationStatus.Pending, expireAt, Baseline));
         Assert.False(AdminRepublishPolicy.CanRepublish(Module, ModerationStatus.Suspended, expireAt, Baseline));
         Assert.False(AdminRepublishPolicy.CanRepublish(Module, ModerationStatus.Approved, null, Baseline));
@@ -594,10 +594,7 @@ public class RestaurantsAndCafesTests
 
         await Assert.ThrowsAsync<BadRequestException>(() => admin.RepublishAsync(Module, pending.Id, "admin"));
 
-        await Assert.ThrowsAsync<BadRequestException>(() =>
-            admin.RepublishAsync(ListingModuleType.AccountantOffice, office.Id, "admin"));
-
-        await Assert.ThrowsAsync<NotFoundException>(() => admin.RepublishAsync(Module, office.Id, "admin"));
+await Assert.ThrowsAsync<NotFoundException>(() => admin.RepublishAsync(Module, office.Id, "admin"));
         await Assert.ThrowsAsync<NotFoundException>(() => admin.RepublishAsync(Module, Guid.NewGuid(), "admin"));
 
         Assert.DoesNotContain(audit.Calls, call => call.Method == nameof(IAdminAuditService.LogAsync));

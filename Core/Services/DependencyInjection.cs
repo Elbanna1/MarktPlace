@@ -56,6 +56,7 @@ public static class DependencyInjection
         services.AddScoped<IListingEditReviewNotifier, ListingEditReviewNotifier>();
 
         services.AddScoped<IListingRepublishService, ListingRepublishService>();
+        services.AddScoped<IListingLifecycleProcessor, ListingLifecycleProcessor>();
 
         services.AddScoped<IAdminAdService, AdminAdService>();
 

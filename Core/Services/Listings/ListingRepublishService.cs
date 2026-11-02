@@ -37,39 +37,46 @@ public class ListingRepublishService : IListingRepublishService
         if (type == ListingModuleType.Advertisement)
             return await RepublishAdvertisementAsync(userId, listingId);
 
-        var listing = await _lifecycle.FindAsync(type, listingId, cancellationToken)
-            ?? throw new NotFoundException("الإعلان غير موجود.");
-
-        if (listing is not IModeratedListing moderated || moderated.OwnerUserId != userId)
-            throw new NotFoundException("الإعلان غير موجود.");
-
-        var now = DateTime.UtcNow;
-
-        if (listing.ExpireAt is not { } expireAt)
+        var (listing, moderated) = await _lifecycle.RunExclusiveAsync(type, listingId, async () =>
         {
-            throw new BadRequestException(
-                "لم يتم نشر هذا الإعلان بعد، ولذلك لا يحتاج إلى إعادة نشر.");
-        }
+            var found = await _lifecycle.FindAsync(type, listingId, cancellationToken)
+                ?? throw new NotFoundException("الإعلان غير موجود.");
 
-        if (expireAt > now)
-        {
-            var left = ListingLifecycle.RemainingDays(expireAt, now) ?? 0;
+            if (found is not IModeratedListing owned || owned.OwnerUserId != userId)
+                throw new NotFoundException("الإعلان غير موجود.");
 
-            throw new BadRequestException(
-                $"لا يمكن إعادة نشر إعلان ما زال ساريًا. يتبقى له {left} يوم.");
-        }
+            var now = DateTime.UtcNow;
 
-        listing.PublishedAt = null;
-        listing.ExpireAt = null;
-        listing.RepublishCount++;
+            if (found.ExpireAt is not { } expireAt)
+            {
+                throw new BadRequestException(
+                    "لم يتم نشر هذا الإعلان بعد، ولذلك لا يحتاج إلى إعادة نشر.");
+            }
 
-        moderated.ModerationStatus = ModerationStatus.Pending;
-        moderated.ModeratedAt = null;
-        moderated.ModeratedBy = null;
-        moderated.RejectionReason = null;
-        moderated.ModerationNotes = null;
+            if (expireAt > now)
+            {
+                var left = ListingLifecycle.RemainingDays(expireAt, now) ?? 0;
 
-        await _lifecycle.SaveAsync(type, cancellationToken);
+                throw new BadRequestException(
+                    $"لا يمكن إعادة نشر إعلان ما زال ساريًا. يتبقى له {left} يوم.");
+            }
+
+            found.PublishedAt = null;
+            found.ExpireAt = null;
+            found.RepublishCount++;
+
+            owned.ModerationStatus = ModerationStatus.Pending;
+            owned.ModeratedAt = null;
+            owned.ModeratedBy = null;
+            owned.RejectionReason = null;
+            owned.ModerationNotes = null;
+
+            _lifecycle.MarkAsNew(found, now);
+
+            await _lifecycle.SaveAsync(type, cancellationToken);
+
+            return (found, owned);
+        }, cancellationToken);
 
         await _notifications.NotifyAsync(
             userId, type, NotificationAction.Republished, listingId, moderated.ListingTitle);

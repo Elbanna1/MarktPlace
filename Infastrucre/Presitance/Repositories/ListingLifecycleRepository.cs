@@ -4,6 +4,7 @@ using Persistence.Configurations;
 using Persistence.Data;
 using Persistence.Listings;
 using ServicesAbstraction;
+using Shared.Constants;
 using Shared.Enums;
 
 namespace Persistence.Repositories;
@@ -34,15 +35,25 @@ public class ListingLifecycleRepository : IListingLifecycleRepository
     public Task SaveAsync(ListingModuleType type, CancellationToken cancellationToken = default) =>
         _context.SaveChangesAsync(cancellationToken);
 
+    public Task<T> RunExclusiveAsync<T>(
+        ListingModuleType type, Guid id, Func<Task<T>> operation,
+        CancellationToken cancellationToken = default) =>
+        ListingRowOperations.RunExclusiveAsync(_context, type, id, operation, cancellationToken);
+
+    public void MarkAsNew(object listing, DateTime utcNow) =>
+        ListingRowOperations.MarkAsNew(_context, listing, utcNow);
+
     public async Task<IReadOnlyList<ExpiringListingRow>> GetWindowsClosingBetweenAsync(
         DateTime fromUtc, DateTime toUtc, CancellationToken cancellationToken = default)
     {
         var rows = new List<ExpiringListingRow>();
 
-        foreach (var (module, entityType) in ModerationModuleRegistry.EntityTypes)
+        var modules = ModerationModuleRegistry.EntityTypes
+            .Where(entry => typeof(IExpiringListing).IsAssignableFrom(entry.Value))
+            .DistinctBy(entry => entry.Value);
+
+        foreach (var (module, entityType) in modules)
         {
-            if (!typeof(IExpiringListing).IsAssignableFrom(entityType))
-                continue;
 
             var method = ScanMethod.MakeGenericMethod(entityType);
 
@@ -77,7 +88,7 @@ public class ListingLifecycleRepository : IListingLifecycleRepository
 
         return entities
             .Select(x => new ExpiringListingRow(
-                module,
+                x is LostFoundPost post ? ListingModuleCatalog.ModuleOf(post.PostType) : module,
                 (Guid)_context.Entry(x).Property("Id").CurrentValue!,
                 x.OwnerUserId,
                 x.ListingTitle,

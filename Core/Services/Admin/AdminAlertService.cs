@@ -12,6 +12,7 @@ public class AdminAlertService : IAdminAlertService
     private readonly IUserRepository _users;
     private readonly IUserListingRepository _listings;
     private readonly ILookupService _lookups;
+    private readonly INotificationRepository _notificationHistory;
     private readonly ILogger<AdminAlertService> _logger;
 
     public AdminAlertService(
@@ -19,14 +20,93 @@ public class AdminAlertService : IAdminAlertService
         IUserRepository users,
         IUserListingRepository listings,
         ILookupService lookups,
+        INotificationRepository notificationHistory,
         ILogger<AdminAlertService> logger)
     {
         _notifications = notifications;
         _users = users;
         _listings = listings;
         _lookups = lookups;
+        _notificationHistory = notificationHistory;
         _logger = logger;
     }
+
+    public async Task<int> NotifyListingsExpiringAsync(
+        IReadOnlyCollection<ExpiringListingRow> listings, DateTime utcNow,
+        CancellationToken cancellationToken = default)
+    {
+        if (listings.Count == 0)
+            return 0;
+
+        var admins = await GetAdminIdsAsync(cancellationToken);
+
+        if (admins.Count == 0)
+        {
+            _logger.LogWarning(
+                "{Count} listing(s) are about to expire but no administrator exists to notify.", listings.Count);
+            return 0;
+        }
+
+        var deliveries = await _notificationHistory.FindDeliveriesAsync(
+            admins,
+            NotificationType.AdminListingExpiring,
+            listings.Select(listing => listing.Id).Distinct().ToList(),
+            cancellationToken);
+
+        var lastSent = deliveries.ToDictionary(
+            delivery => (delivery.UserId, delivery.ReferenceId),
+            delivery => delivery.LastCreatedAt);
+
+        var sent = 0;
+
+        foreach (var listing in listings)
+        {
+            var recipients = admins
+                .Where(admin => !WasToldThisCycle(lastSent, admin, listing))
+                .ToList();
+
+            if (recipients.Count == 0)
+                continue;
+
+            try
+            {
+                var context = await ListingContextResolver.ResolveAsync(
+                    _listings, _lookups, _users, listing.Type, listing.Id, cancellationToken);
+
+                var content = NotificationCatalog.AdminAlerts.ListingExpiring(
+                    listing.Type,
+                    listing.Id,
+                    listing.Title,
+                    listing.ExpireAt,
+                    ListingLifecycle.RemainingDays(listing.ExpireAt, utcNow) ?? 0,
+                    ownerId: listing.OwnerId,
+                    ownerName: context?.OwnerName,
+                    categoryId: context?.CategoryId ?? listing.CategoryId,
+                    categoryName: context?.CategoryName,
+                    subCategoryId: context?.SubCategoryId ?? listing.SubCategoryId,
+                    subCategoryName: context?.SubCategoryName,
+                    imageUrl: context?.ImageUrl);
+
+                sent += await _notifications.CreateManyAsync(
+                    recipients, content, listing.Id, NotificationAction.Expired, cancellationToken);
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                _logger.LogError(exception,
+                    "Failed to alert administrators that {Module} {ListingId} is about to expire.",
+                    listing.Type, listing.Id);
+            }
+        }
+
+        return sent;
+    }
+
+    private static bool WasToldThisCycle(
+        IReadOnlyDictionary<(string UserId, Guid ReferenceId), DateTime> lastSent,
+        string adminId,
+        ExpiringListingRow listing) =>
+        lastSent.TryGetValue((adminId, listing.Id), out var sentAt) &&
+        (listing.PublishedAt is not { } cycleStart || sentAt > cycleStart);
 
     public async Task NotifyPendingListingAsync(
         ListingModuleType listingType, Guid listingId, string? title,

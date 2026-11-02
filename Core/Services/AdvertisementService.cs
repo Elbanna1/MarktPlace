@@ -229,62 +229,61 @@ public class AdvertisementService : IAdvertisementService
     public async Task<AdvertisementDetailsDto> RepublishAsync(
         string ownerId, Guid id, UpdateAdvertisementRequest? edits = null)
     {
-        var advertisement = await _repository.GetOwnedAsync(id, ownerId)
-            ?? throw new NotFoundException("الإعلان مش موجود.");
-
-        var now = DateTime.UtcNow;
-
-        if (advertisement.Status == AdvertisementStatus.Deleted)
-            throw new BadRequestException("الإعلان المحذوف مش ممكن يتنشر تاني.");
-
-        if (!advertisement.IsExpiredAt(now))
+        var advertisement = await _repository.RunExclusiveAsync(id, async () =>
         {
-            throw new BadRequestException(
-                "الإعلان اللي لسه سارٍ مش محتاج إعادة نشر. " +
-                $"لسه فاضل له {advertisement.RemainingDaysAt(now)} يوم.");
-        }
+            var owned = await _repository.GetOwnedAsync(id, ownerId)
+                ?? throw new NotFoundException("الإعلان مش موجود.");
 
-        if (advertisement.ExpiredAt is { } expiredAt &&
-            expiredAt.AddDays(AdvertisementConstants.ExpiredGracePeriodDays) < now)
-        {
-            throw new BadRequestException("معاد إعادة النشر للإعلان ده عدى.");
-        }
+            var now = DateTime.UtcNow;
 
-        var freeUntil = (advertisement.FirstPublishedAt ?? advertisement.CreatedAt)
-            .AddYears(AdvertisementConstants.FreeRepublishPeriodYears);
-        if (now > freeUntil)
-        {
-            throw new PaymentRequiredException(
-                "إعادة النشر مجانية في السنة الأولى بس. عشان تنشر الإعلان ده تاني لازم تدفع أونلاين.");
-        }
+            if (owned.Status == AdvertisementStatus.Deleted)
+                throw new BadRequestException("الإعلان المحذوف مش ممكن يتنشر تاني.");
 
-        if (edits is not null)
-        {
-            await EnsureSubCategoryExistsAsync(edits.SubCategoryId);
+            if (!owned.IsExpiredAt(now))
+            {
+                throw new BadRequestException(
+                    "الإعلان اللي لسه سارٍ مش محتاج إعادة نشر. " +
+                    $"لسه فاضل له {owned.RemainingDaysAt(now)} يوم.");
+            }
 
-            _mapper.Map(edits, advertisement);
+            var freeUntil = (owned.FirstPublishedAt ?? owned.CreatedAt)
+                .AddYears(AdvertisementConstants.FreeRepublishPeriodYears);
+            if (now > freeUntil)
+            {
+                throw new PaymentRequiredException(
+                    "إعادة النشر مجانية في السنة الأولى بس. عشان تنشر الإعلان ده تاني لازم تدفع أونلاين.");
+            }
 
-            advertisement.AdvertisementFeatures.Clear();
-            await AttachFeaturesAsync(advertisement, edits.FeatureIds);
-        }
+            if (edits is not null)
+            {
+                await EnsureSubCategoryExistsAsync(edits.SubCategoryId);
 
-        advertisement.Status = AdvertisementStatus.Active;
-        advertisement.CreatedAt = now;
-        advertisement.ExpiredAt = null;
-        advertisement.DeletedAt = null;
-        advertisement.RepublishCount++;
+                _mapper.Map(edits, owned);
 
-        advertisement.PublishedAt = null;
-        advertisement.ExpireAt = null;
+                owned.AdvertisementFeatures.Clear();
+                await AttachFeaturesAsync(owned, edits.FeatureIds);
+            }
 
-        advertisement.ModerationStatus = ModerationStatus.Pending;
-        advertisement.ModeratedAt = null;
-        advertisement.ModeratedBy = null;
-        advertisement.RejectionReason = null;
-        advertisement.ModerationNotes = null;
+            owned.Status = AdvertisementStatus.Active;
+            owned.CreatedAt = now;
+            owned.ExpiredAt = null;
+            owned.DeletedAt = null;
+            owned.RepublishCount++;
 
-        _repository.Update(advertisement);
-        await _repository.SaveChangesAsync();
+            owned.PublishedAt = null;
+            owned.ExpireAt = null;
+
+            owned.ModerationStatus = ModerationStatus.Pending;
+            owned.ModeratedAt = null;
+            owned.ModeratedBy = null;
+            owned.RejectionReason = null;
+            owned.ModerationNotes = null;
+
+            _repository.Update(owned);
+            await _repository.SaveChangesAsync();
+
+            return owned;
+        });
 
         await _notificationService.NotifyAsync(
             ownerId, ListingModuleType.Advertisement, NotificationAction.Republished,

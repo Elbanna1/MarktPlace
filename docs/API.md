@@ -1,4 +1,4 @@
-﻿# API
+# API
 
 [← README](../README.md) · Related: [AUTHENTICATION](AUTHENTICATION.md) · [AUTHORIZATION](AUTHORIZATION.md) · [MODULES](MODULES.md) · [BUSINESS_RULES](BUSINESS_RULES.md)
 
@@ -463,7 +463,7 @@ Every route requires the `Admin` role **and** the specific page permission. See
 | `PATCH` | `/ads/{type}/{id}/approve` | Approve → **opens the 30-day window** |
 | `PATCH` | `/ads/{type}/{id}/reject` | Reject with a reason |
 | `PATCH` | `/ads/{type}/{id}/suspend` | Suspend |
-| `PATCH` | `/ads/{type}/{id}/republish` | **Admin republish**: restart the 30-day window (approved listings, ≤ 5 days left or expired, modules in `AdminRepublishPolicy` only) |
+| `PATCH` | `/ads/{type}/{id}/republish` | **Admin republish**: restart the 30-day window (approved listings, ≤ 5 days left or expired, every module). Returns `publishedAt`, `expireAt`, `previousExpireAt`, `remainingDays`, `republishCount`, `status` |
 | `DELETE` | `/ads/{type}/{id}` | Delete any listing |
 | `GET` | `/moderation/overview` | |
 | `PATCH` | `/payments/{id}/approve`, `/reject` | Manual payment decisions |

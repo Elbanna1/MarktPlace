@@ -28,4 +28,8 @@ public interface IAdminAlertService
     Task NotifyBannerExpiringAsync(
         Guid bookingId, string? title, DateTime endDate, int daysLeft,
         CancellationToken cancellationToken = default);
+
+    Task<int> NotifyListingsExpiringAsync(
+        IReadOnlyCollection<ExpiringListingRow> listings, DateTime utcNow,
+        CancellationToken cancellationToken = default);
 }

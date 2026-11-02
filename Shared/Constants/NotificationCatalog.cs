@@ -445,6 +445,55 @@ public static class NotificationCatalog
             };
         }
 
+        public static NotificationContent ListingExpiring(
+            ListingModuleType module,
+            Guid listingId,
+            string? title,
+            DateTime expireAtUtc,
+            int daysLeft,
+            string? ownerId = null,
+            string? ownerName = null,
+            int? categoryId = null,
+            string? categoryName = null,
+            int? subCategoryId = null,
+            string? subCategoryName = null,
+            string? imageUrl = null)
+        {
+            var subject = For(module);
+
+            var category = string.IsNullOrWhiteSpace(categoryName) ? null : categoryName.Trim();
+            var sub = string.IsNullOrWhiteSpace(subCategoryName) ? null : subCategoryName.Trim();
+            var owner = string.IsNullOrWhiteSpace(ownerName) ? null : ownerName.Trim();
+
+            var place = category is null ? null : sub is null ? category : $"{category} ← {sub}";
+            var date = ListingLifecycle.ToDisplayTime(expireAtUtc);
+
+            var body = $"{subject.EntityName} ينتهي خلال {daysLeft} يوم (في {date:yyyy/MM/dd}).";
+
+            if (place is not null)
+                body = $"{body} القسم: {place}.";
+
+            return Content(
+                title: "إعلان يقترب من الانتهاء",
+                body: Describe(body, title),
+                type: NotificationType.AdminListingExpiring,
+                icon: "⏳",
+                referenceType: subject.ReferenceType,
+                entityName: subject.EntityName,
+                deepLink: $"/admin/ads/{module}/{listingId}",
+                listingType: module) with
+            {
+                CategoryId = categoryId,
+                SubCategoryId = subCategoryId,
+                CategoryName = category,
+                SubCategoryName = sub,
+                ListingTitle = string.IsNullOrWhiteSpace(title) ? null : title.Trim(),
+                OwnerId = ownerId,
+                OwnerName = owner,
+                ImageUrl = imageUrl
+            };
+        }
+
         public static NotificationContent NewReport(
             Guid reportId, ListingModuleType module, Guid listingId, string? listingTitle, string reasonName) =>
             Content(

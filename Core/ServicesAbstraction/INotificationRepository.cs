@@ -4,8 +4,16 @@ using Shared.Enums;
 
 namespace ServicesAbstraction;
 
+public sealed record NotificationDelivery(string UserId, Guid ReferenceId, DateTime LastCreatedAt);
+
 public interface INotificationRepository
 {
+    Task<IReadOnlyList<NotificationDelivery>> FindDeliveriesAsync(
+        IReadOnlyCollection<string> userIds,
+        NotificationType type,
+        IReadOnlyCollection<Guid> referenceIds,
+        CancellationToken cancellationToken = default);
+
     Task AddAsync(Notification notification);
 
     Task AddRangeAsync(

@@ -53,6 +53,12 @@ public interface IAdminAdRepository
 
     Task SaveModerationAsync(ListingModuleType type, CancellationToken cancellationToken = default);
 
+    Task<T> RunExclusiveAsync<T>(
+        ListingModuleType type, Guid id, Func<Task<T>> operation,
+        CancellationToken cancellationToken = default);
+
+    void MarkAsNew(IModeratedListing listing, DateTime utcNow);
+
     Task<AdminListingSnapshot?> LoadListingAsync(
         ListingModuleType type, Guid id, CancellationToken cancellationToken = default);
 

@@ -2,6 +2,7 @@ using Persistence.Configurations;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
+using Persistence.Listings;
 using ServicesAbstraction;
 using Shared.Constants;
 using Shared.DTOs.Advertisements;
@@ -300,27 +301,46 @@ public class AdvertisementRepository : IAdvertisementRepository
     public async Task<IReadOnlyList<Advertisement>> GetAdvertisementsExpiringBetweenAsync(
         DateTime fromUtc, DateTime toUtc) =>
         await _context.Advertisements
+            .AsNoTracking()
             .Where(a => a.Status == AdvertisementStatus.Active
                         && a.ExpireAt > fromUtc
                         && a.ExpireAt <= toUtc)
             .ToListAsync();
 
-    public async Task<IReadOnlyList<Advertisement>> GetAdvertisementsToExpireAsync(DateTime utcNow) =>
-        await _context.Advertisements
-            .Where(a => a.Status == AdvertisementStatus.Active && a.ExpireAt <= utcNow)
-            .ToListAsync();
-
-    public async Task<IReadOnlyList<Advertisement>> GetAdvertisementsToDeleteAsync(DateTime utcNow)
+    public async Task<IReadOnlyList<ExpiringListingRow>> ExpireDueAdvertisementsAsync(
+        DateTime utcNow, CancellationToken cancellationToken = default)
     {
-        var cutoff = utcNow.AddDays(-AdvertisementConstants.ExpiredGracePeriodDays);
+        var due = await _context.Advertisements
+            .AsNoTracking()
+            .Where(a => a.Status == AdvertisementStatus.Active && a.ExpireAt <= utcNow)
+            .Select(a => new ExpiringListingRow(
+                ListingModuleType.Advertisement, a.Id, a.OwnerId, a.Title, a.ExpireAt!.Value,
+                a.PublishedAt, a.CategoryId, a.SubCategoryId))
+            .ToListAsync(cancellationToken);
 
-        return await _context.Advertisements
-            .Include(a => a.Images)
-            .Where(a => a.Status == AdvertisementStatus.Expired
-                        && a.ExpiredAt != null
-                        && a.ExpiredAt <= cutoff)
-            .ToListAsync();
+        var expired = new List<ExpiringListingRow>(due.Count);
+
+        foreach (var row in due)
+        {
+            var updated = await _context.Advertisements
+                .Where(a => a.Id == row.Id
+                            && a.Status == AdvertisementStatus.Active
+                            && a.ExpireAt <= utcNow)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(a => a.Status, AdvertisementStatus.Expired)
+                    .SetProperty(a => a.ExpiredAt, utcNow), cancellationToken);
+
+            if (updated == 1)
+                expired.Add(row);
+        }
+
+        return expired;
     }
+
+    public Task<T> RunExclusiveAsync<T>(
+        Guid id, Func<Task<T>> operation, CancellationToken cancellationToken = default) =>
+        ListingRowOperations.RunExclusiveAsync(
+            _context, ListingModuleType.Advertisement, id, operation, cancellationToken);
 
     public Task<AdvertisementImage?> GetImageAsync(Guid imageId) =>
         _context.AdvertisementImages

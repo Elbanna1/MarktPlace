@@ -440,11 +440,10 @@ On top of it, `PATCH /api/v2/admin/ads/{type}/{id}/republish` lets an administra
 
 - **Who:** `Admin` role + the `Approve` permission on the ads page (same as approval). Audited as
   `RepublishAd` (old and new `ExpireAt`); the owner is notified («تمت إعادة نشر …»).
-- **Which modules:** only those in `AdminRepublishPolicy` — currently **مطاعم وكافيهات** only. Any other
-  `{type}` answers `400`, an id that is not in that module's table `404`.
+- **Which modules:** every module, including سيارات. An id that is not in that module's table answers `404`.
 - **When:** the listing must be approved and its `ExpireAt` at most **5 days** away, or already past.
   Earlier → `400` with the days left.
-- **Effect:** `PublishedAt = now`, `ExpireAt = now + 30 days`, `RepublishCount + 1`, `ModeratedAt/By`
+- **Effect:** `PublishedAt = now`, `ExpireAt = now + 30 days`, `CreatedAt = now`, `RepublishCount + 1`, `ModeratedAt/By`
   stamped; `FirstPublishedAt` unchanged. It stays `Approved`, so it is public again immediately.
 
 The owner-side `POST /api/advertisements/{id}/republish` (expired only, back to Pending) is unchanged.

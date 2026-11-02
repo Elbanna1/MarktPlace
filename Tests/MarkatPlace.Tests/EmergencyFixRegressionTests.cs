@@ -197,6 +197,11 @@ public class EmergencyFixRegressionTests
 
         public Task<int> DeleteAllAsync(string userId) => throw new NotSupportedException();
 
+        public Task<IReadOnlyList<NotificationDelivery>> FindDeliveriesAsync(
+            IReadOnlyCollection<string> userIds, NotificationType type,
+            IReadOnlyCollection<Guid> referenceIds, CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
         public Task<bool> ExistsAsync(
             string userId, NotificationType type, Guid? referenceId, DateTime? createdAfterUtc = null) =>
             throw new NotSupportedException();

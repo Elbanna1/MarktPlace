@@ -770,6 +770,33 @@ are read-only facts about any expiring listing; only the action itself is gated.
 
 ---
 
+> **Superseded in part by D-41:** the per-module allow-list is gone; every module may be republished.
+
+---
+
+## D-41 — The lifecycle is one processor, covers every module, and never deletes
+
+**Problem.** Admin republish answered 400 for every module but one, and for سيارات it could never have
+worked because `Advertisement` is not `IExpiringListing`. No administrator alert existed at all. The job
+hard-deleted expired سيارات after 15 days. Approving an expired car reopened its window but left
+`Status = Expired`, so it stayed hidden. One failing step aborted the whole pass, and two concurrent
+republishes both passed validation.
+
+**Decision.** `IListingLifecycleProcessor` holds the whole pass, in isolated steps, and takes `utcNow` so
+it can be tested without a clock. `AdminAdService.StartWindow` is the single place a window starts, with
+one arm per entity family. `ListingRowOperations.RunExclusiveAsync` takes `UPDLOCK` inside the EF
+execution strategy for republish on all paths, and stays on `SaveChanges` so the interceptors still run.
+The سيارات stamp is a conditional `ExecuteUpdate`, so a job holding a stale read cannot overwrite a
+concurrent republish.
+
+**Why `Advertisement` still does not implement `IExpiringListing`.** That reasoning stands: the two-arm
+switch is still the smaller change.
+
+**Consequence.** Rows stranded by the old approve bug (`Status = Expired`, `ExpireAt` in the future) are
+not rewritten by any automatic step; administrators see them as expired and can republish them.
+
+---
+
 ## D-40 — Listing state changes are pushed from one SaveChanges interceptor
 
 **Problem.** After an administrator approved a listing nothing told any open screen: the only

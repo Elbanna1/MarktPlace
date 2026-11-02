@@ -27,9 +27,11 @@ public interface IAdvertisementRepository
 
     Task<IReadOnlyList<Advertisement>> GetAdvertisementsExpiringBetweenAsync(DateTime fromUtc, DateTime toUtc);
 
-    Task<IReadOnlyList<Advertisement>> GetAdvertisementsToExpireAsync(DateTime utcNow);
+    Task<IReadOnlyList<ExpiringListingRow>> ExpireDueAdvertisementsAsync(
+        DateTime utcNow, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<Advertisement>> GetAdvertisementsToDeleteAsync(DateTime utcNow);
+    Task<T> RunExclusiveAsync<T>(
+        Guid id, Func<Task<T>> operation, CancellationToken cancellationToken = default);
 
     Task<AdvertisementImage?> GetImageAsync(Guid imageId);
 

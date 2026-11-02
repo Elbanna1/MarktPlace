@@ -410,7 +410,7 @@ public class ListingInteractionService : IListingInteractionService
 
                         CategoryId = (int)(category ?? 0),
                         SubCategoryId = (int)(subCategory ?? 0),
-                        SupportsRepublish = module == ListingModuleType.Advertisement
+                        SupportsRepublish = true
                     };
                 })
                 .ToList(),

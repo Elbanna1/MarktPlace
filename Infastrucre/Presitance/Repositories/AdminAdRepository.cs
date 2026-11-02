@@ -231,6 +231,14 @@ public class AdminAdRepository : IAdminAdRepository
             ? moderator.SaveChangesAsync(cancellationToken)
             : Task.CompletedTask;
 
+    public Task<T> RunExclusiveAsync<T>(
+        ListingModuleType type, Guid id, Func<Task<T>> operation,
+        CancellationToken cancellationToken = default) =>
+        ListingRowOperations.RunExclusiveAsync(_context, type, id, operation, cancellationToken);
+
+    public void MarkAsNew(IModeratedListing listing, DateTime utcNow) =>
+        ListingRowOperations.MarkAsNew(_context, listing, utcNow);
+
     public async Task<AdminListingSnapshot?> LoadListingAsync(
         ListingModuleType type, Guid id, CancellationToken cancellationToken = default)
     {
@@ -381,7 +389,8 @@ public class AdminAdRepository : IAdminAdRepository
             {
                 var until = utcNow.AddDays(AdminRepublishPolicy.WarningDays);
                 query = query.Where(row =>
-                    row.ModerationStatus == ModerationStatus.Approved && row.ExpireAt != null && row.ExpireAt <= until);
+                    row.ModerationStatus == ModerationStatus.Approved &&
+                    ((row.ExpireAt != null && row.ExpireAt <= until) || row.Status == ListingStatus.Expired));
             }
 
             if (filter.Republished is { } republished)

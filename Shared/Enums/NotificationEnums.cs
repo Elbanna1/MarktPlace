@@ -1,4 +1,4 @@
-﻿namespace Shared.Enums;
+namespace Shared.Enums;
 
 public enum NotificationType
 {
@@ -90,6 +90,8 @@ public enum NotificationType
     AdminUserModeration = 54,
 
     AdminBannerExpiring = 55,
+
+    AdminListingExpiring = 58,
 
     AdminRoleGranted = 57
 }
