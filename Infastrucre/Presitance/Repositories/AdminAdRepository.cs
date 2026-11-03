@@ -28,7 +28,7 @@ public class AdminAdRepository : IAdminAdRepository
 
     public async Task<(IReadOnlyList<UserListingRow> Items, int TotalCount)> GetPagedAsync(
         AdminAdFilterParams filter, DateTime utcNow, CancellationToken cancellationToken = default,
-        bool includeTotal = true)
+        bool includeTotal = true, bool orderByExpiry = false)
     {
         IReadOnlyList<string> matchedUserIds = Array.Empty<string>();
         var search = filter.Search?.Trim();
@@ -46,8 +46,11 @@ public class AdminAdRepository : IAdminAdRepository
         if (includeTotal && totalCount == 0)
             return (Array.Empty<UserListingRow>(), 0);
 
-        var items = await query
-            .OrderByDescending(row => row.CreatedAt)
+        var ordered = orderByExpiry
+            ? query.OrderByDescending(row => row.ExpireAt).ThenByDescending(row => row.CreatedAt)
+            : query.OrderByDescending(row => row.CreatedAt);
+
+        var items = await ordered
             .ThenByDescending(row => row.Id)
             .Skip((filter.PageIndex - 1) * filter.PageSize)
             .Take(filter.PageSize)
@@ -238,6 +241,15 @@ public class AdminAdRepository : IAdminAdRepository
 
     public void MarkAsNew(IModeratedListing listing, DateTime utcNow) =>
         ListingRowOperations.MarkAsNew(_context, listing, utcNow);
+
+    public DateTime? CreatedAtOf(IModeratedListing listing)
+    {
+        var entry = _context.Entry(listing);
+
+        return entry.Metadata.FindProperty("CreatedAt") is { } property && property.ClrType == typeof(DateTime)
+            ? (DateTime)entry.Property("CreatedAt").CurrentValue!
+            : null;
+    }
 
     public async Task<AdminListingSnapshot?> LoadListingAsync(
         ListingModuleType type, Guid id, CancellationToken cancellationToken = default)

@@ -21,7 +21,7 @@ public interface IAdminAdRepository
 {
     Task<(IReadOnlyList<UserListingRow> Items, int TotalCount)> GetPagedAsync(
         AdminAdFilterParams filter, DateTime utcNow, CancellationToken cancellationToken = default,
-        bool includeTotal = true);
+        bool includeTotal = true, bool orderByExpiry = false);
 
     Task<IReadOnlyList<AdminAdStatusCount>> GetStatusBreakdownAsync(
         DateTime utcNow, string? ownerId = null, CancellationToken cancellationToken = default);
@@ -58,6 +58,8 @@ public interface IAdminAdRepository
         CancellationToken cancellationToken = default);
 
     void MarkAsNew(IModeratedListing listing, DateTime utcNow);
+
+    DateTime? CreatedAtOf(IModeratedListing listing);
 
     Task<AdminListingSnapshot?> LoadListingAsync(
         ListingModuleType type, Guid id, CancellationToken cancellationToken = default);

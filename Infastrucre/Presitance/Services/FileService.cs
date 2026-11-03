@@ -183,7 +183,7 @@ public class FileService : IFileService
         throw new BadRequestException($"مسموح بـ {max} صور بحد أقصى؛ {reason}.");
     }
 
-    private static ImageFormatDescriptor ValidateImage(UploadImageModel file)
+    internal static ImageFormatDescriptor ValidateImage(UploadImageModel file)
     {
         var size = Math.Max(file.Length, file.Content.LongLength);
         var name = string.IsNullOrWhiteSpace(file.FileName) ? "الملف المرفوع" : $"الملف '{file.FileName}'";

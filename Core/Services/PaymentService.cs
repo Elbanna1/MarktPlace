@@ -19,6 +19,7 @@ public class PaymentService : IPaymentService
     private readonly INotificationService _notifications;
     private readonly IAdminAuditService _audit;
     private readonly IAdminAlertService _alerts;
+    private readonly IAdPaymentService? _adPayments;
 
     public PaymentService(
         IPaymentRepository repository,
@@ -26,7 +27,8 @@ public class PaymentService : IPaymentService
         IMapper mapper,
         INotificationService notifications,
         IAdminAuditService audit,
-        IAdminAlertService alerts)
+        IAdminAlertService alerts,
+        IAdPaymentService? adPayments = null)
     {
         _repository = repository;
         _fileService = fileService;
@@ -34,6 +36,7 @@ public class PaymentService : IPaymentService
         _notifications = notifications;
         _audit = audit;
         _alerts = alerts;
+        _adPayments = adPayments;
     }
 
     public async Task<IReadOnlyList<PaymentMethodDto>> GetMethodsAsync(CancellationToken cancellationToken = default)
@@ -84,6 +87,15 @@ public class PaymentService : IPaymentService
     public async Task<AdminPaymentDetailsDto> ApprovePaymentAsync(
         Guid id, string adminUserId, CancellationToken cancellationToken = default)
     {
+        if (_adPayments is not null && await _adPayments.IsAdPaymentAsync(id, cancellationToken))
+        {
+            await _adPayments.ReviewAsync(
+                id, new Shared.DTOs.AdPayments.ReviewAdPaymentRequest { Decision = nameof(PaymentStatus.Approved) },
+                adminUserId, cancellationToken);
+
+            return await GetForAdminAsync(id, cancellationToken);
+        }
+
         var payment = await LoadForDecisionAsync(id, cancellationToken);
 
         payment.Status = PaymentStatus.Approved;
@@ -115,6 +127,20 @@ public class PaymentService : IPaymentService
         Guid id, string adminUserId, RejectPaymentRequest request,
         CancellationToken cancellationToken = default)
     {
+        if (_adPayments is not null && await _adPayments.IsAdPaymentAsync(id, cancellationToken))
+        {
+            await _adPayments.ReviewAsync(
+                id,
+                new Shared.DTOs.AdPayments.ReviewAdPaymentRequest
+                {
+                    Decision = nameof(PaymentStatus.Rejected),
+                    RejectionReason = request.Reason
+                },
+                adminUserId, cancellationToken);
+
+            return await GetForAdminAsync(id, cancellationToken);
+        }
+
         var payment = await LoadForDecisionAsync(id, cancellationToken);
 
         var reason = request.Reason.Trim();

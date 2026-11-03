@@ -115,6 +115,7 @@ public static class DependencyInjection
         services.AddScoped<IWorkshopRepository, WorkshopRepository>();
         services.AddScoped<ICraftsmanRepository, CraftsmanRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
+        services.AddScoped<IAdPaymentRepository, AdPaymentRepository>();
 
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 
@@ -205,6 +206,7 @@ public static class DependencyInjection
         services.AddScoped<IFarmRepository, FarmRepository>();
         services.AddScoped<ICompanyRepository, CompanyRepository>();
         services.AddScoped<IFileService, FileService>();
+        services.AddScoped<IPrivateFileStore, PrivateFileStore>();
         services.AddScoped<IUploadsDiagnostics, UploadsDiagnostics>();
 
         services.AddScoped<IUserListingSource, AdvertisementListingSource>();

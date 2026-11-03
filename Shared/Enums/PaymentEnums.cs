@@ -34,5 +34,7 @@ public enum PaymentPurpose
 
     AdvertisementPackage = 4,
 
-    ListingCredits = 5
+    ListingCredits = 5,
+
+    AdvertisementPublication = 6
 }

@@ -29,7 +29,24 @@ var uploadsPhysicalRoot = UploadsStorage.ResolveRoot(builder.Configuration, buil
 foreach (var uploadFolder in ImageConstants.AllFolders)
     Directory.CreateDirectory(Path.Combine(uploadsPhysicalRoot, uploadFolder));
 
-builder.Services.Configure<FileStorageSettings>(options => options.UploadsRootPath = uploadsPhysicalRoot);
+var privateFilesRoot = Persistence.Services.PrivateFileStore.ResolveRoot(
+    builder.Configuration["FileStorage:PrivateRootPath"], builder.Environment.ContentRootPath);
+
+if (UploadsStorage.IsInside(privateFilesRoot, uploadsPhysicalRoot) ||
+    UploadsStorage.IsInside(privateFilesRoot, Path.Combine(builder.Environment.ContentRootPath, "wwwroot")) ||
+    string.Equals(privateFilesRoot.TrimEnd(Path.DirectorySeparatorChar), uploadsPhysicalRoot.TrimEnd(Path.DirectorySeparatorChar), StringComparison.OrdinalIgnoreCase))
+{
+    throw new InvalidOperationException(
+        "FileStorage:PrivateRootPath must not be inside a publicly served folder (wwwroot or the uploads root).");
+}
+
+Directory.CreateDirectory(privateFilesRoot);
+
+builder.Services.Configure<FileStorageSettings>(options =>
+{
+    options.UploadsRootPath = uploadsPhysicalRoot;
+    options.PrivateRootPath = privateFilesRoot;
+});
 
 builder.Services.Configure<ListingInteractionSettings>(
     builder.Configuration.GetSection(ListingInteractionSettings.SectionName));
@@ -253,6 +270,16 @@ if (!app.Environment.IsDevelopment() &&
         "replaces that directory deletes every uploaded image while the database still points at them. " +
         "Set {Setting} to a folder outside the application directory.",
         uploadsPhysicalRoot, "FileStorage__UploadsRootPath");
+}
+
+if (!app.Environment.IsDevelopment() &&
+    UploadsStorage.IsInside(privateFilesRoot, app.Environment.ContentRootPath))
+{
+    uploadsLogger.LogWarning(
+        "Private files (payment screenshots) are stored inside the application directory ({PrivateRoot}). " +
+        "A deployment that replaces that directory deletes them. Set {Setting} to a folder outside the " +
+        "application directory and outside every publicly served folder.",
+        privateFilesRoot, "FileStorage__PrivateRootPath");
 }
 
 app.Use(async (context, next) =>

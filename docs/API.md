@@ -463,10 +463,16 @@ Every route requires the `Admin` role **and** the specific page permission. See
 | `PATCH` | `/ads/{type}/{id}/approve` | Approve → **opens the 30-day window** |
 | `PATCH` | `/ads/{type}/{id}/reject` | Reject with a reason |
 | `PATCH` | `/ads/{type}/{id}/suspend` | Suspend |
+| `GET` | `/ads/expired`, `/ads/expired/count` | **Expired page**: approved listings whose window has ended, across **every** module, most recently expired first. Same filters as `/ads` (`type`, `categoryId`, `subCategoryId`, `search`, `ownerId`, `pageIndex`, `pageSize`) |
 | `PATCH` | `/ads/{type}/{id}/republish` | **Admin republish**: restart the 30-day window (approved listings, ≤ 5 days left or expired, every module). Returns `publishedAt`, `expireAt`, `previousExpireAt`, `remainingDays`, `republishCount`, `status` |
 | `DELETE` | `/ads/{type}/{id}` | Delete any listing |
 | `GET` | `/moderation/overview` | |
 | `PATCH` | `/payments/{id}/approve`, `/reject` | Manual payment decisions |
+| `GET`/`PUT` | `/ad-payment/settings` | Advertisement payment settings: `isEnabled`, `price`, `currency`, `instructions`, `paymentMethodIds` (empty = every active method). Account details live on `/payment-methods` |
+| `GET` | `/ad-payment/submissions` | Ad payment queue (default `status=Pending`; also `type`, `categoryId`, `advertisementId`, `userId`, `fromDate`, `toDate`) |
+| `GET` | `/ad-payment/submissions/{id}`, `/ad-payment/submissions/{id}/screenshot` | One submission; the screenshot is streamed only to admins (`private, no-store`) |
+| `PATCH` | `/ad-payment/submissions/{id}/review` | `{ "decision": "Approved" \| "Rejected", "rejectionReason" }` — approval of an expired ad runs the admin republish; approval of a pending ad leaves it for moderation |
+| `GET` | `/ad-payment/history` | Every ad payment, any status, same filters |
 | `PATCH` | `/banner-requests/{id}/approve`, `/reject`, `/approve-payment`, `/reject-payment` | Banner bookings |
 | — | `/users`, `/categories`, `/locations`, `/banners`, `/reports`, `/feedback`, `/referrals`, `/forms`, `/home`, `/settings`, `/audit-logs` | Dashboard pages |
 
@@ -479,6 +485,19 @@ Every route requires the `Admin` role **and** the specific page permission. See
 >
 > `/ads` also filters on `expiringWithinDays`, `republishDue` and `republished`, and each row carries
 > `isExpired`, `isExpiringSoon`, `canRepublish` and `republishCount`.
+
+### Advertisement payments (user side)
+
+| Method | Route | Auth | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/api/v2/public/ad-payment/config` | anonymous | `isEnabled`, `price`, `currency`, `instructions`, offered `paymentMethods` (with account details) |
+| `POST` | `/api/v2/ads/{type}/{id}/payment` | owner | multipart: `PaymentMethodId`, `TransactionReference?`, `Screenshot`. The price comes from the settings, never from the request |
+| `GET` | `/api/v2/ads/{type}/{id}/payment` | owner | `isPaymentRequired`, `canSubmit`, latest `paymentStatus`, `amount`, `rejectionReason`, … |
+
+`{type}` here accepts the `ListingModuleType` name or number. While payments are enabled, approving a listing
+whose approval would open a **new** 30-day window answers **402** until an approved, unused ad payment exists
+(edits that send a running listing back to review are not charged; listings created before payments were
+switched on are grandfathered). See [BUSINESS_RULES § Advertisement payments](BUSINESS_RULES.md).
 
 ### Real-time events — `/hubs/notifications`
 

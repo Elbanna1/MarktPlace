@@ -1,4 +1,4 @@
-using Domain.Entities;
+﻿using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using ServicesAbstraction;
 using Services.AdForms;
@@ -22,6 +22,7 @@ public class AdminAdService : IAdminAdService
     private readonly IListingInterestNotifier _interestNotifier;
     private readonly IAdminAuditService _audit;
     private readonly ILogger<AdminAdService> _logger;
+    private readonly IAdPaymentGate? _paymentGate;
 
     public AdminAdService(
         IAdminAdRepository repository,
@@ -30,7 +31,8 @@ public class AdminAdService : IAdminAdService
         INotificationService notifications,
         IListingInterestNotifier interestNotifier,
         IAdminAuditService audit,
-        ILogger<AdminAdService> logger)
+        ILogger<AdminAdService> logger,
+        IAdPaymentGate? paymentGate = null)
     {
         _repository = repository;
         _interactions = interactions;
@@ -39,11 +41,31 @@ public class AdminAdService : IAdminAdService
         _interestNotifier = interestNotifier;
         _audit = audit;
         _logger = logger;
+        _paymentGate = paymentGate;
     }
 
     public Task<PaginatedResult<AdminAdListItemDto>> GetAdsAsync(
         AdminAdFilterParams filter, CancellationToken cancellationToken = default) =>
         GetAdsAsync(filter, includeTotal: true, cancellationToken);
+
+    public Task<PaginatedResult<AdminAdListItemDto>> GetExpiredAdsAsync(
+        AdminAdFilterParams filter, CancellationToken cancellationToken = default)
+    {
+        filter.Status = ListingStatus.Expired;
+        filter.ModerationStatus = ModerationStatus.Approved;
+
+        return GetAdsAsync(filter, includeTotal: true, cancellationToken, orderByExpiry: true);
+    }
+
+    public Task<int> GetExpiredCountAsync(CancellationToken cancellationToken = default) =>
+        _repository.CountAsync(
+            new AdminAdFilterParams
+            {
+                Status = ListingStatus.Expired,
+                ModerationStatus = ModerationStatus.Approved
+            },
+            DateTime.UtcNow,
+            cancellationToken);
 
     public async Task<IReadOnlyList<AdminAdListItemDto>> GetLatestAdsAsync(
         int count, CancellationToken cancellationToken = default)
@@ -57,12 +79,13 @@ public class AdminAdService : IAdminAdService
     }
 
     private async Task<PaginatedResult<AdminAdListItemDto>> GetAdsAsync(
-        AdminAdFilterParams filter, bool includeTotal, CancellationToken cancellationToken)
+        AdminAdFilterParams filter, bool includeTotal, CancellationToken cancellationToken,
+        bool orderByExpiry = false)
     {
         var utcNow = DateTime.UtcNow;
 
         var (rows, totalCount) = await _repository.GetPagedAsync(
-            filter, utcNow, cancellationToken, includeTotal);
+            filter, utcNow, cancellationToken, includeTotal, orderByExpiry);
 
         if (rows.Count == 0)
             return new PaginatedResult<AdminAdListItemDto>(
@@ -260,9 +283,17 @@ public class AdminAdService : IAdminAdService
         var previousStatus = listing.ModerationStatus;
         var previousExpireAt = WindowEndOf(listing);
 
+        var opensWindow = Services.AdPayments.AdPaymentRules.OpensNewWindow(listing, DateTime.UtcNow);
+
+        if (opensWindow && _paymentGate is not null)
+            await _paymentGate.EnsurePaidAsync(type, id, _repository.CreatedAtOf(listing), cancellationToken);
+
         Decide(listing, ModerationStatus.Approved, adminUserId, reason: null, request.Notes);
 
         await _repository.SaveModerationAsync(type, cancellationToken);
+
+        if (opensWindow && _paymentGate is not null && WindowEndOf(listing) != previousExpireAt)
+            await _paymentGate.ConsumeAsync(type, id, DateTime.UtcNow, WindowEndOf(listing), cancellationToken);
 
         await _audit.LogAsync(
             AdminAuditAction.ApproveAd, AdminAuditCatalog.Targets.Advertisement, id.ToString(),
@@ -535,6 +566,9 @@ public class AdminAdService : IAdminAdService
 
                 return (found, previous.Value, now, WindowEndOf(found)!.Value, count);
             }, cancellationToken);
+
+        if (_paymentGate is not null)
+            await _paymentGate.ConsumeAsync(type, id, publishedAt, expireAt, cancellationToken);
 
         await _audit.LogAsync(
             AdminAuditAction.RepublishAd, AdminAuditCatalog.Targets.Advertisement, id.ToString(),

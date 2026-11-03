@@ -1,4 +1,4 @@
-using Shared.DTOs.Admin;
+﻿using Shared.DTOs.Admin;
 using Shared.Enums;
 using Shared.Responses;
 
@@ -13,6 +13,11 @@ public interface IAdminAdService
         int count, CancellationToken cancellationToken = default);
 
     Task<int> GetPendingCountAsync(CancellationToken cancellationToken = default);
+
+    Task<PaginatedResult<AdminAdListItemDto>> GetExpiredAdsAsync(
+        AdminAdFilterParams filter, CancellationToken cancellationToken = default);
+
+    Task<int> GetExpiredCountAsync(CancellationToken cancellationToken = default);
 
     Task<AdminAdDetailsDto> GetAdDetailsAsync(
         ListingModuleType type, Guid id, CancellationToken cancellationToken = default);

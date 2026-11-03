@@ -30,6 +30,8 @@ public class Payment
 
     public string? Notes { get; set; }
 
+    public string? TransactionReference { get; set; }
+
     public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
 
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;

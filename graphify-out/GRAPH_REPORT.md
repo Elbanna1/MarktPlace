@@ -1,28 +1,28 @@
-# Graph Report - MarkatPlace  (2026-11-02)
+# Graph Report - MarkatPlace  (2026-11-03)
 
 ## Corpus Check
-- 1667 files · ~3,285,516 words
+- 1683 files · ~3,343,013 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 7 file(s) not represented in the graph (top: .user 2, (none) 1, .http 1)
 
 ## Summary
-- 28174 nodes · 81225 edges · 564 communities (545 shown, 19 thin omitted)
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 7039 edges (avg confidence: 0.86)
+- 28482 nodes · 82472 edges · 563 communities (545 shown, 18 thin omitted)
+- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 7178 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `750e1b38`
+- Built from commit: `a201afb2`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - Task
-- ApiResponse
-- UploadImageModel
+- Guid
+- .AddApplicationServices
 - AppDbContext
 - Shared.Enums
 - Shared.Constants
-- Guid
+- AskConsultService
 - MigrationBuilder
 - Shared.Exceptions
 - IRealEstateLookup
@@ -38,7 +38,7 @@
 - GovernorateGuideModulesTests
 - EntityTypeBuilder
 - LivestockListItemDto
-- BeeDetailsDto
+- HttpGet
 - AdFormSchemaCatalog
 - FishDetailsDto
 - WomenClothing
@@ -49,25 +49,25 @@
 - CharityListItemDtoBase
 - DecorAntiqueDetailsDto
 - UpdateAdvertisementRequest
-- HomeFurnishingPriceStatisticsDto
+- PlantOrnamentListItemDto
 - Land
-- UpdatePetRequest
+- .GetName
 - IHomeFurnishingGalleryEdit
 - SubCategoryType
 - Building
 - CreateDirectoryListingRequest
 - CreateAdFormDto
 - IHomeFurnishingLookup
-- HomeApplianceDetailsDto
+- HomeApplianceListItemDto
 - ListingLifecycleIntegrationTests
 - .LogAsync
-- INotificationService
-- Development Guide
+- NotificationType
+- UserMessages
 - Theory
-- IFileService
+- UploadImageModel
 - AppSettings
 - `Core/ServicesAbstraction` — the contract layer (148 files)
-- MenClothing
+- MenClothingImage
 - CreateKidsClothingRequest
 - Furniture
 - Shop
@@ -78,44 +78,44 @@
 - LandDetailsDto
 - RequestSizeLimitTests
 - Handmade
-- .NotifyAsync
+- FurnishingCurtain
 - Apartment
 - BadRequestException
 - FurnitureDetailsDto
-- IBannerBookingService
+- DateTime
 - UpdateWomenClothingRequest
 - ILogger
 - JwtSettings
 - Livestock
-- .ReadFile
+- FurnishingCurtainDetailsDto
 - DecorAntique
 - KitchenTool
 - CreateLandRequest
 - MenClothing
 - GovernorateGuideDtos.cs
 - AntiqueDetailsDto
-- RealEstateListItemDtoBase
+- CreateShopRequest
 - UserNotificationInterest
-- .GetName
-- GoogleSignInHarness
+- BirdMappingProfile
+- .DeactivateAsync
 - IModeratedListing
 - Project
 - FormFieldDto
-- .UpdateAsync
+- Notification
 - CarCatalog
 - ClothingLookups.cs
 - OnlineShoppingLookups.cs
 - HandmadeDetailsDto
 - LightingDecorDetailsDto
-- LookupRepository
+- CancellationToken
 - CreateBuildingRequest
 - CreateCoinStampRequest
-- ShopDetailsDto
+- HomeFurnishingLookupEntry
 - AdvertisementFilterParams
 - AbstractValidator
 - CreateBirdRequest
-- IFormFile
-- CategoryTreeDto
+- CreateBannerBookingRequest
+- NotFoundException
 - BuildingDetailsDto
 - Farm
 - BannerBooking
@@ -123,47 +123,47 @@
 - BirdDetailsDto
 - AdvertisementCardRow
 - DoctorSpecialty
-- INotificationInterestService
+- NotificationAction
 - SupplierType
 - AdvertisementService
 - IListingImage
 - Factory
-- UserAccountStatus
+- AdminUserDetailsDto
 - CreateHandmadeRequest
-- NotificationFilterParams
+- NotificationDto
 - Profile
 - `Infastrucre/Presitance` → namespace `Persistence`
 - ReverseProxyHostingTests
 - RestaurantsAndCafesTests
-- ILookupService
-- ListingStatsFilter
+- LookupMappingProfile
+- ListingActionsDto
 - CreateApartmentRequest
 - CreateMenClothingRequest
 - ApplicationUser
-- KidsClothingMappingProfile
-- Shared.DTOs.HomeFurnishing
+- AdPaymentService
+- HomeFurnishingRequestValidator
 - BannerDto
-- AdminDashboardService
+- IAdminDashboardService
 - SECURITY.md
 - InlineData
 - UserListingDto
 - AdminAuditAction
-- LivestockListItemDto
+- HandmadeListItemDto
 - PlatformSetting
-- KitchenToolListItemDto
+- HomeFurnishingPriceStatisticsDto
 - Presitance.csproj
-- .UpdateAsync
+- Payment
 - HomeAppliance
 - SehhatyCategoryTests
-- AdminSettingsDto
+- KitchenToolProductType
 - JobRequest
-- .AddPersistence
+- OfficesCategoryTests
 - SupplierSpecialization
 - UpdateAntiqueRequest
-- AdvertisementImage
+- AdPaymentMethodDto
 - KidsClothingListItemDto
 - LightingDecor
-- OtherAnimalImage
+- PaymentStatus
 - MenClothingMappingProfile
 - AdvertiserLookupTests
 - ProfileStatisticsDto
@@ -171,9 +171,9 @@
 - ReadOnlySpan
 - CraftsmanSpecialization
 - BathroomSupply
-- .UpdateAsync
+- BloodRequest
 - PetAgeLookup
-- CategoryType
+- Architecture Decisions
 - CoinStamp
 - Painting
 - PlantOrnament
@@ -189,28 +189,28 @@
 - CompanyField
 - FishListItemDto
 - AntiqueFilterParams
-- Referral
+- AntiqueDetailsDto
 - AdminAccountService
 - AdminAdDetailsDto
 - IListingStats
 - BannerBookingDto
 - BirdAgeLookup
 - UpdateWomenClothingRequest
-- DecorAntiqueMappingProfile
-- FakeReferralRepository
+- BannerLocation
+- Referral
 - BuildingListItemDto
 - JobField
 - ListingRealtimeInterceptor
-- HomemadeFood
-- IAdminAccountService
+- AdPaymentRepository
+- HomeFurnishingListItemDtoBase
 - AdminAlertService
-- Architecture Decisions
-- AdvertisementStatisticsDto
 - .UpdateAsync
+- AdvertisementStatisticsDto
+- LightingDecorListItemDto
 - .Apply
-- IPaymentService
-- AccessoryMappingProfile
-- ListingRatingDto
+- NotificationContent
+- CreateAccessoryRequest
+- ListingRatingTargetDto
 - Horse
 - Pet
 - JobOpportunity
@@ -222,14 +222,14 @@
 - OtherAnimal
 - SheepGoat
 - AntiqueConditionLookup
-- .Video
+- BannerPlacementSetting
 - AdminReferralStatisticsDto
 - FarmType
 - ListingInteractionService
 - AdminAdFilterParams
 - CreateDecorAntiqueRequest
 - CreateBannerRequest
-- PaymentMethodDto
+- CreatePaymentMethodRequest
 - WorkshopCraftsmenRestructureTests
 - CoinStampDetailsDto
 - PaintingDetailsDto
@@ -239,19 +239,19 @@
 - OtherAnimalAgeLookup
 - HomeKitchen
 - ShoppingElectronic
-- DecorAntiqueFilterParams
+- ProfileService
 - KidsClothingDetailsDto
 - MenClothingDetailsDto
-- WomenClothingDetailsDto
-- AccessoryFilterParams
+- AdminUserService
+- AdminAdPaymentSubmissionDto
 - ApartmentOptionalFieldsTests
 - LostFoundPost
 - Cosmetic
 - DirectoryModule
-- UserDto
+- BathroomSupplyListItemDto
 - .Apply
-- CreatePetRequest
-- HorseDetailsDto
+- PaymentMethodDto
+- CoinStampListItemDto
 - LivestockDetailsDto
 - PetListItemDto
 - Company
@@ -259,52 +259,52 @@
 - WholesaleTrader
 - AdFormFieldOverride
 - AdminPageGrant
-- BeeFilterParams
+- DirectoryListing
 - RealtimeListingEventTests
 - 00 — Start Here
-- PetMappingProfile
+- BannerPlacementDto
 - AdvertisementDetailsDto
 - CamelDetailsDto
-- OtherAnimalDetailsDto
+- PlantOrnamentProductType
 - SheepGoatDetailsDto
-- UpdateBeeRequest
+- CreateHomeApplianceRequest
 - JobOpportunityDetailsDto
 - AdminPermission
 - Craftsman
 - LostFoundPostListItemDto
 - Business Rules
-- HorseImage
+- CharityListing
 - SheepGoatImage
-- FurnishingCurtainImage
+- BirdFilterParams
 - Workshop
 - AdminAdListItemDto
 - AdminPageDefinitionDto
 - AntiqueListItemDto
 - JobRequestDetailsDto
-- IMapper
+- BuildingListItemDto
 - LivestockAgeLookup
 - FruitVegetableMerchant
 - Payment
-- BeeMappingProfile
-- CreateBeeRequest
-- NotificationInterestCategoryOptionDto
+- RestaurantAndCafe
+- CreateSupplierRequest
+- BathroomSupplyColor
 - AdminFormFieldDto
 - AdvertisementListItemDto
 - HorseListItemDto
-- AskConsultCommentDto
+- .UpdateAsync
 - PaintingListItemDto
 - HomemadeFoodDetailsDto
 - HomemadeFoodListItemDto
 - WorkshopType
-- BirdImage
+- BirdService
 - PetImage
-- CraftsmanImage
+- FruitVegetableMerchantDetailsDto
 - MenClothingColor
-- ListingLifecycleRulesTests
+- HomeApplianceDeviceType
+- ListingChange
 - .UpdateAsync
-- WomenClothingImage
-- EmailTemplateTests
-- AdminReferralService
+- UpdateBirdRequest
+- AdminRepublishResultDto
 - AdminAnalyticsDto
 - WomenClothingListItemDto
 - HomeFurnishingDetailsDtoBase
@@ -315,7 +315,7 @@
 - AdminFormService
 - AdminBannerSlotOverviewDto
 - SheepGoatMappingProfile
-- AdminReferrerDto
+- JobExperienceLevelDto
 - CamelListItemDto
 - OtherAnimalListItemDto
 - SheepGoatListItemDto
@@ -331,29 +331,29 @@
 - CreateLostFoundPostRequest
 - LostFoundPostDetailsDto
 - HomeKitchenFilterParams
-- IUserAccessStateCache
+- UserAccountStatus
 - FishAgeLookup
 - SheepGoatAgeLookup
-- .UpdateAsync
+- PaintingVideo
 - .SampleLookups
 - JobFieldLookup
-- PetFilterParams
+- CreateBathroomSupplyRequest
 - CraftsmanListItemDto
-- ApartmentElevatorOptionalTests
-- KidsClothingFilterParams
-- PaginationParams
+- FishFilterParams
+- ListingLifecycleProcessor
+- AdminPaymentListItemDto
 - UpdateCoinStampRequest
 - DecorAntiqueListItemDto
 - UpdatePaintingRequest
-- HorseAge
+- AdPaymentStatusDto
 - JobRequestListItemDto
-- ListingReportDto
+- ListingInteractionMetadataDto
 - HomeKitchenDetailsDto
 - HomeKitchenListItemDto
 - ListingChangedEventDto
-- AccountStateEnforcementTests
+- BathroomSupplyService
 - GiftToyImage
-- ShoppingElectronicImage
+- CreateFactoryRequest
 - WorkshopListItemDto
 - JobExperienceLevel
 - UpdateDecorAntiqueRequest
@@ -362,240 +362,238 @@
 - CosmeticListItemDto
 - WholesaleTraderDetailsDto
 - InterestedIn
-- ILogger
+- 4. Where each kind of code belongs
 - CamelAgeLookup
 - HorseAgeLookup
 - DecorAntiqueConditionLookup
-- PetAge
-- PetBreed
-- HorseMappingProfile
+- CreateFishRequest
+- Shared.DTOs.BannerBookings
+- BathroomSupplyRepository
 - .UpdateAsync
 - CamelFilterParams
-- HorseFilterParams
-- OtherAnimalFilterParams
+- UpdateWholesaleTraderRequest
+- ModerationModelConfiguration
 - UpdateHandmadeRequest
 - CreatePaintingRequest
-- UpdateMenClothingRequest
+- .Detect
 - CompanyDetailsDto
 - GiftToyDetailsDto
 - GiftToyListItemDto
 - SupplierDetailsDto
 - PaintingMappingProfile
 - FruitVegetableMerchantDetailsDto
-- BloodGroup
-- ReferralService
-- AdminReferralDto
-- Modules
+- CharityRepositoryBase
+- SqlCountInterceptor
+- BathroomSupplyImage
+- BannerBookingSummaryDto
 - CreateAntiqueRequest
-- KidsClothingSize
+- FarmImage
 - WorkshopDetailsDto
 - CoinStampConditionLookup
 - EquipmentMachineType
 - BirdImage
-- HomemadeFoodDeliveryArea
+- UpdateFruitVegetableMerchantRequest
 - PaginationParams
 - FishImage
 - UpdateHomemadeFoodRequest
-- .Apply
+- ListingEditModerationInterceptor
 - AdminAuditLog
 - CoinStampFilterParams
 - AskConsultCategory
 - UpdateSettingsRequest
-- UpdateHorseRequest
+- PrivateFileStore
 - UploadsDiagnostics
 - UpdateWholesaleTraderRequest
-- AdminDashboardPaymentDto
+- AdminDashboardBannerRequestDto
 - CreateFarmRequest
 - CreateFormFieldRequest
 - PaintingFilterParams
-- IReadOnlyCollection
+- IReadOnlyDictionary
 - HomeSection
-- DecorAntiqueImage
-- .UpdateAsync
-- CreateHorseRequest
-- KidsClothingImage
+- CoinsStampsController
+- PaintingsController
+- MarkatPlace — Backend
+- CreateCraftsmanRequest
 - UpdateCamelRequest
 - UpdateJobOpportunityRequest
-- UpdateOtherAnimalRequest
+- BirdType
 - UpdateSheepGoatRequest
 - UpdateFormFieldRequest
 - BannerAvailabilityDto
 - BannerBookingListItemDto
 - UpdateAccessoryRequest
 - CreateHomemadeFoodRequest
-- 09 — Authentication
+- FactoryImage
 - AskConsultDetailsDto
 - LostFoundComment
-- .UpdateAsync
+- Shared.DTOs.JobRequests
 - GiftToyType
 - AskConsultListItemDto
 - CreateCamelRequest
-- CreateOtherAnimalRequest
+- WholesaleTradersController
 - CreateSheepGoatRequest
-- IUnitOfWork
+- Setup — New Developer Quick Start
 - AdvertisementView
 - AdminDashboardStatsDto
 - IBusinessAdvertisementFields
 - CompanyListItemDto
-- WholesaleTraderListItemDto
-- BeeImage
+- AdminModuleOptionDto
+- RequireAdminPermissionAttribute
 - Feedback
 - CamelMappingProfile
-- OtherAnimalMappingProfile
+- SupplierImage
 - CreateJobOpportunityRequest
 - UpdateFishRequest
 - UpdateJobRequestRequest
-- ReferralStatus
-- ReadConfigDto
-- Authentication
+- FishMappingProfile
+- B. Existing Architecture Discovered
+- SheepGoatService
 - PublishedBannerDto
-- WomenClothingColor
-- CreateAskConsultRequest
+- ListingEditReviewEntry
+- .UpdateAsync
 - BloodRequestDetailsDto
-- DecorAntiqueMaterial
-- AccessoryType
-- AccessoryImage
+- DecorAntiquesController
+- FarmsController
+- HomeKitchenController
 - GiftToyImage
 - UpdateBannerPlacementRequest
-- CosmeticSection
+- AdminUserListItemDto
 - FeedbackStatus
 - CreateShoppingElectronicRequest
 - HomeKitchenImage
 - CreateJobRequestRequest
 - http
-- CreateAccessoryRequest
+- FishType
 - UpdateHomeKitchenRequest
-- UpdateShoppingElectronicRequest
+- HandmadeColorSelection
 - LostFoundImage
-- KidsClothingType
+- GiftsToysController
 - AdFormOverrideApplier
-- KidsClothingColorSelection
+- HandmadeController
 - BannerRejectionReason
 - PublicSettingsDto
-- FurnitureColorSelection
-- HomeApplianceColorSelection
+- PromoteRealEstateRequest
+- CreateCategoryRequest
 - ExperienceLevel
-- CharityMappingProfile
 - LostFoundCommentDto
 - FactoryListItemDto
 - UpdateFarmRequest
 - FeedbackListItemDto
-- IAdminLocationService
-- UpdateCosmeticRequest
-- AdminUploadLimitsDto
-- Feature
-- WorkshopTypeLookup
+- SaveLocationRequest
+- 06 — Environment Variables
+- FurnishingCurtainColorSelection
+- LostFoundFilterParams
+- EgyptianArabicLanguageManager
 - CraftsmenController
 - FeedbackService
-- AdminDashboardPaymentDto
+- AdminDashboardRepository
 - UpdateSupplierRequest
-- IdentityDataSeeder
-- BloodRequestListItemDto
-- AdminBannerCenterSummaryDto
-- AdminSettingsService
+- Authorization
+- FactoriesController
+- FruitVegetableMerchantsController
+- SuppliersController
 - UpdateCompanyRequest
 - GiftToyFilterParams
 - UpdateGiftToyRequest
 - CreateHomeKitchenRequest
-- ProjectDto
+- WorkshopsController
 - HandmadeColorLookup
 - PaintingImage
-- EquipmentUsageField
-- VehicleAssemblyCountry
+- BathroomSupplyDetailsDto
+- .AddAsync
 - UpdateCraftsmanRequest
 - CraftsmanSpecializationLookup
 - BathroomSupplyColorSelection
-- AdminOptionDto
-- AdminDashboardDto
+- .GetAuthorsAsync
+- TaxiVehicleType
 - AdminAuditLogDto
 - SheepGoatFilterParams
 - HomeKitchenColorSelection
-- CreateCosmeticRequest
-- CompanyFilterParams
-- FactoryFilterParams
+- CamelVaccinationLookup
+- WomenClothingSizeLookup
+- AccessoryColorLookup
 - LostFoundLike
 - GoogleAuthCatalog
 - FeedbackMetadataDto
-- CompanyMappingProfile
-- RealEstatePriceStatisticsDto
-- UpdateWorkshopRequest
 - CreateCompanyRequest
-- FarmFilterParams
+- LandFilterParams
+- UpdateWorkshopRequest
+- AccessoryMaterialLookup
+- HomeKitchenColorLookup
 - CreateGiftToyRequest
-- ApiRouteIndex
+- HomeKitchenSectionLookup
 - AdFormFieldOption
 - PaintingMaterialLookup
 - CharityFormSchemas
-- BeeType
-- PetPurpose
+- CenterDto
+- BirdPurpose
 - CreateBloodRequestRequest
 - SeedPlacement
-- ListingRatingFilterParams
+- PaginatedResult
 - UpdateFactoryRequest
 - BannerTargetUrl
-- IReferralService
+- ListingRejectionReason
 - CreateWorkshopRequest
 - SheepGoatBreed
-- IPublicSettingsService
-- CharityImageDto
+- ListingLifecycleService
+- MerchantSaleTypeLookup
 - FeedbackImage
-- ListingFavorite
-- ReferralLinkEvent
+- AppDbContextFactory
+- FishPurpose
 - .FeaturesOf
-- AdminAuditService
-- RescueListItemDto
+- AdminOptionDto
+- Rescue
 - Shared.DTOs.Notifications
-- OtherAnimalVaccination
-- CreateCommentRequest
-- RegisterRequest
-- .GetUsersAsync
+- 01 — Project Overview
+- Technology inventory
+- EducationLevelLookup
+- SubmitPaymentRequest
+- Frontend changes for real-time listings and images
+- SupplierFilterParams
 - ChangedVehiclePart
-- CompanyImage
-- CosmeticImage
+- UpdateShopRequest
+- Strategy in one paragraph
+- .BuildModel
 - AdminAuditLogFilterParams
+- OwnerTotalRow
 - UpdateLostFoundPostRequest
 - FeedbackDetailsDto
+- ListingReportMetadataDto
 - CosmeticFilterParams
-- HorseBreed
 - AdminFormOptionDto
-- OtherAnimalType
-- VehicleOriginCountry
 - SupplierSpecializationLookup
-- GeneralService
 - AdminFormSchemaDto
 - CamelBreed
 - API
 - CamelPurpose
-- HorsePurpose
 - SheepGoatPurpose
 - ListingNotificationDispatch
 - WholesaleTradeTypeLookup
 - CreateFeedbackRequest
 - SaveFormOptionRequest
 - FeedbackFilterParams
-- ProfileService
+- UpdateProfileRequest
 - ApiResponse
-- DirectorySortBy
+- DirectoryRepository
 - UpdateFeedbackStatusRequest
-- LikeResultDto
 - CLAUDE.md
 - .claude/CLAUDE.md
 
 ## God Nodes (most connected - your core abstractions)
-1. `AppDbContext` - 1072 edges
-2. `ApiResponse` - 847 edges
-3. `Shared.Enums` - 751 edges
-4. `Shared.Constants` - 587 edges
-5. `ListingModuleType` - 553 edges
-6. `Domain.Entities` - 549 edges
-7. `ServicesAbstraction` - 463 edges
-8. `UploadImageModel` - 317 edges
-9. `NotFoundException` - 282 edges
+1. `AppDbContext` - 1078 edges
+2. `ApiResponse` - 858 edges
+3. `Shared.Enums` - 763 edges
+4. `Shared.Constants` - 595 edges
+5. `ListingModuleType` - 591 edges
+6. `Domain.Entities` - 555 edges
+7. `ServicesAbstraction` - 471 edges
+8. `UploadImageModel` - 321 edges
+9. `NotFoundException` - 285 edges
 10. `CreateAdFormLookupsDto` - 275 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Sensitive data` --references--> `AdminAuditLog`  [INFERRED]
-  docs/SECURITY.md → Core/Domain/Entities/AdminAuditLog.cs
+- `Identity and authorization` --references--> `AdminPageGrant`  [INFERRED]
+  SHOPIKLOPIK-DEVELOPER-HANDBOOK/01-PROJECT-OVERVIEW.md → Core/Domain/Entities/AdminPageGrant.cs
 - `Table families` --references--> `ApplicationUser`  [INFERRED]
   SHOPIKLOPIK-DEVELOPER-HANDBOOK/07-DATABASE.md → Core/Domain/Entities/ApplicationUser.cs
 - ``VisibleToViewer` — how owners see their own pending listings` --references--> `IAdminActionContext`  [INFERRED]
@@ -608,43 +606,43 @@
 ## Import Cycles
 - None detected.
 
-## Communities (564 total, 19 thin omitted)
+## Communities (563 total, 18 thin omitted)
 
 ### Community 0 - "Task"
 Cohesion: 0.01
-Nodes (71): LookupService, IAdminAccountRepository, IAdminCatalogService, IAdminDashboardRepository, IAdminUserRepository, IFurnishingCurtainRepository, IFurnitureRepository, IHomeApplianceRepository (+63 more)
+Nodes (63): FishService, PetService, IAntiqueService, IBeeService, IBirdService, ICamelService, IFishService, IFurnishingCurtainService (+55 more)
 
-### Community 1 - "ApiResponse"
-Cohesion: 0.01
-Nodes (201): AccessoriesController, CurrentUserId, IsAdmin, AdminAccountsController, AdminPermissionsController, AdminAdsV2Controller, AdminApiController, CurrentAdminId (+193 more)
+### Community 1 - "Guid"
+Cohesion: 0.02
+Nodes (84): IAdminAdService, IAdminFormService, IAdvertisementService, IBannerBookingService, ILostFoundService, IPaymentService, AdminAccountsController, AdminPermissionsController (+76 more)
 
-### Community 2 - "UploadImageModel"
-Cohesion: 0.01
-Nodes (45): IAccessoryService, IAdminHomeService, IAdminSettingsService, IAntiqueService, IBannerService, IBeeService, ICamelService, ICoinStampService (+37 more)
+### Community 2 - ".AddApplicationServices"
+Cohesion: 0.02
+Nodes (45): IAccessoryService, IAdminAccountService, IAdminCatalogService, IAdPaymentService, IAuthService, IBannerService, IBannerSettingsService, ICosmeticService (+37 more)
 
 ### Community 3 - "AppDbContext"
 Cohesion: 0.00
-Nodes (409): AppDbContext, Accessories, AccessoryCategories, AccessoryColors, AccessoryColorSelections, AccessoryImages, AccessoryMaterials, AccessoryTypes (+401 more)
+Nodes (407): AppDbContext, Accessories, AccessoryCategories, AccessoryColors, AccessoryColorSelections, AccessoryImages, AccessoryMaterials, AccessoryTypes (+399 more)
 
 ### Community 4 - "Shared.Enums"
 Cohesion: 0.01
-Nodes (33): RateListingRequestValidator, Shared.Enums, Services.JobModules, Shared.DTOs.Common, Shared.DTOs.Antiques, Shared.DTOs.Charity, Shared.DTOs.WholesaleTraders, Shared.DTOs.Suppliers (+25 more)
+Nodes (20): Shared.Enums, Shared.DTOs.Common, Shared.DTOs.Antiques, Services.AdPayments, Shared.DTOs.WholesaleTraders, Shared.DTOs.Suppliers, Services.AntiqueModules, Shared.DTOs.Companies (+12 more)
 
 ### Community 5 - "Shared.Constants"
-Cohesion: 0.02
-Nodes (39): ValidationExtensions, Shared.DTOs.Offices, Services.GovernorateGuide, Services.Mapping, Services.Validation, Services.Directory, Shared.Constants, Shared.DTOs.RestaurantsAndCafes (+31 more)
-
-### Community 6 - "Guid"
 Cohesion: 0.01
-Nodes (66): AskConsultService, BloodRequestService, RescueService, IAdminFormService, IAskConsultService, IBloodRequestService, IRescueService, ICompanyService (+58 more)
+Nodes (44): ValidationExtensions, Shared.DTOs.Charity, Services.GovernorateGuide, Services.RealEstate, Services.Mapping, Shared.DTOs.RealEstate, Services.ClothingModules, Services.Validation (+36 more)
+
+### Community 6 - "AskConsultService"
+Cohesion: 0.08
+Nodes (19): AskConsultService, BloodRequestService, CreateAskConsultCommentRequestValidator, ICharityRepository, IAskConsultService, AskConsultCommentDto, AskConsultId, Author (+11 more)
 
 ### Community 7 - "MigrationBuilder"
 Cohesion: 0.02
-Nodes (78): Database, D-44 — Workshop types and craftsman specializations are retired, never deleted, Category 11 — عقارات (Real Estate) · subs 47–49, 65, Category 13 — صحتي (Sehhaty) · subs 53–58, Category 2 — دليل محافظتي (internally Workshops & Craftsmen) · subs 5–6, 66–68, The advertiser lookup index, intialCreate, AddClothingCategoryModules (+70 more)
+Nodes (75): D-44 — Workshop types and craftsman specializations are retired, never deleted, intialCreate, AddClothingCategoryModules, AddNotificationPresentationFields, lastUploadUpdates, AddOnlineShoppingCategoryModules, AddHomeFurnishingCategoryModules, TestEndpoints (+67 more)
 
 ### Community 8 - "Shared.Exceptions"
 Cohesion: 0.02
-Nodes (32): Shared.Settings, Shared.DTOs.Lookups, Shared.DTOs.Lookups.Read, Services.Listings, Services.Settings, Persistence, Services.Notifications, Services.Referrals (+24 more)
+Nodes (37): DependencyInjection, Shared.DTOs.Offices, Shared.Settings, Shared.DTOs.Lookups, Shared.DTOs.Lookups.Read, Services.Listings, Persistence, Services.Notifications (+29 more)
 
 ### Community 9 - "IRealEstateLookup"
 Cohesion: 0.01
@@ -652,7 +650,7 @@ Nodes (244): ApartmentDirectionLookup, Id, Name, NameEn, ApartmentExchangeWithLo
 
 ### Community 10 - "ServicesAbstraction"
 Cohesion: 0.03
-Nodes (24): Services.HomeFurnishing, Services.RealEstate, Services.Antiques, Services, Presentation.Controllers, Shared.DTOs.Home, Shared.Authorization, Shared.DTOs.Admin (+16 more)
+Nodes (20): Services.HomeFurnishing, Services.Settings, Services.Antiques, Presentation.Controllers, Shared.Authorization, Shared.DTOs.AdPayments, Shared.DTOs.Admin, Shared.DTOs.Banners (+12 more)
 
 ### Community 11 - "CreateAdFormLookupsDto"
 Cohesion: 0.01
@@ -660,75 +658,75 @@ Nodes (231): CreateAdFormLookupsDto, AccessoryCategories, AccessoryColors, Acces
 
 ### Community 12 - "IQueryable"
 Cohesion: 0.01
-Nodes (216): IUserListingRepository, SupportedModules, AdvertisementListingSource, Type, AntiqueListingSource, Type, CoinStampListingSource, Type (+208 more)
+Nodes (214): IFarmRepository, IListingLifecycleRepository, Admin — `/api/v2/admin`, Advertisement payments (user side), Real-time events — `/hubs/notifications`, DependencyInjection, AdvertisementListingSource, Type (+206 more)
 
 ### Community 13 - "AskConsult"
-Cohesion: 0.02
-Nodes (134): AskConsult, AskerName, Category, Center, Comments, CommentsCount, Governorate, Images (+126 more)
+Cohesion: 0.04
+Nodes (48): AskConsult, AskerName, Category, Center, Comments, CommentsCount, Governorate, Images (+40 more)
 
 ### Community 14 - "Domain.Entities"
-Cohesion: 0.04
-Nodes (6): Persistence.Repositories, Persistence.Configurations, Domain.Entities, Persistence.Configurations.Listings, QueryFilterNames, RealEstateLookupReader
+Cohesion: 0.03
+Nodes (12): Persistence.Repositories, Persistence.Configurations, Persistence.Listings, Domain.Entities, Persistence.Configurations.Listings, Persistence.Data, Domain.Entities.Listings, ListingSortIndex (+4 more)
 
 ### Community 15 - "RealEstateLookupEntry"
 Cohesion: 0.01
-Nodes (186): RealEstateMappingExtensions, ApartmentDirectionLookupConfiguration, Entries, TableName, ApartmentExchangeWithLookupConfiguration, Entries, TableName, ApartmentFeatureLookupConfiguration (+178 more)
+Nodes (185): ApartmentDirectionLookupConfiguration, Entries, TableName, ApartmentExchangeWithLookupConfiguration, Entries, TableName, ApartmentFeatureLookupConfiguration, Entries (+177 more)
 
 ### Community 16 - "Advertisement"
 Cohesion: 0.01
 Nodes (150): Advertisement, AcceptsHigherPriced, AcceptsLowerPriced, AccidentsCount, ActivityType, Address, AdvertisementFeatures, AdvertisementViews (+142 more)
 
 ### Community 17 - "BirdListItemDto"
-Cohesion: 0.03
-Nodes (87): UpdateBirdRequestValidator, BirdFilterParams, Age, AnimalType, Gender, HealthStatus, PriceFrom, PriceTo (+79 more)
+Cohesion: 0.07
+Nodes (29): BirdListItemDto, Age, AgeName, AnimalType, AnimalTypeName, AverageRating, CreatedAt, Description (+21 more)
 
 ### Community 19 - "GovernorateGuideModulesTests"
-Cohesion: 0.05
-Nodes (49): GeneralServiceService, Module, CreateGeneralServiceRequestValidator, GeneralServiceFilterParamsValidator, GovernorateGuideValidationRules, UpdateGeneralServiceRequestValidator, IGeneralServiceService, GeneralServicesController (+41 more)
+Cohesion: 0.04
+Nodes (57): GeneralService, ServiceSubtype, ServiceType, GeneralServiceImage, Listing, GeneralServiceService, Module, GovernorateGuideMappingProfile (+49 more)
 
 ### Community 20 - "EntityTypeBuilder"
-Cohesion: 0.08
-Nodes (20): ExperienceLevelLookup, Id, Name, ListingTypeLookup, Id, Name, ExperienceLevelLookupConfiguration, HomeFurnishingImageConfiguration (+12 more)
+Cohesion: 0.02
+Nodes (78): AdvertisementConfiguration, AdvertisementFeatureConfiguration, LivestockConfiguration, OtherAnimalConfiguration, OtherAnimalImageConfiguration, PetConfiguration, AntiqueImageConfiguration, AntiqueVideoConfiguration (+70 more)
 
 ### Community 21 - "LivestockListItemDto"
 Cohesion: 0.02
-Nodes (97): CreateLivestockRequestValidator, UpdateLivestockRequestValidator, CreateLivestockRequest, Address, Age, Breed, Description, Gender (+89 more)
+Nodes (134): LivestockMappingProfile, CreateLivestockRequestValidator, UpdateLivestockRequestValidator, LivestockCatalog, CreateLivestockRequest, Address, Age, Breed (+126 more)
 
-### Community 22 - "BeeDetailsDto"
-Cohesion: 0.07
-Nodes (30): BeeDetailsDto, Address, AnimalType, AnimalTypeName, AverageRating, CreatedAt, Description, GoogleMaps (+22 more)
+### Community 22 - "HttpGet"
+Cohesion: 0.03
+Nodes (48): IBuildingService, ILandService, AccessoriesController, CurrentUserId, IsAdmin, AntiquesController, CurrentUserId, IsAdmin (+40 more)
 
 ### Community 23 - "AdFormSchemaCatalog"
-Cohesion: 0.07
+Cohesion: 0.08
 Nodes (8): AdFormSchema, AdFormSchemaCatalog, E. Form Schema Details, CreateAdFormSubmitDto, ContentType, Endpoint, Method, RequiresAuthentication
 
 ### Community 24 - "FishDetailsDto"
-Cohesion: 0.03
-Nodes (92): FishMappingProfile, CreateFishRequestValidator, FishCatalog, CreateFishRequest, Address, Age, AnimalType, Description (+84 more)
+Cohesion: 0.07
+Nodes (30): FishDetailsDto, Address, Age, AgeName, AnimalType, AnimalTypeName, AverageRating, CreatedAt (+22 more)
 
 ### Community 25 - "WomenClothing"
 Cohesion: 0.04
-Nodes (44): WomenClothing, Address, Brand, Center, ClothingType, Colors, Condition, CreatedAt (+36 more)
+Nodes (63): WomenClothing, Address, Brand, Center, ClothingType, Colors, Condition, CreatedAt (+55 more)
 
 ### Community 26 - "Fact"
-Cohesion: 0.04
-Nodes (32): AdvertisementFilterParamsValidator, GoogleSignInRequestValidator, GoogleSignInRequest, Center, Code, IdToken, RedirectUri, ReferralCode (+24 more)
+Cohesion: 0.02
+Nodes (65): AdvertisementFilterParamsValidator, GoogleSignInRequestValidator, LoginRequestValidator, RefreshTokenRequestValidator, Status codes, Services — `Core/Services`, Testing, `web.config` (+57 more)
 
 ### Community 27 - "ShopListItemDto"
 Cohesion: 0.01
-Nodes (202): ShopMappingProfile, CreateShopRequestValidator, ShopValidationRules, ShopCatalog, CreateShopRequest, AcceptsDifferencePayment, AllowsActivityChange, Area (+194 more)
+Nodes (211): ShopMappingProfile, ShopCatalog, ShopDetailsDto, AcceptsDifferencePayment, AllowsActivityChange, Area, AvailableFrom, AvailableTo (+203 more)
 
 ### Community 28 - "ReadConfigCatalog"
 Cohesion: 0.07
-Nodes (33): ReadConfigCatalog, ReadConfigSchema, ReadOperationFactory, Lookup cleanup summary, FormFieldOptionDto, Group, Label, LabelEn (+25 more)
+Nodes (28): ReadConfigCatalog, ReadConfigSchema, ReadOperationFactory, Lookup cleanup summary, ReadOperationDto, Endpoint, Key, Label (+20 more)
 
 ### Community 29 - "CreateAdvertisementRequest"
 Cohesion: 0.02
 Nodes (126): CreateAdvertisementRequest, AcceptsHigherPriced, AcceptsLowerPriced, AccidentsCount, ActivityType, Address, AirbagsDeployed, AllMaintenanceAtDealer (+118 more)
 
 ### Community 30 - "CharityListItemDtoBase"
-Cohesion: 0.07
-Nodes (28): CharityListItemDtoBase, ApprovedAt, AverageRating, CategoryId, CategoryName, CreatedAt, HasLocation, Id (+20 more)
+Cohesion: 0.06
+Nodes (33): CharityImageDto, Id, IsPrimary, SortOrder, Url, CharityListItemDtoBase, ApprovedAt, AverageRating (+25 more)
 
 ### Community 31 - "DecorAntiqueDetailsDto"
 Cohesion: 0.05
@@ -738,101 +736,101 @@ Nodes (38): DecorAntiqueDetailsDto, Address, AverageRating, Center, Condition, C
 Cohesion: 0.02
 Nodes (122): UpdateAdvertisementRequest, AcceptsHigherPriced, AcceptsLowerPriced, AccidentsCount, ActivityType, Address, AirbagsDeployed, AllMaintenanceAtDealer (+114 more)
 
-### Community 33 - "HomeFurnishingPriceStatisticsDto"
-Cohesion: 0.02
-Nodes (70): BathroomSupplyService, IBathroomSupplyRepository, IBathroomSupplyService, IFurnishingCurtainService, IFurnitureService, ILightingDecorService, IPlantOrnamentService, BathroomSupplyRepository (+62 more)
+### Community 33 - "PlantOrnamentListItemDto"
+Cohesion: 0.07
+Nodes (17): IPlantOrnamentService, PlantsOrnamentsController, CurrentUserId, IsAdmin, PlantOrnamentFilterParams, HeightFrom, HeightTo, ProductType (+9 more)
 
 ### Community 34 - "Land"
-Cohesion: 0.01
-Nodes (186): Land, AcceptsDifferencePayment, Address, AdvertiserName, AllowedBuildingRatio, AllowedFloorsCount, Area, AreaUnit (+178 more)
+Cohesion: 0.02
+Nodes (147): Land, AcceptsDifferencePayment, Address, AdvertiserName, AllowedBuildingRatio, AllowedFloorsCount, Area, AreaUnit (+139 more)
 
-### Community 35 - "UpdatePetRequest"
-Cohesion: 0.09
-Nodes (22): UpdatePetRequestValidator, UpdatePetRequest, Address, Age, Breed, Description, Gender, GoogleMaps (+14 more)
+### Community 35 - ".GetName"
+Cohesion: 0.02
+Nodes (104): PetMappingProfile, CreatePetRequestValidator, UpdatePetRequestValidator, AnimalCatalog, AnimalLookupEntry, PetCatalog, CreatePetRequest, Address (+96 more)
 
 ### Community 36 - "IHomeFurnishingGalleryEdit"
 Cohesion: 0.08
-Nodes (25): UpdateBathroomSupplyRequestValidator, UpdateBathroomSupplyRequest, RemoveImageIds, RemoveVideo, UpdateFurnishingCurtainRequest, RemoveImageIds, RemoveVideo, UpdateFurnitureRequest (+17 more)
+Nodes (25): UpdateLightingDecorRequestValidator, UpdateBathroomSupplyRequest, RemoveImageIds, RemoveVideo, UpdateFurnishingCurtainRequest, RemoveImageIds, RemoveVideo, UpdateFurnitureRequest (+17 more)
 
 ### Community 37 - "SubCategoryType"
 Cohesion: 0.02
-Nodes (92): AdvertiserLookupCatalog, SupportedSubCategories, AdvertisementValidationRules, D-35 — The advertiser lookup is a database `GROUP BY`, and the name is the key, Backend — modified, Backend — new, C. Category and Subcategory Registration, Database (+84 more)
+Nodes (79): AnimalSubCategories, AntiqueSubCategories, BusinessSubCategories, CharitySubCategories, ClothingSubCategories, HomeFurnishingSubCategories, JobsSubCategories, OfficesSubCategories (+71 more)
 
 ### Community 38 - "Building"
 Cohesion: 0.02
-Nodes (148): Building, AcceptsDifferencePayment, Address, AdvertiserName, ApartmentsCount, Area, AvailableFrom, AvailableTo (+140 more)
+Nodes (139): Building, AcceptsDifferencePayment, Address, AdvertiserName, ApartmentsCount, Area, AvailableFrom, AvailableTo (+131 more)
 
 ### Community 39 - "CreateDirectoryListingRequest"
 Cohesion: 0.04
-Nodes (94): DirectoryListingService, Module, DentalLaboratoryService, Module, HospitalService, Module, MedicalCenterService, Module (+86 more)
+Nodes (105): DentalLaboratoryService, Module, DoctorService, Module, HospitalService, Module, MedicalCenterService, Module (+97 more)
 
 ### Community 40 - "CreateAdFormDto"
 Cohesion: 0.05
-Nodes (43): AdFormBreadcrumbBuilder, D-33 — The create-advertisement breadcrumb is server-built, CategoryDto, DirectSubCategoryId, Icon, Id, Name, NameAr (+35 more)
+Nodes (41): CategoryDto, DirectSubCategoryId, Icon, Id, Name, NameAr, OpensFormDirectly, SortOrder (+33 more)
 
 ### Community 41 - "IHomeFurnishingLookup"
 Cohesion: 0.02
-Nodes (177): BathroomSupplyColorLookup, Id, Name, NameEn, BathroomSupplyMaterialLookup, Id, Name, NameEn (+169 more)
+Nodes (106): BathroomSupplyColorLookup, Id, Name, NameEn, BathroomSupplyMaterialLookup, Id, Name, NameEn (+98 more)
 
-### Community 42 - "HomeApplianceDetailsDto"
-Cohesion: 0.03
-Nodes (88): HomeApplianceMappingProfile, HomeApplianceCatalog, CreateHomeApplianceRequest, Brand, Colors, Condition, DeliveryAvailable, DeviceType (+80 more)
+### Community 42 - "HomeApplianceListItemDto"
+Cohesion: 0.07
+Nodes (30): HomeApplianceListItemDto, Brand, BrandName, Colors, Condition, ConditionName, DeliveryAvailable, DeviceType (+22 more)
 
 ### Community 43 - "ListingLifecycleIntegrationTests"
-Cohesion: 0.10
-Nodes (8): LifecycleApiCollection, LifecycleApiFixture, Admin, AdminId, Anonymous, ListingFactory, LocalDb, ListingLifecycleIntegrationTests
+Cohesion: 0.08
+Nodes (9): AdPaymentIntegrationTests, ExpiredListingsAdminPageTests, LifecycleApiCollection, LifecycleApiFixture, Admin, AdminId, Anonymous, LocalDb (+1 more)
 
 ### Community 44 - ".LogAsync"
-Cohesion: 0.03
-Nodes (70): Category, Advertisements, Icon, Id, IsActive, Name, NameAr, SortOrder (+62 more)
+Cohesion: 0.04
+Nodes (45): Category, Advertisements, Icon, Id, IsActive, Name, NameAr, SortOrder (+37 more)
 
-### Community 45 - "INotificationService"
-Cohesion: 0.02
-Nodes (138): Notification, Action, CategoryId, CategoryName, CreatedAt, DeepLink, EntityName, Icon (+130 more)
+### Community 45 - "NotificationType"
+Cohesion: 0.04
+Nodes (56): NotificationDelivery, NotificationCatalog, AllListingSubjects, NotificationSubject, NotificationType, AccountCreated, AdminBannerExpiring, AdminDeletedListing (+48 more)
 
-### Community 46 - "Development Guide"
-Cohesion: 0.13
-Nodes (15): 1. Domain, 3. Contracts, 4. Application, 5. Presentation and DI, 6. Migration, then verify, Adding a field to an existing module, Adding a new listing module, Adding an endpoint (+7 more)
+### Community 46 - "UserMessages"
+Cohesion: 0.07
+Nodes (29): 1. Domain, 2. Persistence, 3. Contracts, 4. Application, 5. Presentation and DI, 6. Migration, then verify, Adding a field to an existing module, Adding a new listing module (+21 more)
 
 ### Community 47 - "Theory"
-Cohesion: 0.04
-Nodes (14): CreateLawyerOfficeRequestValidator, SwaggerAuthSettings, IsConfigured, Password, Username, LookupRouteIntegrityTests, OfficesCategoryTests, Result (+6 more)
+Cohesion: 0.03
+Nodes (23): AdvertiserLookupCatalog, SupportedSubCategories, CatalogSelection, D-35 — The advertiser lookup is a database `GROUP BY`, and the name is the key, D-36 — One catalog for category identity, and a parent check in every lookup, SubCategoryConfiguration, 1. `GET /api/lookups/create-ad-form/{categoryId}/{subCategoryId}`, 2. `GET /api/lookups/read-config/{categoryId}/{subCategoryId}` (+15 more)
 
-### Community 48 - "IFileService"
-Cohesion: 0.06
-Nodes (22): DirectoryListing, Images, CharityListings, ListingImages, AdminUploadKind, Document, Image, Video (+14 more)
+### Community 48 - "UploadImageModel"
+Cohesion: 0.03
+Nodes (65): AdminSettingsService, AdminUploadKind, Document, Image, Video, IAdminSettingsRepository, IAdminSettingsService, IFileService (+57 more)
 
 ### Community 49 - "AppSettings"
 Cohesion: 0.04
-Nodes (37): Testing, D-15 — All user-facing text in one catalogue, `Tests/MarkatPlace.Tests`, Contract details that cost time, Coverage achieved, Egyptian input, HTTP suites, Language (+29 more)
+Nodes (35): `Tests/MarkatPlace.Tests`, Contract details that cost time, Coverage achieved, Egyptian input, HTTP suites, Language, Mutation testing, Owner visibility (+27 more)
 
 ### Community 50 - "`Core/ServicesAbstraction` — the contract layer (148 files)"
-Cohesion: 0.05
-Nodes (36): IAdminActionContext, IpAddress, IsAdmin, UserId, UserName, IEmailService, IRealtimeNotifier, ITokenService (+28 more)
+Cohesion: 0.02
+Nodes (78): PublicResponseCache, LookupCache, Version, RegisterRequestValidator, IAdminActionContext, IpAddress, IsAdmin, UserId (+70 more)
 
-### Community 51 - "MenClothing"
-Cohesion: 0.07
-Nodes (23): MenClothingColorSelection, Color, MenClothing, MenClothingId, MenClothingImage, CreatedAt, FileName, Id (+15 more)
+### Community 51 - "MenClothingImage"
+Cohesion: 0.16
+Nodes (10): MenClothingImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, MenClothing (+2 more)
 
 ### Community 52 - "CreateKidsClothingRequest"
-Cohesion: 0.06
-Nodes (31): CreateKidsClothingRequest, Address, Brand, Center, ClothingType, Colors, Condition, DeliveryAvailable (+23 more)
+Cohesion: 0.03
+Nodes (88): KidsClothingMappingProfile, KidsClothingCatalog, CreateKidsClothingRequest, Address, Brand, Center, ClothingType, Colors (+80 more)
 
 ### Community 53 - "Furniture"
 Cohesion: 0.03
-Nodes (83): Furniture, Address, CanBeDisassembled, Center, Colors, Condition, CreatedAt, DeletedAt (+75 more)
+Nodes (89): Furniture, Address, CanBeDisassembled, Center, Colors, Condition, CreatedAt, DeletedAt (+81 more)
 
 ### Community 54 - "Shop"
-Cohesion: 0.01
-Nodes (161): Shop, AcceptsDifferencePayment, Address, AdvertiserName, AllowsActivityChange, Area, AvailableFrom, AvailableTo (+153 more)
+Cohesion: 0.02
+Nodes (100): Shop, AcceptsDifferencePayment, Address, AdvertiserName, AllowsActivityChange, Area, AvailableFrom, AvailableTo (+92 more)
 
 ### Community 55 - "ApartmentDetailsDto"
 Cohesion: 0.01
-Nodes (242): DirectoryMapping, ApartmentMappingProfile, BuildingMappingProfile, ApartmentCatalog, ApartmentDetailsDto, AcceptsDifferencePayment, ApartmentsPerFloor, ApartmentType (+234 more)
+Nodes (201): ApartmentMappingProfile, BuildingMappingProfile, ApartmentCatalog, ApartmentDetailsDto, AcceptsDifferencePayment, ApartmentsPerFloor, ApartmentType, ApartmentTypeName (+193 more)
 
 ### Community 56 - "MenClothingListItemDto"
-Cohesion: 0.03
-Nodes (65): MenClothingFilterParams, Brand, Center, ClothingType, Color, PriceFrom, PriceTo, Search (+57 more)
+Cohesion: 0.02
+Nodes (90): MenClothingFilterParams, Brand, Center, ClothingType, Color, PriceFrom, PriceTo, Search (+82 more)
 
 ### Community 57 - "CarDetailsDto"
 Cohesion: 0.02
@@ -840,171 +838,171 @@ Nodes (98): CarDetailsDto, AcceptsHigherPriced, AcceptsLowerPriced, AccidentsCou
 
 ### Community 58 - "IVehicleAdvertisementFields"
 Cohesion: 0.02
-Nodes (99): CreateAdvertisementRequestValidator, UpdateAdvertisementRequestValidator, IVehicleAdvertisementFields, AcceptsHigherPriced, AcceptsLowerPriced, AccidentsCount, ActivityType, AirbagsDeployed (+91 more)
+Nodes (97): IVehicleAdvertisementFields, AcceptsHigherPriced, AcceptsLowerPriced, AccidentsCount, ActivityType, AirbagsDeployed, AllMaintenanceAtDealer, AssemblyCountry (+89 more)
 
 ### Community 59 - "LandDetailsDto"
 Cohesion: 0.01
-Nodes (257): LandMappingProfile, LandCatalog, LandDetailsDto, AcceptsDifferencePayment, AllowedBuildingRatio, AllowedFloorsCount, Area, AreaUnit (+249 more)
+Nodes (250): DirectoryMapping, LandMappingProfile, LandCatalog, LandDetailsDto, AcceptsDifferencePayment, AllowedBuildingRatio, AllowedFloorsCount, Area (+242 more)
 
 ### Community 60 - "RequestSizeLimitTests"
 Cohesion: 0.03
-Nodes (49): Middleware pipeline, D-32 — One 256 MB request ceiling, and the reverse proxy is what enforces it, D-34 — Swagger is public in Development and password-gated everywhere else, Background services, Before you deploy — required configuration, Configuration layering, CORS headers survive an error response, Deployment (+41 more)
+Nodes (61): D-32 — One 256 MB request ceiling, and the reverse proxy is what enforces it, Background services, Before you deploy — required configuration, Configuration layering, CORS headers survive an error response, Deployment, Health checks, Keep uploads outside the application directory (production) (+53 more)
 
 ### Community 61 - "Handmade"
 Cohesion: 0.03
-Nodes (71): Handmade, Address, Center, Colors, CreatedAt, CustomOrder, DeletedAt, Description (+63 more)
+Nodes (63): Handmade, Address, Center, Colors, CreatedAt, CustomOrder, DeletedAt, Description (+55 more)
 
-### Community 62 - ".NotifyAsync"
-Cohesion: 0.02
-Nodes (126): FurnishingCurtain, Address, Center, Colors, CreatedAt, DeletedAt, DeliveryAvailable, Description (+118 more)
+### Community 62 - "FurnishingCurtain"
+Cohesion: 0.03
+Nodes (65): FurnishingCurtain, Address, Center, Colors, CreatedAt, DeletedAt, DeliveryAvailable, Description (+57 more)
 
 ### Community 63 - "Apartment"
 Cohesion: 0.02
-Nodes (122): Apartment, AcceptsDifferencePayment, Address, AdvertiserName, ApartmentsPerFloor, ApartmentType, Area, AvailableFrom (+114 more)
+Nodes (128): Apartment, AcceptsDifferencePayment, Address, AdvertiserName, ApartmentsPerFloor, ApartmentType, Area, AvailableFrom (+120 more)
 
 ### Community 64 - "BadRequestException"
-Cohesion: 0.07
-Nodes (20): BannerBookingService, PlacementScope, BannerPlacementPresenter, BannerSettingsService, BannerBookingMappingProfile, IBannerBookingRepository, BannerBookingCatalog, SeedIds (+12 more)
+Cohesion: 0.09
+Nodes (6): BannerBookingService, PlacementScope, BannerPlacementPresenter, BannerBookingMappingProfile, IBannerBookingRepository, BannerBookingLifecycleService
 
 ### Community 65 - "FurnitureDetailsDto"
 Cohesion: 0.03
 Nodes (79): FurnitureMappingProfile, FurnitureCatalog, CreateFurnitureRequest, CanBeDisassembled, Colors, Condition, DeliveryAvailable, FurnitureType (+71 more)
 
-### Community 66 - "IBannerBookingService"
-Cohesion: 0.11
-Nodes (3): IBannerBookingService, RejectBannerPaymentRequest, Notes
+### Community 66 - "DateTime"
+Cohesion: 0.05
+Nodes (29): LostFoundListingQuery, HomeFurnishingQueries, UserListingRepository, SupportedModules, AdminTimeSeriesPointDto, Count, Date, ListingKeyRow (+21 more)
 
 ### Community 67 - "UpdateWomenClothingRequest"
-Cohesion: 0.04
-Nodes (59): CreateWomenClothingRequest, Address, Brand, Center, ClothingType, Colors, Condition, DeliveryAvailable (+51 more)
+Cohesion: 0.02
+Nodes (96): CreateWomenClothingRequest, Address, Brand, Center, ClothingType, Colors, Condition, DeliveryAvailable (+88 more)
 
 ### Community 68 - "ILogger"
-Cohesion: 0.04
-Nodes (40): D-30 — Demo data cannot reach a non-development database, DemoImage, DemoImageLibrary, DownloadedCount, FailedCount, ReusedCount, UploadsRoot, ManifestEntry (+32 more)
+Cohesion: 0.03
+Nodes (58): Adding one, Check constraints, Database, Important constraints, Indexes, Inspecting a local database, Migrations, Performance-sensitive queries (+50 more)
 
 ### Community 69 - "JwtSettings"
-Cohesion: 0.05
-Nodes (42): `Shared`, The catalogues — read these before adding anything, EmailSettings, DisplayName, Email, EnableSsl, LogoUrl, Password (+34 more)
+Cohesion: 0.03
+Nodes (61): Lifetimes, Signing key — start-up fail-fast, The access token, `Shared`, The catalogues — read these before adding anything, AppUrlSettingsExtensions, CorsExtensions, ForwardedHeadersExtensions (+53 more)
 
 ### Community 70 - "Livestock"
 Cohesion: 0.04
-Nodes (51): Livestock, Address, Age, Breed, CreatedAt, DeletedAt, Description, ExpireAt (+43 more)
+Nodes (49): Livestock, Address, Age, Breed, CreatedAt, DeletedAt, Description, ExpireAt (+41 more)
 
-### Community 71 - ".ReadFile"
-Cohesion: 0.04
-Nodes (44): Configuration safety, 401 on an endpoint that should be public, 403 from an admin endpoint even though the user is an administrator, 429 with `Retry-After`, A promoted user is still refused, A unique index is not preventing duplicates, A valid image is rejected, An owner gets 404 on their own listing (+36 more)
+### Community 71 - "FurnishingCurtainDetailsDto"
+Cohesion: 0.03
+Nodes (79): FurnishingCurtainMappingProfile, HomeApplianceMappingProfile, FurnishingCurtainCatalog, HomeApplianceCatalog, CreateFurnishingCurtainRequest, Colors, DeliveryAvailable, Material (+71 more)
 
 ### Community 72 - "DecorAntique"
-Cohesion: 0.05
-Nodes (44): DecorAntique, Address, Center, Condition, CreatedAt, DeletedAt, Description, ExpireAt (+36 more)
+Cohesion: 0.03
+Nodes (64): DecorAntique, Address, Center, Condition, CreatedAt, DeletedAt, Description, ExpireAt (+56 more)
 
 ### Community 73 - "KitchenTool"
-Cohesion: 0.02
-Nodes (114): KitchenTool, Address, Center, Colors, CreatedAt, DeletedAt, Description, Email (+106 more)
+Cohesion: 0.03
+Nodes (71): KitchenTool, Address, Center, Colors, CreatedAt, DeletedAt, Description, Email (+63 more)
 
 ### Community 74 - "CreateLandRequest"
 Cohesion: 0.03
 Nodes (79): LandValidationRules, CreateLandRequest, AcceptsDifferencePayment, AllowedBuildingRatio, AllowedFloorsCount, Area, AreaUnit, AvailableFrom (+71 more)
 
 ### Community 75 - "MenClothing"
-Cohesion: 0.05
-Nodes (44): MenClothing, Address, Brand, Center, ClothingType, Colors, Condition, CreatedAt (+36 more)
+Cohesion: 0.04
+Nodes (50): MenClothing, Address, Brand, Center, ClothingType, Colors, Condition, CreatedAt (+42 more)
 
 ### Community 76 - "GovernorateGuideDtos.cs"
-Cohesion: 0.11
-Nodes (31): CommercialShopService, Module, ResortHotelAmusementService, Module, CommercialShopFilterParamsValidator, CreateCommercialShopRequestValidator, CreateResortHotelAmusementRequestValidator, UpdateCommercialShopRequestValidator (+23 more)
+Cohesion: 0.07
+Nodes (44): CommercialShop, ActivityType, OtherActivityType, CommercialShopImage, Listing, ResortHotelAmusement, ResortHotelAmusementImage, Listing (+36 more)
 
 ### Community 77 - "AntiqueDetailsDto"
-Cohesion: 0.03
-Nodes (71): AntiqueMappingProfile, AntiqueCatalog, MaxYear, AntiqueLookupEntry, AntiqueModuleCatalog, AntiqueDetailsDto, Address, AntiqueName (+63 more)
+Cohesion: 0.08
+Nodes (32): AntiqueMappingProfile, AntiqueCatalog, MaxYear, AntiqueLookupEntry, AntiqueModuleCatalog, AntiqueImageDto, Id, IsPrimary (+24 more)
 
-### Community 78 - "RealEstateListItemDtoBase"
-Cohesion: 0.04
-Nodes (54): RealEstateQueries, CreateRealEstateRequestBase, Address, AdvertiserName, Center, Description, District, Email (+46 more)
+### Community 78 - "CreateShopRequest"
+Cohesion: 0.03
+Nodes (75): CreateShopRequestValidator, ShopValidationRules, CreateShopRequest, AcceptsDifferencePayment, AllowsActivityChange, Area, AvailableFrom, AvailableTo (+67 more)
 
 ### Community 79 - "UserNotificationInterest"
-Cohesion: 0.06
-Nodes (33): UserNotificationInterest, CategoryId, CreatedAt, Id, IsEnabled, SubCategoryId, UpdatedAt, User (+25 more)
+Cohesion: 0.03
+Nodes (67): UserNotificationInterest, CategoryId, CreatedAt, Id, IsEnabled, SubCategoryId, UpdatedAt, User (+59 more)
 
-### Community 80 - ".GetName"
-Cohesion: 0.13
-Nodes (14): BirdMappingProfile, LivestockMappingProfile, AnimalCatalog, AnimalLookupEntry, BirdCatalog, LivestockCatalog, BirdImageDto, Id (+6 more)
+### Community 80 - "BirdMappingProfile"
+Cohesion: 0.18
+Nodes (11): BirdMappingProfile, BirdCatalog, BirdImageDto, Id, IsPrimary, Url, BirdVaccination, FullyVaccinated (+3 more)
 
-### Community 81 - "GoogleSignInHarness"
-Cohesion: 0.04
-Nodes (49): AccountService, DeactivateAccountRequestValidator, AccountClosureResult, IAccountClosureRepository, IAccountService, GoogleUserProfile, IGoogleTokenValidator, ClientId (+41 more)
+### Community 81 - ".DeactivateAsync"
+Cohesion: 0.09
+Nodes (20): AccountService, DeactivateAccountRequestValidator, AccountClosureResult, IAccountClosureRepository, IAccountService, AccountClosureRepository, DeactivateAccountRequest, Confirm (+12 more)
 
 ### Community 82 - "IModeratedListing"
-Cohesion: 0.02
-Nodes (98): IExpiringListing, ExpireAt, FirstPublishedAt, PublishedAt, RepublishCount, IModeratedListing, ListingTitle, ModeratedAt (+90 more)
+Cohesion: 0.04
+Nodes (38): IModeratedListing, ListingTitle, ModeratedAt, ModeratedBy, ModerationNotes, ModerationStatus, OwnerUserId, RejectionReason (+30 more)
 
 ### Community 83 - "Project"
-Cohesion: 0.03
-Nodes (59): Center, Governorate, GovernorateId, Id, IsActive, Name, Projects, SortOrder (+51 more)
+Cohesion: 0.04
+Nodes (54): Center, Governorate, GovernorateId, Id, IsActive, Name, Projects, SortOrder (+46 more)
 
 ### Community 84 - "FormFieldDto"
-Cohesion: 0.05
-Nodes (37): AdFormFieldFactory, `Core/Services`, FormFieldConditionDto, Field, Values, FormFieldDto, AllowedExtensions, DefaultValue (+29 more)
+Cohesion: 0.03
+Nodes (53): KitchenToolColorSelection, Color, KitchenTool, KitchenToolId, ShopRentInclusionSelection, Inclusion, Shop, ShopId (+45 more)
 
-### Community 85 - ".UpdateAsync"
-Cohesion: 0.11
-Nodes (12): DecorAntiqueVideo, CreatedAt, DecorAntique, DecorAntiqueId, FileName, Id, VideoPath, VideoUrl (+4 more)
+### Community 85 - "Notification"
+Cohesion: 0.05
+Nodes (34): Notification, Action, CategoryId, CategoryName, CreatedAt, DeepLink, EntityName, Icon (+26 more)
 
 ### Community 86 - "CarCatalog"
 Cohesion: 0.03
-Nodes (86): CarCatalog, MaxManufacturingYear, CarFeature, CarNameOptionDto, Group, Name, Value, AccidentsCount (+78 more)
+Nodes (95): DemoAd, CarCatalog, MaxManufacturingYear, CarFeature, CarNameOptionDto, Group, Name, Value (+87 more)
 
 ### Community 87 - "ClothingLookups.cs"
 Cohesion: 0.02
-Nodes (96): KidsClothingBrandLookup, Id, Name, NameEn, KidsClothingColorLookup, Id, Name, NameEn (+88 more)
+Nodes (85): KidsClothingBrandLookup, Id, Name, NameEn, KidsClothingColorLookup, Id, Name, NameEn (+77 more)
 
 ### Community 88 - "OnlineShoppingLookups.cs"
-Cohesion: 0.02
-Nodes (85): AccessoryCategoryLookup, Id, Name, NameEn, AccessoryColorLookup, Id, Name, NameEn (+77 more)
+Cohesion: 0.03
+Nodes (65): AccessoryCategoryLookup, Id, Name, NameEn, AccessoryTypeLookup, Id, Name, NameEn (+57 more)
 
 ### Community 89 - "HandmadeDetailsDto"
 Cohesion: 0.06
 Nodes (34): HandmadeDetailsDto, Address, AverageRating, Center, Colors, CreatedAt, CustomOrder, Description (+26 more)
 
 ### Community 90 - "LightingDecorDetailsDto"
-Cohesion: 0.04
-Nodes (56): LightingDecorMappingProfile, LightingDecorCatalog, CreateLightingDecorRequest, Colors, LightType, Material, OtherColor, OtherMaterial (+48 more)
+Cohesion: 0.05
+Nodes (51): LightingDecorMappingProfile, CreateLightingDecorRequestValidator, LightingDecorRequestValidatorBase, LightingDecorCatalog, CreateLightingDecorRequest, Colors, LightType, Material (+43 more)
 
-### Community 91 - "LookupRepository"
-Cohesion: 0.04
-Nodes (43): AvailabilitySeasonLookup, Id, Name, CompanyFieldLookup, Code, Group, GroupAr, Id (+35 more)
+### Community 91 - "CancellationToken"
+Cohesion: 0.01
+Nodes (73): AvailabilitySeasonLookup, Id, Name, FarmingMethodLookup, Code, Id, Name, ProductionSpecialtyLookup (+65 more)
 
 ### Community 92 - "CreateBuildingRequest"
 Cohesion: 0.03
-Nodes (66): BuildingValidationRules, 1. `<Image>` — the false «لا توجد صورة», 2. Real-time listings — reuse the existing hub connection, 3. Notification clicks, 4. مباني (Buildings) — what the frontend has to add, 5. دليل محافظتي — محلات تجارية / خدمات عامة / قرى سياحية وفنادق وملاهي, Frontend changes for real-time listings and images, BuildingCatalog (+58 more)
+Nodes (62): RealEstateListings, Governorate, BuildingValidationRules, BuildingCatalog, CreateBuildingRequest, AcceptsDifferencePayment, ApartmentsCount, Area (+54 more)
 
 ### Community 93 - "CreateCoinStampRequest"
 Cohesion: 0.08
 Nodes (25): CreateCoinStampRequest, Address, Center, Condition, Country, Denomination, Description, GoogleMaps (+17 more)
 
-### Community 94 - "ShopDetailsDto"
+### Community 94 - "HomeFurnishingLookupEntry"
 Cohesion: 0.03
-Nodes (73): ShopDetailsDto, AcceptsDifferencePayment, AllowsActivityChange, Area, AvailableFrom, AvailableTo, BathroomsCount, CeilingHeight (+65 more)
+Nodes (74): BathroomSupplyColorLookupConfiguration, Entries, TableName, FurnishingCurtainColorLookupConfiguration, Entries, TableName, FurnishingCurtainMaterialLookupConfiguration, Entries (+66 more)
 
 ### Community 95 - "AdvertisementFilterParams"
 Cohesion: 0.03
-Nodes (63): DemoAd, AdvertisementCatalog, AdvertisementFilterParams, BodyType, Brand, CategoryId, Center, Color (+55 more)
+Nodes (58): AdvertisementFilterParams, BodyType, Brand, CategoryId, Center, Color, Condition, FeatureIds (+50 more)
 
 ### Community 96 - "AbstractValidator"
-Cohesion: 0.08
-Nodes (44): CreateFormFieldRequestValidator, SaveFormOptionRequestValidator, UpdateFormFieldRequestValidator, AntiqueValidationRules, RejectBannerPaymentRequestValidator, BusinessValidationRules, AskConsultValidationRules, BloodRequestValidationRules (+36 more)
+Cohesion: 0.06
+Nodes (61): CreateAccessoryRequestValidator, UpdateAccessoryRequestValidator, UpdateFormFieldRequestValidator, AntiqueValidationRules, BannerImagePreviewRequestValidator, RejectBannerPaymentRequestValidator, BusinessValidationRules, AskConsultValidationRules (+53 more)
 
 ### Community 97 - "CreateBirdRequest"
-Cohesion: 0.06
-Nodes (34): CreateBirdRequestValidator, CreateBirdRequest, Address, Age, AnimalType, Description, Gender, GoogleMaps (+26 more)
+Cohesion: 0.10
+Nodes (20): CreateBirdRequestValidator, CreateBirdRequest, Address, Age, AnimalType, Description, Gender, GoogleMaps (+12 more)
 
-### Community 98 - "IFormFile"
-Cohesion: 0.04
-Nodes (52): BannerImagePreviewRequestValidator, CreateBannerBookingRequestValidator, CreateSupplierRequestValidator, SubmitPaymentRequestValidator, `Infastrucre/Presantion` → namespace `Presentation`, EmptyFormFileCollection, FormFileExtensions, UploadImagesRequest (+44 more)
+### Community 98 - "CreateBannerBookingRequest"
+Cohesion: 0.11
+Nodes (19): CreateBannerBookingRequestValidator, CreateBannerBookingRequest, AdvertiserName, ButtonText, CategoryId, ConfirmationAccepted, Description, DesktopImage (+11 more)
 
-### Community 99 - "CategoryTreeDto"
-Cohesion: 0.13
-Nodes (15): CategoryTreeDto, DirectSubCategoryId, Icon, Id, Name, NameAr, OpensFormDirectly, SortOrder (+7 more)
+### Community 99 - "NotFoundException"
+Cohesion: 0.07
+Nodes (20): ShopImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, Shop (+12 more)
 
 ### Community 100 - "BuildingDetailsDto"
 Cohesion: 0.03
@@ -1012,15 +1010,15 @@ Nodes (69): BuildingDetailsDto, AcceptsDifferencePayment, ApartmentsCount, Area,
 
 ### Community 101 - "Farm"
 Cohesion: 0.05
-Nodes (48): Farm, Address, AreaInFeddan, AvailabilitySeason, AvailableQuantity, CreatedAt, DeletedAt, Description (+40 more)
+Nodes (36): Farm, Address, AreaInFeddan, AvailabilitySeason, AvailableQuantity, CreatedAt, DeletedAt, Description (+28 more)
 
 ### Community 102 - "BannerBooking"
-Cohesion: 0.02
-Nodes (90): BannerBooking, AccountNameSnapshot, AdvertiserName, ApprovedAt, ButtonText, CancelledAt, Category, CategoryId (+82 more)
+Cohesion: 0.03
+Nodes (63): BannerBooking, AccountNameSnapshot, AdvertiserName, ApprovedAt, ButtonText, CancelledAt, Category, CategoryId (+55 more)
 
 ### Community 103 - "Supplier"
-Cohesion: 0.05
-Nodes (46): Supplier, Address, CreatedAt, DeletedAt, Description, Email, ExpireAt, FirstPublishedAt (+38 more)
+Cohesion: 0.06
+Nodes (33): Supplier, Address, CreatedAt, DeletedAt, Description, Email, ExpireAt, FirstPublishedAt (+25 more)
 
 ### Community 104 - "BirdDetailsDto"
 Cohesion: 0.06
@@ -1028,99 +1026,99 @@ Nodes (34): BirdDetailsDto, Address, Age, AgeName, AnimalType, AnimalTypeName, A
 
 ### Community 105 - "AdvertisementCardRow"
 Cohesion: 0.05
-Nodes (38): AdvertisementMappingProfile, AdvertisementCardRow, Brand, BusinessName, CategoryId, CategoryName, Center, CreatedAt (+30 more)
+Nodes (42): AdvertisementMappingProfile, AdvertisementCardRow, Brand, BusinessName, CategoryId, CategoryName, Center, CreatedAt (+34 more)
 
 ### Community 106 - "DoctorSpecialty"
-Cohesion: 0.03
-Nodes (74): DoctorService, Module, IDoctorService, DoctorsController, CreateDoctorRequest, OtherSpecialty, Specialty, DoctorDto (+66 more)
+Cohesion: 0.02
+Nodes (102): DentalLaboratory, DentalLaboratoryImage, Listing, Doctor, OtherSpecialty, Specialty, DoctorImage, Listing (+94 more)
 
-### Community 107 - "INotificationInterestService"
-Cohesion: 0.09
-Nodes (10): INotificationInterestService, NotificationInterestsController, CurrentUserId, NotificationsController, CurrentUserId, NotificationInterestOptionsDto, Categories, NewListingsEnabled (+2 more)
+### Community 107 - "NotificationAction"
+Cohesion: 0.06
+Nodes (22): NotificationAction, AdminDeleted, AdminUpdated, Approved, Commented, Created, Deleted, EditedPendingReview (+14 more)
 
 ### Community 108 - "SupplierType"
-Cohesion: 0.03
-Nodes (59): Category 4 — رجال أعمال (Business) · subs 9–14, BusinessCatalog, GroupedEntry, AvailabilitySeason, AllYear, AvailableNow, Seasonal, SaleType (+51 more)
+Cohesion: 0.04
+Nodes (48): SupplierType, AgriculturalEquipment, Aluminum, AnimalFeed, BakeryAndSweets, Beverages, BricksSandAndGravel, CablesAndWires (+40 more)
 
 ### Community 109 - "AdvertisementService"
-Cohesion: 0.07
-Nodes (4): AdvertisementService, IAdvertisementRepository, IAdvertisementService, AdvertisementRepository
+Cohesion: 0.05
+Nodes (26): AdvertisementFeature, Advertisement, AdvertisementId, Feature, FeatureId, AdvertisementImage, Advertisement, AdvertisementId (+18 more)
 
 ### Community 110 - "IListingImage"
-Cohesion: 0.05
-Nodes (35): BathroomSupplyImage, BathroomSupply, BathroomSupplyId, CreatedAt, FileName, Id, ImagePath, ImageUrl (+27 more)
+Cohesion: 0.07
+Nodes (27): IExpiringListing, ExpireAt, FirstPublishedAt, PublishedAt, RepublishCount, IListingImage, CreatedAt, FileName (+19 more)
 
 ### Community 111 - "Factory"
-Cohesion: 0.05
-Nodes (44): Factory, Address, CreatedAt, DeletedAt, Description, Email, ExpireAt, FactoryName (+36 more)
+Cohesion: 0.06
+Nodes (35): Factory, Address, CreatedAt, DeletedAt, Description, Email, ExpireAt, FactoryName (+27 more)
 
-### Community 112 - "UserAccountStatus"
-Cohesion: 0.03
-Nodes (63): AdminUserService, UpdateUserStatusRequestValidator, Account states, UserAccountCatalog, Options, AdminUserDetailsDto, ActiveBannersCount, BannerRequests (+55 more)
+### Community 112 - "AdminUserDetailsDto"
+Cohesion: 0.06
+Nodes (32): AdminUserDetailsDto, ActiveBannersCount, BannerRequests, Center, CreatedAt, Email, EmailConfirmed, Governorate (+24 more)
 
 ### Community 113 - "CreateHandmadeRequest"
 Cohesion: 0.03
-Nodes (87): AntiqueModuleExamples, HandmadeMappingProfile, HandmadeCatalog, CreateHandmadeRequest, Address, Center, Colors, CustomOrder (+79 more)
+Nodes (60): HandmadeCatalog, CreateHandmadeRequest, Address, Center, Colors, CustomOrder, Description, GoogleMaps (+52 more)
 
-### Community 114 - "NotificationFilterParams"
-Cohesion: 0.26
-Nodes (5): NotificationFilterParams, ReferenceType, Search, Type, UnreadOnly
+### Community 114 - "NotificationDto"
+Cohesion: 0.06
+Nodes (32): Real-time notifications, `MarkatPlace` — the host, NotificationHub, SignalRRealtimeNotifier, NotificationDto, Action, CategoryId, CategoryName (+24 more)
 
 ### Community 115 - "Profile"
-Cohesion: 0.06
-Nodes (34): JobFormLookups, EducationLevelOptions, ExperienceLevelOptions, JobFieldOptions, SalaryTypeOptions, WorkTypeOptions, JobModuleExamples, JobOpportunityMappingProfile (+26 more)
+Cohesion: 0.07
+Nodes (30): JobFormLookups, EducationLevelOptions, ExperienceLevelOptions, JobFieldOptions, SalaryTypeOptions, WorkTypeOptions, JobModuleExamples, JobOpportunityMappingProfile (+22 more)
 
 ### Community 116 - "`Infastrucre/Presitance` → namespace `Persistence`"
-Cohesion: 0.06
-Nodes (35): Global query filters, Seams, 1. Moderation, R1.1 — Nothing is published unreviewed, R1.2 — Only an administrator changes moderation status, R1.3 — A listing is publicly visible only when approved **and** inside its window, R1.4 — Editing a published listing returns it to review, Repositories (+27 more)
-
-### Community 117 - "ReverseProxyHostingTests"
-Cohesion: 0.06
-Nodes (17): AppUrlSettingsExtensions, CorsExtensions, ForwardedHeadersExtensions, JwtAuthenticationExtensions, CorsSettings, AllowAnyOrigin, AllowedOrigins, AllowLocalhostInDevelopment (+9 more)
+Cohesion: 0.14
+Nodes (16): Global query filters, Seams, Repositories, Global query filters, Soft delete, Patterns to avoid, Patterns to follow, `Infastrucre/Presitance` → namespace `Persistence` (+8 more)
 
 ### Community 118 - "RestaurantsAndCafesTests"
-Cohesion: 0.09
-Nodes (21): RestaurantAndCafe, RestaurantAndCafeImage, Listing, RestaurantsAndCafesMappingProfile, RestaurantAndCafeService, Module, CreateRestaurantAndCafeRequestValidator, UpdateRestaurantAndCafeRequestValidator (+13 more)
-
-### Community 119 - "ILookupService"
-Cohesion: 0.04
-Nodes (48): LookupMappingProfile, D-38 — A category that opens its form directly keeps one hidden sub-category, AvailabilitySeasonDto, Id, Name, CompanyFieldDto, Code, Group (+40 more)
-
-### Community 120 - "ListingStatsFilter"
 Cohesion: 0.07
-Nodes (16): ListingViewQueue, Dropped, Reader, IListingViewRecorder, ListingViewEvent, A cacheable GET ignores its query string and keeps answering the first page, HttpCacheAttribute, MaxAgeSeconds (+8 more)
+Nodes (7): CreateRestaurantAndCafeRequestValidator, D-39 — Admin republish is a generic action with a per-module allow-list, DemoSeedImage, AdminRepublishPolicy, ListingLifecycle, ListingLifecycleRulesTests, RestaurantsAndCafesTests
+
+### Community 119 - "LookupMappingProfile"
+Cohesion: 0.03
+Nodes (63): CompanyFieldLookup, Code, Group, GroupAr, Id, Name, FarmTypeLookup, Group (+55 more)
+
+### Community 120 - "ListingActionsDto"
+Cohesion: 0.03
+Nodes (51): ListingViewQueue, Dropped, Reader, IListingViewRecorder, ListingViewEvent, Cross-module statistics, A cacheable GET ignores its query string and keeps answering the first page, HttpCacheAttribute (+43 more)
 
 ### Community 121 - "CreateApartmentRequest"
-Cohesion: 0.04
-Nodes (53): ApartmentValidationRules, CreateApartmentRequest, AcceptsDifferencePayment, ApartmentsPerFloor, ApartmentType, Area, AvailableFrom, AvailableTo (+45 more)
+Cohesion: 0.03
+Nodes (79): ApartmentValidationRules, CreateApartmentRequest, AcceptsDifferencePayment, ApartmentsPerFloor, ApartmentType, Area, AvailableFrom, AvailableTo (+71 more)
 
 ### Community 122 - "CreateMenClothingRequest"
-Cohesion: 0.06
-Nodes (32): CreateMenClothingRequest, Address, Brand, Center, ClothingType, Colors, Condition, DeliveryAvailable (+24 more)
+Cohesion: 0.09
+Nodes (23): CreateMenClothingRequest, Address, Brand, Center, ClothingType, Colors, Condition, DeliveryAvailable (+15 more)
 
 ### Community 123 - "ApplicationUser"
-Cohesion: 0.03
-Nodes (59): ApplicationUser, Center, CreatedAt, FirstName, Governorate, PasswordResetOtpExpiry, PasswordResetOtpHash, PasswordResetTokenHash (+51 more)
+Cohesion: 0.02
+Nodes (114): ApplicationUser, Center, CreatedAt, FirstName, Governorate, PasswordResetOtpExpiry, PasswordResetOtpHash, PasswordResetTokenHash (+106 more)
 
-### Community 124 - "KidsClothingMappingProfile"
-Cohesion: 0.10
-Nodes (20): KidsClothingMappingProfile, KidsClothingCatalog, KidsClothingImageDto, Id, IsPrimary, Url, KidsClothingColor, Black (+12 more)
-
-### Community 125 - "Shared.DTOs.HomeFurnishing"
+### Community 124 - "AdPaymentService"
 Cohesion: 0.06
-Nodes (21): BathroomSupplyRequestValidatorBase, CreateFurnishingCurtainRequestValidator, FurnishingCurtainRequestValidatorBase, UpdateFurnishingCurtainRequestValidator, CreateFurnitureRequestValidator, FurnitureRequestValidatorBase, UpdateFurnitureRequestValidator, CreateHomeApplianceRequestValidator (+13 more)
+Nodes (28): AdPaymentSetting, Currency, EnabledAt, Id, Instructions, IsEnabled, PaymentMethodIds, Price (+20 more)
+
+### Community 125 - "HomeFurnishingRequestValidator"
+Cohesion: 0.12
+Nodes (19): BathroomSupplyRequestValidatorBase, CreateBathroomSupplyRequestValidator, UpdateBathroomSupplyRequestValidator, CreateFurnishingCurtainRequestValidator, FurnishingCurtainRequestValidatorBase, UpdateFurnishingCurtainRequestValidator, CreateFurnitureRequestValidator, FurnitureRequestValidatorBase (+11 more)
 
 ### Community 126 - "BannerDto"
-Cohesion: 0.07
+Cohesion: 0.06
 Nodes (32): Banner, CreatedAt, Description, DisplayOrder, EndDate, Id, ImageFileName, ImagePath (+24 more)
 
-### Community 127 - "AdminDashboardService"
-Cohesion: 0.14
-Nodes (6): AdminDashboardService, IAdminDashboardService, IAdminReferralService, IBannerSettingsService, AdminBannerCenterController, AdminModerationController
+### Community 127 - "IAdminDashboardService"
+Cohesion: 0.24
+Nodes (4): IAdminDashboardService, AdminBannerCenterController, AdminModerationController, AdminDashboardController
 
 ### Community 128 - "SECURITY.md"
-Cohesion: 0.10
-Nodes (26): 2026-09-08 — repeated aggregates over the same table, Current profile, Discovery strips, How to measure, Index hygiene, Key-first paging, Not changed, and why, One change was measured and reverted (+18 more)
+Cohesion: 0.11
+Nodes (23): 2026-09-08 — repeated aggregates over the same table, Current profile, Discovery strips, How to measure, Index hygiene, Key-first paging, Not changed, and why, One change was measured and reverted (+15 more)
+
+### Community 129 - "InlineData"
+Cohesion: 0.07
+Nodes (10): CreateApartmentRequestValidator, UpdateApartmentRequestValidator, UpdateApartmentRequest, RemoveImageIds, RemoveVideo, IRealEstateGalleryEdit, RemoveImageIds, RemoveVideo (+2 more)
 
 ### Community 130 - "UserListingDto"
 Cohesion: 0.06
@@ -1130,77 +1128,77 @@ Nodes (33): ExpiredSinceDto, Days, ExpiredAt, Text, UserListingDto, AverageRatin
 Cohesion: 0.04
 Nodes (54): AdminAuditAction, ActivateAdmin, ActivateUser, ApproveAd, ApproveBanner, ApproveBannerPayment, ApprovePayment, BlockUser (+46 more)
 
-### Community 132 - "LivestockListItemDto"
-Cohesion: 0.06
-Nodes (31): LivestockListItemDto, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt, Description (+23 more)
+### Community 132 - "HandmadeListItemDto"
+Cohesion: 0.05
+Nodes (39): AntiqueModuleExamples, HandmadeMappingProfile, HandmadeColorDto, Color, Name, HandmadeImageDto, Id, IsPrimary (+31 more)
 
 ### Community 133 - "PlatformSetting"
 Cohesion: 0.07
 Nodes (28): PlatformSetting, AboutUs, Address, Description, Email, FacebookUrl, FaviconPath, FaviconUrl (+20 more)
 
-### Community 134 - "KitchenToolListItemDto"
-Cohesion: 0.09
-Nodes (15): IKitchenToolService, KitchenToolFilterParams, Color, Material, ProductType, KitchenToolListItemDto, Colors, Material (+7 more)
+### Community 134 - "HomeFurnishingPriceStatisticsDto"
+Cohesion: 0.03
+Nodes (34): IFurnitureService, IKitchenToolService, FurnitureController, CurrentUserId, IsAdmin, HomeAppliancesController, CurrentUserId, IsAdmin (+26 more)
 
 ### Community 135 - "Presitance.csproj"
 Cohesion: 0.05
 Nodes (45): net10.0, Microsoft.NET.Sdk, net10.0, FluentValidation (12.1.1), FluentValidation.DependencyInjectionExtensions (12.1.1), Microsoft.NET.Sdk, net10.0, Microsoft.NET.Sdk (+37 more)
 
-### Community 136 - ".UpdateAsync"
-Cohesion: 0.12
-Nodes (8): KidsClothingSizeSelection, KidsClothing, KidsClothingId, Size, KidsClothingService, IKidsClothingRepository, KidsClothingSizeSelectionConfiguration, KidsClothingRepository
+### Community 136 - "Payment"
+Cohesion: 0.05
+Nodes (37): Payment, AccountNameSnapshot, ActivatedAt, ActivationEndAt, ActivationStartAt, Amount, ApprovedAt, ApprovedBy (+29 more)
 
 ### Community 137 - "HomeAppliance"
-Cohesion: 0.03
-Nodes (84): HomeAppliance, Address, Brand, Center, Colors, Condition, CreatedAt, DeletedAt (+76 more)
+Cohesion: 0.02
+Nodes (95): HomeAppliance, Address, Brand, Center, Colors, Condition, CreatedAt, DeletedAt (+87 more)
 
 ### Community 138 - "SehhatyCategoryTests"
 Cohesion: 0.11
-Nodes (6): Hospital, CreateDoctorRequestValidator, HospitalRepository, AdvertiserLookupParams, Search, SehhatyCategoryTests
+Nodes (4): CreateDoctorRequestValidator, AdvertiserLookupParams, Search, SehhatyCategoryTests
 
-### Community 139 - "AdminSettingsDto"
-Cohesion: 0.08
-Nodes (24): AdminSettingsDto, AboutUs, Address, Description, Email, FacebookUrl, FaviconUrl, InstagramUrl (+16 more)
+### Community 139 - "KitchenToolProductType"
+Cohesion: 0.06
+Nodes (38): KitchenToolMappingProfile, KitchenToolCatalog, CreateKitchenToolRequest, Colors, Material, OtherColor, OtherMaterial, OtherProductType (+30 more)
 
 ### Community 140 - "JobRequest"
 Cohesion: 0.05
-Nodes (42): JobRequest, Address, ApplicantName, Center, CreatedAt, CvFileName, CvFilePath, CvFileUrl (+34 more)
+Nodes (40): JobRequest, Address, ApplicantName, Center, CreatedAt, CvFileName, CvFilePath, CvFileUrl (+32 more)
 
-### Community 141 - ".AddPersistence"
-Cohesion: 0.02
-Nodes (170): DirectoryListing, Address, CreatedAt, DeletedAt, Description, Email, ExpireAt, FirstPublishedAt (+162 more)
+### Community 141 - "OfficesCategoryTests"
+Cohesion: 0.05
+Nodes (57): DirectoryListingImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, ListingId (+49 more)
 
 ### Community 142 - "SupplierSpecialization"
 Cohesion: 0.04
-Nodes (50): SupplierMappingProfile, Entry, SupplierCatalog, SupplierFilterParams, Search, SuppliedProduct, SupplierName, SupplierType (+42 more)
+Nodes (44): Entry, SupplierCatalog, SupplierSpecialization, AgriculturalEquipment, Aluminum, AnimalFeed, Bricks, BuildingMaterials (+36 more)
 
 ### Community 143 - "UpdateAntiqueRequest"
 Cohesion: 0.08
 Nodes (26): UpdateAntiqueRequest, Address, AntiqueName, AntiqueType, Center, Condition, CountryOfOrigin, Description (+18 more)
 
-### Community 144 - "AdvertisementImage"
-Cohesion: 0.06
-Nodes (24): AdvertisementFeature, Advertisement, AdvertisementId, Feature, FeatureId, AdvertisementImage, Advertisement, AdvertisementId (+16 more)
+### Community 144 - "AdPaymentMethodDto"
+Cohesion: 0.05
+Nodes (40): AdminAdPaymentSettingsDto, EnabledAt, PaymentMethodIds, UpdatedAt, UpdatedBy, UpdatedByName, UsesAllActiveMethods, AdPaymentListingActions (+32 more)
 
 ### Community 145 - "KidsClothingListItemDto"
-Cohesion: 0.07
-Nodes (30): KidsClothingListItemDto, AverageRating, Brand, BrandName, Center, ClothingType, ClothingTypeName, Colors (+22 more)
+Cohesion: 0.06
+Nodes (34): KidsClothingImageDto, Id, IsPrimary, Url, KidsClothingListItemDto, AverageRating, Brand, BrandName (+26 more)
 
 ### Community 146 - "LightingDecor"
 Cohesion: 0.03
-Nodes (78): LightingDecor, Address, Center, Colors, CreatedAt, DeletedAt, Description, Email (+70 more)
+Nodes (79): LightingDecor, Address, Center, Colors, CreatedAt, DeletedAt, Description, Email (+71 more)
 
-### Community 147 - "OtherAnimalImage"
-Cohesion: 0.12
-Nodes (13): OtherAnimalImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, OtherAnimal (+5 more)
+### Community 147 - "PaymentStatus"
+Cohesion: 0.05
+Nodes (41): PaymentMappingProfile, PaymentDetailsDto, Amount, ApprovedAt, Currency, Id, Notes, PaymentMethod (+33 more)
 
 ### Community 148 - "MenClothingMappingProfile"
-Cohesion: 0.10
-Nodes (18): MenClothingMappingProfile, WomenClothingMappingProfile, MenClothingCatalog, WomenClothingCatalog, ClothingCatalog, ClothingLookupEntry, MenClothingImageDto, Id (+10 more)
+Cohesion: 0.07
+Nodes (31): MenClothingMappingProfile, WomenClothingMappingProfile, MenClothingCatalog, WomenClothingCatalog, ClothingCatalog, ClothingLookupEntry, MenClothingImageDto, Id (+23 more)
 
 ### Community 149 - "AdvertiserLookupTests"
-Cohesion: 0.09
-Nodes (19): IAdvertiserLookupRepository, AdvertiserLookupRepository, SupportedSubCategories, 2. `GET /api/lookups/read-config/{categoryId}/{subCategoryId}`, 3. `GET /api/lookups/advertisers/{categoryId}/{subCategoryId}`, A. Executive Summary, D. Lookup Endpoint Changes, F. Search and Filters (+11 more)
+Cohesion: 0.12
+Nodes (10): AdvertiserLookupService, IAdvertiserLookupRepository, IAdvertiserLookupService, AdvertiserLookupRepository, SupportedSubCategories, AdvertiserOptionDto, Id, ListingsCount (+2 more)
 
 ### Community 150 - "ProfileStatisticsDto"
 Cohesion: 0.12
@@ -1208,59 +1206,59 @@ Nodes (16): ListingTypeStatisticsDto, Active, Expired, Pending, Rejected, Total,
 
 ### Community 151 - "AdminRequestValidators.cs"
 Cohesion: 0.04
-Nodes (52): AdminFormFieldRules, AdminReportActionRequestValidator, AdminReportDecisionRequestValidator, ApproveListingRequestValidator, CreateCategoryRequestValidator, CreateProjectRequestValidator, CreateSubCategoryRequestValidator, RefundPaymentRequestValidator (+44 more)
+Nodes (50): AdminFormFieldRules, AdminReportActionRequestValidator, AdminReportDecisionRequestValidator, ApproveListingRequestValidator, CreateCategoryRequestValidator, CreateFormFieldRequestValidator, CreateProjectRequestValidator, CreateSubCategoryRequestValidator (+42 more)
 
 ### Community 152 - "ReadOnlySpan"
-Cohesion: 0.09
-Nodes (13): D-17 — Format decided by magic bytes, name discarded, D-27 — Content-type mappings are driven off the upload catalogues, Upload security, A file uploads successfully but its URL answers 404, DocumentFormatCatalog, UploadFormatDescriptor, ImageDimensionReader, ImageDimensions (+5 more)
+Cohesion: 0.13
+Nodes (15): D-27 — Content-type mappings are driven off the upload catalogues, 429 with `Retry-After`, A file uploads successfully but its URL answers 404, A valid image is rejected, API behaviour, HTTP 413 on upload — and the CORS error that follows it, HTTP 415 on a create endpoint, HTTP 422 with an `errors` array (+7 more)
 
 ### Community 153 - "CraftsmanSpecialization"
 Cohesion: 0.05
-Nodes (44): CraftsmanMappingProfile, SpecializationEntry, WorkshopCraftsmenCatalog, CraftsmanSpecialization, AirConditioningTechnician, Aluminum, ArgonWelding, Blacksmith (+36 more)
+Nodes (44): Category 2 — دليل محافظتي (internally Workshops & Craftsmen) · subs 5–6, 66–68, SpecializationEntry, WorkshopCraftsmenCatalog, CraftsmanSpecialization, AirConditioningTechnician, Aluminum, ArgonWelding, Blacksmith (+36 more)
 
 ### Community 154 - "BathroomSupply"
-Cohesion: 0.03
-Nodes (79): BathroomSupply, Address, Center, Colors, CreatedAt, DeletedAt, Description, Email (+71 more)
+Cohesion: 0.04
+Nodes (45): BathroomSupply, Address, Center, Colors, CreatedAt, DeletedAt, Description, Email (+37 more)
 
-### Community 155 - ".UpdateAsync"
-Cohesion: 0.15
-Nodes (4): FishService, IFishRepository, IFishService, FishRepository
+### Community 155 - "BloodRequest"
+Cohesion: 0.07
+Nodes (28): BloodRequest, Address, BloodGroup, Center, Details, Governorate, HospitalName, Images (+20 more)
 
 ### Community 156 - "PetAgeLookup"
 Cohesion: 0.05
 Nodes (35): PetAgeLookup, Id, Name, NameEn, PetBreedLookup, Id, Name, NameEn (+27 more)
 
-### Community 157 - "CategoryType"
-Cohesion: 0.10
-Nodes (20): D-37 — A shared directory-listing base for name / address / contact modules, CategoryCatalog, CategoryEntry, SubCategoryEntry, CategoryType, Animals, Antiques, Business (+12 more)
+### Community 157 - "Architecture Decisions"
+Cohesion: 0.03
+Nodes (63): Architecture Decisions, D-01 — The misspelled project folders stay, D-02 — 48 independent modules instead of a shared base class, D-04 — Named query filters, never bare `IgnoreQueryFilters()`, D-05 — The publication window is layered into the moderation filter, D-07 — Cross-cutting listing behaviour lives in global action filters, D-10 — Two permission tables, not one bitmask column, D-11 — `ModeratedBy` is a plain column, not a foreign key (+55 more)
 
 ### Community 158 - "CoinStamp"
 Cohesion: 0.03
-Nodes (67): CoinStamp, Address, Center, Condition, Country, CreatedAt, DeletedAt, Denomination (+59 more)
+Nodes (65): CoinStamp, Address, Center, Condition, Country, CreatedAt, DeletedAt, Denomination (+57 more)
 
 ### Community 159 - "Painting"
 Cohesion: 0.04
-Nodes (45): Painting, Address, ArtistName, Center, CreatedAt, DeletedAt, Description, ExecutionYear (+37 more)
+Nodes (46): Painting, Address, ArtistName, Center, CreatedAt, DeletedAt, Description, ExecutionYear (+38 more)
 
 ### Community 160 - "PlantOrnament"
-Cohesion: 0.02
-Nodes (108): PlantOrnamentSuitableForLookup, Id, Name, NameEn, PlantOrnament, Address, Center, CreatedAt (+100 more)
+Cohesion: 0.04
+Nodes (67): PlantOrnament, Address, Center, CreatedAt, DeletedAt, Description, Email, ExpireAt (+59 more)
 
 ### Community 161 - ".AddApplicationServices"
-Cohesion: 0.06
-Nodes (64): CreateAdFormService, DependencyInjection, AdvertiserLookupService, CategorySelectionResolver, ListingInterestNotifier, ContractorService, Module, EngineeringConsultancyOfficeService (+56 more)
+Cohesion: 0.07
+Nodes (54): ContractorService, Module, EngineeringConsultancyOfficeService, Module, IndustrialConsultancyOfficeService, Module, LawyerOfficeService, Module (+46 more)
 
 ### Community 162 - "TradeType"
 Cohesion: 0.04
 Nodes (46): TradeType, Aluminum, AnimalFeed, BakeryAndSweets, Batteries, Beverages, CementAndBuildingMaterials, Ceramic (+38 more)
 
 ### Community 163 - "Antique"
-Cohesion: 0.03
-Nodes (66): Antique, Address, AntiqueName, AntiqueType, Center, Condition, CountryOfOrigin, CreatedAt (+58 more)
+Cohesion: 0.04
+Nodes (64): Antique, Address, AntiqueName, AntiqueType, Center, Condition, CountryOfOrigin, CreatedAt (+56 more)
 
 ### Community 164 - "KidsClothing"
-Cohesion: 0.05
-Nodes (44): KidsClothing, Address, Brand, Center, ClothingType, Colors, Condition, CreatedAt (+36 more)
+Cohesion: 0.03
+Nodes (65): KidsClothing, Address, Brand, Center, ClothingType, Colors, Condition, CreatedAt (+57 more)
 
 ### Community 165 - ".UpdateAsync"
 Cohesion: 0.18
@@ -1271,16 +1269,16 @@ Cohesion: 0.11
 Nodes (19): HomeKitchenMappingProfile, HomeKitchenCatalog, HomeKitchenColor, Beige, Black, Brown, Gold, Gray (+11 more)
 
 ### Community 167 - "FactoryDetailsDto"
-Cohesion: 0.05
-Nodes (42): FactoryMappingProfile, CreateFactoryRequest, Address, Description, Email, FactoryName, GoogleMaps, Images (+34 more)
+Cohesion: 0.09
+Nodes (22): FactoryDetailsDto, Address, AverageRating, CreatedAt, Description, Email, FactoryName, GoogleMaps (+14 more)
 
 ### Community 168 - "BeeListItemDto"
-Cohesion: 0.08
-Nodes (25): BeeListItemDto, AnimalType, AnimalTypeName, AverageRating, CreatedAt, Description, HealthStatus, HealthStatusName (+17 more)
+Cohesion: 0.02
+Nodes (102): BeeMappingProfile, CreateBeeRequestValidator, UpdateBeeRequestValidator, BeeCatalog, BeeFilterParams, AnimalType, HealthStatus, PriceFrom (+94 more)
 
 ### Community 169 - "BuildingsModuleTests"
-Cohesion: 0.09
-Nodes (8): CatalogSelection, CreateBuildingRequestValidator, UpdateBuildingRequestValidator, 1. `GET /api/lookups/create-ad-form/{categoryId}/{subCategoryId}`, UpdateBuildingRequest, RemoveImageIds, RemoveVideo, BuildingsModuleTests
+Cohesion: 0.12
+Nodes (8): CreateBuildingRequestValidator, UpdateBuildingRequestValidator, BuildingListingSource, Type, UpdateBuildingRequest, RemoveImageIds, RemoveVideo, BuildingsModuleTests
 
 ### Community 170 - "CompanyField"
 Cohesion: 0.04
@@ -1291,104 +1289,112 @@ Cohesion: 0.08
 Nodes (25): FishListItemDto, Age, AgeName, AnimalType, AnimalTypeName, AverageRating, CreatedAt, Description (+17 more)
 
 ### Community 172 - "AntiqueFilterParams"
-Cohesion: 0.08
-Nodes (25): AntiqueFilterParams, AntiqueType, Center, Condition, CountryOfOrigin, ManufactureYear, Negotiable, Originality (+17 more)
+Cohesion: 0.10
+Nodes (18): AntiqueFilterParams, AntiqueType, Center, Condition, CountryOfOrigin, ManufactureYear, Negotiable, Originality (+10 more)
 
-### Community 173 - "Referral"
-Cohesion: 0.15
-Nodes (12): Referral, CompletedAt, CreatedAt, Id, ReferralCode, Referred, ReferredUserId, Referrer (+4 more)
+### Community 173 - "AntiqueDetailsDto"
+Cohesion: 0.05
+Nodes (39): AntiqueDetailsDto, Address, AntiqueName, AntiqueType, AntiqueTypeName, AverageRating, Center, Condition (+31 more)
 
 ### Community 174 - "AdminAccountService"
 Cohesion: 0.03
-Nodes (68): AdminAccountService, ConfirmAdminRequestValidator, UpdateAdminRequestValidator, UpdateAdminStatusRequestValidator, AdminAccountDetailsDto, FirstName, Pages, SecondName (+60 more)
+Nodes (69): AdminAccountService, UpdateAdminRequestValidator, UpdateAdminStatusRequestValidator, IAdminAccountRepository, AdminAccountRepository, AdminAccountDetailsDto, FirstName, Pages (+61 more)
 
 ### Community 175 - "AdminAdDetailsDto"
 Cohesion: 0.05
 Nodes (44): AdminAdDetailsDto, AverageRating, CanRepublish, CategoryId, CategoryName, CreatedAt, DetailsEndpoint, EndDate (+36 more)
 
 ### Community 176 - "IListingStats"
-Cohesion: 0.06
-Nodes (36): PetDetailsDto, Address, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt (+28 more)
+Cohesion: 0.05
+Nodes (40): PetDetailsDto, Address, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt (+32 more)
 
 ### Community 177 - "BannerBookingDto"
-Cohesion: 0.03
-Nodes (60): BannerBookingDto, AdvertiserName, ApprovedAt, ButtonText, CategoryId, CategoryName, ConfirmationAccepted, Currency (+52 more)
+Cohesion: 0.05
+Nodes (44): BannerBookingDto, AdvertiserName, ApprovedAt, ButtonText, CategoryId, CategoryName, ConfirmationAccepted, Currency (+36 more)
 
 ### Community 178 - "BirdAgeLookup"
 Cohesion: 0.06
 Nodes (30): BirdAgeLookup, Id, Name, NameEn, BirdGenderLookup, Id, Name, NameEn (+22 more)
 
 ### Community 179 - "UpdateWomenClothingRequest"
+Cohesion: 0.05
+Nodes (44): UpdateWomenClothingRequest, Address, Brand, Center, ClothingType, Colors, Condition, DeliveryAvailable (+36 more)
+
+### Community 180 - "BannerLocation"
 Cohesion: 0.08
-Nodes (25): UpdateWomenClothingRequest, Address, Brand, Center, ClothingType, Colors, Condition, DeliveryAvailable (+17 more)
+Nodes (24): BannerSettingsService, UpdateBannerPlacementRequestValidator, BannerBookingQuoteQuery, CategoryId, Location, PaymentMethodId, SlotNumber, SubCategoryId (+16 more)
 
-### Community 180 - "DecorAntiqueMappingProfile"
-Cohesion: 0.12
-Nodes (18): DecorAntiqueMappingProfile, DecorAntiqueCatalog, DecorAntiqueImageDto, Id, IsPrimary, Url, DecorAntiqueVideoDto, Id (+10 more)
-
-### Community 181 - "FakeReferralRepository"
-Cohesion: 0.12
-Nodes (8): FakeReferralRepository, LinkEvents, InvitationLinkTests, StubEnvironment, ApplicationName, ContentRootFileProvider, ContentRootPath, EnvironmentName
+### Community 181 - "Referral"
+Cohesion: 0.02
+Nodes (118): Referral, CompletedAt, CreatedAt, Id, ReferralCode, Referred, ReferredUserId, Referrer (+110 more)
 
 ### Community 182 - "BuildingListItemDto"
 Cohesion: 0.02
-Nodes (93): BuildingListItemDto, ApartmentsCount, Area, BathroomsCount, BuildingType, BuildingTypeName, Features, FinishingType (+85 more)
+Nodes (123): RealEstateMappingExtensions, RealEstateQueries, CreateRealEstateRequestBase, Address, AdvertiserName, Center, Description, District (+115 more)
 
 ### Community 183 - "JobField"
 Cohesion: 0.05
 Nodes (43): JobField, Accountant, AdministrativeEmployee, AgriculturalEngineer, AgriculturalSupervisor, AirConditioningTechnician, ApplicationDeveloper, ArchitecturalEngineer (+35 more)
 
 ### Community 184 - "ListingRealtimeInterceptor"
-Cohesion: 0.05
-Nodes (16): ListingEditReviewNotifier, ListingEditReviewQueue, IListingEditReviewNotifier, IListingEditReviewQueue, ListingEditReviewEntry, RequestSqlCounter, Count, ElapsedMilliseconds (+8 more)
+Cohesion: 0.11
+Nodes (5): ListingMediaFileInterceptor, PendingFiles, ListingRealtimeInterceptor, FailingSaveInterceptor, Fail
 
-### Community 185 - "HomemadeFood"
-Cohesion: 0.05
-Nodes (41): HomemadeFood, AdditionalNotes, AvailableOrderingHours, CreatedAt, DeletedAt, DeliveryAreas, DeliveryAvailable, Description (+33 more)
+### Community 185 - "AdPaymentRepository"
+Cohesion: 0.09
+Nodes (12): AdPaymentGate, IAdPaymentRepository, IAdPaymentGate, AdPaymentRepository, AdminAdPaymentFilterParams, AdvertisementId, CategoryId, FromDate (+4 more)
+
+### Community 186 - "HomeFurnishingListItemDtoBase"
+Cohesion: 0.06
+Nodes (36): FurnishingCurtainListItemDto, Colors, DeliveryAvailable, Material, MaterialName, OtherColor, OtherMaterial, OtherProductType (+28 more)
 
 ### Community 187 - "AdminAlertService"
-Cohesion: 0.04
-Nodes (37): AdminAlertService, ListingLifecycleProcessor, ListingRepublishService, ListingContextResolver, ListingNotificationContext, IAdminAlertService, IListingLifecycleProcessor, ExpiringListingRow (+29 more)
+Cohesion: 0.07
+Nodes (22): AdminAlertService, ListingRepublishService, ListingContextResolver, ListingNotificationContext, IAdminAlertService, IUserRepository, UserDisplayName, UserRepository (+14 more)
 
-### Community 188 - "Architecture Decisions"
-Cohesion: 0.09
-Nodes (22): Architecture Decisions, D-01 — The misspelled project folders stay, D-02 — 48 independent modules instead of a shared base class, D-04 — Named query filters, never bare `IgnoreQueryFilters()`, D-05 — The publication window is layered into the moderation filter, D-07 — Cross-cutting listing behaviour lives in global action filters, D-10 — Two permission tables, not one bitmask column, D-11 — `ModeratedBy` is a plain column, not a foreign key (+14 more)
+### Community 188 - ".UpdateAsync"
+Cohesion: 0.10
+Nodes (17): CharityListings, RescueService, CreateRescueRequestValidator, UpdateRescueRequestValidator, CharityValidationRules, IRescueService, CreateRescueRequest, Address (+9 more)
 
 ### Community 189 - "AdvertisementStatisticsDto"
-Cohesion: 0.08
-Nodes (25): AdvertisementCategoryStatisticsDto, Active, CategoryId, CategoryName, CategoryNameAr, Expired, Total, AdvertisementStatisticsDto (+17 more)
+Cohesion: 0.06
+Nodes (32): 13. Module-specific rules, AdvertisementCategoryStatisticsDto, Active, CategoryId, CategoryName, CategoryNameAr, Expired, Total (+24 more)
 
-### Community 190 - ".UpdateAsync"
-Cohesion: 0.13
-Nodes (8): AccessoryColorSelection, Accessory, AccessoryId, Color, AccessoryService, IAccessoryRepository, AccessoryColorSelectionConfiguration, AccessoryRepository
+### Community 190 - "LightingDecorListItemDto"
+Cohesion: 0.08
+Nodes (16): ILightingDecorService, LightingDecorController, CurrentUserId, IsAdmin, LightingDecorListItemDto, Colors, LightType, LightTypeName (+8 more)
 
 ### Community 191 - ".Apply"
-Cohesion: 0.08
-Nodes (12): ClothingModuleExamples, API, AdminAuthorizationDocumentFilter, AntiqueModuleExamplesOperationFilter, ClothingModuleExamplesOperationFilter, CreateAdFormExamplesOperationFilter, MinimalSwaggerDocumentFilter, PasswordResetTokenHeaderOperationFilter (+4 more)
+Cohesion: 0.09
+Nodes (10): API, AdminAuthorizationDocumentFilter, AntiqueModuleExamplesOperationFilter, CreateAdFormExamplesOperationFilter, MinimalSwaggerDocumentFilter, PasswordResetTokenHeaderOperationFilter, ReadConfigExamplesOperationFilter, StandardResponsesOperationFilter (+2 more)
 
-### Community 193 - "AccessoryMappingProfile"
-Cohesion: 0.12
-Nodes (17): AccessoryMappingProfile, AccessoryCatalog, AccessoryCategory, Everyone, Kids, Men, Women, AccessoryColor (+9 more)
+### Community 192 - "NotificationContent"
+Cohesion: 0.15
+Nodes (6): AdminAlerts, BannerBookings, Interests, Moderation, NotificationContent, Referrals
 
-### Community 194 - "ListingRatingDto"
-Cohesion: 0.07
-Nodes (30): ListingRatingDto, CreatedAt, Id, Rating, Reviewer, Target, UpdatedAt, ListingRatingResultDto (+22 more)
+### Community 193 - "CreateAccessoryRequest"
+Cohesion: 0.04
+Nodes (66): AccessoryMappingProfile, AccessoryCatalog, AccessoryFilterParams, AccessoryType, Category, Color, Material, PriceFrom (+58 more)
+
+### Community 194 - "ListingRatingTargetDto"
+Cohesion: 0.14
+Nodes (14): ListingRatingTargetDto, CategoryId, CategoryName, DetailsUrl, Id, ImageUrl, IsAvailable, Route (+6 more)
 
 ### Community 195 - "Horse"
-Cohesion: 0.05
-Nodes (39): Horse, Address, Age, Breed, CreatedAt, DeletedAt, Description, ExpireAt (+31 more)
+Cohesion: 0.02
+Nodes (86): Horse, Address, Age, Breed, CreatedAt, DeletedAt, Description, ExpireAt (+78 more)
 
 ### Community 196 - "Pet"
 Cohesion: 0.05
-Nodes (39): Pet, Address, Age, Breed, CreatedAt, DeletedAt, Description, ExpireAt (+31 more)
+Nodes (38): Pet, Address, Age, Breed, CreatedAt, DeletedAt, Description, ExpireAt (+30 more)
 
 ### Community 197 - "JobOpportunity"
-Cohesion: 0.05
-Nodes (39): JobOpportunity, Address, Center, CreatedAt, DeletedAt, Description, EmployerName, ExpireAt (+31 more)
+Cohesion: 0.04
+Nodes (50): JobOpportunity, Address, Center, CreatedAt, DeletedAt, Description, EmployerName, ExpireAt (+42 more)
 
 ### Community 198 - "Accessory"
-Cohesion: 0.05
-Nodes (39): Accessory, AccessoryType, Category, Colors, CreatedAt, DeletedAt, Description, ExpireAt (+31 more)
+Cohesion: 0.04
+Nodes (57): Accessory, AccessoryType, Category, Colors, CreatedAt, DeletedAt, Description, ExpireAt (+49 more)
 
 ### Community 199 - "UpdateKidsClothingRequest"
 Cohesion: 0.08
@@ -1407,36 +1413,36 @@ Cohesion: 0.05
 Nodes (38): Camel, Address, Age, Breed, CreatedAt, DeletedAt, Description, ExpireAt (+30 more)
 
 ### Community 203 - "OtherAnimal"
-Cohesion: 0.05
-Nodes (38): OtherAnimal, Address, Age, AnimalType, CreatedAt, DeletedAt, Description, ExpireAt (+30 more)
+Cohesion: 0.03
+Nodes (81): OtherAnimal, Address, Age, AnimalType, CreatedAt, DeletedAt, Description, ExpireAt (+73 more)
 
 ### Community 204 - "SheepGoat"
 Cohesion: 0.05
 Nodes (38): SheepGoat, Address, Age, Breed, CreatedAt, DeletedAt, Description, ExpireAt (+30 more)
 
 ### Community 205 - "AntiqueConditionLookup"
-Cohesion: 0.08
+Cohesion: 0.07
 Nodes (25): AntiqueConditionLookup, Id, Name, NameEn, AntiqueMaterialLookup, Id, Name, NameEn (+17 more)
 
-### Community 206 - ".Video"
-Cohesion: 0.39
-Nodes (13): CreateAccessoryRequestValidator, UpdateAccessoryRequestValidator, CreateCosmeticRequestValidator, UpdateCosmeticRequestValidator, CreateGiftToyRequestValidator, UpdateGiftToyRequestValidator, CreateHomeKitchenRequestValidator, UpdateHomeKitchenRequestValidator (+5 more)
+### Community 206 - "BannerPlacementSetting"
+Cohesion: 0.08
+Nodes (24): BannerPlacementSetting, AllowedFormats, Bookings, CreatedAt, DesktopHeight, DesktopWidth, DisplayOrder, DurationDays (+16 more)
 
 ### Community 207 - "AdminReferralStatisticsDto"
 Cohesion: 0.10
 Nodes (21): AdminReferralStatisticsDto, ActiveReferrers, CompletedReferrals, ConversionRate, GeneratedAt, PendingReferrals, ThisMonth, ThisWeek (+13 more)
 
 ### Community 208 - "FarmType"
-Cohesion: 0.06
-Nodes (36): FarmMappingProfile, AvailabilitySeasonOptionDto, Id, Name, FarmingMethodOptionDto, Code, Id, Name (+28 more)
+Cohesion: 0.07
+Nodes (27): FarmFilterParams, FarmName, FarmType, Search, FarmType, CalfFattening, Camels, Cattle (+19 more)
 
 ### Community 209 - "ListingInteractionService"
-Cohesion: 0.03
-Nodes (67): ListingRating, CreatedAt, Id, ListingId, ListingOwnerId, ListingTitle, ListingType, Rating (+59 more)
+Cohesion: 0.01
+Nodes (162): ListingFavorite, CreatedAt, ListingId, ListingType, User, UserId, ListingRating, CreatedAt (+154 more)
 
 ### Community 210 - "AdminAdFilterParams"
-Cohesion: 0.06
-Nodes (29): AdminAdFilterParamsValidator, AdminAdStatusCount, AdminListingSnapshot, AdminModuleCount, IAdminAdRepository, AdminAdRepository, AdminAdFilterParams, CategoryId (+21 more)
+Cohesion: 0.13
+Nodes (14): AdminAdFilterParamsValidator, AdminAdFilterParams, CategoryId, ExpiringWithinDays, FromDate, ModerationStatus, OwnerId, RepublishDue (+6 more)
 
 ### Community 211 - "CreateDecorAntiqueRequest"
 Cohesion: 0.08
@@ -1446,32 +1452,32 @@ Nodes (24): CreateDecorAntiqueRequest, Address, Center, Condition, Description, 
 Cohesion: 0.09
 Nodes (21): BannerValidationRules, CreateBannerRequestValidator, UpdateBannerRequestValidator, CreateBannerRequest, Description, DisplayOrder, EndDate, Image (+13 more)
 
-### Community 213 - "PaymentMethodDto"
-Cohesion: 0.02
-Nodes (114): PaymentMappingProfile, 9. Payments and banners, PaymentCatalog, SeedIds, SeedPaymentMethod, AccountHolderName, AccountNumber, ArabicName (+106 more)
+### Community 213 - "CreatePaymentMethodRequest"
+Cohesion: 0.05
+Nodes (41): PaymentCatalog, SeedIds, SeedPaymentMethod, AccountHolderName, AccountNumber, ArabicName, BankName, DisplayOrder (+33 more)
 
 ### Community 214 - "WorkshopCraftsmenRestructureTests"
-Cohesion: 0.13
-Nodes (8): CreateCraftsmanRequestValidator, CreateWorkshopRequestValidator, CraftsmanFilterParams, City, ExperienceLevel, Search, Specialization, WorkshopCraftsmenRestructureTests
+Cohesion: 0.06
+Nodes (22): CreateAdFormService, AdFormBreadcrumbBuilder, CategorySelection, CategorySelectionResolver, CreateCraftsmanRequestValidator, CreateWorkshopRequestValidator, D-33 — The create-advertisement breadcrumb is server-built, CraftsmanFilterParams (+14 more)
 
 ### Community 215 - "CoinStampDetailsDto"
-Cohesion: 0.02
-Nodes (98): CoinStampMappingProfile, CoinStampCatalog, CoinStampDetailsDto, Address, AverageRating, Center, Condition, ConditionName (+90 more)
+Cohesion: 0.03
+Nodes (67): CoinStampMappingProfile, CoinStampCatalog, CoinStampDetailsDto, Address, AverageRating, Center, Condition, ConditionName (+59 more)
 
 ### Community 216 - "PaintingDetailsDto"
 Cohesion: 0.05
-Nodes (38): PaintingDetailsDto, Address, ArtistName, AverageRating, Center, CreatedAt, Description, ExecutionYear (+30 more)
+Nodes (40): PaintingService, IPaintingRepository, PaintingDetailsDto, Address, ArtistName, AverageRating, Center, CreatedAt (+32 more)
 
 ### Community 217 - "AdminPermissionService"
-Cohesion: 0.06
-Nodes (35): AdminContext, AdminPermissionService, AdminAccessResult, IAdminPermissionService, D-08 — `AdminPermissionFilter` fails closed, Authorization, AdminAuthorizationOperationFilter, AdminPermissionFilter (+27 more)
+Cohesion: 0.08
+Nodes (24): AdminContext, AdminPermissionService, AdminAccessResult, IAdminPermissionService, D-08 — `AdminPermissionFilter` fails closed, AdminPermissionFilter, AdminIdentityDto, Email (+16 more)
 
 ### Community 218 - "Bee"
-Cohesion: 0.06
-Nodes (36): Bee, Address, AnimalType, CreatedAt, DeletedAt, Description, ExpireAt, FirstPublishedAt (+28 more)
+Cohesion: 0.03
+Nodes (77): Bee, Address, AnimalType, CreatedAt, DeletedAt, Description, ExpireAt, FirstPublishedAt (+69 more)
 
 ### Community 219 - "Fish"
-Cohesion: 0.06
+Cohesion: 0.05
 Nodes (36): Fish, Address, Age, AnimalType, CreatedAt, DeletedAt, Description, ExpireAt (+28 more)
 
 ### Community 220 - "OtherAnimalAgeLookup"
@@ -1483,12 +1489,12 @@ Cohesion: 0.06
 Nodes (36): HomeKitchen, Colors, CreatedAt, DeletedAt, DeliveryAvailable, Description, ExpireAt, FirstPublishedAt (+28 more)
 
 ### Community 222 - "ShoppingElectronic"
-Cohesion: 0.06
-Nodes (36): ShoppingElectronic, Brand, CompatibleWith, CreatedAt, DeletedAt, Description, ExpireAt, FirstPublishedAt (+28 more)
+Cohesion: 0.05
+Nodes (47): ShoppingElectronic, Brand, CompatibleWith, CreatedAt, DeletedAt, Description, ExpireAt, FirstPublishedAt (+39 more)
 
-### Community 223 - "DecorAntiqueFilterParams"
+### Community 223 - "ProfileService"
 Cohesion: 0.09
-Nodes (23): DecorAntiqueFilterParams, Center, Condition, ItemType, Material, Negotiable, Originality, PriceFrom (+15 more)
+Nodes (19): ProfileService, IProfileService, UserListingStatusRow, Status, Type, UserListingFilterParams, PageNumber, Status (+11 more)
 
 ### Community 224 - "KidsClothingDetailsDto"
 Cohesion: 0.05
@@ -1498,57 +1504,57 @@ Nodes (37): KidsClothingDetailsDto, Address, AverageRating, Brand, BrandName, Ce
 Cohesion: 0.05
 Nodes (37): MenClothingDetailsDto, Address, AverageRating, Brand, BrandName, Center, ClothingType, ClothingTypeName (+29 more)
 
-### Community 226 - "WomenClothingDetailsDto"
-Cohesion: 0.05
-Nodes (37): WomenClothingDetailsDto, Address, AverageRating, Brand, BrandName, Center, ClothingType, ClothingTypeName (+29 more)
-
-### Community 227 - "AccessoryFilterParams"
+### Community 226 - "AdminUserService"
 Cohesion: 0.11
-Nodes (19): AccessoryFilterParams, AccessoryType, Category, Color, Material, PriceFrom, PriceTo, Search (+11 more)
+Nodes (10): AdminUserService, AdminAdStatusCount, IAdminUserRepository, AdminUserRepository, AdminUserFilterParams, FromDate, IsAdmin, Search (+2 more)
+
+### Community 227 - "AdminAdPaymentSubmissionDto"
+Cohesion: 0.06
+Nodes (34): AdminAdPaymentSubmissionDto, AdvertisementId, AdvertisementTitle, AdvertisementType, AdvertisementTypeName, Amount, CategoryId, CategoryName (+26 more)
 
 ### Community 228 - "ApartmentOptionalFieldsTests"
-Cohesion: 0.08
+Cohesion: 0.07
 Nodes (7): CreateLandRequestValidator, UpdateLandRequestValidator, UpdateLandRequest, RemoveImageIds, RemoveVideo, ApartmentOptionalFieldsTests, LandValidationTests
 
 ### Community 229 - "LostFoundPost"
-Cohesion: 0.05
+Cohesion: 0.06
 Nodes (35): LostFoundPost, Center, Comments, CommentsCount, CreatedAt, DeletedAt, Description, ExpireAt (+27 more)
 
 ### Community 230 - "Cosmetic"
-Cohesion: 0.06
-Nodes (35): Cosmetic, Brand, CreatedAt, DeletedAt, Description, DiscountAvailable, ExpireAt, FirstPublishedAt (+27 more)
+Cohesion: 0.05
+Nodes (46): Cosmetic, Brand, CreatedAt, DeletedAt, Description, DiscountAvailable, ExpireAt, FirstPublishedAt (+38 more)
 
 ### Community 231 - "DirectoryModule"
 Cohesion: 0.13
-Nodes (14): DirectoryFormSchemas, GovernorateGuideFormSchemas, SehhatyFormSchemas, DirectoryValidationRules, The directory-listing base, DirectoryListingRules, DirectoryModule, Category (+6 more)
+Nodes (16): DirectoryFormSchemas, GovernorateGuideFormSchemas, SehhatyFormSchemas, DirectoryValidationRules, The directory-listing base, DirectoryListingRules, DirectoryModule, Category (+8 more)
 
-### Community 232 - "UserDto"
-Cohesion: 0.11
-Nodes (17): API, Authorized JavaScript origins — required, Authorized redirect URIs, Configuration, CORS, Database, Frontend integration, `GET /api/auth/google/config` — anonymous (+9 more)
+### Community 232 - "BathroomSupplyListItemDto"
+Cohesion: 0.09
+Nodes (14): IBathroomSupplyService, BathroomSuppliesController, CurrentUserId, IsAdmin, BathroomSupplyListItemDto, Colors, Material, MaterialName (+6 more)
 
 ### Community 233 - ".Apply"
-Cohesion: 0.08
+Cohesion: 0.09
 Nodes (16): BusinessModuleExamples, BusinessModuleExamplesOperationFilter, MerchantSaleTypeDto, Id, Name, SupplierSpecializationDto, Group, GroupAr (+8 more)
 
-### Community 234 - "CreatePetRequest"
-Cohesion: 0.10
-Nodes (21): CreatePetRequestValidator, CreatePetRequest, Address, Age, Breed, Description, Gender, GoogleMaps (+13 more)
+### Community 234 - "PaymentMethodDto"
+Cohesion: 0.08
+Nodes (20): PaymentsController, CurrentUserId, IsAdmin, BannerPaymentMethodDto, CopyLabel, CopyValue, Method, TransferNote (+12 more)
 
-### Community 235 - "HorseDetailsDto"
+### Community 235 - "CoinStampListItemDto"
 Cohesion: 0.06
-Nodes (36): HorseDetailsDto, Address, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt (+28 more)
+Nodes (31): CoinStampListItemDto, AverageRating, Center, Condition, ConditionName, Country, CreatedAt, Denomination (+23 more)
 
 ### Community 236 - "LivestockDetailsDto"
-Cohesion: 0.06
-Nodes (36): LivestockDetailsDto, Address, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt (+28 more)
+Cohesion: 0.05
+Nodes (44): LivestockDetailsDto, Address, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt (+36 more)
 
 ### Community 237 - "PetListItemDto"
-Cohesion: 0.06
-Nodes (31): PetListItemDto, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt, Description (+23 more)
+Cohesion: 0.05
+Nodes (33): AnimalModuleExamples, AnimalModuleExamplesOperationFilter, PetListItemDto, Age, AgeName, AverageRating, Breed, BreedName (+25 more)
 
 ### Community 238 - "Company"
-Cohesion: 0.06
-Nodes (34): Company, Address, CompanyField, CompanyName, CreatedAt, DeletedAt, Description, Email (+26 more)
+Cohesion: 0.05
+Nodes (47): Company, Address, CompanyField, CompanyName, CreatedAt, DeletedAt, Description, Email (+39 more)
 
 ### Community 239 - "GiftToy"
 Cohesion: 0.06
@@ -1556,63 +1562,63 @@ Nodes (34): GiftToy, CreatedAt, DeletedAt, DeliveryAvailable, Description, Expir
 
 ### Community 240 - "WholesaleTrader"
 Cohesion: 0.05
-Nodes (47): WholesaleTrader, Address, CreatedAt, DeletedAt, Description, Email, ExpireAt, FirstPublishedAt (+39 more)
+Nodes (45): WholesaleTrader, Address, CreatedAt, DeletedAt, Description, Email, ExpireAt, FirstPublishedAt (+37 more)
 
 ### Community 241 - "AdFormFieldOverride"
 Cohesion: 0.06
 Nodes (33): AdFormFieldOverride, Category, CategoryId, CreatedAt, FieldName, HelpText, Id, IsCustom (+25 more)
 
 ### Community 242 - "AdminPageGrant"
-Cohesion: 0.06
-Nodes (30): AdminPageGrant, AdminUser, AdminUserId, CreatedAt, GrantedBy, Id, PageKey, Permissions (+22 more)
+Cohesion: 0.12
+Nodes (17): AdminPageGrant, AdminUser, AdminUserId, CreatedAt, GrantedBy, Id, PageKey, Permissions (+9 more)
 
-### Community 243 - "BeeFilterParams"
-Cohesion: 0.10
-Nodes (20): BeeFilterParams, AnimalType, HealthStatus, PriceFrom, PriceTo, Purpose, Search, SellerName (+12 more)
+### Community 243 - "DirectoryListing"
+Cohesion: 0.07
+Nodes (30): DirectoryListing, DirectoryListing, Images, Address, CreatedAt, DeletedAt, Description, Email (+22 more)
 
 ### Community 244 - "RealtimeListingEventTests"
-Cohesion: 0.14
-Nodes (3): UploadsStorage, UploadsStorageHealthCheck, RealtimeListingEventTests
+Cohesion: 0.12
+Nodes (6): UploadsStorageHealthCheck, ApproveListingRequest, Notes, SilentProxy, Calls, RealtimeListingEventTests
 
 ### Community 245 - "00 — Start Here"
 Cohesion: 0.13
 Nodes (15): 00 — Start Here, 10. How production deployment works (high level), 11. How to run the project locally (the short version), 12. Quick reference, 13. The 30-minute onboarding path, 14. Full document index, 1. What Shopiklopik is, 2. What the backend is responsible for (+7 more)
 
-### Community 246 - "PetMappingProfile"
-Cohesion: 0.17
-Nodes (11): PetMappingProfile, PetCatalog, PetImageDto, Id, IsPrimary, Url, PetVaccination, FullyVaccinated (+3 more)
+### Community 246 - "BannerPlacementDto"
+Cohesion: 0.07
+Nodes (28): BannerImageSpecDto, AllowedFormatNames, AllowedFormats, AspectRatio, Height, Kind, KindName, MaxSizeBytes (+20 more)
 
 ### Community 247 - "AdvertisementDetailsDto"
-Cohesion: 0.06
-Nodes (33): AdvertisementDetailsDto, AverageRating, CanReport, CategoryId, CategoryName, Center, CreatedAt, Description (+25 more)
+Cohesion: 0.05
+Nodes (38): AdvertisementDetailsDto, AverageRating, CanReport, CategoryId, CategoryName, Center, CreatedAt, Description (+30 more)
 
 ### Community 248 - "CamelDetailsDto"
 Cohesion: 0.06
 Nodes (34): CamelDetailsDto, Address, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt (+26 more)
 
-### Community 249 - "OtherAnimalDetailsDto"
-Cohesion: 0.06
-Nodes (34): OtherAnimalDetailsDto, Address, Age, AgeName, AnimalType, AnimalTypeName, AverageRating, CreatedAt (+26 more)
+### Community 249 - "PlantOrnamentProductType"
+Cohesion: 0.09
+Nodes (24): PlantOrnamentMappingProfile, PlantOrnamentCatalog, HomeFurnishingImageDto, Id, IsPrimary, SortOrder, Url, CreatePlantOrnamentRequest (+16 more)
 
 ### Community 250 - "SheepGoatDetailsDto"
 Cohesion: 0.06
 Nodes (34): SheepGoatDetailsDto, Address, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt (+26 more)
 
-### Community 251 - "UpdateBeeRequest"
-Cohesion: 0.11
-Nodes (19): UpdateBeeRequestValidator, UpdateBeeRequest, Address, AnimalType, Description, GoogleMaps, HealthStatus, Images (+11 more)
+### Community 251 - "CreateHomeApplianceRequest"
+Cohesion: 0.07
+Nodes (27): CreateHomeApplianceRequest, Brand, Colors, Condition, DeliveryAvailable, DeviceType, OtherBrand, OtherColor (+19 more)
 
 ### Community 252 - "JobOpportunityDetailsDto"
 Cohesion: 0.06
 Nodes (34): JobOpportunityDetailsDto, Address, AverageRating, Center, CreatedAt, Description, EmployerName, GoogleMaps (+26 more)
 
 ### Community 253 - "AdminPermission"
-Cohesion: 0.09
-Nodes (23): AdminPageAssignmentRequestValidator, UpdateAdminPermissionsRequestValidator, Permissions, D-09 — Admin pages are code; grants are data, Changing permissions, AdminPageCatalog, All, AllPermissions (+15 more)
+Cohesion: 0.08
+Nodes (24): AdminPageAssignmentRequestValidator, ConfirmAdminRequestValidator, UpdateAdminPermissionsRequestValidator, D-09 — Admin pages are code; grants are data, Changing permissions, Development rules that matter, AdminPageCatalog, All (+16 more)
 
 ### Community 254 - "Craftsman"
-Cohesion: 0.06
-Nodes (34): Craftsman, AdDescription, Address, AdTitle, Center, CreatedAt, DeletedAt, Email (+26 more)
+Cohesion: 0.05
+Nodes (45): Craftsman, AdDescription, Address, AdTitle, Center, CreatedAt, DeletedAt, Email (+37 more)
 
 ### Community 255 - "LostFoundPostListItemDto"
 Cohesion: 0.06
@@ -1620,23 +1626,23 @@ Nodes (32): LostFoundMappingProfile, LostFoundImageDto, Id, IsPrimary, Url, Lost
 
 ### Community 256 - "Business Rules"
 Cohesion: 0.06
-Nodes (28): EgyptianArabicLanguageManager, Culture, Enabled, 10. Referrals, 11. User-facing language, 13. Module-specific rules, 3. Ownership and visibility, 4. Interactions (+20 more)
+Nodes (34): 10. Referrals, 2. Publication window, 3. Ownership and visibility, 4. Interactions, 5. Validation, 6. Uploads, 7. Notifications, 8. Comments (+26 more)
 
-### Community 257 - "HorseImage"
-Cohesion: 0.12
-Nodes (12): HorseImage, CreatedAt, FileName, Horse, HorseId, Id, ImagePath, ImageUrl (+4 more)
+### Community 257 - "CharityListing"
+Cohesion: 0.08
+Nodes (25): CharityListing, CreatedAt, DeletedAt, ExpireAt, FirstPublishedAt, Id, IsDeleted, IsResponsibilityAccepted (+17 more)
 
 ### Community 258 - "SheepGoatImage"
-Cohesion: 0.12
-Nodes (12): SheepGoatImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, SheepGoat (+4 more)
+Cohesion: 0.15
+Nodes (10): SheepGoatImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, SheepGoat (+2 more)
 
-### Community 259 - "FurnishingCurtainImage"
-Cohesion: 0.13
-Nodes (13): FurnishingCurtainImage, CreatedAt, FileName, FurnishingCurtain, FurnishingCurtainId, Id, ImagePath, ImageUrl (+5 more)
+### Community 259 - "BirdFilterParams"
+Cohesion: 0.09
+Nodes (24): BirdFilterParams, Age, AnimalType, Gender, HealthStatus, PriceFrom, PriceTo, Purpose (+16 more)
 
 ### Community 260 - "Workshop"
 Cohesion: 0.05
-Nodes (46): Workshop, AdDescription, Address, AdTitle, Center, CreatedAt, DeletedAt, Email (+38 more)
+Nodes (44): Workshop, AdDescription, Address, AdTitle, Center, CreatedAt, DeletedAt, Email (+36 more)
 
 ### Community 261 - "AdminAdListItemDto"
 Cohesion: 0.06
@@ -1654,9 +1660,9 @@ Nodes (32): AntiqueListItemDto, AntiqueName, AntiqueType, AntiqueTypeName, Avera
 Cohesion: 0.06
 Nodes (32): JobRequestDetailsDto, Address, ApplicantName, AverageRating, Center, CreatedAt, CvFileName, CvFileUrl (+24 more)
 
-### Community 265 - "IMapper"
-Cohesion: 0.22
-Nodes (3): BeeService, IBeeRepository, BeeRepository
+### Community 265 - "BuildingListItemDto"
+Cohesion: 0.08
+Nodes (25): BuildingListItemDto, ApartmentsCount, Area, BathroomsCount, BuildingType, BuildingTypeName, Features, FinishingType (+17 more)
 
 ### Community 266 - "LivestockAgeLookup"
 Cohesion: 0.05
@@ -1664,39 +1670,39 @@ Nodes (35): LivestockAgeLookup, Id, Name, NameEn, LivestockBreedLookup, Id, Name
 
 ### Community 267 - "FruitVegetableMerchant"
 Cohesion: 0.05
-Nodes (45): FruitVegetableMerchant, Address, CreatedAt, DeletedAt, Description, ExpireAt, FirstPublishedAt, GoogleMaps (+37 more)
+Nodes (44): FruitVegetableMerchant, Address, CreatedAt, DeletedAt, Description, ExpireAt, FirstPublishedAt, GoogleMaps (+36 more)
 
 ### Community 268 - "Payment"
-Cohesion: 0.04
-Nodes (64): Payment, AccountNameSnapshot, ActivatedAt, ActivationEndAt, ActivationStartAt, Amount, ApprovedAt, ApprovedBy (+56 more)
+Cohesion: 0.05
+Nodes (32): PaymentMethod, AccountHolderName, AccountNumber, ArabicName, BankName, CreatedAt, DisplayOrder, Iban (+24 more)
 
-### Community 269 - "BeeMappingProfile"
+### Community 269 - "RestaurantAndCafe"
 Cohesion: 0.16
-Nodes (12): BeeMappingProfile, BeeCatalog, BeeImageDto, Id, IsPrimary, Url, BeeProduction, Honey (+4 more)
+Nodes (20): RestaurantAndCafe, RestaurantAndCafeImage, Listing, RestaurantsAndCafesMappingProfile, RestaurantAndCafeService, Module, UpdateRestaurantAndCafeRequestValidator, IRestaurantAndCafeService (+12 more)
 
-### Community 270 - "CreateBeeRequest"
+### Community 270 - "CreateSupplierRequest"
+Cohesion: 0.09
+Nodes (20): SupplierMappingProfile, CreateSupplierRequestValidator, CreateSupplierRequest, Address, Description, Email, GoogleMaps, Images (+12 more)
+
+### Community 271 - "BathroomSupplyColor"
 Cohesion: 0.11
-Nodes (18): CreateBeeRequestValidator, CreateBeeRequest, Address, AnimalType, Description, GoogleMaps, HealthStatus, Images (+10 more)
-
-### Community 271 - "NotificationInterestCategoryOptionDto"
-Cohesion: 0.07
-Nodes (29): ReplaceNotificationInterestsRequestValidator, AddNotificationInterestRequest, CategoryId, SubCategoryId, NotificationInterestCategoryOptionDto, CategoryId, Icon, InterestId (+21 more)
+Nodes (18): BathroomSupplyMappingProfile, BathroomSupplyMaterialLookupConfiguration, Entries, TableName, BathroomSupplyCatalog, BathroomSupplyColor, Beige, Black (+10 more)
 
 ### Community 272 - "AdminFormFieldDto"
 Cohesion: 0.06
 Nodes (31): AdminFormFieldDto, CanRelaxRequirement, FieldId, HelpText, IsOverridden, IsPersisted, Label, LabelEn (+23 more)
 
 ### Community 273 - "AdvertisementListItemDto"
-Cohesion: 0.05
-Nodes (40): AdvertisementListItemDto, AverageRating, Brand, BusinessName, CategoryId, CategoryName, Center, CreatedAt (+32 more)
+Cohesion: 0.06
+Nodes (31): AdvertisementListItemDto, AverageRating, Brand, BusinessName, CategoryId, CategoryName, Center, CreatedAt (+23 more)
 
 ### Community 274 - "HorseListItemDto"
-Cohesion: 0.06
-Nodes (31): HorseListItemDto, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt, Description (+23 more)
+Cohesion: 0.02
+Nodes (133): HorseMappingProfile, CreateHorseRequestValidator, UpdateHorseRequestValidator, HorseCatalog, CreateHorseRequest, Address, Age, Breed (+125 more)
 
-### Community 275 - "AskConsultCommentDto"
-Cohesion: 0.11
-Nodes (17): AskConsultCommentDto, AskConsultId, Author, CanDelete, CanEdit, Comment, CreatedAt, Id (+9 more)
+### Community 275 - ".UpdateAsync"
+Cohesion: 0.19
+Nodes (3): SupplierService, ISupplierRepository, SupplierRepository
 
 ### Community 276 - "PaintingListItemDto"
 Cohesion: 0.06
@@ -1707,56 +1713,56 @@ Cohesion: 0.06
 Nodes (31): HomemadeFoodDetailsDto, AdditionalNotes, AvailableOrderingHours, AverageRating, CreatedAt, DeliveryAreas, DeliveryAvailable, Description (+23 more)
 
 ### Community 278 - "HomemadeFoodListItemDto"
-Cohesion: 0.06
-Nodes (31): HomemadeFoodImageDto, Id, IsPrimary, Url, HomemadeFoodListItemDto, AdditionalNotes, AvailableOrderingHours, AverageRating (+23 more)
+Cohesion: 0.04
+Nodes (51): HomemadeFoodMappingProfile, HomemadeFoodCatalog, OnlineShoppingCatalog, OnlineShoppingLookupEntry, HomemadeFoodImageDto, Id, IsPrimary, Url (+43 more)
 
 ### Community 279 - "WorkshopType"
 Cohesion: 0.06
-Nodes (31): WorkshopMappingProfile, WorkshopType, AirConditioningAndRefrigeration, Aluminum, Blacksmithing, CarBodywork, CarElectrical, CarPainting (+23 more)
-
-### Community 280 - "BirdImage"
-Cohesion: 0.15
-Nodes (4): BirdService, IBirdRepository, IBirdService, BirdRepository
+Nodes (30): WorkshopType, AirConditioningAndRefrigeration, Aluminum, Blacksmithing, CarBodywork, CarElectrical, CarPainting, Carpentry (+22 more)
 
 ### Community 281 - "PetImage"
-Cohesion: 0.12
-Nodes (12): PetImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, Pet (+4 more)
+Cohesion: 0.15
+Nodes (10): PetImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, Pet (+2 more)
 
-### Community 282 - "CraftsmanImage"
-Cohesion: 0.12
-Nodes (13): CraftsmanImage, Craftsman, CraftsmanId, CreatedAt, FileName, Id, ImagePath, ImageUrl (+5 more)
+### Community 282 - "FruitVegetableMerchantDetailsDto"
+Cohesion: 0.09
+Nodes (23): FruitVegetableMerchantDetailsDto, Address, AverageRating, CreatedAt, Description, GoogleMaps, Id, Images (+15 more)
 
 ### Community 283 - "MenClothingColor"
-Cohesion: 0.12
-Nodes (17): MenClothingColor, Beige, Black, Blue, Brown, Gray, Green, Maroon (+9 more)
+Cohesion: 0.08
+Nodes (22): MenClothingColorSelection, Color, MenClothing, MenClothingId, MenClothingColorSelectionConfiguration, MenClothingColor, Beige, Black (+14 more)
 
-### Community 285 - ".UpdateAsync"
-Cohesion: 0.12
-Nodes (13): JobOpportunityImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, JobOpportunity (+5 more)
+### Community 284 - "HomeApplianceDeviceType"
+Cohesion: 0.09
+Nodes (23): HomeApplianceDeviceType, AirConditioner, AirFryer, Blender, Chopper, CoffeeMachine, Cooker, DeepFreezer (+15 more)
 
-### Community 286 - "WomenClothingImage"
-Cohesion: 0.16
-Nodes (10): WomenClothingImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, WomenClothing (+2 more)
-
-### Community 287 - "EmailTemplateTests"
+### Community 285 - "ListingChange"
 Cohesion: 0.15
-Nodes (5): Brand, EmailCatalog, Palette, PasswordReset, EmailTemplateTests
+Nodes (16): IListingEventPublisher, SignalRListingEventPublisher, ListingChange, ModerationQueueChangedEventDto, Change, Id, ModerationStatus, OccurredAt (+8 more)
 
-### Community 288 - "AdminReferralService"
-Cohesion: 0.22
-Nodes (5): AdminReferralService, IReferralLinkBuilder, D-29 — Invitation links are built from the frontend URL, never from the request, ReferralLinkBuilder, StubReferralLinkBuilder
+### Community 286 - ".UpdateAsync"
+Cohesion: 0.20
+Nodes (3): FactoryService, IFactoryRepository, FactoryRepository
+
+### Community 287 - "UpdateBirdRequest"
+Cohesion: 0.10
+Nodes (21): UpdateBirdRequestValidator, UpdateBirdRequest, Address, Age, AnimalType, Description, Gender, GoogleMaps (+13 more)
+
+### Community 288 - "AdminRepublishResultDto"
+Cohesion: 0.10
+Nodes (19): AdminRepublishResultDto, ExpireAt, Id, Moderation, PreviousExpireAt, PublishedAt, RemainingDays, RepublishCount (+11 more)
 
 ### Community 289 - "AdminAnalyticsDto"
-Cohesion: 0.09
-Nodes (26): AdminAnalyticsDto, AdsByCategory, AdsOverTime, From, RevenueOverTime, To, TopCategories, UsersOverTime (+18 more)
+Cohesion: 0.05
+Nodes (42): AdminAnalyticsDto, AdsByCategory, AdsOverTime, From, RevenueOverTime, To, TopCategories, UsersOverTime (+34 more)
 
 ### Community 290 - "WomenClothingListItemDto"
 Cohesion: 0.06
-Nodes (34): WomenClothingImageDto, Id, IsPrimary, Url, WomenClothingListItemDto, AverageRating, Brand, BrandName (+26 more)
+Nodes (32): ClothingModuleExamples, ClothingModuleExamplesOperationFilter, WomenClothingListItemDto, AverageRating, Brand, BrandName, Center, ClothingType (+24 more)
 
 ### Community 291 - "HomeFurnishingDetailsDtoBase"
-Cohesion: 0.04
-Nodes (57): HomeFurnishingDetailsDtoBase, Address, AverageRating, Center, CreatedAt, Description, Email, GoogleMaps (+49 more)
+Cohesion: 0.07
+Nodes (30): HomeFurnishingDetailsDtoBase, Address, AverageRating, Center, CreatedAt, Description, Email, GoogleMaps (+22 more)
 
 ### Community 292 - "AccessoryDetailsDto"
 Cohesion: 0.07
@@ -1767,16 +1773,12 @@ Cohesion: 0.07
 Nodes (30): AccessoryImageDto, Id, IsPrimary, Url, AccessoryListItemDto, AccessoryType, AccessoryTypeName, AverageRating (+22 more)
 
 ### Community 294 - "04 — Development Setup"
-Cohesion: 0.04
-Nodes (49): 02 — Architecture, 10. What this architecture optimises for, and what it costs, 1. The one-line summary, 2. The request path, 8. Transactions and the unit of work, 9. Response shape, 03 — Project Structure, `Core/Services` — business logic (277 files) (+41 more)
+Cohesion: 0.14
+Nodes (14): 04 — Development Setup, A five-minute smoke test in Swagger, Common setup failures, Never do these locally, Recommended local environment (all of it), Step 1 — Prerequisites, Step 2 — Clone and build, Step 3 — Point at a local database (+6 more)
 
 ### Community 295 - "BeeHealthStatusLookup"
 Cohesion: 0.09
 Nodes (20): BeeHealthStatusLookup, Id, Name, NameEn, BeeProductionLookup, Id, Name, NameEn (+12 more)
-
-### Community 296 - "AdminFormService"
-Cohesion: 0.16
-Nodes (3): AdminFormService, IAdminFormRepository, AdminFormRepository
 
 ### Community 297 - "AdminBannerSlotOverviewDto"
 Cohesion: 0.08
@@ -1786,17 +1788,17 @@ Nodes (25): AdminBannerSlotOccupancy, AdminBannerPlacementOverviewDto, Currency,
 Cohesion: 0.18
 Nodes (11): SheepGoatMappingProfile, SheepGoatCatalog, SheepGoatImageDto, Id, IsPrimary, Url, SheepGoatVaccination, FullyVaccinated (+3 more)
 
-### Community 299 - "AdminReferrerDto"
-Cohesion: 0.08
-Nodes (26): AdminReferrerDto, AccountStatus, AccountStatusName, CompletedReferrals, ConversionRate, Email, LastReferralAt, Name (+18 more)
+### Community 299 - "JobExperienceLevelDto"
+Cohesion: 0.13
+Nodes (8): IJobRequestService, JobRequestsController, CurrentUserId, IsAdmin, JobExperienceLevelDto, Id, Name, NameEn
 
 ### Community 300 - "CamelListItemDto"
 Cohesion: 0.07
 Nodes (29): CamelListItemDto, Age, AgeName, AverageRating, Breed, BreedName, CreatedAt, Description (+21 more)
 
 ### Community 301 - "OtherAnimalListItemDto"
-Cohesion: 0.07
-Nodes (29): OtherAnimalListItemDto, Age, AgeName, AnimalType, AnimalTypeName, AverageRating, CreatedAt, Description (+21 more)
+Cohesion: 0.02
+Nodes (121): OtherAnimalMappingProfile, CreateOtherAnimalRequestValidator, UpdateOtherAnimalRequestValidator, OtherAnimalCatalog, CreateOtherAnimalRequest, Address, Age, AnimalType (+113 more)
 
 ### Community 302 - "SheepGoatListItemDto"
 Cohesion: 0.07
@@ -1827,28 +1829,32 @@ Cohesion: 0.07
 Nodes (29): ShoppingElectronicImageDto, Id, IsPrimary, Url, ShoppingElectronicListItemDto, AverageRating, Brand, CompatibleWith (+21 more)
 
 ### Community 309 - "CamelService"
-Cohesion: 0.12
+Cohesion: 0.11
 Nodes (13): CamelImage, Camel, CamelId, CreatedAt, FileName, Id, ImagePath, ImageUrl (+5 more)
 
 ### Community 310 - "SupplierListItemDto"
-Cohesion: 0.08
-Nodes (23): SupplierImageDto, Id, IsPrimary, Url, SupplierListItemDto, AverageRating, CreatedAt, Description (+15 more)
+Cohesion: 0.11
+Nodes (19): SupplierListItemDto, AverageRating, CreatedAt, Description, Id, Images, IsFavorite, OtherSupplierType (+11 more)
+
+### Community 311 - "LostFoundService"
+Cohesion: 0.18
+Nodes (5): LostFoundService, CreateCommentRequestValidator, ILostFoundRepository, CreateCommentRequest, Comment
 
 ### Community 312 - "CreateLostFoundPostRequest"
-Cohesion: 0.17
-Nodes (12): CreateLostFoundPostRequestValidator, CreateLostFoundPostRequest, Center, Description, FoundDate, Governorate, Images, ItemName (+4 more)
+Cohesion: 0.09
+Nodes (20): CreateLostFoundPostRequestValidator, Category 3 — المفقودات (Lost & Found) · subs 7–8, AdvertisementCatalog, CreateLostFoundPostRequest, Center, Description, FoundDate, Governorate (+12 more)
 
 ### Community 313 - "LostFoundPostDetailsDto"
-Cohesion: 0.06
-Nodes (35): Category 3 — المفقودات (Lost & Found) · subs 7–8, LostFoundPostDetailsDto, AverageRating, CategoryId, Center, CommentsCount, CreatedAt, Description (+27 more)
+Cohesion: 0.07
+Nodes (28): LostFoundPostDetailsDto, AverageRating, CategoryId, Center, CommentsCount, CreatedAt, Description, FavoriteCount (+20 more)
 
 ### Community 314 - "HomeKitchenFilterParams"
 Cohesion: 0.11
 Nodes (19): HomeKitchenFilterParams, Color, DeliveryAvailable, Material, PriceFrom, PriceTo, Search, Section (+11 more)
 
-### Community 315 - "IUserAccessStateCache"
-Cohesion: 0.14
-Nodes (10): IUserAccessStateCache, UserAccessState, Role changes take effect immediately, D-21 — Roles are re-read from the database on every request, Account state is enforced on every request, DatabaseRoleClaimsTransformation, UserAccessStateCache, 1. `DatabaseRoleClaimsTransformation` (an `IClaimsTransformation`) (+2 more)
+### Community 315 - "UserAccountStatus"
+Cohesion: 0.05
+Nodes (29): IUserAccessStateCache, UserAccessState, Role changes take effect immediately, D-21 — Roles are re-read from the database on every request, Account state is enforced on every request, Authorization, DatabaseRoleClaimsTransformation, UserAccessStateCache (+21 more)
 
 ### Community 316 - "FishAgeLookup"
 Cohesion: 0.09
@@ -1858,61 +1864,61 @@ Nodes (20): FishAgeLookup, Id, Name, NameEn, FishHealthStatusLookup, Id, Name, N
 Cohesion: 0.06
 Nodes (30): SheepGoatAgeLookup, Id, Name, NameEn, SheepGoatBreedLookup, Id, Name, NameEn (+22 more)
 
-### Community 318 - ".UpdateAsync"
-Cohesion: 0.12
-Nodes (12): PaintingVideo, CreatedAt, FileName, Id, Painting, PaintingId, VideoPath, VideoUrl (+4 more)
+### Community 318 - "PaintingVideo"
+Cohesion: 0.18
+Nodes (9): PaintingVideo, CreatedAt, FileName, Id, Painting, PaintingId, VideoPath, VideoUrl (+1 more)
 
 ### Community 319 - ".SampleLookups"
-Cohesion: 0.06
-Nodes (26): AnimalFormLookups, AntiqueFormLookups, ClothingFormLookups, CreateAdFormExamples, All, Example, HomeFurnishingFormLookups, OnlineShoppingFormLookups (+18 more)
+Cohesion: 0.05
+Nodes (34): AnimalFormLookups, AntiqueFormLookups, ClothingFormLookups, CreateAdFormExamples, All, Example, HomeFurnishingFormLookups, OnlineShoppingFormLookups (+26 more)
 
 ### Community 320 - "JobFieldLookup"
-Cohesion: 0.07
-Nodes (27): EducationLevelLookup, Id, Name, NameEn, JobExperienceLevelLookup, Id, Name, NameEn (+19 more)
+Cohesion: 0.06
+Nodes (21): JobExperienceLevelLookup, Id, Name, NameEn, JobFieldLookup, Group, GroupAr, Id (+13 more)
 
-### Community 321 - "PetFilterParams"
-Cohesion: 0.13
-Nodes (15): PetFilterParams, Age, Breed, Gender, HealthStatus, PriceFrom, PriceTo, Purpose (+7 more)
+### Community 321 - "CreateBathroomSupplyRequest"
+Cohesion: 0.10
+Nodes (20): BathroomSupplyProductTypeLookupConfiguration, Entries, TableName, CreateBathroomSupplyRequest, Colors, Material, OtherColor, OtherMaterial (+12 more)
 
 ### Community 322 - "CraftsmanListItemDto"
 Cohesion: 0.08
-Nodes (24): CraftsmanImageDto, Id, IsPrimary, Url, CraftsmanListItemDto, AdDescription, AdTitle, AverageRating (+16 more)
+Nodes (25): CraftsmanMappingProfile, CraftsmanImageDto, Id, IsPrimary, Url, CraftsmanListItemDto, AdDescription, AdTitle (+17 more)
 
-### Community 323 - "ApartmentElevatorOptionalTests"
-Cohesion: 0.13
-Nodes (9): CreateApartmentRequestValidator, UpdateApartmentRequestValidator, UpdateApartmentRequest, RemoveImageIds, RemoveVideo, IRealEstateGalleryEdit, RemoveImageIds, RemoveVideo (+1 more)
+### Community 323 - "FishFilterParams"
+Cohesion: 0.11
+Nodes (19): FishFilterParams, Age, AnimalType, HealthStatus, PriceFrom, PriceTo, Purpose, Search (+11 more)
 
-### Community 324 - "KidsClothingFilterParams"
-Cohesion: 0.13
-Nodes (15): KidsClothingFilterParams, Brand, Center, ClothingType, Color, PriceFrom, PriceTo, Search (+7 more)
+### Community 324 - "ListingLifecycleProcessor"
+Cohesion: 0.23
+Nodes (5): ListingLifecycleProcessor, IListingLifecycleProcessor, ExpiringListingRow, Background services, D-41 — The lifecycle is one processor, covers every module, and never deletes
 
-### Community 325 - "PaginationParams"
-Cohesion: 0.06
-Nodes (34): AdminPaymentFilterParams, FromDate, PaymentMethodId, Search, Status, ToDate, UserId, PaginationParams (+26 more)
+### Community 325 - "AdminPaymentListItemDto"
+Cohesion: 0.08
+Nodes (22): AdminPaymentFilterParams, FromDate, PaymentMethodId, Search, Status, ToDate, UserId, AdminPaymentListItemDto (+14 more)
 
 ### Community 326 - "UpdateCoinStampRequest"
 Cohesion: 0.07
 Nodes (27): UpdateCoinStampRequest, Address, Center, Condition, Country, Denomination, Description, GoogleMaps (+19 more)
 
 ### Community 327 - "DecorAntiqueListItemDto"
-Cohesion: 0.07
-Nodes (27): DecorAntiqueListItemDto, AverageRating, Center, Condition, ConditionName, CreatedAt, Description, Id (+19 more)
+Cohesion: 0.03
+Nodes (80): DecorAntiqueMappingProfile, DecorAntiqueCatalog, DecorAntiqueImageDto, Id, IsPrimary, Url, DecorAntiqueListItemDto, AverageRating (+72 more)
 
 ### Community 328 - "UpdatePaintingRequest"
 Cohesion: 0.07
 Nodes (27): UpdatePaintingRequest, Address, ArtistName, Center, Description, ExecutionYear, Framed, GoogleMaps (+19 more)
 
-### Community 329 - "HorseAge"
-Cohesion: 0.13
-Nodes (14): HorseAge, Adult, Newborn, Old, Young, HorseGender, Female, Male (+6 more)
+### Community 329 - "AdPaymentStatusDto"
+Cohesion: 0.11
+Nodes (19): AdPaymentStatusDto, AdvertisementId, AdvertisementType, Amount, CanSubmit, Currency, CurrentPrice, HasPayment (+11 more)
 
 ### Community 330 - "JobRequestListItemDto"
-Cohesion: 0.06
-Nodes (35): JobRequestListItemDto, ApplicantName, AverageRating, Center, CreatedAt, CvFileUrl, Description, Education (+27 more)
+Cohesion: 0.07
+Nodes (27): JobRequestListItemDto, ApplicantName, AverageRating, Center, CreatedAt, CvFileUrl, Description, Education (+19 more)
 
-### Community 331 - "ListingReportDto"
-Cohesion: 0.02
-Nodes (102): ListingInteractionCatalog, IListingViews, Views, ViewsListingId, ViewsListingType, CreateListingReportRequest, Details, Reason (+94 more)
+### Community 331 - "ListingInteractionMetadataDto"
+Cohesion: 0.10
+Nodes (21): ListingInteractionMetadataDto, Modules, RecentlyViewedRetentionCount, ReportReasons, ReportStatuses, ViewDedupeWindowMinutes, ListingModuleDto, CategoryId (+13 more)
 
 ### Community 332 - "HomeKitchenDetailsDto"
 Cohesion: 0.07
@@ -1923,20 +1929,20 @@ Cohesion: 0.07
 Nodes (27): HomeKitchenImageDto, Id, IsPrimary, Url, HomeKitchenListItemDto, AverageRating, Colors, CreatedAt (+19 more)
 
 ### Community 334 - "ListingChangedEventDto"
-Cohesion: 0.05
-Nodes (41): IListingEventPublisher, ListingChange, ListingChangedEventDto, CategoryId, Change, ExpireAt, Id, IsPublic (+33 more)
+Cohesion: 0.07
+Nodes (26): ListingChangedEventDto, CategoryId, Change, ExpireAt, Id, IsPublic, ModerationStatus, OccurredAt (+18 more)
 
 ### Community 336 - "GiftToyImage"
-Cohesion: 0.21
+Cohesion: 0.18
 Nodes (3): GiftToyService, IGiftToyRepository, GiftToyRepository
 
-### Community 337 - "ShoppingElectronicImage"
-Cohesion: 0.12
-Nodes (13): ShoppingElectronicImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, ShoppingElectronic (+5 more)
+### Community 337 - "CreateFactoryRequest"
+Cohesion: 0.11
+Nodes (16): FactoryMappingProfile, CreateFactoryRequest, Address, Description, Email, FactoryName, GoogleMaps, Images (+8 more)
 
 ### Community 338 - "WorkshopListItemDto"
-Cohesion: 0.09
-Nodes (22): WorkshopImageDto, Id, IsPrimary, Url, WorkshopListItemDto, AdDescription, AdTitle, AverageRating (+14 more)
+Cohesion: 0.08
+Nodes (23): WorkshopMappingProfile, WorkshopImageDto, Id, IsPrimary, Url, WorkshopListItemDto, AdDescription, AdTitle (+15 more)
 
 ### Community 339 - "JobExperienceLevel"
 Cohesion: 0.13
@@ -1955,76 +1961,72 @@ Cohesion: 0.08
 Nodes (26): CosmeticDetailsDto, AverageRating, Brand, CreatedAt, Description, DiscountAvailable, Id, Images (+18 more)
 
 ### Community 343 - "CosmeticListItemDto"
-Cohesion: 0.08
-Nodes (26): CosmeticImageDto, Id, IsPrimary, Url, CosmeticListItemDto, AverageRating, Brand, CreatedAt (+18 more)
+Cohesion: 0.03
+Nodes (73): CosmeticMappingProfile, CosmeticCatalog, CosmeticImageDto, Id, IsPrimary, Url, CosmeticListItemDto, AverageRating (+65 more)
 
 ### Community 344 - "WholesaleTraderDetailsDto"
 Cohesion: 0.08
 Nodes (26): WholesaleTraderDetailsDto, Address, AverageRating, CreatedAt, Description, Email, GoogleMaps, Id (+18 more)
 
 ### Community 345 - "InterestedIn"
-Cohesion: 0.08
-Nodes (25): DamageLevel, Heavy, Light, Medium, InterestedIn, AnyCar, AnyHeavyEquipment, Car (+17 more)
+Cohesion: 0.05
+Nodes (41): Admin republish (the 30-day cycle), Category 10 — افرش بيتك (Home Furnishing) · subs 40–46, Category 11 — عقارات (Real Estate) · subs 47–49, 65, Category 8 — الملابس (Clothing) · subs 31–33, Category 9 — التسوق أونلاين (Online Shopping) · subs 34–39, Cross-module features, Endpoints a module publishes, Files a module owns (+33 more)
 
-### Community 346 - "ILogger"
-Cohesion: 0.07
-Nodes (18): AdvertiserLookupParamsValidator, Global action filters, Cross-module statistics, ListingSortIndex, ListingSortIndexCatalog, ListingEditReviewFilter, ListingInteractionFilter, Counter (+10 more)
+### Community 346 - "4. Where each kind of code belongs"
+Cohesion: 0.03
+Nodes (69): AdvertiserLookupParamsValidator, A request, end to end, Architecture, Controllers — `Infastrucre/Presantion/Controllers`, Cross-module read model, DTOs — `Shared/DTOs`, Entities — `Core/Domain/Entities`, External integrations (+61 more)
 
 ### Community 347 - "CamelAgeLookup"
-Cohesion: 0.06
-Nodes (30): CamelAgeLookup, Id, Name, NameEn, CamelBreedLookup, Id, Name, NameEn (+22 more)
+Cohesion: 0.08
+Nodes (25): CamelAgeLookup, Id, Name, NameEn, CamelBreedLookup, Id, Name, NameEn (+17 more)
 
 ### Community 348 - "HorseAgeLookup"
 Cohesion: 0.05
 Nodes (35): HorseAgeLookup, Id, Name, NameEn, HorseBreedLookup, Id, Name, NameEn (+27 more)
 
 ### Community 349 - "DecorAntiqueConditionLookup"
-Cohesion: 0.09
+Cohesion: 0.08
 Nodes (20): DecorAntiqueConditionLookup, Id, Name, NameEn, DecorAntiqueItemTypeLookup, Id, Name, NameEn (+12 more)
 
-### Community 350 - "PetAge"
-Cohesion: 0.13
-Nodes (14): PetAge, Adult, Newborn, Old, Young, PetGender, Female, Male (+6 more)
+### Community 350 - "CreateFishRequest"
+Cohesion: 0.11
+Nodes (18): CreateFishRequestValidator, CreateFishRequest, Address, Age, AnimalType, Description, GoogleMaps, HealthStatus (+10 more)
 
-### Community 351 - "PetBreed"
-Cohesion: 0.13
-Nodes (15): PetBreed, Cats, Dogs, GermanShepherd, GoldenRetriever, Griffon, Hamster, Husky (+7 more)
-
-### Community 352 - "HorseMappingProfile"
+### Community 352 - "BathroomSupplyRepository"
 Cohesion: 0.17
-Nodes (11): HorseMappingProfile, HorseCatalog, HorseImageDto, Id, IsPrimary, Url, HorseVaccination, FullyVaccinated (+3 more)
+Nodes (5): BathroomSupplyRepository, BathroomSupplyFilterParams, Color, Material, ProductType
 
 ### Community 353 - ".UpdateAsync"
-Cohesion: 0.09
-Nodes (18): HomemadeFoodDeliveryAreaSelection, DeliveryArea, HomemadeFood, HomemadeFoodId, HomemadeFoodImage, CreatedAt, FileName, HomemadeFood (+10 more)
+Cohesion: 0.04
+Nodes (59): HomemadeFood, AdditionalNotes, AvailableOrderingHours, CreatedAt, DeletedAt, DeliveryAreas, DeliveryAvailable, Description (+51 more)
 
 ### Community 354 - "CamelFilterParams"
-Cohesion: 0.09
-Nodes (24): CamelFilterParams, Age, Breed, Gender, HealthStatus, PriceFrom, PriceTo, Purpose (+16 more)
+Cohesion: 0.12
+Nodes (15): CamelFilterParams, Age, Breed, Gender, HealthStatus, PriceFrom, PriceTo, Purpose (+7 more)
 
-### Community 355 - "HorseFilterParams"
-Cohesion: 0.13
-Nodes (15): HorseFilterParams, Age, Breed, Gender, HealthStatus, PriceFrom, PriceTo, Purpose (+7 more)
+### Community 355 - "UpdateWholesaleTraderRequest"
+Cohesion: 0.12
+Nodes (17): UpdateWholesaleTraderRequestValidator, UpdateWholesaleTraderRequest, Address, Description, Email, GoogleMaps, Images, OtherTradeType (+9 more)
 
-### Community 356 - "OtherAnimalFilterParams"
-Cohesion: 0.08
-Nodes (25): OtherAnimalFilterParams, Age, AnimalType, Gender, HealthStatus, PriceFrom, PriceTo, Purpose (+17 more)
+### Community 356 - "ModerationModelConfiguration"
+Cohesion: 0.17
+Nodes (7): 1. Moderation, R1.1 — Nothing is published unreviewed, R1.2 — Only an administrator changes moderation status, R1.3 — A listing is publicly visible only when approved **and** inside its window, R1.4 — Editing a published listing returns it to review, The visibility + ordering index, ModerationModelConfiguration
 
 ### Community 357 - "UpdateHandmadeRequest"
-Cohesion: 0.05
-Nodes (37): HandmadeFilterParams, Center, Color, CustomOrder, HandmadeType, IsFullyHandmade, Negotiable, PriceFrom (+29 more)
+Cohesion: 0.08
+Nodes (25): UpdateHandmadeRequest, Address, Center, Colors, CustomOrder, Description, GoogleMaps, HandmadeType (+17 more)
 
 ### Community 358 - "CreatePaintingRequest"
 Cohesion: 0.08
 Nodes (25): CreatePaintingRequest, Address, ArtistName, Center, Description, ExecutionYear, Framed, GoogleMaps (+17 more)
 
-### Community 359 - "UpdateMenClothingRequest"
-Cohesion: 0.08
-Nodes (25): UpdateMenClothingRequest, Address, Brand, Center, ClothingType, Colors, Condition, DeliveryAvailable (+17 more)
+### Community 359 - ".Detect"
+Cohesion: 0.19
+Nodes (3): D-17 — Format decided by magic bytes, name discarded, Upload security, UploadSecurityTests
 
 ### Community 360 - "CompanyDetailsDto"
-Cohesion: 0.08
-Nodes (25): CompanyDetailsDto, Address, AverageRating, CompanyField, CompanyFieldGroup, CompanyFieldName, CompanyName, CreatedAt (+17 more)
+Cohesion: 0.07
+Nodes (26): ICompanyService, CompanyDetailsDto, Address, AverageRating, CompanyField, CompanyFieldGroup, CompanyFieldName, CompanyName (+18 more)
 
 ### Community 361 - "GiftToyDetailsDto"
 Cohesion: 0.08
@@ -2043,39 +2045,39 @@ Cohesion: 0.12
 Nodes (18): PaintingMappingProfile, PaintingCatalog, PaintingImageDto, Id, IsPrimary, Url, PaintingVideoDto, Id (+10 more)
 
 ### Community 365 - "FruitVegetableMerchantDetailsDto"
-Cohesion: 0.03
-Nodes (65): FruitVegetableMerchantMappingProfile, CreateFruitVegetableMerchantRequestValidator, FruitVegetableMerchantCatalog, CreateFruitVegetableMerchantRequest, Address, Description, GoogleMaps, Images (+57 more)
+Cohesion: 0.04
+Nodes (48): FruitVegetableMerchantMappingProfile, CreateFruitVegetableMerchantRequestValidator, FruitVegetableMerchantCatalog, CreateFruitVegetableMerchantRequest, Address, Description, GoogleMaps, Images (+40 more)
 
-### Community 366 - "BloodGroup"
-Cohesion: 0.13
-Nodes (14): BloodGroup, ABNegative, ABPositive, ANegative, APositive, BNegative, BPositive, ONegative (+6 more)
+### Community 366 - "CharityRepositoryBase"
+Cohesion: 0.11
+Nodes (11): CharityRepositoryBase, Set, CharityFilterParamsBase, HasLocation, Search, SortBy, CharitySortBy, MostLiked (+3 more)
 
-### Community 367 - "ReferralService"
+### Community 367 - "SqlCountInterceptor"
+Cohesion: 0.27
+Nodes (4): RequestSqlCounter, Count, ElapsedMilliseconds, SqlCountInterceptor
+
+### Community 368 - "BathroomSupplyImage"
+Cohesion: 0.14
+Nodes (13): BathroomSupplyImage, BathroomSupply, BathroomSupplyId, CreatedAt, FileName, Id, ImagePath, ImageUrl (+5 more)
+
+### Community 369 - "BannerBookingSummaryDto"
 Cohesion: 0.12
-Nodes (14): ReferralService, ReferralResolutionDto, Message, ReferralCode, ReferrerName, Valid, ReferralStatisticsDto, Completed (+6 more)
-
-### Community 368 - "AdminReferralDto"
-Cohesion: 0.06
-Nodes (24): IReferralRepository, ReferralRepository, AdminReferralDto, CompletedAt, CreatedAt, Id, ReferralCode, ReferralLink (+16 more)
-
-### Community 369 - "Modules"
-Cohesion: 0.18
-Nodes (11): Category 10 — افرش بيتك (Home Furnishing) · subs 40–46, Category 15 — مطاعم وكافيهات (Restaurants & Cafes) · sub 64, Category 8 — الملابس (Clothing) · subs 31–33, Category 9 — التسوق أونلاين (Online Shopping) · subs 34–39, Cross-module features, Endpoints a module publishes, Files a module owns, Modules (+3 more)
+Nodes (16): BannerBookingSummaryDto, CategoryName, Currency, DurationDays, DurationDisplay, EndDate, Location, LocationName (+8 more)
 
 ### Community 370 - "CreateAntiqueRequest"
-Cohesion: 0.08
-Nodes (24): CreateAntiqueRequest, Address, AntiqueName, AntiqueType, Center, Condition, CountryOfOrigin, Description (+16 more)
+Cohesion: 0.06
+Nodes (36): CreateAntiqueRequest, Address, AntiqueName, AntiqueType, Center, Condition, CountryOfOrigin, Description (+28 more)
 
-### Community 371 - "KidsClothingSize"
-Cohesion: 0.13
-Nodes (15): KidsClothingSize, ElevenToTwelveYears, FiveYears, FourYears, Months0To3, Months3To6, Months6To12, Newborn (+7 more)
+### Community 371 - "FarmImage"
+Cohesion: 0.16
+Nodes (10): FarmImage, CreatedAt, Farm, FarmId, FileName, Id, ImagePath, ImageUrl (+2 more)
 
 ### Community 372 - "WorkshopDetailsDto"
 Cohesion: 0.08
 Nodes (24): WorkshopDetailsDto, AdDescription, Address, AdTitle, AverageRating, Center, CreatedAt, Email (+16 more)
 
 ### Community 373 - "CoinStampConditionLookup"
-Cohesion: 0.12
+Cohesion: 0.11
 Nodes (15): CoinStampConditionLookup, Id, Name, NameEn, CoinStampItemTypeLookup, Id, Name, NameEn (+7 more)
 
 ### Community 374 - "EquipmentMachineType"
@@ -2083,19 +2085,19 @@ Cohesion: 0.13
 Nodes (15): EquipmentMachineType, Backhoe, Bulldozer, ConcreteMixer, ConcretePump, Crane, Dumper, Excavator (+7 more)
 
 ### Community 375 - "BirdImage"
-Cohesion: 0.16
+Cohesion: 0.15
 Nodes (10): BirdImage, Bird, BirdId, CreatedAt, FileName, Id, ImagePath, ImageUrl (+2 more)
 
-### Community 376 - "HomemadeFoodDeliveryArea"
-Cohesion: 0.07
-Nodes (30): HomemadeFoodMappingProfile, HomemadeFoodCatalog, OnlineShoppingCatalog, OnlineShoppingLookupEntry, HomemadeFoodFilterParams, DeliveryArea, DeliveryAvailable, PreparedOnDemand (+22 more)
+### Community 376 - "UpdateFruitVegetableMerchantRequest"
+Cohesion: 0.13
+Nodes (15): UpdateFruitVegetableMerchantRequestValidator, UpdateFruitVegetableMerchantRequest, Address, Description, GoogleMaps, Images, MerchantName, Phone (+7 more)
 
 ### Community 377 - "PaginationParams"
 Cohesion: 0.12
 Nodes (16): HomeFurnishingFilterParamsBase, Center, IsFeatured, IsPremium, IsUrgent, Negotiable, PriceFrom, PriceTo (+8 more)
 
 ### Community 378 - "FishImage"
-Cohesion: 0.16
+Cohesion: 0.15
 Nodes (10): FishImage, CreatedAt, FileName, Fish, FishId, Id, ImagePath, ImageUrl (+2 more)
 
 ### Community 379 - "UpdateHomemadeFoodRequest"
@@ -2103,40 +2105,40 @@ Cohesion: 0.09
 Nodes (23): UpdateHomemadeFoodRequest, AdditionalNotes, AvailableOrderingHours, DeliveryAreas, DeliveryAvailable, Description, Images, Ingredients (+15 more)
 
 ### Community 381 - "AdminAuditLog"
-Cohesion: 0.13
-Nodes (15): AdminAuditLog, Action, AdminName, AdminUserId, CreatedAt, Description, Id, IpAddress (+7 more)
+Cohesion: 0.11
+Nodes (17): AdminAuditLog, Action, AdminName, AdminUserId, CreatedAt, Description, Id, IpAddress (+9 more)
 
 ### Community 382 - "CoinStampFilterParams"
 Cohesion: 0.14
 Nodes (14): CoinStampFilterParams, Center, Condition, Country, IsOriginal, IsRare, IssueYear, ItemType (+6 more)
 
 ### Community 383 - "AskConsultCategory"
-Cohesion: 0.14
-Nodes (14): AskConsultCategory, Agriculture, BusinessAndTrade, Cars, ContractingAndFinishing, Education, FamilyAndLife, General (+6 more)
+Cohesion: 0.06
+Nodes (36): CharityMappingProfile, CharityCatalog, CharityLookupEntry, BloodRequestListItemDto, Address, BloodGroup, BloodGroupName, Center (+28 more)
 
 ### Community 384 - "UpdateSettingsRequest"
-Cohesion: 0.10
-Nodes (20): UpdateSettingsRequest, AboutUs, Address, Description, Email, FacebookUrl, InstagramUrl, LinkedInUrl (+12 more)
-
-### Community 385 - "UpdateHorseRequest"
 Cohesion: 0.09
-Nodes (22): UpdateHorseRequestValidator, UpdateHorseRequest, Address, Age, Breed, Description, Gender, GoogleMaps (+14 more)
+Nodes (21): UpdateSettingsRequestValidator, UpdateSettingsRequest, AboutUs, Address, Description, Email, FacebookUrl, InstagramUrl (+13 more)
+
+### Community 385 - "PrivateFileStore"
+Cohesion: 0.25
+Nodes (3): IPrivateFileStore, PrivateFileContent, PrivateFileStore
 
 ### Community 386 - "UploadsDiagnostics"
-Cohesion: 0.09
-Nodes (17): IUploadsDiagnostics, AdminDiagnosticsController, UploadsDiagnostics, UploadsDiagnosticsDto, Folders, MissingImages, SampleMissingPaths, StoredInsideApplicationDirectory (+9 more)
+Cohesion: 0.14
+Nodes (12): IUploadsDiagnostics, UploadsDiagnostics, UploadsDiagnosticsDto, Folders, MissingImages, SampleMissingPaths, StoredInsideApplicationDirectory, TotalImages (+4 more)
 
 ### Community 387 - "UpdateWholesaleTraderRequest"
 Cohesion: 0.04
-Nodes (53): CreateWholesaleTraderRequestValidator, UpdateWholesaleTraderRequestValidator, Entry, WholesaleTraderCatalog, CreateWholesaleTraderRequest, Address, Description, Email (+45 more)
+Nodes (61): WholesaleTraderMappingProfile, CreateWholesaleTraderRequestValidator, Entry, WholesaleTraderCatalog, CreateWholesaleTraderRequest, Address, Description, Email (+53 more)
 
-### Community 388 - "AdminDashboardPaymentDto"
-Cohesion: 0.17
-Nodes (11): AdminModerationOverviewDto, PendingAds, PendingBanners, PendingPayments, PendingReports, RecentBannerRequests, RecentPayments, RecentPendingAds (+3 more)
+### Community 388 - "AdminDashboardBannerRequestDto"
+Cohesion: 0.08
+Nodes (25): AdminModerationOverviewDto, PendingAds, PendingBanners, PendingPayments, PendingReports, RecentBannerRequests, RecentPayments, RecentPendingAds (+17 more)
 
 ### Community 389 - "CreateFarmRequest"
-Cohesion: 0.09
-Nodes (21): CreateFarmRequest, Address, AreaInFeddan, AvailabilitySeason, AvailableQuantity, Description, Email, FarmingMethod (+13 more)
+Cohesion: 0.05
+Nodes (45): FarmMappingProfile, Category 4 — رجال أعمال (Business) · subs 9–14, BusinessCatalog, GroupedEntry, CreateFarmRequest, Address, AreaInFeddan, AvailabilitySeason (+37 more)
 
 ### Community 390 - "CreateFormFieldRequest"
 Cohesion: 0.09
@@ -2146,29 +2148,29 @@ Nodes (22): CreateFormFieldRequest, HelpText, IsRequired, LabelAr, LabelEn, MaxL
 Cohesion: 0.09
 Nodes (22): PaintingFilterParams, ArtistName, Center, Framed, Negotiable, Originality, PaintingType, PriceFrom (+14 more)
 
-### Community 392 - "IReadOnlyCollection"
-Cohesion: 0.05
-Nodes (38): AdminAdOwner, CounterRow, Count, Kind, ListingId, ListingType, Total, ListingCardDto (+30 more)
+### Community 392 - "IReadOnlyDictionary"
+Cohesion: 0.09
+Nodes (5): AdminAdOwner, AdPaymentListingSummary, ReferralLinkEventType, Click, Share
 
 ### Community 393 - "HomeSection"
-Cohesion: 0.04
-Nodes (56): HomeSection, Category, CategoryId, CreatedAt, Id, ImagePath, ImageUrl, IsVisible (+48 more)
+Cohesion: 0.03
+Nodes (68): HomeSection, Category, CategoryId, CreatedAt, Id, ImagePath, ImageUrl, IsVisible (+60 more)
 
-### Community 394 - "DecorAntiqueImage"
-Cohesion: 0.18
-Nodes (10): DecorAntiqueImage, CreatedAt, DecorAntique, DecorAntiqueId, FileName, Id, ImagePath, ImageUrl (+2 more)
+### Community 394 - "CoinsStampsController"
+Cohesion: 0.16
+Nodes (4): ICoinStampService, CoinsStampsController, CurrentUserId, IsAdmin
 
-### Community 395 - ".UpdateAsync"
-Cohesion: 0.21
-Nodes (3): CosmeticService, ICosmeticRepository, CosmeticRepository
+### Community 395 - "PaintingsController"
+Cohesion: 0.16
+Nodes (4): IPaintingService, PaintingsController, CurrentUserId, IsAdmin
 
-### Community 396 - "CreateHorseRequest"
-Cohesion: 0.10
-Nodes (21): CreateHorseRequestValidator, CreateHorseRequest, Address, Age, Breed, Description, Gender, GoogleMaps (+13 more)
+### Community 396 - "MarkatPlace — Backend"
+Cohesion: 0.14
+Nodes (14): Configuration, Deployment overview, Developer and Project Maintainer, Documentation index, High-level architecture, Main features, MarkatPlace — Backend, Quick start (+6 more)
 
-### Community 397 - "KidsClothingImage"
-Cohesion: 0.18
-Nodes (10): KidsClothingImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, KidsClothing (+2 more)
+### Community 397 - "CreateCraftsmanRequest"
+Cohesion: 0.14
+Nodes (14): CreateCraftsmanRequest, AdDescription, Address, AdTitle, Center, Email, ExperienceLevel, GoogleMapsUrl (+6 more)
 
 ### Community 398 - "UpdateCamelRequest"
 Cohesion: 0.10
@@ -2178,9 +2180,9 @@ Nodes (21): UpdateCamelRequestValidator, UpdateCamelRequest, Address, Age, Breed
 Cohesion: 0.10
 Nodes (21): UpdateJobOpportunityRequestValidator, UpdateJobOpportunityRequest, Address, Center, Description, EmployerName, GoogleMaps, Images (+13 more)
 
-### Community 400 - "UpdateOtherAnimalRequest"
-Cohesion: 0.10
-Nodes (21): UpdateOtherAnimalRequestValidator, UpdateOtherAnimalRequest, Address, Age, AnimalType, Description, Gender, GoogleMaps (+13 more)
+### Community 400 - "BirdType"
+Cohesion: 0.14
+Nodes (14): BirdType, BaladiChickens, Canary, Chickens, Ducks, Falcons, Geese, LoveBirds (+6 more)
 
 ### Community 401 - "UpdateSheepGoatRequest"
 Cohesion: 0.10
@@ -2191,12 +2193,12 @@ Cohesion: 0.10
 Nodes (21): UpdateFormFieldRequest, ClearConditions, HelpText, IsHidden, IsRequired, LabelAr, LabelEn, MaxLength (+13 more)
 
 ### Community 403 - "BannerAvailabilityDto"
-Cohesion: 0.05
-Nodes (37): BannerAvailabilityDto, AvailableSlots, CategoryId, CategoryName, IsAvailable, Location, LocationName, Message (+29 more)
+Cohesion: 0.10
+Nodes (21): BannerAvailabilityDto, AvailableSlots, CategoryId, CategoryName, IsAvailable, Location, LocationName, Message (+13 more)
 
 ### Community 404 - "BannerBookingListItemDto"
-Cohesion: 0.03
-Nodes (61): AdminDashboardBannerRequestDto, AdvertiserName, Currency, Id, Location, LocationName, PaymentStatus, PaymentStatusName (+53 more)
+Cohesion: 0.04
+Nodes (47): BannerBookingFilterParams, CategoryId, FromDate, Location, PaymentStatus, Search, Status, SubCategoryId (+39 more)
 
 ### Community 405 - "UpdateAccessoryRequest"
 Cohesion: 0.10
@@ -2206,21 +2208,21 @@ Nodes (21): UpdateAccessoryRequest, AccessoryType, Category, Colors, Description
 Cohesion: 0.10
 Nodes (21): CreateHomemadeFoodRequest, AdditionalNotes, AvailableOrderingHours, DeliveryAreas, DeliveryAvailable, Description, Images, Ingredients (+13 more)
 
-### Community 407 - "09 — Authentication"
-Cohesion: 0.12
-Nodes (16): 09 — Authentication, Access token (JWT), E-mail verification, Error responses, Known weaknesses, Login, Logout, Password reset — the three-step OTP flow (+8 more)
+### Community 407 - "FactoryImage"
+Cohesion: 0.18
+Nodes (10): FactoryImage, CreatedAt, Factory, FactoryId, FileName, Id, ImagePath, ImageUrl (+2 more)
 
 ### Community 408 - "AskConsultDetailsDto"
-Cohesion: 0.15
-Nodes (13): AskConsultDetailsDto, AskerName, Category, CategoryLabel, Center, CommentsCount, Governorate, IsLikedByCurrentUser (+5 more)
+Cohesion: 0.07
+Nodes (26): CreateAskConsultRequestValidator, UpdateAskConsultRequestValidator, AskConsultDetailsDto, AskerName, Category, CategoryLabel, Center, CommentsCount (+18 more)
 
 ### Community 409 - "LostFoundComment"
-Cohesion: 0.15
-Nodes (10): LostFoundComment, Comment, CreatedAt, Id, Post, PostId, UpdatedAt, User (+2 more)
+Cohesion: 0.10
+Nodes (11): LostFoundComment, Comment, CreatedAt, Id, Post, PostId, UpdatedAt, User (+3 more)
 
-### Community 410 - ".UpdateAsync"
-Cohesion: 0.22
-Nodes (3): CompanyService, ICompanyRepository, CompanyRepository
+### Community 410 - "Shared.DTOs.JobRequests"
+Cohesion: 0.17
+Nodes (3): Services.JobModules, Shared.DTOs.JobOpportunities, Shared.DTOs.JobRequests
 
 ### Community 411 - "GiftToyType"
 Cohesion: 0.12
@@ -2234,53 +2236,53 @@ Nodes (13): AskConsultListItemDto, AskerName, Category, CategoryLabel, Center, C
 Cohesion: 0.10
 Nodes (20): CreateCamelRequestValidator, CreateCamelRequest, Address, Age, Breed, Description, Gender, GoogleMaps (+12 more)
 
-### Community 414 - "CreateOtherAnimalRequest"
-Cohesion: 0.10
-Nodes (20): CreateOtherAnimalRequestValidator, CreateOtherAnimalRequest, Address, Age, AnimalType, Description, Gender, GoogleMaps (+12 more)
+### Community 414 - "WholesaleTradersController"
+Cohesion: 0.18
+Nodes (4): IWholesaleTraderService, WholesaleTradersController, CurrentUserId, IsAdmin
 
 ### Community 415 - "CreateSheepGoatRequest"
 Cohesion: 0.10
 Nodes (20): CreateSheepGoatRequestValidator, CreateSheepGoatRequest, Address, Age, Breed, Description, Gender, GoogleMaps (+12 more)
 
-### Community 416 - "IUnitOfWork"
-Cohesion: 0.08
-Nodes (25): RegisterRequestValidator, ITransactionScope, IUnitOfWork, Registration, Adding one, Check constraints, Database, Important constraints (+17 more)
+### Community 416 - "Setup — New Developer Quick Start"
+Cohesion: 0.15
+Nodes (13): 10. Where to start developing, 1. Prerequisites, 2. Open the project, 3. Restore and build, 4. Configure the database connection, 5. Configure the remaining environment, 6. Migrations, 7. Start the API (+5 more)
 
 ### Community 417 - "AdvertisementView"
 Cohesion: 0.20
 Nodes (8): AdvertisementView, Advertisement, AdvertisementId, Id, IpAddress, ViewedAt, ViewerUserId, AdvertisementViewConfiguration
 
 ### Community 418 - "AdminDashboardStatsDto"
-Cohesion: 0.10
-Nodes (20): AdminDashboardStatsDto, ActiveAdsCount, ActiveBannersCount, ActiveUsersCount, AdsCount, BannerRevenue, CompletedReferralsCount, Currency (+12 more)
+Cohesion: 0.06
+Nodes (35): AdminQuickActionDto, Count, Icon, IsUrgent, Key, Label, Route, AdminDashboardDto (+27 more)
 
 ### Community 419 - "IBusinessAdvertisementFields"
 Cohesion: 0.10
 Nodes (20): IBusinessAdvertisementFields, Address, AvailabilitySeason, BusinessName, CompanyField, Email, FarmingMethod, FarmType (+12 more)
 
 ### Community 420 - "CompanyListItemDto"
-Cohesion: 0.10
-Nodes (20): CompanyListItemDto, Address, AverageRating, CompanyField, CompanyFieldGroup, CompanyFieldName, CompanyName, CreatedAt (+12 more)
-
-### Community 421 - "WholesaleTraderListItemDto"
 Cohesion: 0.08
-Nodes (25): WholesaleTraderMappingProfile, WholesaleTraderImageDto, Id, IsPrimary, Url, WholesaleTraderListItemDto, AverageRating, CreatedAt (+17 more)
+Nodes (24): CompanyFilterParams, CompanyField, CompanyName, Search, CompanyListItemDto, Address, AverageRating, CompanyField (+16 more)
 
-### Community 422 - "BeeImage"
-Cohesion: 0.18
-Nodes (10): BeeImage, Bee, BeeId, CreatedAt, FileName, Id, ImagePath, ImageUrl (+2 more)
+### Community 421 - "AdminModuleOptionDto"
+Cohesion: 0.15
+Nodes (13): AdminAdMetadataDto, ModerationStatuses, Modules, RejectionReasons, AdminModuleOptionDto, ArabicName, CategoryId, CategoryName (+5 more)
+
+### Community 422 - "RequireAdminPermissionAttribute"
+Cohesion: 0.30
+Nodes (8): AdminAuthorizationOperationFilter, AdminPageAttribute, PageKey, AdminSelfServiceAttribute, RequireAdminPermissionAttribute, PageKey, Permission, SuperAdminOnlyAttribute
 
 ### Community 423 - "Feedback"
 Cohesion: 0.11
 Nodes (18): Feedback, AdminReply, ClosedAt, CreatedAt, Description, Id, Images, Rating (+10 more)
 
 ### Community 424 - "CamelMappingProfile"
-Cohesion: 0.18
-Nodes (11): CamelMappingProfile, CamelCatalog, CamelImageDto, Id, IsPrimary, Url, CamelVaccination, FullyVaccinated (+3 more)
+Cohesion: 0.11
+Nodes (20): CamelMappingProfile, CamelCatalog, CamelImageDto, Id, IsPrimary, Url, CamelAge, Adult (+12 more)
 
-### Community 425 - "OtherAnimalMappingProfile"
+### Community 425 - "SupplierImage"
 Cohesion: 0.18
-Nodes (11): OtherAnimalMappingProfile, OtherAnimalCatalog, OtherAnimalImageDto, Id, IsPrimary, Url, OtherAnimalHealthStatus, Excellent (+3 more)
+Nodes (10): SupplierImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, Supplier (+2 more)
 
 ### Community 426 - "CreateJobOpportunityRequest"
 Cohesion: 0.05
@@ -2294,68 +2296,64 @@ Nodes (19): UpdateFishRequestValidator, UpdateFishRequest, Address, Age, AnimalT
 Cohesion: 0.11
 Nodes (19): UpdateJobRequestRequestValidator, UpdateJobRequestRequest, Address, ApplicantName, Center, CvFile, Description, Education (+11 more)
 
-### Community 429 - "ReferralStatus"
-Cohesion: 0.12
-Nodes (14): ReferralCatalog, Options, MyReferralFilterParams, Status, ReferredUserDto, CompletedAt, Id, Name (+6 more)
+### Community 429 - "FishMappingProfile"
+Cohesion: 0.27
+Nodes (6): FishMappingProfile, FishCatalog, FishImageDto, Id, IsPrimary, Url
 
-### Community 430 - "ReadConfigDto"
-Cohesion: 0.18
-Nodes (8): ReadConfigDto, Category, Details, List, Module, Operations, RequiresSubCategory, SubCategory
-
-### Community 431 - "Authentication"
-Cohesion: 0.17
-Nodes (12): 401 vs 403, Authentication, Google Sign-In, Identity configuration, Lifetimes, Login, Logout, Password reset (+4 more)
+### Community 430 - "B. Existing Architecture Discovered"
+Cohesion: 0.13
+Nodes (14): ReadConfigService, ModerationModuleRegistry, EntityTypes, B. Existing Architecture Discovered, 5. The seams — why 49 modules are not 49 copies of everything, 03 — Project Structure, `Core/Services` — business logic (277 files), `Infastrucre/Presantion` → namespace `Presentation` (89 files) (+6 more)
 
 ### Community 432 - "PublishedBannerDto"
 Cohesion: 0.11
 Nodes (19): PublishedBannerDto, ButtonText, CategoryId, Description, DesktopImageUrl, EndDate, Id, IsInternalTarget (+11 more)
 
-### Community 433 - "WomenClothingColor"
-Cohesion: 0.06
-Nodes (30): WomenClothingColorSelection, Color, WomenClothing, WomenClothingId, WomenClothingSizeSelection, Size, WomenClothing, WomenClothingId (+22 more)
+### Community 433 - "ListingEditReviewEntry"
+Cohesion: 0.32
+Nodes (5): ListingEditReviewNotifier, ListingEditReviewQueue, IListingEditReviewNotifier, IListingEditReviewQueue, ListingEditReviewEntry
 
-### Community 434 - "CreateAskConsultRequest"
-Cohesion: 0.17
-Nodes (12): CreateAskConsultRequest, AskerName, Category, OtherCategory, Question, Title, CreateCharityRequestBase, Images (+4 more)
+### Community 434 - ".UpdateAsync"
+Cohesion: 0.18
+Nodes (6): IBloodRequestService, BloodRequestsController, CharityControllerBase, CurrentUserId, IsAdmin, OptionalUserId
 
 ### Community 435 - "BloodRequestDetailsDto"
 Cohesion: 0.17
 Nodes (12): BloodRequestDetailsDto, Address, BloodGroup, BloodGroupName, Center, Details, Governorate, HospitalName (+4 more)
 
-### Community 436 - "DecorAntiqueMaterial"
-Cohesion: 0.17
-Nodes (12): DecorAntiqueMaterial, Bronze, Ceramic, Copper, Crystal, Glass, Marble, Other (+4 more)
-
-### Community 437 - "AccessoryType"
-Cohesion: 0.17
-Nodes (12): AccessoryType, Bags, Belts, Bracelets, Chains, Earrings, Glasses, HairAccessories (+4 more)
-
-### Community 438 - "AccessoryImage"
+### Community 436 - "DecorAntiquesController"
 Cohesion: 0.20
-Nodes (10): AccessoryImage, Accessory, AccessoryId, CreatedAt, FileName, Id, ImagePath, ImageUrl (+2 more)
+Nodes (4): IDecorAntiqueService, DecorAntiquesController, CurrentUserId, IsAdmin
+
+### Community 437 - "FarmsController"
+Cohesion: 0.18
+Nodes (4): IFarmService, FarmsController, CurrentUserId, IsAdmin
+
+### Community 438 - "HomeKitchenController"
+Cohesion: 0.18
+Nodes (4): IHomeKitchenService, HomeKitchenController, CurrentUserId, IsAdmin
 
 ### Community 439 - "GiftToyImage"
 Cohesion: 0.20
 Nodes (10): GiftToyImage, CreatedAt, FileName, GiftToy, GiftToyId, Id, ImagePath, ImageUrl (+2 more)
 
 ### Community 440 - "UpdateBannerPlacementRequest"
-Cohesion: 0.05
-Nodes (42): BannerImageRules, Requirement, AspectRatio, UpdateBannerPlacementRequestValidator, BannerImageDto, Height, Kind, KindName (+34 more)
+Cohesion: 0.08
+Nodes (20): BannerImageRules, Requirement, AspectRatio, BannerBookingCatalog, SeedIds, ImageFormatDescriptor, BannerImageDto, Height (+12 more)
 
-### Community 441 - "CosmeticSection"
-Cohesion: 0.14
-Nodes (15): CosmeticMappingProfile, CosmeticCatalog, CosmeticSection, HairCare, Lenses, Makeup, NaturalProducts, Other (+7 more)
+### Community 441 - "AdminUserListItemDto"
+Cohesion: 0.17
+Nodes (12): AdminUserListItemDto, AdsCount, CreatedAt, Email, Id, Image, IsAdmin, Name (+4 more)
 
 ### Community 442 - "FeedbackStatus"
 Cohesion: 0.14
 Nodes (14): FeedbackMappingProfile, FeedbackCatalog, FeedbackStatus, Closed, New, Replied, Resolved, UnderReview (+6 more)
 
 ### Community 443 - "CreateShoppingElectronicRequest"
-Cohesion: 0.05
-Nodes (53): ShoppingElectronicMappingProfile, ShoppingElectronicCatalog, CreateShoppingElectronicRequest, Brand, CompatibleWith, Description, Images, OtherSection (+45 more)
+Cohesion: 0.03
+Nodes (71): ShoppingElectronicMappingProfile, ShoppingElectronicCatalog, CreateShoppingElectronicRequest, Brand, CompatibleWith, Description, Images, OtherSection (+63 more)
 
 ### Community 444 - "HomeKitchenImage"
-Cohesion: 0.20
+Cohesion: 0.18
 Nodes (10): HomeKitchenImage, CreatedAt, FileName, HomeKitchen, HomeKitchenId, Id, ImagePath, ImageUrl (+2 more)
 
 ### Community 445 - "CreateJobRequestRequest"
@@ -2366,61 +2364,57 @@ Nodes (17): CreateJobRequestRequestValidator, CreateJobRequestRequest, Address, 
 Cohesion: 0.12
 Nodes (17): ASPNETCORE_ENVIRONMENT, applicationUrl, commandName, dotnetRunMessages, environmentVariables, launchBrowser, launchUrl, applicationUrl (+9 more)
 
-### Community 447 - "CreateAccessoryRequest"
-Cohesion: 0.11
-Nodes (18): CreateAccessoryRequest, AccessoryType, Category, Colors, Description, Images, Logo, Material (+10 more)
+### Community 447 - "FishType"
+Cohesion: 0.17
+Nodes (12): FishType, Carp, Catfish, Goldfish, Koi, Mullet, OrnamentalFish, Other (+4 more)
 
 ### Community 448 - "UpdateHomeKitchenRequest"
 Cohesion: 0.11
 Nodes (18): UpdateHomeKitchenRequest, Colors, DeliveryAvailable, Description, Images, Material, OtherColor, OtherMaterial (+10 more)
 
-### Community 449 - "UpdateShoppingElectronicRequest"
-Cohesion: 0.11
-Nodes (18): UpdateShoppingElectronicRequest, Brand, CompatibleWith, Description, Images, OtherSection, Phone, Price (+10 more)
+### Community 449 - "HandmadeColorSelection"
+Cohesion: 0.24
+Nodes (6): HandmadeColorSelection, Color, Handmade, HandmadeId, Id, HandmadeColorSelectionConfiguration
 
 ### Community 450 - "LostFoundImage"
 Cohesion: 0.14
 Nodes (11): LostFoundImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, Post (+3 more)
 
-### Community 451 - "KidsClothingType"
-Cohesion: 0.18
-Nodes (11): KidsClothingType, Dress, Jacket, NewbornClothing, Other, Pajamas, Set, Sportswear (+3 more)
+### Community 451 - "GiftsToysController"
+Cohesion: 0.20
+Nodes (4): IGiftToyService, GiftsToysController, CurrentUserId, IsAdmin
 
-### Community 453 - "KidsClothingColorSelection"
-Cohesion: 0.27
-Nodes (5): KidsClothingColorSelection, Color, KidsClothing, KidsClothingId, KidsClothingColorSelectionConfiguration
+### Community 453 - "HandmadeController"
+Cohesion: 0.20
+Nodes (4): IHandmadeService, HandmadeController, CurrentUserId, IsAdmin
 
 ### Community 454 - "BannerRejectionReason"
 Cohesion: 0.13
 Nodes (15): RejectBannerBookingRequestValidator, BannerRejectionReasonDto, Name, RequiresNotes, Value, RejectBannerBookingRequest, Notes, Reason (+7 more)
 
 ### Community 455 - "PublicSettingsDto"
-Cohesion: 0.03
-Nodes (53): PublicResponseCache, HomeService, LookupCache, Version, PublicSettingsService, IHomeService, ILookupCache, Version (+45 more)
+Cohesion: 0.08
+Nodes (23): PublicSettingsService, PublicSettingsDto, AboutUs, Address, Description, Email, FacebookUrl, FaviconUrl (+15 more)
 
-### Community 456 - "FurnitureColorSelection"
-Cohesion: 0.27
-Nodes (5): FurnitureColorSelection, Color, Furniture, FurnitureId, FurnitureColorSelectionConfiguration
+### Community 456 - "PromoteRealEstateRequest"
+Cohesion: 0.24
+Nodes (4): PromoteRealEstateRequest, IsFeatured, IsPremium, IsUrgent
 
-### Community 457 - "HomeApplianceColorSelection"
-Cohesion: 0.27
-Nodes (5): HomeApplianceColorSelection, Color, HomeAppliance, HomeApplianceId, HomeApplianceColorSelectionConfiguration
+### Community 457 - "CreateCategoryRequest"
+Cohesion: 0.24
+Nodes (10): CreateCategoryRequest, Icon, IsActive, NameAr, NameEn, SortOrder, CreateSubCategoryRequest, UpdateCategoryRequest (+2 more)
 
 ### Community 458 - "ExperienceLevel"
-Cohesion: 0.06
-Nodes (25): DemoCraftsman, DemoPost, DemoRecords, DemoUser, DemoWorkshop, CreateCraftsmanRequest, AdDescription, Address (+17 more)
-
-### Community 459 - "CharityMappingProfile"
-Cohesion: 0.40
-Nodes (3): CharityMappingProfile, CharityCatalog, CharityLookupEntry
+Cohesion: 0.12
+Nodes (11): DemoCraftsman, DemoPost, DemoRecords, DemoUser, DemoWorkshop, ExperienceLevel, FiveToTenYears, LessThanOneYear (+3 more)
 
 ### Community 460 - "LostFoundCommentDto"
-Cohesion: 0.18
-Nodes (11): LostFoundCommentDto, Author, CanDelete, CanEdit, Comment, CreatedAt, Id, IsMine (+3 more)
+Cohesion: 0.12
+Nodes (16): ListingCommentAuthorDto, Id, IsListingOwner, Name, ProfileImageUrl, LostFoundCommentDto, Author, CanDelete (+8 more)
 
 ### Community 461 - "FactoryListItemDto"
-Cohesion: 0.12
-Nodes (17): FactoryListItemDto, Address, AverageRating, CreatedAt, Description, FactoryName, Id, Images (+9 more)
+Cohesion: 0.09
+Nodes (21): FactoryImageDto, Id, IsPrimary, Url, FactoryListItemDto, Address, AverageRating, CreatedAt (+13 more)
 
 ### Community 462 - "UpdateFarmRequest"
 Cohesion: 0.12
@@ -2430,57 +2424,65 @@ Nodes (17): UpdateFarmRequest, Address, AreaInFeddan, AvailabilitySeason, Availa
 Cohesion: 0.12
 Nodes (17): FeedbackListItemDto, CreatedAt, HasReply, Id, ImagesCount, IsClosed, PrimaryImageUrl, Rating (+9 more)
 
-### Community 465 - "UpdateCosmeticRequest"
-Cohesion: 0.12
-Nodes (17): UpdateCosmeticRequest, Brand, Description, DiscountAvailable, Images, OtherSection, Phone, Price (+9 more)
+### Community 464 - "SaveLocationRequest"
+Cohesion: 0.14
+Nodes (8): IAdminLocationService, AdminGovernoratesController, SaveLocationRequest, IsActive, Name, SortOrder, UpdateProjectRequest, CenterId
 
-### Community 466 - "AdminUploadLimitsDto"
-Cohesion: 0.20
-Nodes (9): AdminUploadLimitsDto, DocumentExtensions, DocumentMaxSizeMb, ImageExtensions, ImageMaxSizeMb, MaxImagesPerItem, MaxRequestBodySizeMb, VideoExtensions (+1 more)
+### Community 465 - "06 — Environment Variables"
+Cohesion: 0.18
+Nodes (11): 06 — Environment Variables, Bootstrap only — set once, start once, then delete, Local development, Optional, Production (systemd), Required in production, Strongly recommended in production, The naming rule (+3 more)
 
-### Community 467 - "Feature"
-Cohesion: 0.29
-Nodes (7): Feature, AdvertisementFeatures, Group, Id, Name, Scope, FeatureConfiguration
+### Community 466 - "FurnishingCurtainColorSelection"
+Cohesion: 0.27
+Nodes (5): FurnishingCurtainColorSelection, Color, FurnishingCurtain, FurnishingCurtainId, FurnishingCurtainColorSelectionConfiguration
 
-### Community 468 - "WorkshopTypeLookup"
-Cohesion: 0.33
-Nodes (5): WorkshopTypeLookup, Id, IsActive, Name, WorkshopTypeLookupConfiguration
+### Community 467 - "LostFoundFilterParams"
+Cohesion: 0.24
+Nodes (7): LostFoundFilterParams, City, Date, FoundDate, LostDate, PostType, Search
+
+### Community 468 - "EgyptianArabicLanguageManager"
+Cohesion: 0.22
+Nodes (5): EgyptianArabicLanguageManager, Culture, Enabled, 11. User-facing language, Adding validation
 
 ### Community 469 - "CraftsmenController"
-Cohesion: 0.24
+Cohesion: 0.20
 Nodes (4): ICraftsmanService, CraftsmenController, CurrentUserId, IsAdmin
 
 ### Community 470 - "FeedbackService"
-Cohesion: 0.25
+Cohesion: 0.24
 Nodes (3): FeedbackService, IFeedbackRepository, FeedbackRepository
 
-### Community 471 - "AdminDashboardPaymentDto"
-Cohesion: 0.20
-Nodes (10): AdminDashboardPaymentDto, Amount, Currency, Id, PaymentMethodName, Status, StatusName, SubmittedAt (+2 more)
+### Community 471 - "AdminDashboardRepository"
+Cohesion: 0.07
+Nodes (13): AdminDashboardService, IAdminDashboardRepository, AdminDashboardRepository, AdminDashboardPaymentDto, Amount, Currency, Id, PaymentMethodName (+5 more)
 
 ### Community 472 - "UpdateSupplierRequest"
-Cohesion: 0.06
-Nodes (31): UpdateFruitVegetableMerchantRequestValidator, UpdateSupplierRequestValidator, UpdateFruitVegetableMerchantRequest, Address, Description, GoogleMaps, Images, MerchantName (+23 more)
-
-### Community 473 - "IdentityDataSeeder"
-Cohesion: 0.05
-Nodes (40): `AdminPermissionFilter` — how it is enforced, Authorization, Coverage, How administrators are created, It fails closed, Ownership — listings, Per-page permissions, Quick reference (+32 more)
-
-### Community 474 - "BloodRequestListItemDto"
-Cohesion: 0.20
-Nodes (10): BloodRequestListItemDto, Address, BloodGroup, BloodGroupName, Center, Details, Governorate, HospitalName (+2 more)
-
-### Community 475 - "AdminBannerCenterSummaryDto"
 Cohesion: 0.12
-Nodes (16): AdminBannerCenterDto, ExpiringSoon, Placements, Summary, AdminBannerCenterSummaryDto, Active, Cancelled, Currency (+8 more)
+Nodes (16): UpdateSupplierRequestValidator, UpdateSupplierRequest, Address, Description, Email, GoogleMaps, Images, OtherSupplierType (+8 more)
+
+### Community 473 - "Authorization"
+Cohesion: 0.12
+Nodes (16): `AdminPermissionFilter` — how it is enforced, Authorization, Coverage, How administrators are created, It fails closed, Ownership — listings, Per-page permissions, Quick reference (+8 more)
+
+### Community 474 - "FactoriesController"
+Cohesion: 0.22
+Nodes (4): IFactoryService, FactoriesController, CurrentUserId, IsAdmin
+
+### Community 475 - "FruitVegetableMerchantsController"
+Cohesion: 0.22
+Nodes (4): IFruitVegetableMerchantService, FruitVegetableMerchantsController, CurrentUserId, IsAdmin
+
+### Community 476 - "SuppliersController"
+Cohesion: 0.22
+Nodes (4): ISupplierService, SuppliersController, CurrentUserId, IsAdmin
 
 ### Community 477 - "UpdateCompanyRequest"
 Cohesion: 0.12
 Nodes (16): UpdateCompanyRequest, Address, CompanyField, CompanyName, Description, Email, GoogleMaps, Images (+8 more)
 
 ### Community 478 - "GiftToyFilterParams"
-Cohesion: 0.12
-Nodes (15): GiftToyFilterParams, DeliveryAvailable, GiftType, GiftWrapping, PriceFrom, PriceTo, Search, SortBy (+7 more)
+Cohesion: 0.20
+Nodes (10): GiftToyFilterParams, DeliveryAvailable, GiftType, GiftWrapping, PriceFrom, PriceTo, Search, SortBy (+2 more)
 
 ### Community 479 - "UpdateGiftToyRequest"
 Cohesion: 0.12
@@ -2490,25 +2492,21 @@ Nodes (16): UpdateGiftToyRequest, DeliveryAvailable, Description, GiftType, Gift
 Cohesion: 0.12
 Nodes (16): CreateHomeKitchenRequest, Colors, DeliveryAvailable, Description, Images, Material, OtherColor, OtherMaterial (+8 more)
 
-### Community 481 - "ProjectDto"
+### Community 481 - "WorkshopsController"
 Cohesion: 0.22
-Nodes (8): ProjectDto, CenterId, CenterName, GovernorateId, GovernorateName, Id, Name, SortOrder
+Nodes (4): IWorkshopService, WorkshopsController, CurrentUserId, IsAdmin
 
 ### Community 482 - "HandmadeColorLookup"
 Cohesion: 0.18
 Nodes (10): HandmadeColorLookup, Id, Name, NameEn, HandmadeTypeLookup, Id, Name, NameEn (+2 more)
 
 ### Community 483 - "PaintingImage"
-Cohesion: 0.18
+Cohesion: 0.16
 Nodes (10): PaintingImage, CreatedAt, FileName, Id, ImagePath, ImageUrl, IsPrimary, Painting (+2 more)
 
-### Community 484 - "EquipmentUsageField"
-Cohesion: 0.22
-Nodes (9): EquipmentUsageField, Agriculture, Construction, Contracting, Factories, Other, Quarries, RoadsAndBridges (+1 more)
-
-### Community 485 - "VehicleAssemblyCountry"
-Cohesion: 0.22
-Nodes (9): VehicleAssemblyCountry, America, China, Egypt, Germany, India, Japan, Korea (+1 more)
+### Community 484 - "BathroomSupplyDetailsDto"
+Cohesion: 0.20
+Nodes (10): BathroomSupplyDetailsDto, Colors, Material, MaterialName, OtherColor, OtherMaterial, OtherProductType, ProductType (+2 more)
 
 ### Community 486 - "UpdateCraftsmanRequest"
 Cohesion: 0.13
@@ -2519,16 +2517,16 @@ Cohesion: 0.29
 Nodes (6): CraftsmanSpecializationLookup, GroupName, Id, IsActive, Name, CraftsmanSpecializationLookupConfiguration
 
 ### Community 488 - "BathroomSupplyColorSelection"
-Cohesion: 0.32
+Cohesion: 0.24
 Nodes (5): BathroomSupplyColorSelection, BathroomSupply, BathroomSupplyId, Color, BathroomSupplyColorSelectionConfiguration
 
-### Community 489 - "AdminOptionDto"
-Cohesion: 0.18
-Nodes (11): AdminAuditAuthorDto, AdminName, AdminUserId, Count, AdminAuditMetadataDto, Actions, Admins, TargetTypes (+3 more)
+### Community 489 - ".GetAuthorsAsync"
+Cohesion: 0.40
+Nodes (4): AdminAuditAuthorDto, AdminName, AdminUserId, Count
 
-### Community 490 - "AdminDashboardDto"
-Cohesion: 0.13
-Nodes (15): AdminQuickActionDto, Count, Icon, IsUrgent, Key, Label, Route, AdminDashboardDto (+7 more)
+### Community 490 - "TaxiVehicleType"
+Cohesion: 0.22
+Nodes (9): TaxiVehicleType, Limousine, Microbus, MiniBus, Other, PassengerVan, Service, Taxi (+1 more)
 
 ### Community 491 - "AdminAuditLogDto"
 Cohesion: 0.13
@@ -2539,88 +2537,96 @@ Cohesion: 0.09
 Nodes (24): SheepGoatFilterParams, Age, Breed, Gender, HealthStatus, PriceFrom, PriceTo, Purpose (+16 more)
 
 ### Community 493 - "HomeKitchenColorSelection"
-Cohesion: 0.32
+Cohesion: 0.27
 Nodes (5): HomeKitchenColorSelection, Color, HomeKitchen, HomeKitchenId, HomeKitchenColorSelectionConfiguration
 
-### Community 494 - "CreateCosmeticRequest"
-Cohesion: 0.13
-Nodes (15): CreateCosmeticRequest, Brand, Description, DiscountAvailable, Images, OtherSection, Phone, Price (+7 more)
+### Community 494 - "CamelVaccinationLookup"
+Cohesion: 0.32
+Nodes (5): CamelVaccinationLookup, Id, Name, NameEn, CamelVaccinationLookupConfiguration
 
-### Community 495 - "CompanyFilterParams"
-Cohesion: 0.36
-Nodes (4): CompanyFilterParams, CompanyField, CompanyName, Search
+### Community 495 - "WomenClothingSizeLookup"
+Cohesion: 0.32
+Nodes (5): WomenClothingSizeLookup, Id, Name, NameEn, WomenClothingSizeLookupConfiguration
 
-### Community 496 - "FactoryFilterParams"
-Cohesion: 0.36
-Nodes (4): FactoryFilterParams, FactoryName, ProductionSpecialty, Search
+### Community 496 - "AccessoryColorLookup"
+Cohesion: 0.32
+Nodes (5): AccessoryColorLookup, Id, Name, NameEn, AccessoryColorLookupConfiguration
 
 ### Community 497 - "LostFoundLike"
-Cohesion: 0.18
-Nodes (8): LostFoundLike, CreatedAt, Id, Post, PostId, User, UserId, LostFoundLikeConfiguration
+Cohesion: 0.13
+Nodes (11): LostFoundLike, CreatedAt, Id, Post, PostId, User, UserId, LostFoundLikeConfiguration (+3 more)
 
 ### Community 498 - "GoogleAuthCatalog"
-Cohesion: 0.18
-Nodes (6): D-20 — Identity's username whitelist is emptied, Names and usernames, AccountNameRules, GoogleAuthCatalog, DefaultCenter, DefaultGovernorate
+Cohesion: 0.07
+Nodes (24): D-20 — Identity's username whitelist is emptied, Names and usernames, AccountNameRules, AppRoles, All, GoogleAuthCatalog, DefaultCenter, DefaultGovernorate (+16 more)
 
 ### Community 499 - "FeedbackMetadataDto"
-Cohesion: 0.16
+Cohesion: 0.17
 Nodes (12): FeedbackMetadataDto, MaxDescriptionLength, MaxImages, MaxRating, MaxTitleLength, MinRating, Statuses, Types (+4 more)
 
-### Community 500 - "CompanyMappingProfile"
-Cohesion: 0.15
-Nodes (11): CompanyMappingProfile, CompanyFieldOptionDto, Code, Group, GroupAr, Id, Name, CompanyImageDto (+3 more)
+### Community 500 - "CreateCompanyRequest"
+Cohesion: 0.07
+Nodes (25): CompanyMappingProfile, CompanyFieldOptionDto, Code, Group, GroupAr, Id, Name, CompanyImageDto (+17 more)
 
-### Community 501 - "RealEstatePriceStatisticsDto"
-Cohesion: 0.18
-Nodes (5): RealEstatePriceStatisticsDto, AveragePrice, Count, MaxPrice, MinPrice
+### Community 501 - "LandFilterParams"
+Cohesion: 0.03
+Nodes (59): ApartmentFilterParams, ApartmentType, AreaFrom, AreaTo, BathroomsCount, FinishingType, FloorType, FurnishedStatus (+51 more)
 
 ### Community 502 - "UpdateWorkshopRequest"
 Cohesion: 0.14
 Nodes (14): UpdateWorkshopRequestValidator, UpdateWorkshopRequest, AdDescription, Address, AdTitle, Center, Email, GoogleMapsUrl (+6 more)
 
-### Community 503 - "CreateCompanyRequest"
-Cohesion: 0.14
-Nodes (14): CreateCompanyRequest, Address, CompanyField, CompanyName, Description, Email, GoogleMaps, Images (+6 more)
+### Community 503 - "AccessoryMaterialLookup"
+Cohesion: 0.32
+Nodes (5): AccessoryMaterialLookup, Id, Name, NameEn, AccessoryMaterialLookupConfiguration
 
-### Community 504 - "FarmFilterParams"
-Cohesion: 0.36
-Nodes (4): FarmFilterParams, FarmName, FarmType, Search
+### Community 504 - "HomeKitchenColorLookup"
+Cohesion: 0.32
+Nodes (5): HomeKitchenColorLookup, Id, Name, NameEn, HomeKitchenColorLookupConfiguration
 
 ### Community 505 - "CreateGiftToyRequest"
 Cohesion: 0.14
 Nodes (14): CreateGiftToyRequest, DeliveryAvailable, Description, GiftType, GiftWrapping, Images, OtherGiftType, Phone (+6 more)
 
+### Community 506 - "HomeKitchenSectionLookup"
+Cohesion: 0.32
+Nodes (5): HomeKitchenSectionLookup, Id, Name, NameEn, HomeKitchenSectionLookupConfiguration
+
 ### Community 507 - "AdFormFieldOption"
-Cohesion: 0.17
-Nodes (11): AdFormFieldOption, FieldOverride, FieldOverrideId, Group, Id, IsActive, Label, LabelEn (+3 more)
+Cohesion: 0.10
+Nodes (12): AdFormFieldOption, FieldOverride, FieldOverrideId, Group, Id, IsActive, Label, LabelEn (+4 more)
 
 ### Community 508 - "PaintingMaterialLookup"
 Cohesion: 0.12
 Nodes (15): PaintingMaterialLookup, Id, Name, NameEn, PaintingOriginalityLookup, Id, Name, NameEn (+7 more)
 
-### Community 510 - "BeeType"
+### Community 510 - "CenterDto"
 Cohesion: 0.25
-Nodes (8): BeeType, Buckfast, Carniolan, Caucasian, EgyptianBaladi, Hybrid, Italian, Other
+Nodes (7): CenterDto, GovernorateId, GovernorateName, Id, Name, ProjectsCount, SortOrder
 
-### Community 511 - "PetPurpose"
+### Community 511 - "BirdPurpose"
 Cohesion: 0.25
-Nodes (8): PetPurpose, Adoption, Breeding, Companionship, Guarding, Other, Sale, Shows
+Nodes (8): BirdPurpose, Breeding, EggProduction, Hunting, MeatProduction, Ornamental, Other, Sale
 
 ### Community 512 - "CreateBloodRequestRequest"
-Cohesion: 0.29
-Nodes (7): CreateBloodRequestRequest, Address, BloodGroup, Center, Details, HospitalName, RequesterName
+Cohesion: 0.11
+Nodes (19): CreateBloodRequestRequestValidator, UpdateBloodRequestRequestValidator, CreateBloodRequestRequest, Address, BloodGroup, Center, Details, HospitalName (+11 more)
 
 ### Community 513 - "SeedPlacement"
 Cohesion: 0.15
 Nodes (13): SeedPlacement, AllowedFormats, DesktopHeight, DesktopWidth, DisplayOrder, DurationDays, Id, Location (+5 more)
 
-### Community 514 - "ListingRatingFilterParams"
-Cohesion: 0.29
-Nodes (7): ListingRatingFilterParams, ListingId, ListingType, MaxRating, MinRating, Rating, ReviewerUserId
+### Community 514 - "PaginatedResult"
+Cohesion: 0.02
+Nodes (25): IAdminReferralService, IAdminUserService, IDirectoryListingService, IFeedbackService, IJobOpportunityService, AdminReferralsController, AdminUsersController, DirectoryControllerBase (+17 more)
 
 ### Community 515 - "UpdateFactoryRequest"
 Cohesion: 0.15
 Nodes (13): UpdateFactoryRequest, Address, Description, Email, FactoryName, GoogleMaps, Images, OtherSpecialty (+5 more)
+
+### Community 517 - "ListingRejectionReason"
+Cohesion: 0.25
+Nodes (7): ListingRejectionReason, Duplicate, IncompleteData, IncorrectInformation, Other, ProhibitedContent, ProhibitedImages
 
 ### Community 518 - "CreateWorkshopRequest"
 Cohesion: 0.15
@@ -2630,65 +2636,77 @@ Nodes (13): CreateWorkshopRequest, AdDescription, Address, AdTitle, Center, Emai
 Cohesion: 0.15
 Nodes (13): SheepGoatBreed, Awassi, BaladiGoat, Barki, BoerGoat, Crossbreed, DamascusGoat, Harri (+5 more)
 
-### Community 520 - "IPublicSettingsService"
-Cohesion: 0.40
-Nodes (3): IPublicSettingsService, Shared.DTOs.Settings, PublicSettingsController
-
-### Community 521 - "CharityImageDto"
-Cohesion: 0.40
-Nodes (5): CharityImageDto, Id, IsPrimary, SortOrder, Url
+### Community 521 - "MerchantSaleTypeLookup"
+Cohesion: 0.33
+Nodes (5): MerchantSaleTypeLookup, Id, Name, NameEn, MerchantSaleTypeLookupConfiguration
 
 ### Community 522 - "FeedbackImage"
 Cohesion: 0.18
 Nodes (10): FeedbackImage, CreatedAt, Feedback, FeedbackId, FileName, Id, ImagePath, ImageUrl (+2 more)
 
-### Community 523 - "ListingFavorite"
-Cohesion: 0.21
-Nodes (7): ListingFavorite, CreatedAt, ListingId, ListingType, User, UserId, ListingFavoriteConfiguration
+### Community 523 - "AppDbContextFactory"
+Cohesion: 0.29
+Nodes (5): AppDbContextFactory, Working with migrations locally, Development-only, Applying a migration manually, Generating a script instead of executing
 
-### Community 524 - "ReferralLinkEvent"
-Cohesion: 0.08
-Nodes (19): ReferralLinkEvent, CreatedAt, EventType, Id, ReferralCode, Referrer, ReferrerUserId, ReferralLinkEventConfiguration (+11 more)
+### Community 524 - "FishPurpose"
+Cohesion: 0.29
+Nodes (7): FishPurpose, Breeding, Consumption, FishFarming, Ornamental, Other, Sale
 
 ### Community 525 - ".FeaturesOf"
 Cohesion: 0.20
 Nodes (9): CarFormLookups, CarFeatureOptionDto, Group, Id, Name, CarLookupItemDto, Group, Id (+1 more)
 
-### Community 526 - "AdminAuditService"
-Cohesion: 0.24
-Nodes (5): AdminAuditService, AdminAuditCatalog, AllActions, AllTargets, Targets
+### Community 526 - "AdminOptionDto"
+Cohesion: 0.13
+Nodes (15): AdminAuditCatalog, AllActions, AllTargets, Targets, AdminOptionDto, Id, Name, RequiresNotes (+7 more)
 
-### Community 527 - "RescueListItemDto"
+### Community 527 - "Rescue"
+Cohesion: 0.07
+Nodes (28): Rescue, Address, Details, Images, ListingTitle, RescuerName, RescueImage, CreatedAt (+20 more)
+
+### Community 529 - "01 — Project Overview"
+Cohesion: 0.29
+Nodes (6): 01 — Project Overview, Backend purpose, Product, Scale of the domain, The 12 categories, What is *not* in this system
+
+### Community 530 - "Technology inventory"
+Cohesion: 0.29
+Nodes (7): Architecture of the API, Data, Everything else, Identity and authorization, Packages actually referenced, Runtime and language, Technology inventory
+
+### Community 531 - "EducationLevelLookup"
 Cohesion: 0.40
-Nodes (5): RescueListItemDto, Address, Details, RescuerName, StatsListingType
+Nodes (5): EducationLevelLookup, Id, Name, NameEn, EducationLevelLookupConfiguration
 
-### Community 529 - "OtherAnimalVaccination"
+### Community 532 - "SubmitPaymentRequest"
+Cohesion: 0.33
+Nodes (6): SubmitPaymentRequestValidator, SubmitPaymentRequest, Amount, Notes, PaymentMethodId, Screenshot
+
+### Community 533 - "Frontend changes for real-time listings and images"
+Cohesion: 0.33
+Nodes (6): 1. `<Image>` — the false «لا توجد صورة», 2. Real-time listings — reuse the existing hub connection, 3. Notification clicks, 4. مباني (Buildings) — what the frontend has to add, 5. دليل محافظتي — محلات تجارية / خدمات عامة / قرى سياحية وفنادق وملاهي, Frontend changes for real-time listings and images
+
+### Community 534 - "SupplierFilterParams"
 Cohesion: 0.40
-Nodes (5): OtherAnimalVaccination, FullyVaccinated, NotVaccinated, PartiallyVaccinated, Unknown
-
-### Community 530 - "CreateCommentRequest"
-Cohesion: 0.50
-Nodes (3): CreateCommentRequestValidator, CreateCommentRequest, Comment
-
-### Community 531 - "RegisterRequest"
-Cohesion: 0.17
-Nodes (11): RegisterRequest, Center, ConfirmPassword, Email, FirstName, Governorate, Password, Phone (+3 more)
+Nodes (5): SupplierFilterParams, Search, SuppliedProduct, SupplierName, SupplierType
 
 ### Community 535 - "ChangedVehiclePart"
-Cohesion: 0.17
-Nodes (12): ChangedVehiclePart, Bumper, Chassis, Door, Engine, Fender, FrontBumper, Gearbox (+4 more)
+Cohesion: 0.08
+Nodes (21): AdvertisementValidationRules, CreateAdvertisementRequestValidator, UpdateAdvertisementRequestValidator, CarSubCategories, ChangedVehiclePart, Bumper, Chassis, Door (+13 more)
 
-### Community 536 - "CompanyImage"
-Cohesion: 0.20
-Nodes (10): CompanyImage, Company, CompanyId, CreatedAt, FileName, Id, ImagePath, ImageUrl (+2 more)
+### Community 536 - "UpdateShopRequest"
+Cohesion: 0.50
+Nodes (4): UpdateShopRequestValidator, UpdateShopRequest, RemoveImageIds, RemoveVideo
 
-### Community 537 - "CosmeticImage"
-Cohesion: 0.20
-Nodes (10): CosmeticImage, Cosmetic, CosmeticId, CreatedAt, FileName, Id, ImagePath, ImageUrl (+2 more)
+### Community 537 - "Strategy in one paragraph"
+Cohesion: 0.33
+Nodes (4): `fix-migration-history.sql`, Strategy in one paragraph, The migration history table, What that implies
 
 ### Community 539 - "AdminAuditLogFilterParams"
 Cohesion: 0.22
 Nodes (9): AdminAuditLogFilterParams, Action, AdminUserId, DateFrom, DateTo, Search, Sort, TargetId (+1 more)
+
+### Community 540 - "OwnerTotalRow"
+Cohesion: 0.67
+Nodes (3): OwnerTotalRow, Kind, Value
 
 ### Community 541 - "UpdateLostFoundPostRequest"
 Cohesion: 0.18
@@ -2698,33 +2716,21 @@ Nodes (10): UpdateLostFoundPostRequestValidator, UpdateLostFoundPostRequest, Cen
 Cohesion: 0.18
 Nodes (11): FeedbackDetailsDto, AdminReply, ClosedAt, Description, Images, ReviewedAt, ReviewedBy, FeedbackImageDto (+3 more)
 
-### Community 544 - "CosmeticFilterParams"
-Cohesion: 0.18
-Nodes (11): CosmeticFilterParams, Brand, DiscountAvailable, PriceFrom, PriceTo, Search, Section, ShippingAvailable (+3 more)
+### Community 543 - "ListingReportMetadataDto"
+Cohesion: 0.67
+Nodes (3): ListingReportMetadataDto, Reasons, Statuses
 
-### Community 545 - "HorseBreed"
-Cohesion: 0.18
-Nodes (11): HorseBreed, Andalusian, ArabianHorse, Barb, Crossbreed, EgyptianArabian, Friesian, Other (+3 more)
+### Community 544 - "CosmeticFilterParams"
+Cohesion: 0.07
+Nodes (26): CosmeticFilterParams, Brand, DiscountAvailable, PriceFrom, PriceTo, Search, Section, ShippingAvailable (+18 more)
 
 ### Community 547 - "AdminFormOptionDto"
-Cohesion: 0.20
+Cohesion: 0.22
 Nodes (9): AdminFormOptionDto, Group, Id, IsActive, IsCustom, Label, LabelEn, SortOrder (+1 more)
-
-### Community 552 - "OtherAnimalType"
-Cohesion: 0.20
-Nodes (10): OtherAnimalType, Deer, Donkeys, FarmInsects, GuineaPig, Monkeys, Mules, Other (+2 more)
-
-### Community 554 - "VehicleOriginCountry"
-Cohesion: 0.20
-Nodes (10): VehicleOriginCountry, America, China, France, Germany, India, Italy, Japan (+2 more)
 
 ### Community 556 - "SupplierSpecializationLookup"
 Cohesion: 0.25
 Nodes (7): SupplierSpecializationLookup, Group, GroupAr, Id, Name, NameEn, SupplierSpecializationLookupConfiguration
-
-### Community 558 - "GeneralService"
-Cohesion: 0.17
-Nodes (9): GeneralService, ServiceSubtype, ServiceType, GeneralServiceImage, Listing, GeneralServiceConfiguration, GeneralServiceImageConfiguration, GeneralServiceRepository (+1 more)
 
 ### Community 559 - "AdminFormSchemaDto"
 Cohesion: 0.22
@@ -2741,10 +2747,6 @@ Nodes (23): Account — `/api/account`, Advertiser options — `GET /advertisers
 ### Community 586 - "CamelPurpose"
 Cohesion: 0.25
 Nodes (8): CamelPurpose, Breeding, MeatProduction, MilkProduction, Other, Racing, Sale, Transport
-
-### Community 587 - "HorsePurpose"
-Cohesion: 0.25
-Nodes (8): HorsePurpose, Breeding, Other, Racing, Riding, Sale, Shows, Work
 
 ### Community 588 - "SheepGoatPurpose"
 Cohesion: 0.25
@@ -2770,45 +2772,41 @@ Nodes (7): SaveFormOptionRequest, Group, IsActive, Label, LabelEn, SortOrder, Va
 Cohesion: 0.29
 Nodes (7): FeedbackFilterParams, FromDate, Search, Status, ToDate, Type, UserId
 
-### Community 597 - "ProfileService"
-Cohesion: 0.06
-Nodes (29): MappingProfile, ProfileService, ChangePasswordRequestValidator, UpdateProfileRequestValidator, ChangePasswordRequest, ConfirmPassword, NewPassword, OldPassword (+21 more)
+### Community 597 - "UpdateProfileRequest"
+Cohesion: 0.22
+Nodes (9): UpdateProfileRequestValidator, UpdateProfileRequest, Center, Email, FirstName, Phone, ProfileImage, SecondName (+1 more)
 
 ### Community 602 - "ApiResponse"
-Cohesion: 0.33
+Cohesion: 0.29
 Nodes (5): ApiResponse, Data, Errors, Message, Success
 
-### Community 605 - "DirectorySortBy"
-Cohesion: 0.40
-Nodes (4): DirectorySortBy, MostViewed, Newest, Oldest
+### Community 605 - "DirectoryRepository"
+Cohesion: 0.09
+Nodes (10): DirectoryListingService, Module, IDirectoryRepository, 2026-10-09 — round trips on the listing, profile and admin paths, DirectoryRepository, Set, DirectorySortBy, MostViewed (+2 more)
 
 ### Community 606 - "UpdateFeedbackStatusRequest"
 Cohesion: 0.50
 Nodes (4): UpdateFeedbackStatusRequestValidator, UpdateFeedbackStatusRequest, AdminReply, Status
 
-### Community 609 - "LikeResultDto"
-Cohesion: 0.50
-Nodes (3): LikeResultDto, Liked, LikesCount
-
 ## Knowledge Gaps
-- **14709 isolated node(s):** `net10.0`, `Microsoft.Extensions.Identity.Stores (10.0.10)`, `Microsoft.NET.Sdk`, `Id`, `CategoryId` (+14704 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 15194 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **14821 isolated node(s):** `net10.0`, `Microsoft.Extensions.Identity.Stores (10.0.10)`, `Microsoft.NET.Sdk`, `Id`, `CategoryId` (+14816 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 15306 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **18 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `AppDbContext` connect `AppDbContext` to `Task`, `Guid`, `MigrationBuilder`, `IRealEstateLookup`, `FeedbackImage`, `ListingFavorite`, `ReferralLinkEvent`, `AskConsult`, `Domain.Entities`, `IQueryable`, `Advertisement`, `GovernorateGuideModulesTests`, `EntityTypeBuilder`, `CompanyImage`, `WomenClothing`, `CosmeticImage`, `Fact`, `HomeFurnishingPriceStatisticsDto`, `Land`, `Building`, `IHomeFurnishingLookup`, `ListingLifecycleIntegrationTests`, `.LogAsync`, `INotificationService`, `GeneralService`, `SupplierSpecializationLookup`, `Theory`, `AppSettings`, ``Core/ServicesAbstraction` — the contract layer (148 files)`, `MenClothing`, `Furniture`, `Shop`, `Handmade`, `.NotifyAsync`, `Apartment`, `ILogger`, `Livestock`, `.ReadFile`, `DecorAntique`, `KitchenTool`, `MenClothing`, `ListingNotificationDispatch`, `UserNotificationInterest`, `WholesaleTradeTypeLookup`, `GoogleSignInHarness`, `Project`, `.UpdateAsync`, `ClothingLookups.cs`, `OnlineShoppingLookups.cs`, `LookupRepository`, `Farm`, `BannerBooking`, `Supplier`, `AdvertisementService`, `IListingImage`, `Factory`, ``Infastrucre/Presitance` → namespace `Persistence``, `RestaurantsAndCafesTests`, `ApplicationUser`, `BannerDto`, `PlatformSetting`, `.UpdateAsync`, `HomeAppliance`, `SehhatyCategoryTests`, `JobRequest`, `.AddPersistence`, `AdvertisementImage`, `LightingDecor`, `OtherAnimalImage`, `AdvertiserLookupTests`, `BathroomSupply`, `.UpdateAsync`, `PetAgeLookup`, `CoinStamp`, `Painting`, `PlantOrnament`, `Antique`, `KidsClothing`, `.UpdateAsync`, `BuildingsModuleTests`, `Referral`, `BirdAgeLookup`, `HomemadeFood`, `AdminAlertService`, `.UpdateAsync`, `Horse`, `Pet`, `JobOpportunity`, `Accessory`, `Bird`, `Camel`, `OtherAnimal`, `SheepGoat`, `AntiqueConditionLookup`, `ListingInteractionService`, `AdminAdFilterParams`, `WorkshopCraftsmenRestructureTests`, `Bee`, `Fish`, `OtherAnimalAgeLookup`, `HomeKitchen`, `ShoppingElectronic`, `LostFoundPost`, `Cosmetic`, `UserDto`, `Company`, `GiftToy`, `WholesaleTrader`, `AdFormFieldOverride`, `AdminPageGrant`, `RealtimeListingEventTests`, `00 — Start Here`, `Craftsman`, `HorseImage`, `SheepGoatImage`, `FurnishingCurtainImage`, `Workshop`, `IMapper`, `LivestockAgeLookup`, `FruitVegetableMerchant`, `Payment`, `BirdImage`, `PetImage`, `CraftsmanImage`, `.UpdateAsync`, `WomenClothingImage`, `BeeHealthStatusLookup`, `AdminFormService`, `CamelService`, `IUserAccessStateCache`, `FishAgeLookup`, `SheepGoatAgeLookup`, `.UpdateAsync`, `JobFieldLookup`, `AccountStateEnforcementTests`, `GiftToyImage`, `ShoppingElectronicImage`, `CamelAgeLookup`, `HorseAgeLookup`, `DecorAntiqueConditionLookup`, `.UpdateAsync`, `AdminReferralDto`, `CoinStampConditionLookup`, `BirdImage`, `FishImage`, `AdminAuditLog`, `UploadsDiagnostics`, `HomeSection`, `DecorAntiqueImage`, `.UpdateAsync`, `KidsClothingImage`, `LostFoundComment`, `.UpdateAsync`, `IUnitOfWork`, `AdvertisementView`, `BeeImage`, `Feedback`, `WomenClothingColor`, `AccessoryImage`, `GiftToyImage`, `HomeKitchenImage`, `LostFoundImage`, `KidsClothingColorSelection`, `FurnitureColorSelection`, `HomeApplianceColorSelection`, `Feature`, `WorkshopTypeLookup`, `FeedbackService`, `HandmadeColorLookup`, `PaintingImage`, `CraftsmanSpecializationLookup`, `BathroomSupplyColorSelection`, `HomeKitchenColorSelection`, `LostFoundLike`, `AdFormFieldOption`, `PaintingMaterialLookup`?**
-  _High betweenness centrality (0.119) - this node is a cross-community bridge._
+- **Why does `AppDbContext` connect `AppDbContext` to `Task`, `MerchantSaleTypeLookup`, `FeedbackImage`, `IRealEstateLookup`, `AppDbContextFactory`, `AskConsult`, `Domain.Entities`, `Rescue`, `Advertisement`, `IQueryable`, `GovernorateGuideModulesTests`, `EducationLevelLookup`, `WomenClothing`, `Fact`, `Land`, `Building`, `IHomeFurnishingLookup`, `ListingLifecycleIntegrationTests`, `.LogAsync`, `SupplierSpecializationLookup`, `Theory`, `UploadImageModel`, `AppSettings`, ``Core/ServicesAbstraction` — the contract layer (148 files)`, `MenClothingImage`, `Furniture`, `Shop`, `Handmade`, `FurnishingCurtain`, `Apartment`, `DateTime`, `ILogger`, `Livestock`, `DecorAntique`, `KitchenTool`, `MenClothing`, `GovernorateGuideDtos.cs`, `ListingNotificationDispatch`, `UserNotificationInterest`, `WholesaleTradeTypeLookup`, `.DeactivateAsync`, `IModeratedListing`, `Project`, `FormFieldDto`, `Notification`, `ClothingLookups.cs`, `OnlineShoppingLookups.cs`, `CancellationToken`, `DirectoryRepository`, `AbstractValidator`, `NotFoundException`, `Farm`, `BannerBooking`, `Supplier`, `DoctorSpecialty`, `AdvertisementService`, `Factory`, ``Infastrucre/Presitance` → namespace `Persistence``, `RestaurantsAndCafesTests`, `LookupMappingProfile`, `ApplicationUser`, `AdPaymentService`, `BannerDto`, `PlatformSetting`, `Payment`, `HomeAppliance`, `SehhatyCategoryTests`, `JobRequest`, `OfficesCategoryTests`, `LightingDecor`, `AdvertiserLookupTests`, `BathroomSupply`, `BloodRequest`, `PetAgeLookup`, `CoinStamp`, `Painting`, `PlantOrnament`, `Antique`, `KidsClothing`, `.UpdateAsync`, `BuildingsModuleTests`, `AdminAccountService`, `BirdAgeLookup`, `Referral`, `AdPaymentRepository`, `AdminAlertService`, `Horse`, `Pet`, `JobOpportunity`, `Accessory`, `Bird`, `Camel`, `OtherAnimal`, `SheepGoat`, `AntiqueConditionLookup`, `BannerPlacementSetting`, `ListingInteractionService`, `WorkshopCraftsmenRestructureTests`, `Bee`, `Fish`, `OtherAnimalAgeLookup`, `HomeKitchen`, `ShoppingElectronic`, `AdminUserService`, `LostFoundPost`, `Cosmetic`, `Company`, `GiftToy`, `WholesaleTrader`, `AdFormFieldOverride`, `AdminPageGrant`, `RealtimeListingEventTests`, `00 — Start Here`, `Craftsman`, `SheepGoatImage`, `Workshop`, `LivestockAgeLookup`, `FruitVegetableMerchant`, `Payment`, `RestaurantAndCafe`, `.UpdateAsync`, `PetImage`, `MenClothingColor`, `.UpdateAsync`, `BeeHealthStatusLookup`, `CamelService`, `UserAccountStatus`, `FishAgeLookup`, `SheepGoatAgeLookup`, `PaintingVideo`, `JobFieldLookup`, `GiftToyImage`, `4. Where each kind of code belongs`, `CamelAgeLookup`, `HorseAgeLookup`, `DecorAntiqueConditionLookup`, `BathroomSupplyRepository`, `.UpdateAsync`, `CharityRepositoryBase`, `BathroomSupplyImage`, `FarmImage`, `CoinStampConditionLookup`, `BirdImage`, `FishImage`, `AdminAuditLog`, `UploadsDiagnostics`, `HomeSection`, `FactoryImage`, `LostFoundComment`, `AdvertisementView`, `Feedback`, `SupplierImage`, `B. Existing Architecture Discovered`, `GiftToyImage`, `HomeKitchenImage`, `HandmadeColorSelection`, `LostFoundImage`, `FurnishingCurtainColorSelection`, `FeedbackService`, `AdminDashboardRepository`, `HandmadeColorLookup`, `PaintingImage`, `.AddAsync`, `CraftsmanSpecializationLookup`, `BathroomSupplyColorSelection`, `HomeKitchenColorSelection`, `CamelVaccinationLookup`, `WomenClothingSizeLookup`, `AccessoryColorLookup`, `LostFoundLike`, `AccessoryMaterialLookup`, `HomeKitchenColorLookup`, `HomeKitchenSectionLookup`, `AdFormFieldOption`, `PaintingMaterialLookup`?**
+  _High betweenness centrality (0.123) - this node is a cross-community bridge._
 - **Are the 13 inferred relationships involving `AppDbContext` (e.g. with `Dependency injection` and `Projects and layers`) actually correct?**
   _`AppDbContext` has 13 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `net10.0`, `Microsoft.Extensions.Identity.Stores (10.0.10)`, `Microsoft.NET.Sdk` to the rest of the system?**
-  _14709 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _14821 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Task` be split into smaller, more focused modules?**
-  _Cohesion score 0.005447191097393822 - nodes in this community are weakly interconnected._
-- **Why does `Shared.Enums` connect `Shared.Enums` to `Shared.Constants`, `Shared.Exceptions`, `ServicesAbstraction`, `IQueryable`, `ReferralLinkEvent`, `Domain.Entities`, `Shared.DTOs.Notifications`, `BirdListItemDto`, `Persistence.Data`, `GovernorateGuideModulesTests`, `LivestockListItemDto`, `FishDetailsDto`, `ShopListItemDto`, `SubCategoryType`, `CreateDirectoryListingRequest`, `HomeApplianceDetailsDto`, `INotificationService`, `CreateKidsClothingRequest`, `ApartmentDetailsDto`, `MenClothingListItemDto`, `LandDetailsDto`, `.NotifyAsync`, `FurnitureDetailsDto`, `UpdateWomenClothingRequest`, `KitchenTool`, `GovernorateGuideDtos.cs`, `AntiqueDetailsDto`, `RealEstateListItemDtoBase`, `IModeratedListing`, `CarCatalog`, `LightingDecorDetailsDto`, `CreateBuildingRequest`, `DirectorySortBy`, `AbstractValidator`, `DoctorSpecialty`, `SupplierType`, `UserAccountStatus`, `CreateHandmadeRequest`, `RestaurantsAndCafesTests`, `Shared.DTOs.HomeFurnishing`, `AdminAuditAction`, `.AddPersistence`, `SupplierSpecialization`, `AdminRequestValidators.cs`, `BathroomSupply`, `CategoryType`, `PlantOrnament`, `.AddApplicationServices`, `HomeKitchenColor`, `AdminAccountService`, `DecorAntiqueMappingProfile`, `ListingRealtimeInterceptor`, `AccessoryMappingProfile`, `AdminAdFilterParams`, `PaymentMethodDto`, `CoinStampDetailsDto`, `AdminPermissionService`, `DirectoryModule`, `BeeFilterParams`, `AdminPermission`, `WorkshopType`, `AdminAnalyticsDto`, `LostFoundPostDetailsDto`, `HorseAge`, `ListingReportDto`, `InterestedIn`, `PetAge`, `CamelFilterParams`, `OtherAnimalFilterParams`, `PaintingMappingProfile`, `FruitVegetableMerchantDetailsDto`, `BloodGroup`, `HomemadeFoodDeliveryArea`, `PaginationParams`, `UpdateWholesaleTraderRequest`, `HomeSection`, `GiftToyType`, `CreateJobOpportunityRequest`, `UpdateBannerPlacementRequest`, `CosmeticSection`, `FeedbackStatus`, `CreateShoppingElectronicRequest`, `ExperienceLevel`, `CharityMappingProfile`, `GiftToyFilterParams`, `SheepGoatFilterParams`?**
-  _High betweenness centrality (0.045) - this node is a cross-community bridge._
-- **Should `ApiResponse` be split into smaller, more focused modules?**
-  _Cohesion score 0.010064657212456994 - nodes in this community are weakly interconnected._
-- **Why does `ListingModuleType` connect `IQueryable` to `Task`, `ApiResponse`, `ListingRatingFilterParams`, `UploadImageModel`, `Guid`, `ListingFavorite`, `RescueListItemDto`, `BirdListItemDto`, `GovernorateGuideModulesTests`, `BeeDetailsDto`, `FishDetailsDto`, `ShopListItemDto`, `ReadConfigCatalog`, `CharityListItemDtoBase`, `DecorAntiqueDetailsDto`, `HomeFurnishingPriceStatisticsDto`, `SubCategoryType`, `CreateDirectoryListingRequest`, `HomeApplianceDetailsDto`, `ListingLifecycleIntegrationTests`, `INotificationService`, `Development Guide`, `Theory`, `IFileService`, `Furniture`, `ApartmentDetailsDto`, `MenClothingListItemDto`, `LandDetailsDto`, `.NotifyAsync`, `FurnitureDetailsDto`, `JwtSettings`, `API`, `KitchenTool`, `GovernorateGuideDtos.cs`, `AntiqueDetailsDto`, `ListingNotificationDispatch`, `IModeratedListing`, `HandmadeDetailsDto`, `LightingDecorDetailsDto`, `ShopDetailsDto`, `BuildingDetailsDto`, `BirdDetailsDto`, `DoctorSpecialty`, `AdvertisementService`, `IListingImage`, `CreateHandmadeRequest`, ``Infastrucre/Presitance` → namespace `Persistence``, `RestaurantsAndCafesTests`, `ListingStatsFilter`, `UserListingDto`, `LivestockListItemDto`, `KitchenToolListItemDto`, `HomeAppliance`, `.AddPersistence`, `KidsClothingListItemDto`, `LightingDecor`, `AdvertiserLookupTests`, `CategoryType`, `PlantOrnament`, `.AddApplicationServices`, `FactoryDetailsDto`, `BeeListItemDto`, `BuildingsModuleTests`, `FishListItemDto`, `AdminAdDetailsDto`, `IListingStats`, `BuildingListItemDto`, `ListingRealtimeInterceptor`, `AdminAlertService`, `ListingRatingDto`, `ListingInteractionService`, `AdminAdFilterParams`, `CoinStampDetailsDto`, `PaintingDetailsDto`, `KidsClothingDetailsDto`, `MenClothingDetailsDto`, `WomenClothingDetailsDto`, `DirectoryModule`, `HorseDetailsDto`, `LivestockDetailsDto`, `PetListItemDto`, `AdminPageGrant`, `RealtimeListingEventTests`, `AdvertisementDetailsDto`, `CamelDetailsDto`, `OtherAnimalDetailsDto`, `SheepGoatDetailsDto`, `JobOpportunityDetailsDto`, `LostFoundPostListItemDto`, `AdminAdListItemDto`, `AntiqueListItemDto`, `JobRequestDetailsDto`, `AdvertisementListItemDto`, `HorseListItemDto`, `PaintingListItemDto`, `HomemadeFoodDetailsDto`, `HomemadeFoodListItemDto`, `AdminAnalyticsDto`, `WomenClothingListItemDto`, `HomeFurnishingDetailsDtoBase`, `AccessoryDetailsDto`, `AccessoryListItemDto`, `CamelListItemDto`, `OtherAnimalListItemDto`, `SheepGoatListItemDto`, `DirectoryListingDto`, `FarmDetailsDto`, `FarmListItemDto`, `JobOpportunityListItemDto`, `ShoppingElectronicDetailsDto`, `ShoppingElectronicListItemDto`, `SupplierListItemDto`, `LostFoundService`, `LostFoundPostDetailsDto`, `.SampleLookups`, `CraftsmanListItemDto`, `DecorAntiqueListItemDto`, `JobRequestListItemDto`, `ListingReportDto`, `HomeKitchenDetailsDto`, `HomeKitchenListItemDto`, `ListingChangedEventDto`, `WorkshopListItemDto`, `CraftsmanDetailsDto`, `CosmeticDetailsDto`, `CosmeticListItemDto`, `WholesaleTraderDetailsDto`, `ILogger`, `CompanyDetailsDto`, `GiftToyDetailsDto`, `GiftToyListItemDto`, `SupplierDetailsDto`, `FruitVegetableMerchantDetailsDto`, `Modules`, `WorkshopDetailsDto`, `IReadOnlyCollection`, `AskConsultDetailsDto`, `AskConsultListItemDto`, `CompanyListItemDto`, `WholesaleTraderListItemDto`, `BloodRequestDetailsDto`, `FactoryListItemDto`, `BloodRequestListItemDto`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
+  _Cohesion score 0.008030213317543888 - nodes in this community are weakly interconnected._
+- **Why does `Shared.Enums` connect `Shared.Enums` to `Shared.Constants`, `ListingRejectionReason`, `Shared.Exceptions`, `ServicesAbstraction`, `Domain.Entities`, `Shared.DTOs.Notifications`, `GovernorateGuideModulesTests`, `LivestockListItemDto`, `ShopListItemDto`, `CosmeticFilterParams`, `.GetName`, `SubCategoryType`, `CreateDirectoryListingRequest`, `NotificationType`, `CreateKidsClothingRequest`, `ApartmentDetailsDto`, `MenClothingListItemDto`, `LandDetailsDto`, `FurnitureDetailsDto`, `UpdateWomenClothingRequest`, `FurnishingCurtainDetailsDto`, `GovernorateGuideDtos.cs`, `AntiqueDetailsDto`, `UserNotificationInterest`, `CarCatalog`, `LightingDecorDetailsDto`, `CreateBuildingRequest`, `DirectoryRepository`, `DoctorSpecialty`, `NotificationAction`, `CreateHandmadeRequest`, `AdminAuditAction`, `KitchenToolProductType`, `SupplierSpecialization`, `AdPaymentMethodDto`, `AdminRequestValidators.cs`, `Architecture Decisions`, `.AddApplicationServices`, `HomeKitchenColor`, `BeeListItemDto`, `AntiqueFilterParams`, `AdminAccountService`, `Referral`, `BuildingListItemDto`, `CreateAccessoryRequest`, `ListingInteractionService`, `CreatePaymentMethodRequest`, `CoinStampDetailsDto`, `ProfileService`, `DirectoryModule`, `PlantOrnamentProductType`, `AdminPermission`, `BirdFilterParams`, `RestaurantAndCafe`, `BathroomSupplyColor`, `HorseListItemDto`, `HomemadeFoodListItemDto`, `WorkshopType`, `AdminAnalyticsDto`, `OtherAnimalListItemDto`, `CreateLostFoundPostRequest`, `UserAccountStatus`, `FishFilterParams`, `DecorAntiqueListItemDto`, `CosmeticListItemDto`, `InterestedIn`, `Shared.DTOs.BannerBookings`, `PaintingMappingProfile`, `FruitVegetableMerchantDetailsDto`, `CharityRepositoryBase`, `PaginationParams`, `AskConsultCategory`, `UpdateWholesaleTraderRequest`, `CreateFarmRequest`, `HomeSection`, `AskConsultDetailsDto`, `Shared.DTOs.JobRequests`, `GiftToyType`, `RequireAdminPermissionAttribute`, `CamelMappingProfile`, `CreateJobOpportunityRequest`, `ListingEditReviewEntry`, `UpdateBannerPlacementRequest`, `FeedbackStatus`, `CreateShoppingElectronicRequest`, `ExperienceLevel`, `SheepGoatFilterParams`?**
+  _High betweenness centrality (0.058) - this node is a cross-community bridge._
+- **Should `Guid` be split into smaller, more focused modules?**
+  _Cohesion score 0.01567271318536074 - nodes in this community are weakly interconnected._
+- **Why does `ListingModuleType` connect `IQueryable` to `Guid`, `.AddApplicationServices`, `PaginatedResult`, `Rescue`, `BirdListItemDto`, `01 — Project Overview`, `GovernorateGuideModulesTests`, `LivestockListItemDto`, `FishDetailsDto`, `ShopListItemDto`, `ReadConfigCatalog`, `CharityListItemDtoBase`, `DecorAntiqueDetailsDto`, `PlantOrnamentListItemDto`, `SubCategoryType`, `CreateDirectoryListingRequest`, `HomeApplianceListItemDto`, `ListingLifecycleIntegrationTests`, `NotificationType`, `UserMessages`, `Theory`, `Furniture`, `ApartmentDetailsDto`, `MenClothingListItemDto`, `LandDetailsDto`, `FurnitureDetailsDto`, `DateTime`, `UpdateWomenClothingRequest`, `JwtSettings`, `FurnishingCurtainDetailsDto`, `API`, `KitchenTool`, `GovernorateGuideDtos.cs`, `ListingNotificationDispatch`, `UserNotificationInterest`, `IModeratedListing`, `Notification`, `HandmadeDetailsDto`, `AbstractValidator`, `BuildingDetailsDto`, `BirdDetailsDto`, `DoctorSpecialty`, `NotificationAction`, `IListingImage`, `NotificationDto`, ``Infastrucre/Presitance` → namespace `Persistence``, `RestaurantsAndCafesTests`, `ListingActionsDto`, `ApplicationUser`, `AdPaymentService`, `UserListingDto`, `HandmadeListItemDto`, `HomeFurnishingPriceStatisticsDto`, `HomeAppliance`, `SehhatyCategoryTests`, `OfficesCategoryTests`, `AdPaymentMethodDto`, `KidsClothingListItemDto`, `LightingDecor`, `Architecture Decisions`, `PlantOrnament`, `.AddApplicationServices`, `FactoryDetailsDto`, `BeeListItemDto`, `BuildingsModuleTests`, `FishListItemDto`, `AntiqueDetailsDto`, `AdminAdDetailsDto`, `IListingStats`, `BuildingListItemDto`, `ListingRealtimeInterceptor`, `AdPaymentRepository`, `HomeFurnishingListItemDtoBase`, `AdminAlertService`, `.UpdateAsync`, `LightingDecorListItemDto`, `NotificationContent`, `ListingRatingTargetDto`, `Horse`, `OtherAnimal`, `ListingInteractionService`, `AdminAdFilterParams`, `CoinStampDetailsDto`, `PaintingDetailsDto`, `Bee`, `ProfileService`, `KidsClothingDetailsDto`, `MenClothingDetailsDto`, `AdminAdPaymentSubmissionDto`, `DirectoryModule`, `BathroomSupplyListItemDto`, `CoinStampListItemDto`, `LivestockDetailsDto`, `PetListItemDto`, `RealtimeListingEventTests`, `AdvertisementDetailsDto`, `CamelDetailsDto`, `SheepGoatDetailsDto`, `JobOpportunityDetailsDto`, `LostFoundPostListItemDto`, `AdminAdListItemDto`, `AntiqueListItemDto`, `JobRequestDetailsDto`, `BuildingListItemDto`, `FruitVegetableMerchant`, `RestaurantAndCafe`, `AdvertisementListItemDto`, `HorseListItemDto`, `PaintingListItemDto`, `HomemadeFoodDetailsDto`, `HomemadeFoodListItemDto`, `FruitVegetableMerchantDetailsDto`, `ListingChange`, `AdminRepublishResultDto`, `AdminAnalyticsDto`, `WomenClothingListItemDto`, `HomeFurnishingDetailsDtoBase`, `AccessoryDetailsDto`, `AccessoryListItemDto`, `CamelListItemDto`, `OtherAnimalListItemDto`, `SheepGoatListItemDto`, `DirectoryListingDto`, `FarmDetailsDto`, `FarmListItemDto`, `JobOpportunityListItemDto`, `ShoppingElectronicDetailsDto`, `ShoppingElectronicListItemDto`, `SupplierListItemDto`, `CreateLostFoundPostRequest`, `LostFoundPostDetailsDto`, `UserAccountStatus`, `.SampleLookups`, `CraftsmanListItemDto`, `ListingLifecycleProcessor`, `DecorAntiqueListItemDto`, `AdPaymentStatusDto`, `JobRequestListItemDto`, `HomeKitchenDetailsDto`, `HomeKitchenListItemDto`, `ListingChangedEventDto`, `WorkshopListItemDto`, `CraftsmanDetailsDto`, `CosmeticDetailsDto`, `CosmeticListItemDto`, `WholesaleTraderDetailsDto`, `InterestedIn`, `4. Where each kind of code belongs`, `CompanyDetailsDto`, `GiftToyDetailsDto`, `GiftToyListItemDto`, `SupplierDetailsDto`, `FruitVegetableMerchantDetailsDto`, `WorkshopDetailsDto`, `ListingEditModerationInterceptor`, `AskConsultCategory`, `UpdateWholesaleTraderRequest`, `IReadOnlyDictionary`, `AskConsultDetailsDto`, `AskConsultListItemDto`, `CompanyListItemDto`, `AdminModuleOptionDto`, `B. Existing Architecture Discovered`, `ListingEditReviewEntry`, `BloodRequestDetailsDto`, `FactoryListItemDto`, `BathroomSupplyDetailsDto`, `.AddAsync`?**
+  _High betweenness centrality (0.042) - this node is a cross-community bridge._

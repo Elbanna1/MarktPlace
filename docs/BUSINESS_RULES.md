@@ -339,3 +339,27 @@ Enforced by three test suites, including a source-wide scan that fails the build
 2. Check `Tests/MarkatPlace.Tests` for a guard.
 3. Check [DECISIONS.md](DECISIONS.md) — the odd-looking ones are usually deliberate.
 4. If it is still wrong, change the **single** place it is defined, not the 48 call sites.
+
+## Advertisement payments
+
+- One admin-controlled setting for every module: `AdPaymentSettings` (single row, seeded **disabled**, price 0).
+  Payment methods and account details are the existing `PaymentMethods` rows; `paymentMethodIds` narrows which
+  ones are offered (empty = all active).
+- An ad payment is a `Payments` row with `Purpose = AdvertisementPublication (6)`, `TargetType` = module name,
+  `TargetId` = listing id. The amount and currency are copied from the settings at submission — the request
+  cannot set them. Rows are never deleted; expiry and republish do not touch them.
+- A payment can be submitted only by the listing's owner, only while payments are enabled, and only when the
+  listing needs a new window: pending/rejected with no running window, or approved and expired / ≤ 5 days left.
+  One pending submission per listing (filtered unique index `UX_Payments_AdPayment_OnePending`), and none while
+  an approved, unused payment exists.
+- Review: `Approved` or `Rejected` (reason required). A reviewer cannot review their own payment. Approval
+  **never approves moderation**: a pending listing stays pending; an approved expired listing is renewed through
+  the existing admin republish. The approved payment is a credit, consumed (`ActivatedAt`) when a window opens.
+- Gate: while enabled, `PATCH /api/v2/admin/ads/{type}/{id}/approve` that would open a new window needs a credit
+  (402 otherwise). Listings created before `EnabledAt` are exempt. Admin republish is not gated (it is the
+  admin's own decision) but consumes a credit when one exists.
+- The generic `/api/v2/admin/payments/{id}/approve|reject` routes delegate ad payments to the same review.
+- Screenshots are stored under `FileStorage:PrivateRootPath` (default `<content root>/App_Data/private-uploads`),
+  never under the public uploads root, and are streamed only by the admin screenshot endpoint. **Production must
+  set `FileStorage__PrivateRootPath` to a folder outside the application directory** or a redeploy deletes them.
+

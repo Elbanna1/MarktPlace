@@ -80,6 +80,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<PaymentMethod> PaymentMethods => Set<PaymentMethod>();
     public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<AdPaymentSetting> AdPaymentSettings => Set<AdPaymentSetting>();
 
     public DbSet<Banner> Banners => Set<Banner>();
 

@@ -845,6 +845,59 @@ namespace Presitance.Migrations
                     b.ToTable("AdFormFieldOverrides");
                 });
 
+            modelBuilder.Entity("Domain.Entities.AdPaymentSetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateTime?>("EnabledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PaymentMethodIds")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AdPaymentSettings", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_AdPaymentSettings_Price", "[Price] >= 0");
+
+                            t.HasCheckConstraint("CK_AdPaymentSettings_SingleRow", "[Id] = 1");
+                        });
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Currency = "EGP",
+                            IsEnabled = false,
+                            Price = 0m
+                        });
+                });
+
             modelBuilder.Entity("Domain.Entities.AdminAuditLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -24676,6 +24729,10 @@ namespace Presitance.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("TransactionReference")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -24691,6 +24748,12 @@ namespace Presitance.Migrations
                     b.HasIndex("TargetType", "TargetId");
 
                     b.HasIndex("UserId", "SubmittedAt");
+
+                    b.HasIndex("Purpose", "Status", "SubmittedAt");
+
+                    b.HasIndex(new[] { "TargetType", "TargetId" }, "UX_Payments_AdPayment_OnePending")
+                        .IsUnique()
+                        .HasFilter("[Purpose] = 6 AND [Status] = 1");
 
                     b.ToTable("Payments", (string)null);
                 });

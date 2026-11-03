@@ -89,6 +89,8 @@ public static class DependencyInjection
         services.AddScoped<IWorkshopService, WorkshopService>();
         services.AddScoped<ICraftsmanService, CraftsmanService>();
         services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<IAdPaymentService, Services.AdPayments.AdPaymentService>();
+        services.AddScoped<IAdPaymentGate, Services.AdPayments.AdPaymentGate>();
         services.AddScoped<IBannerService, BannerService>();
 
         services.AddScoped<IBannerBookingService, BannerBookingService>();

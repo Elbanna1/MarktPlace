@@ -1,7 +1,8 @@
-using Domain.Entities;
+﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Shared.Constants;
+using Shared.Enums;
 
 namespace Persistence.Configurations;
 
@@ -52,5 +53,13 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.HasIndex(p => p.PaymentMethodId);
 
         builder.HasIndex(p => new { p.TargetType, p.TargetId });
+
+        builder.Property(p => p.TransactionReference).HasMaxLength(100);
+
+        builder.HasIndex(p => new { p.TargetType, p.TargetId }, "UX_Payments_AdPayment_OnePending")
+            .IsUnique()
+            .HasFilter($"[Purpose] = {(int)PaymentPurpose.AdvertisementPublication} AND [Status] = {(int)PaymentStatus.Pending}");
+
+        builder.HasIndex(p => new { p.Purpose, p.Status, p.SubmittedAt });
     }
 }

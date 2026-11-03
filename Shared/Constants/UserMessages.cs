@@ -207,6 +207,15 @@ public static class UserMessages
         public const string Submitted = "استلمنا بيانات الدفع، والإدارة هتراجعها وهتوصلك النتيجة.";
     }
 
+    public static class AdPayments
+    {
+        public const string ConfigLoaded = "تم تحميل إعدادات الدفع للإعلانات.";
+
+        public const string StatusLoaded = "تم تحميل حالة الدفع للإعلان.";
+
+        public const string Submitted = "استلمنا إثبات الدفع للإعلان، والإدارة هتراجعه وهتوصلك النتيجة.";
+    }
+
     public static class Generic
     {
         public const string Loaded = "تم تحميل البيانات.";

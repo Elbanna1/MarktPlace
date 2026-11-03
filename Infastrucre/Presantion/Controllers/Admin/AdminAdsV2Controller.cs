@@ -59,6 +59,30 @@ public class AdminAdsV2Controller : AdminApiController
     }
 
     [RequireAdminPermission(AdminPermission.View)]
+    [HttpGet("expired")]
+    [ProducesResponseType(typeof(ApiResponse<PaginatedResult<AdminAdListItemDto>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<ApiResponse<PaginatedResult<AdminAdListItemDto>>>> GetExpiredAds(
+        [FromQuery] AdminAdFilterParams filter)
+    {
+        var result = await _ads.GetExpiredAdsAsync(filter, RequestAborted);
+
+        return Ok(ApiResponse<PaginatedResult<AdminAdListItemDto>>.Ok(
+            result, "تم استرجاع الإعلانات المنتهية."));
+    }
+
+    [RequireAdminPermission(AdminPermission.View)]
+    [HttpGet("expired/count")]
+    [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<int>>> GetExpiredCount()
+    {
+        var count = await _ads.GetExpiredCountAsync(RequestAborted);
+
+        return Ok(ApiResponse<int>.Ok(count, "تم استرجاع عدد الإعلانات المنتهية."));
+    }
+
+    [RequireAdminPermission(AdminPermission.View)]
     [HttpGet("metadata")]
     [ProducesResponseType(typeof(ApiResponse<AdminAdMetadataDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<AdminAdMetadataDto>>> GetMetadata()
