@@ -490,9 +490,16 @@ Every route requires the `Admin` role **and** the specific page permission. See
 
 | Method | Route | Auth | Purpose |
 | --- | --- | --- | --- |
-| `GET` | `/api/v2/public/ad-payment/config` | anonymous | `isEnabled`, `price`, `currency`, `instructions`, offered `paymentMethods` (with account details) |
-| `POST` | `/api/v2/ads/{type}/{id}/payment` | owner | multipart: `PaymentMethodId`, `TransactionReference?`, `Screenshot`. The price comes from the settings, never from the request |
-| `GET` | `/api/v2/ads/{type}/{id}/payment` | owner | `isPaymentRequired`, `canSubmit`, latest `paymentStatus`, `amount`, `rejectionReason`, … |
+| `GET` | `/api/v2/ad-payment/config` | signed in | `isEnabled`, `price`, `currency`, `instructions`, `updatedAt`, offered `paymentMethods` (with account details). `no-store` |
+| `GET` | `/api/v2/public/ad-payment/config` | anonymous | same payload, kept for compatibility |
+| `GET` | `/api/v2/ad-payment/modules` | signed in | every advertisement type and whether it is subject to ad payment |
+| `POST` | `/api/v2/ads/{type}/{id}/payment` | owner | multipart: `PaymentMethodId`, `Screenshot`, `TransactionReference?`, `Notes?`, `ExpectedAmount?`, `ExpectedCurrency?`. The price comes from the settings, never from the request; a stale `ExpectedAmount` gets 409 |
+| `POST` | `/api/v2/ads/{type}/{id}/payment/resubmit` | owner | same body; only when the latest submission is `Rejected` |
+| `GET` | `/api/v2/ads/{type}/{id}/payment` | owner | `stage`, `isPaymentRequired`, `canSubmit`, `canResubmit`, latest `paymentStatus`, frozen `amount`, `rejectionReason`, `currentPrice`, ad moderation status, … |
+
+Every concrete `create-ad-form` response carries a static `payment` descriptor (module type, endpoints, fields);
+the frontend shows the section only when the live config says `isEnabled`. Full contract, lifecycle and the
+65-type map: [AD_PAYMENT_INTEGRATION.md](AD_PAYMENT_INTEGRATION.md).
 
 `{type}` here accepts the `ListingModuleType` name or number. While payments are enabled, approving a listing
 whose approval would open a **new** 30-day window answers **402** until an approved, unused ad payment exists

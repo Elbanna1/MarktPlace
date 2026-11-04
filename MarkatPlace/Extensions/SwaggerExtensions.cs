@@ -110,6 +110,8 @@ public static class SwaggerExtensions
 
             options.OperationFilter<CreateAdFormExamplesOperationFilter>();
 
+            options.OperationFilter<AdPaymentExamplesOperationFilter>();
+
             options.OperationFilter<ReadConfigExamplesOperationFilter>();
 
             options.OperationFilter<BusinessModuleExamplesOperationFilter>();

@@ -6,6 +6,8 @@ namespace ServicesAbstraction;
 
 public record AdPaymentListingSummary(string? Title, int? CategoryId, int? SubCategoryId);
 
+public record AdPaymentListingFacts(Guid LatestPaymentId, PaymentStatus LatestStatus, bool HasCredit);
+
 public interface IAdPaymentRepository
 {
     Task<AdPaymentSetting?> GetSettingsAsync(bool asNoTracking = true, CancellationToken cancellationToken = default);
@@ -35,6 +37,9 @@ public interface IAdPaymentRepository
         CancellationToken cancellationToken = default);
 
     Task<IReadOnlyDictionary<(ListingModuleType Type, Guid Id), AdPaymentListingSummary>> GetListingSummariesAsync(
+        IReadOnlyCollection<(ListingModuleType Type, Guid Id)> listings, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyDictionary<(ListingModuleType Type, Guid Id), AdPaymentListingFacts>> GetListingFactsAsync(
         IReadOnlyCollection<(ListingModuleType Type, Guid Id)> listings, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyDictionary<string, string>> GetUserNamesAsync(

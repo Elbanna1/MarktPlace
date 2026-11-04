@@ -197,6 +197,48 @@ public class AdPaymentRepository : IAdPaymentRepository
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         _context.SaveChangesAsync(cancellationToken);
 
+    public async Task<IReadOnlyDictionary<(ListingModuleType Type, Guid Id), AdPaymentListingFacts>> GetListingFactsAsync(
+        IReadOnlyCollection<(ListingModuleType Type, Guid Id)> listings, CancellationToken cancellationToken = default)
+    {
+        if (listings.Count == 0)
+            return new Dictionary<(ListingModuleType, Guid), AdPaymentListingFacts>();
+
+        var ids = listings.Select(listing => listing.Id).Distinct().ToList();
+
+        var rows = await _context.Payments
+            .AsNoTracking()
+            .Where(payment => payment.Purpose == Purpose && payment.TargetId != null && ids.Contains(payment.TargetId.Value))
+            .Select(payment => new
+            {
+                payment.Id,
+                payment.TargetType,
+                TargetId = payment.TargetId!.Value,
+                payment.Status,
+                payment.ActivatedAt,
+                payment.SubmittedAt
+            })
+            .ToListAsync(cancellationToken);
+
+        var wanted = listings.ToHashSet();
+        var facts = new Dictionary<(ListingModuleType, Guid), AdPaymentListingFacts>();
+
+        foreach (var group in rows.GroupBy(row => (row.TargetType, row.TargetId)))
+        {
+            if (!Enum.TryParse<ListingModuleType>(group.Key.TargetType, out var type) ||
+                !wanted.Contains((type, group.Key.TargetId)))
+                continue;
+
+            var latest = group.OrderByDescending(row => row.SubmittedAt).ThenByDescending(row => row.Id).First();
+
+            facts[(type, group.Key.TargetId)] = new AdPaymentListingFacts(
+                latest.Id,
+                latest.Status,
+                group.Any(row => row.Status == PaymentStatus.Approved && row.ActivatedAt == null));
+        }
+
+        return facts;
+    }
+
     private IQueryable<Payment> ForListing(ListingModuleType type, Guid listingId)
     {
         var target = type.ToString();

@@ -214,6 +214,10 @@ public static class UserMessages
         public const string StatusLoaded = "تم تحميل حالة الدفع للإعلان.";
 
         public const string Submitted = "استلمنا إثبات الدفع للإعلان، والإدارة هتراجعه وهتوصلك النتيجة.";
+
+        public const string Resubmitted = "استلمنا إثبات الدفع الجديد للإعلان، والإدارة هتراجعه وهتوصلك النتيجة.";
+
+        public const string ModulesLoaded = "تم تحميل أنواع الإعلانات وحالة رسوم النشر لكل نوع.";
     }
 
     public static class Generic

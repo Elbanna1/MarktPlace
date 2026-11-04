@@ -362,6 +362,205 @@ public class AdPaymentIntegrationTests
         });
     }
 
+    [LocalDbFact]
+    public async Task The_authenticated_config_and_the_form_descriptor_follow_the_admin_switch()
+    {
+        await WithPaymentsDisabledAfterAsync(async () =>
+        {
+            var (_, user) = await _api.CreateOwnerAsync();
+
+            Assert.Equal(HttpStatusCode.Unauthorized, (await _api.Anonymous.GetAsync(UserConfigUrl)).StatusCode);
+
+            var off = await DataAsync(user, UserConfigUrl);
+            Assert.False(off.GetProperty("isEnabled").GetBoolean());
+            Assert.Equal(0, off.GetProperty("paymentMethods").GetArrayLength());
+
+            await EnableAsync(120m, "حوّل وارفع الإيصال.");
+
+            var on = await DataAsync(user, UserConfigUrl);
+            Assert.True(on.GetProperty("isEnabled").GetBoolean());
+            Assert.Equal(120m, on.GetProperty("price").GetDecimal());
+            Assert.Equal("حوّل وارفع الإيصال.", on.GetProperty("instructions").GetString());
+            Assert.NotEqual(JsonValueKind.Null, on.GetProperty("updatedAt").ValueKind);
+
+            var method = on.GetProperty("paymentMethods")[0];
+            Assert.True(method.TryGetProperty("arabicName", out _));
+            Assert.True(method.TryGetProperty("paymentInfo", out _));
+            Assert.False(method.TryGetProperty("isActive", out _));
+            Assert.False(method.TryGetProperty("createdAt", out _));
+
+            var form = await DataAsync(user, "/api/lookups/create-ad-form/10/40");
+            var payment = form.GetProperty("payment");
+            Assert.True(payment.GetProperty("isSubjectToPayment").GetBoolean());
+            Assert.Equal((int)ListingModuleType.Furniture, payment.GetProperty("advertisementType").GetInt32());
+            Assert.Equal("/api/v2/ad-payment/config", payment.GetProperty("configEndpoint").GetString());
+            Assert.Contains(payment.GetProperty("fields").EnumerateArray(),
+                field => field.GetProperty("name").GetString() == "Screenshot" && field.GetProperty("required").GetBoolean());
+
+            var modules = await DataAsync(user, "/api/v2/ad-payment/modules");
+            Assert.Equal(Enum.GetValues<ListingModuleType>().Length, modules.GetArrayLength());
+            Assert.All(modules.EnumerateArray(), row => Assert.True(row.GetProperty("isSubjectToPayment").GetBoolean()));
+        });
+    }
+
+    [LocalDbFact]
+    public async Task A_changed_price_is_refused_and_a_rejected_payment_is_resubmitted_through_its_own_route()
+    {
+        await WithPaymentsDisabledAfterAsync(async () =>
+        {
+            await EnableAsync(150m);
+
+            var (ownerId, owner) = await _api.CreateOwnerAsync();
+            var id = await _api.SeedAsync(Generic, ownerId, "إعادة-رفع-" + Guid.NewGuid().ToString("N"));
+            var paymentUrl = $"/api/v2/ads/{Generic}/{id}/payment";
+            var resubmitUrl = paymentUrl + "/resubmit";
+            var methodId = await FirstMethodIdAsync();
+
+            var initial = await DataAsync(owner, paymentUrl);
+            Assert.Equal("AwaitingPayment", initial.GetProperty("stage").GetString());
+            Assert.Equal("Pending", initial.GetProperty("advertisementModerationStatus").GetString());
+            Assert.False(initial.GetProperty("canResubmit").GetBoolean());
+
+            Assert.Equal(HttpStatusCode.BadRequest,
+                (await SubmitFormAsync(owner, resubmitUrl, Fields(methodId))).StatusCode);
+
+            var stale = await SubmitFormAsync(owner, paymentUrl, Fields(methodId, ("ExpectedAmount", "100")));
+            Assert.Equal(HttpStatusCode.Conflict, stale.StatusCode);
+
+            var wrongCurrency = await SubmitFormAsync(owner, paymentUrl,
+                Fields(methodId, ("ExpectedAmount", "150"), ("ExpectedCurrency", "USD")));
+            Assert.Equal(HttpStatusCode.Conflict, wrongCurrency.StatusCode);
+
+            Assert.Equal(HttpStatusCode.BadRequest, (await SubmitFormAsync(owner, paymentUrl,
+                Fields(methodId, ("Notes", new string('x', 501))))).StatusCode);
+
+            var first = await ReadCreatedAsync(await SubmitFormAsync(owner, paymentUrl,
+                Fields(methodId, ("ExpectedAmount", "150"), ("ExpectedCurrency", "egp"), ("Notes", "حولت من محفظة باسم أخويا"))));
+            Assert.Equal("حولت من محفظة باسم أخويا", first.GetProperty("notes").GetString());
+            Assert.Equal("PaymentUnderReview", first.GetProperty("stage").GetString());
+            Assert.False(first.GetProperty("isResubmission").GetBoolean());
+
+            var firstId = first.GetProperty("paymentSubmissionId").GetGuid();
+
+            Assert.Equal(HttpStatusCode.Conflict,
+                (await SubmitFormAsync(owner, resubmitUrl, Fields(methodId))).StatusCode);
+
+            await EnableAsync(200m);
+
+            var underReview = await DataAsync(owner, paymentUrl);
+            Assert.Equal(150m, underReview.GetProperty("amount").GetDecimal());
+            Assert.Equal(200m, underReview.GetProperty("currentPrice").GetDecimal());
+
+            await PatchOkAsync(_api.Admin, $"/api/v2/admin/ad-payment/submissions/{firstId}/review",
+                new { decision = "Reject", rejectionReason = "المبلغ ناقص" });
+
+            var rejected = await DataAsync(owner, paymentUrl);
+            Assert.Equal("PaymentRejected", rejected.GetProperty("stage").GetString());
+            Assert.Equal("المبلغ ناقص", rejected.GetProperty("rejectionReason").GetString());
+            Assert.True(rejected.GetProperty("canResubmit").GetBoolean());
+            Assert.NotEqual(JsonValueKind.Null, rejected.GetProperty("reviewedAt").ValueKind);
+
+            var details = await DataAsync(_api.Admin, $"/api/v2/admin/ads/{(int)Generic}/{id}");
+            Assert.Equal("PaymentRejected", details.GetProperty("payment").GetProperty("stage").GetString());
+
+            var second = await ReadCreatedAsync(await SubmitFormAsync(owner, resubmitUrl,
+                Fields(methodId, ("ExpectedAmount", "200"))));
+            Assert.True(second.GetProperty("isResubmission").GetBoolean());
+            Assert.Equal(firstId, second.GetProperty("previousPaymentSubmissionId").GetGuid());
+            Assert.Equal(200m, second.GetProperty("amount").GetDecimal());
+
+            var secondId = second.GetProperty("paymentSubmissionId").GetGuid();
+
+            await PatchOkAsync(_api.Admin, $"/api/v2/admin/ad-payment/submissions/{secondId}/review",
+                new { decision = "Approve", rejectionReason = "" });
+
+            var paid = await DataAsync(owner, paymentUrl);
+            Assert.Equal("Paid", paid.GetProperty("stage").GetString());
+            Assert.False(paid.GetProperty("canResubmit").GetBoolean());
+            Assert.Equal("Pending", paid.GetProperty("advertisementModerationStatus").GetString());
+
+            Assert.Equal(HttpStatusCode.Conflict,
+                (await SubmitFormAsync(owner, resubmitUrl, Fields(methodId))).StatusCode);
+        });
+    }
+
+    [LocalDbFact]
+    public async Task Owner_republish_needs_a_new_payment_even_for_an_ad_created_before_payments_were_enabled()
+    {
+        await WithPaymentsDisabledAfterAsync(async () =>
+        {
+            var (ownerId, owner) = await _api.CreateOwnerAsync();
+            var id = await _api.SeedAsync(Generic, ownerId, "تجديد-مالك-" + Guid.NewGuid().ToString("N"));
+
+            await PatchOkAsync(_api.Admin, $"/api/v2/admin/ads/{(int)Generic}/{id}/approve", new { });
+
+            await EnableAsync(90m);
+
+            var now = DateTime.UtcNow;
+            await _api.SetWindowAsync(Generic, id, now.AddDays(-30).AddHours(-2), now.AddHours(-2));
+            await _api.RunJobAsync(now);
+
+            var republished = await owner.PostAsync($"/api/advertisements/{id}/republish?type={Generic}", null);
+            var text = await republished.Content.ReadAsStringAsync();
+            Assert.True(republished.IsSuccessStatusCode, text);
+
+            var result = JsonDocument.Parse(text).RootElement.GetProperty("data");
+            Assert.True(result.GetProperty("paymentRequired").GetBoolean());
+            Assert.Equal($"/api/v2/ads/{Generic}/{id}/payment", result.GetProperty("paymentEndpoint").GetString());
+
+            Assert.Equal(HttpStatusCode.PaymentRequired,
+                (await _api.Admin.PatchAsync($"/api/v2/admin/ads/{(int)Generic}/{id}/approve", Json(new { }))).StatusCode);
+
+            var status = await DataAsync(owner, $"/api/v2/ads/{Generic}/{id}/payment");
+            Assert.Equal("AwaitingPayment", status.GetProperty("stage").GetString());
+
+            var queue = await DataAsync(_api.Admin, $"/api/v2/admin/ads/{(int)Generic}/{id}");
+            Assert.Equal("AwaitingPayment", queue.GetProperty("payment").GetProperty("stage").GetString());
+            Assert.True(queue.GetProperty("payment").GetProperty("isPaymentRequired").GetBoolean());
+
+            await PutOkAsync(_api.Admin, SettingsUrl, new { isEnabled = false, price = 90 });
+
+            var free = await DataAsync(owner, $"/api/v2/ads/{Generic}/{id}/payment");
+            Assert.Equal("NotRequired", free.GetProperty("stage").GetString());
+
+            await PatchOkAsync(_api.Admin, $"/api/v2/admin/ads/{(int)Generic}/{id}/approve", new { });
+        });
+    }
+
+    private const string UserConfigUrl = "/api/v2/ad-payment/config";
+
+    private static List<(string Name, string Value)> Fields(int methodId, params (string Name, string Value)[] extra)
+    {
+        var fields = new List<(string, string)> { ("PaymentMethodId", methodId.ToString()) };
+        fields.AddRange(extra);
+
+        return fields;
+    }
+
+    private static async Task<HttpResponseMessage> SubmitFormAsync(
+        HttpClient client, string url, IEnumerable<(string Name, string Value)> fields)
+    {
+        using var form = new MultipartFormDataContent();
+
+        foreach (var (name, value) in fields)
+            form.Add(new StringContent(value), name);
+
+        var file = new ByteArrayContent(Png());
+        file.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+        form.Add(file, "Screenshot", "receipt.png");
+
+        return await client.PostAsync(url, form);
+    }
+
+    private static async Task<JsonElement> ReadCreatedAsync(HttpResponseMessage response)
+    {
+        var text = await response.Content.ReadAsStringAsync();
+
+        Assert.True(response.StatusCode == HttpStatusCode.Created, $"{(int)response.StatusCode} {text}");
+
+        return JsonDocument.Parse(text).RootElement.GetProperty("data").Clone();
+    }
+
     private async Task WithPaymentsDisabledAfterAsync(Func<Task> body)
     {
         try

@@ -15,14 +15,17 @@ public class ListingRepublishService : IListingRepublishService
     private readonly INotificationService _notifications;
     private readonly IAdminAlertService _alerts;
     private readonly ILogger<ListingRepublishService> _logger;
+    private readonly IAdPaymentGate? _paymentGate;
 
     public ListingRepublishService(
         IListingLifecycleRepository lifecycle,
         IAdvertisementService advertisements,
         INotificationService notifications,
         IAdminAlertService alerts,
-        ILogger<ListingRepublishService> logger)
+        ILogger<ListingRepublishService> logger,
+        IAdPaymentGate? paymentGate = null)
     {
+        _paymentGate = paymentGate;
         _lifecycle = lifecycle;
         _advertisements = advertisements;
         _notifications = notifications;
@@ -34,8 +37,23 @@ public class ListingRepublishService : IListingRepublishService
         string userId, ListingModuleType type, Guid listingId,
         CancellationToken cancellationToken = default)
     {
-        if (type == ListingModuleType.Advertisement)
-            return await RepublishAdvertisementAsync(userId, listingId);
+        var result = type == ListingModuleType.Advertisement
+            ? await RepublishAdvertisementAsync(userId, listingId)
+            : await RepublishModuleAsync(userId, type, listingId, cancellationToken);
+
+        if (_paymentGate is not null && await _paymentGate.IsRequiredForNewListingAsync(type, cancellationToken))
+        {
+            result.PaymentRequired = true;
+            result.PaymentEndpoint = AdPaymentCatalog.SubmitRouteOf(type, listingId);
+            result.Message += " رسوم النشر مفعلة، فلازم ترفع إثبات دفع جديد قبل ما الإدارة توافق على الإعلان.";
+        }
+
+        return result;
+    }
+
+    private async Task<ListingRepublishResultDto> RepublishModuleAsync(
+        string userId, ListingModuleType type, Guid listingId, CancellationToken cancellationToken)
+    {
 
         var (listing, moderated) = await _lifecycle.RunExclusiveAsync(type, listingId, async () =>
         {

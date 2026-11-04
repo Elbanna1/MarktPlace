@@ -42,6 +42,8 @@ public class PublicAdPaymentConfigDto
     public string? Instructions { get; set; }
 
     public IReadOnlyList<AdPaymentMethodDto> PaymentMethods { get; set; } = Array.Empty<AdPaymentMethodDto>();
+
+    public DateTime? UpdatedAt { get; set; }
 }
 
 public class AdminAdPaymentSettingsDto : PublicAdPaymentConfigDto
@@ -51,8 +53,6 @@ public class AdminAdPaymentSettingsDto : PublicAdPaymentConfigDto
     public bool UsesAllActiveMethods { get; set; }
 
     public DateTime? EnabledAt { get; set; }
-
-    public DateTime? UpdatedAt { get; set; }
 
     public string? UpdatedBy { get; set; }
 
@@ -79,6 +79,12 @@ public class SubmitAdPaymentRequest
     public string? TransactionReference { get; set; }
 
     public IFormFile? Screenshot { get; set; }
+
+    public string? Notes { get; set; }
+
+    public decimal? ExpectedAmount { get; set; }
+
+    public string? ExpectedCurrency { get; set; }
 }
 
 public class AdPaymentSubmissionResultDto
@@ -98,6 +104,24 @@ public class AdPaymentSubmissionResultDto
     public string PaymentStatusName { get; set; } = default!;
 
     public DateTime SubmittedAt { get; set; }
+
+    public int PaymentMethodId { get; set; }
+
+    public string? PaymentMethodName { get; set; }
+
+    public string? TransactionReference { get; set; }
+
+    public string? Notes { get; set; }
+
+    public bool IsResubmission { get; set; }
+
+    public Guid? PreviousPaymentSubmissionId { get; set; }
+
+    public string Stage { get; set; } = default!;
+
+    public string StageName { get; set; } = default!;
+
+    public string StatusEndpoint { get; set; } = default!;
 }
 
 public class AdPaymentStatusDto
@@ -137,6 +161,58 @@ public class AdPaymentStatusDto
     public string? RejectionReason { get; set; }
 
     public decimal? CurrentPrice { get; set; }
+
+    public string? CurrentCurrency { get; set; }
+
+    public bool CanResubmit { get; set; }
+
+    public string Stage { get; set; } = default!;
+
+    public string StageName { get; set; } = default!;
+
+    public string? AdvertisementTitle { get; set; }
+
+    public string AdvertisementModerationStatus { get; set; } = default!;
+
+    public string AdvertisementModerationStatusName { get; set; } = default!;
+
+    public string? Notes { get; set; }
+
+    public string SubmitEndpoint { get; set; } = default!;
+
+    public string ResubmitEndpoint { get; set; } = default!;
+}
+
+public class AdPaymentModuleDto
+{
+    public ListingModuleType AdvertisementType { get; set; }
+
+    public string AdvertisementTypeKey { get; set; } = default!;
+
+    public string AdvertisementTypeName { get; set; } = default!;
+
+    public int? CategoryId { get; set; }
+
+    public int? SubCategoryId { get; set; }
+
+    public string? ApiRoute { get; set; }
+
+    public bool IsSubjectToPayment { get; set; }
+}
+
+public class AdPaymentListingStateDto
+{
+    public bool PaymentsEnabled { get; set; }
+
+    public bool IsPaymentRequired { get; set; }
+
+    public string Stage { get; set; } = default!;
+
+    public string StageName { get; set; } = default!;
+
+    public Guid? PaymentSubmissionId { get; set; }
+
+    public PaymentStatus? PaymentStatus { get; set; }
 }
 
 public class AdminAdPaymentFilterParams : PaginationParams

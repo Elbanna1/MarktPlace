@@ -894,3 +894,18 @@ is unchanged and no migration exists. Existing listings on 3 keep their id and l
 
 **Follow-up (optional, needs approval).** Adding 3 to `InactiveWorkshopTypeRows` would scaffold a one-row
 `UpdateData` migration that aligns the table flag; behaviour would not change.
+
+## D-46 — Ad payment is enforced at approval, not at creation
+
+**Decision.** While ad payments are enabled, every create endpoint still accepts the ad and stores it
+`Pending`; payment proof is submitted to `/api/v2/ads/{type}/{id}/payment` right after, from the same form. The
+only gate is `AdminAdService.ApproveAsync` (402 without an approved, unused payment).
+
+**Why.** There are 65 create endpoints, all multipart, and approval is the single code path that makes any
+listing public. Gating there covers direct API calls, every module, owner republish and future modules with one
+check, without touching 65 request contracts. A one-request "ad + payment" body would have meant changing all
+of them and a half-created ad on every image failure anyway.
+
+**Consequence.** An unpaid ad exists but is invisible; the owner can retry the payment call alone. Admin rows
+carry `payment.stage` so the moderation queue can tell unpaid ads apart. The create-ad-form `payment`
+descriptor is static (so the form stays HTTP-cacheable); the live switch is `GET /api/v2/ad-payment/config`.

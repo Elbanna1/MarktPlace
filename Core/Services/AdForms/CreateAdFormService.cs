@@ -79,6 +79,7 @@ public class CreateAdFormService : ICreateAdFormService
             RequiresSubCategory = false,
             Module = schema.Module,
             Submit = schema.Submit,
+            Payment = Services.AdPayments.AdPaymentFormDescriptor.For(subCategoryId),
             Lookups = await LoadLookupsAsync(schema.RequiredLookups, subCategoryId, cancellationToken),
             Fields = fields
         };

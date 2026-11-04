@@ -96,6 +96,15 @@ public class AdminAdService : IAdminAdService
 
         var tree = await _lookups.GetCategoriesTreeAsync(cancellationToken);
 
+        var payments = _paymentGate is null
+            ? null
+            : await _paymentGate.DescribeAsync(
+                rows.Select(row => new AdPaymentListingSnapshot(
+                        row.Type, row.Id, row.CreatedAt, row.ModerationStatus,
+                        AwaitsFirstWindow(row.ModerationStatus, row.ExpireAt, utcNow)))
+                    .ToList(),
+                utcNow, cancellationToken);
+
         var items = rows.Select(row =>
         {
             var (categoryId, subCategoryId) = ListingInteractionService.ResolveCategory(row);
@@ -141,7 +150,8 @@ public class AdminAdService : IAdminAdService
                                    row.Type, row.ModerationStatus, row.ExpireAt, utcNow) ||
                                (row.ModerationStatus == ModerationStatus.Approved &&
                                 row.Status == ListingStatus.Expired),
-                RepublishCount = row.RepublishCount
+                RepublishCount = row.RepublishCount,
+                Payment = payments?.GetValueOrDefault((row.Type, row.Id))
             };
         }).ToList();
 
@@ -236,6 +246,18 @@ public class AdminAdService : IAdminAdService
                            AdminRepublishPolicy.CanRepublish(type, listing.ModerationStatus, expireAt, utcNow),
             RepublishCount = ReadInt(values, "RepublishCount") ?? 0,
 
+            Payment = _paymentGate is null
+                ? null
+                : (await _paymentGate.DescribeAsync(
+                    new[]
+                    {
+                        new AdPaymentListingSnapshot(
+                            type, id, ReadDate(values, "CreatedAt"), listing.ModerationStatus,
+                            listing.ModerationStatus is ModerationStatus.Pending or ModerationStatus.Rejected &&
+                            Services.AdPayments.AdPaymentRules.OpensNewWindow(listing, utcNow))
+                    },
+                    utcNow, cancellationToken)).GetValueOrDefault((type, id)),
+
             ImageUrls = snapshot.ImageUrls,
             VideoUrls = snapshot.VideoUrls,
 
@@ -273,6 +295,10 @@ public class AdminAdService : IAdminAdService
             id,
             type);
     }
+
+    private static bool AwaitsFirstWindow(ModerationStatus status, DateTime? expireAt, DateTime utcNow) =>
+        status is ModerationStatus.Pending or ModerationStatus.Rejected &&
+        !(expireAt is { } end && end > utcNow);
 
     public async Task<AdminModerationResultDto> ApproveAsync(
         ListingModuleType type, Guid id, string adminUserId,

@@ -70,9 +70,27 @@ public class AdPaymentService : IAdPaymentService
             Price = settings.Price,
             Currency = settings.Currency,
             Instructions = settings.Instructions,
-            PaymentMethods = settings.IsEnabled ? methods.Select(ToDto).ToList() : Array.Empty<AdPaymentMethodDto>()
+            PaymentMethods = settings.IsEnabled ? methods.Select(ToDto).ToList() : Array.Empty<AdPaymentMethodDto>(),
+            UpdatedAt = settings.UpdatedAt
         };
     }
+
+    public IReadOnlyList<AdPaymentModuleDto> GetModules() =>
+        ListingModuleCatalog.All
+            .Select(type => new AdPaymentModuleDto
+            {
+                AdvertisementType = type,
+                AdvertisementTypeKey = type.ToString(),
+                AdvertisementTypeName = ListingModuleCatalog.NameOf(type),
+                CategoryId = (int?)ListingModuleCatalog.CategoryOf(type) ??
+                             (type == ListingModuleType.Advertisement
+                                 ? (int?)ListingModuleCatalog.CategoryOf(SubCategoryType.Private)
+                                 : null),
+                SubCategoryId = (int?)ListingModuleCatalog.SubCategoryOf(type),
+                ApiRoute = ListingModuleCatalog.RouteOf(type) is { Length: > 0 } route ? "/" + route : null,
+                IsSubjectToPayment = AdPaymentCatalog.IsSubjectToPayment(type)
+            })
+            .ToList();
 
     public async Task<AdminAdPaymentSettingsDto> GetSettingsAsync(CancellationToken cancellationToken = default)
     {
@@ -176,9 +194,19 @@ public class AdPaymentService : IAdPaymentService
         return await GetSettingsAsync(cancellationToken);
     }
 
-    public async Task<AdPaymentSubmissionResultDto> SubmitAsync(
+    public Task<AdPaymentSubmissionResultDto> SubmitAsync(
         ListingModuleType type, Guid listingId, string userId, SubmitAdPaymentRequest request,
-        UploadImageModel? screenshot, CancellationToken cancellationToken = default)
+        UploadImageModel? screenshot, CancellationToken cancellationToken = default) =>
+        SubmitCoreAsync(type, listingId, userId, request, screenshot, resubmission: false, cancellationToken);
+
+    public Task<AdPaymentSubmissionResultDto> ResubmitAsync(
+        ListingModuleType type, Guid listingId, string userId, SubmitAdPaymentRequest request,
+        UploadImageModel? screenshot, CancellationToken cancellationToken = default) =>
+        SubmitCoreAsync(type, listingId, userId, request, screenshot, resubmission: true, cancellationToken);
+
+    private async Task<AdPaymentSubmissionResultDto> SubmitCoreAsync(
+        ListingModuleType type, Guid listingId, string userId, SubmitAdPaymentRequest request,
+        UploadImageModel? screenshot, bool resubmission, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -189,8 +217,24 @@ public class AdPaymentService : IAdPaymentService
 
         var listing = await LoadOwnedListingAsync(type, listingId, userId, cancellationToken);
 
-        if (!AdPaymentRules.NeedsNewWindow(listing, DateTime.UtcNow))
-            throw new BadRequestException(AdPaymentRules.NotNeededReason(listing));
+        if (!AdPaymentCatalog.IsSubjectToPayment(type))
+            throw new BadRequestException("النوع ده من الإعلانات مش عليه رسوم نشر.");
+
+        var latest = await _repository.GetLatestForListingAsync(type, listingId, cancellationToken);
+
+        if (resubmission && latest is not { Status: PaymentStatus.Rejected })
+        {
+            throw latest switch
+            {
+                null => new BadRequestException(
+                    "مفيش عملية دفع مرفوضة للإعلان ده عشان تعيد رفعها. استخدم رفع الدفع العادي."),
+                { Status: PaymentStatus.Pending } => new ConflictException(
+                    "إثبات الدفع اللي رفعته لسه قيد المراجعة، ومينفعش تعيد رفعه دلوقتي."),
+                { Status: PaymentStatus.Approved } => new ConflictException(
+                    "تم تأكيد الدفع للإعلان ده بالفعل، ومينفعش تعيد رفعه."),
+                _ => (AppException)new ConflictException("آخر عملية دفع للإعلان ده مش مرفوضة، ومينفعش تعيد رفعها.")
+            };
+        }
 
         if (await _repository.HasPendingAsync(type, listingId, cancellationToken))
             throw new ConflictException("فيه عملية دفع للإعلان ده قيد المراجعة بالفعل. استنى نتيجة المراجعة.");
@@ -198,12 +242,33 @@ public class AdPaymentService : IAdPaymentService
         if (await _repository.HasCreditAsync(type, listingId, cancellationToken))
             throw new ConflictException("تم تأكيد الدفع للإعلان ده بالفعل، ومش محتاج تدفع تاني.");
 
+        if (!AdPaymentRules.NeedsNewWindow(listing, DateTime.UtcNow))
+            throw new BadRequestException(AdPaymentRules.NotNeededReason(listing));
+
+        if (AdPaymentRules.IsGrandfathered(settings.EnabledAt, listing.ModerationStatus, _listings.CreatedAtOf(listing)))
+            throw new BadRequestException("الإعلان ده اتضاف قبل تفعيل رسوم النشر، ومش محتاج دفع.");
+
+        if (request.ExpectedAmount is { } expectedAmount && expectedAmount != settings.Price)
+            throw new ConflictException(
+                $"رسوم نشر الإعلان اتغيرت. الرسوم الحالية {settings.Price:0.##} {settings.Currency}، " +
+                "حدّث الصفحة وراجع المبلغ قبل ما تدفع.");
+
+        if (!string.IsNullOrWhiteSpace(request.ExpectedCurrency) &&
+            !string.Equals(request.ExpectedCurrency.Trim(), settings.Currency, StringComparison.OrdinalIgnoreCase))
+            throw new ConflictException(
+                $"عملة رسوم النشر اتغيرت. العملة الحالية {settings.Currency}، حدّث الصفحة قبل ما تدفع.");
+
         var reference = string.IsNullOrWhiteSpace(request.TransactionReference)
             ? null
             : request.TransactionReference.Trim();
 
         if (reference is { Length: > MaxTransactionReferenceLength })
             throw new BadRequestException($"رقم العملية مينفعش يزيد عن {MaxTransactionReferenceLength} حرف.");
+
+        var notes = string.IsNullOrWhiteSpace(request.Notes) ? null : request.Notes.Trim();
+
+        if (notes is { Length: > AdPaymentCatalog.MaxNotesLength })
+            throw new BadRequestException($"الملاحظات مينفعش تزيد عن {AdPaymentCatalog.MaxNotesLength} حرف.");
 
         var methods = await OfferedMethodsAsync(settings, cancellationToken);
         var method = methods.FirstOrDefault(candidate => candidate.Id == request.PaymentMethodId)
@@ -230,6 +295,7 @@ public class AdPaymentService : IAdPaymentService
             Currency = settings.Currency,
             ScreenshotPath = stored.RelativePath,
             TransactionReference = reference,
+            Notes = notes,
 
             Status = PaymentStatus.Pending,
             SubmittedAt = DateTime.UtcNow,
@@ -288,7 +354,16 @@ public class AdPaymentService : IAdPaymentService
             Currency = payment.Currency,
             PaymentStatus = payment.Status,
             PaymentStatusName = PaymentCatalog.GetStatusName(payment.Status),
-            SubmittedAt = payment.SubmittedAt
+            SubmittedAt = payment.SubmittedAt,
+            PaymentMethodId = payment.PaymentMethodId,
+            PaymentMethodName = payment.PaymentMethodNameSnapshot,
+            TransactionReference = payment.TransactionReference,
+            Notes = payment.Notes,
+            IsResubmission = latest is { Status: PaymentStatus.Rejected },
+            PreviousPaymentSubmissionId = latest is { Status: PaymentStatus.Rejected } ? latest.Id : null,
+            Stage = AdPaymentCatalog.Stages.PaymentUnderReview,
+            StageName = AdPaymentCatalog.Stages.NameOf(AdPaymentCatalog.Stages.PaymentUnderReview),
+            StatusEndpoint = AdPaymentCatalog.SubmitRouteOf(type, listingId)
         };
     }
 
@@ -303,7 +378,12 @@ public class AdPaymentService : IAdPaymentService
         var hasPending = latest is { Status: PaymentStatus.Pending };
         var hasCredit = await _repository.HasCreditAsync(type, listingId, cancellationToken);
 
-        var required = settings.IsEnabled && needsWindow && !hasCredit;
+        var grandfathered = AdPaymentRules.IsGrandfathered(
+            settings.EnabledAt, listing.ModerationStatus, _listings.CreatedAtOf(listing));
+
+        var required = settings.IsEnabled && AdPaymentCatalog.IsSubjectToPayment(type) &&
+                       needsWindow && !grandfathered && !hasCredit;
+        var stage = AdPaymentCatalog.ResolveStage(required, latest?.Status, hasCredit);
 
         return new AdPaymentStatusDto
         {
@@ -324,7 +404,17 @@ public class AdPaymentService : IAdPaymentService
             SubmittedAt = latest?.SubmittedAt,
             ReviewedAt = latest is null ? null : latest.ApprovedAt ?? latest.RejectedAt,
             RejectionReason = latest?.Status == PaymentStatus.Rejected ? latest.RejectReason : null,
-            CurrentPrice = settings.IsEnabled ? settings.Price : null
+            CurrentPrice = settings.IsEnabled ? settings.Price : null,
+            CurrentCurrency = settings.IsEnabled ? settings.Currency : null,
+            CanResubmit = required && !hasPending && latest is { Status: PaymentStatus.Rejected },
+            Stage = stage,
+            StageName = AdPaymentCatalog.Stages.NameOf(stage),
+            AdvertisementTitle = listing.ListingTitle,
+            AdvertisementModerationStatus = listing.ModerationStatus.ToString(),
+            AdvertisementModerationStatusName = ModerationCatalog.NameOf(listing.ModerationStatus),
+            Notes = latest?.Notes,
+            SubmitEndpoint = AdPaymentCatalog.SubmitRouteOf(type, listingId),
+            ResubmitEndpoint = AdPaymentCatalog.ResubmitRouteOf(type, listingId)
         };
     }
 

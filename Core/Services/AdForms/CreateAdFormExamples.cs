@@ -125,6 +125,7 @@ public static class CreateAdFormExamples
             RequiresSubCategory = false,
             Module = schema.Module,
             Submit = schema.Submit,
+            Payment = Services.AdPayments.AdPaymentFormDescriptor.For((int)subCategory),
             Lookups = SampleLookups(schema.RequiredLookups),
             Fields = schema.Fields
         };

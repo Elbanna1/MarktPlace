@@ -20,6 +20,12 @@ public interface IAdPaymentService
         ListingModuleType type, Guid listingId, string userId, SubmitAdPaymentRequest request,
         UploadImageModel? screenshot, CancellationToken cancellationToken = default);
 
+    Task<AdPaymentSubmissionResultDto> ResubmitAsync(
+        ListingModuleType type, Guid listingId, string userId, SubmitAdPaymentRequest request,
+        UploadImageModel? screenshot, CancellationToken cancellationToken = default);
+
+    IReadOnlyList<AdPaymentModuleDto> GetModules();
+
     Task<AdPaymentStatusDto> GetStatusAsync(
         ListingModuleType type, Guid listingId, string userId, CancellationToken cancellationToken = default);
 
@@ -36,10 +42,19 @@ public interface IAdPaymentService
     Task<bool> IsAdPaymentAsync(Guid paymentId, CancellationToken cancellationToken = default);
 }
 
+public sealed record AdPaymentListingSnapshot(
+    ListingModuleType Type, Guid Id, DateTime? CreatedAt, ModerationStatus ModerationStatus, bool OpensNewWindow);
+
 public interface IAdPaymentGate
 {
     Task EnsurePaidAsync(
         ListingModuleType type, Guid listingId, DateTime? listingCreatedAt, CancellationToken cancellationToken = default);
+
+    Task<bool> IsRequiredForNewListingAsync(ListingModuleType type, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyDictionary<(ListingModuleType Type, Guid Id), AdPaymentListingStateDto>> DescribeAsync(
+        IReadOnlyCollection<AdPaymentListingSnapshot> listings, DateTime utcNow,
+        CancellationToken cancellationToken = default);
 
     Task ConsumeAsync(
         ListingModuleType type, Guid listingId, DateTime utcNow, DateTime? windowEnd,

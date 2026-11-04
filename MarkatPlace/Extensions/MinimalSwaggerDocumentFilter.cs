@@ -5,6 +5,14 @@ namespace MarkatPlace.Extensions;
 
 public class MinimalSwaggerDocumentFilter : IDocumentFilter
 {
+    public static readonly IReadOnlySet<string> DocumentedTags = new HashSet<string>(StringComparer.Ordinal)
+    {
+        "Ad Payments"
+    };
+
+    private static bool KeepsDocumentation(OpenApiOperation operation) =>
+        operation.Tags?.Any(tag => DocumentedTags.Contains(tag.Name)) == true;
+
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
         foreach (var tag in swaggerDoc.Tags ?? new List<OpenApiTag>())
@@ -20,6 +28,9 @@ public class MinimalSwaggerDocumentFilter : IDocumentFilter
 
             foreach (var operation in pathItem.Operations.Values)
             {
+                if (KeepsDocumentation(operation))
+                    continue;
+
                 operation.Summary = null;
                 operation.Description = null;
                 operation.ExternalDocs = null;

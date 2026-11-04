@@ -359,6 +359,15 @@ Enforced by three test suites, including a source-wide scan that fails the build
   (402 otherwise). Listings created before `EnabledAt` are exempt. Admin republish is not gated (it is the
   admin's own decision) but consumes a credit when one exists.
 - The generic `/api/v2/admin/payments/{id}/approve|reject` routes delegate ad payments to the same review.
+- Payment is a section of the create-ad form. Creation itself is never blocked: the ad is stored `Pending` and
+  waits for payment; the approval gate is what enforces it, for all 65 types (`AdPaymentCatalog` lists
+  exemptions — currently none).
+- Owner republish needs a **new** payment (the republish resets `CreatedAt`, so grandfathering no longer
+  applies); the republish response says `paymentRequired`. Grandfathering only covers a listing's first
+  approval (pending/rejected listings created before `EnabledAt`).
+- The amount is frozen on the submission. A client may send `ExpectedAmount`/`ExpectedCurrency`; a mismatch
+  with the current settings is a 409, never a silent re-price. A resubmission after rejection uses the current
+  price (`/payment/resubmit`, allowed only when the latest submission is `Rejected`).
 - Screenshots are stored under `FileStorage:PrivateRootPath` (default `<content root>/App_Data/private-uploads`),
   never under the public uploads root, and are streamed only by the admin screenshot endpoint. **Production must
   set `FileStorage__PrivateRootPath` to a folder outside the application directory** or a redeploy deletes them.

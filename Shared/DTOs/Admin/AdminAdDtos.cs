@@ -61,6 +61,9 @@ public class AdminAdListItemDto : IListingStats
 
     public int RepublishCount { get; set; }
 
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public Shared.DTOs.AdPayments.AdPaymentListingStateDto? Payment { get; set; }
+
     [JsonIgnore]
     public ListingModuleType StatsListingType => TypeId;
 
@@ -156,6 +159,9 @@ public class AdminAdDetailsDto : IListingStats
     public bool CanRepublish { get; set; }
 
     public int RepublishCount { get; set; }
+
+    [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)]
+    public Shared.DTOs.AdPayments.AdPaymentListingStateDto? Payment { get; set; }
 
     public IReadOnlyList<string> ImageUrls { get; set; } = Array.Empty<string>();
 

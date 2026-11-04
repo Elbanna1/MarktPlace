@@ -38,6 +38,10 @@ public static class AdPaymentRules
         };
     }
 
+    public static bool IsGrandfathered(DateTime? enabledAt, ModerationStatus status, DateTime? listingCreatedAt) =>
+        status != ModerationStatus.Approved &&
+        enabledAt is { } enabled && listingCreatedAt is { } created && created < enabled;
+
     public static string NotNeededReason(IModeratedListing listing) => listing.ModerationStatus switch
     {
         ModerationStatus.Suspended => "الإعلان ده موقوف من الإدارة، ومينفعش تدفع له دلوقتي.",

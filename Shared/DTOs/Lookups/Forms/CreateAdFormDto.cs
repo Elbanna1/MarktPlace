@@ -21,6 +21,9 @@ public class CreateAdFormDto
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public CreateAdFormSubmitDto? Submit { get; set; }
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public CreateAdFormPaymentDto? Payment { get; set; }
+
     public CreateAdFormLookupsDto Lookups { get; set; } = new();
 
     public IReadOnlyList<FormFieldDto> Fields { get; set; } = Array.Empty<FormFieldDto>();

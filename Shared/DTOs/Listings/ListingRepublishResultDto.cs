@@ -27,4 +27,8 @@ public class ListingRepublishResultDto
     public int RepublishCount { get; set; }
 
     public string Message { get; set; } = default!;
+
+    public bool PaymentRequired { get; set; }
+
+    public string? PaymentEndpoint { get; set; }
 }
