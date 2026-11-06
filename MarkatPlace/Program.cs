@@ -242,6 +242,21 @@ foreach (var uploadFormat in DocumentFormatCatalog.All.Concat(VideoFormatCatalog
         uploadContentTypes.Mappings[extension] = uploadFormat.CanonicalContentType;
 }
 
+var nonPublicUploadPaths = ImageConstants.NonPublicUploadFolders
+    .Select(folder => new PathString($"/{ImageConstants.UploadsRootFolder}/{folder}"))
+    .ToArray();
+
+app.Use(async (context, next) =>
+{
+    if (nonPublicUploadPaths.Any(path => context.Request.Path.StartsWithSegments(path, StringComparison.OrdinalIgnoreCase)))
+    {
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
+        return;
+    }
+
+    await next();
+});
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(uploadsPhysicalRoot),

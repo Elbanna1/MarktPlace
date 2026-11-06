@@ -15,6 +15,7 @@ public class BannerBookingService : IBannerBookingService
     private readonly IBannerBookingRepository _repository;
     private readonly IPaymentService _paymentService;
     private readonly IFileService _fileService;
+    private readonly IPrivateFileStore _privateFiles;
     private readonly INotificationService _notifications;
     private readonly IMapper _mapper;
     private readonly IAdminAuditService _audit;
@@ -28,6 +29,7 @@ public class BannerBookingService : IBannerBookingService
         IBannerBookingRepository repository,
         IPaymentService paymentService,
         IFileService fileService,
+        IPrivateFileStore privateFiles,
         INotificationService notifications,
         IMapper mapper,
         IAdminAuditService audit,
@@ -35,6 +37,7 @@ public class BannerBookingService : IBannerBookingService
         IPublicResponseCache cache,
         ILookupCache cacheVersion)
     {
+        _privateFiles = privateFiles;
         _cache = cache;
         _cacheVersion = cacheVersion;
         _repository = repository;
@@ -268,6 +271,8 @@ public class BannerBookingService : IBannerBookingService
         await EnsureSlotIsFreeAsync(placement, slotNumber, scope, startDate, endDate, null, cancellationToken);
 
         var stored = new List<string>();
+        string? privateProofPath = null;
+        var bookingId = Guid.NewGuid();
         BannerBooking booking;
 
         try
@@ -280,13 +285,13 @@ public class BannerBookingService : IBannerBookingService
                 mobileImage!, ImageConstants.BannerBookingsFolder, cancellationToken);
             stored.Add(mobileFile.RelativePath);
 
-            var proofFile = await _fileService.SaveAsync(
+            var proofFile = await _privateFiles.SaveImageAsync(
                 paymentProof, ImageConstants.BannerBookingProofFolder, cancellationToken);
-            stored.Add(proofFile.RelativePath);
+            privateProofPath = proofFile.RelativePath;
 
             booking = new BannerBooking
             {
-                Id = Guid.NewGuid(),
+                Id = bookingId,
                 UserId = userId,
 
                 Title = request.Title.Trim(),
@@ -334,7 +339,7 @@ public class BannerBookingService : IBannerBookingService
                 AccountNameSnapshot = method.AccountHolderName,
                 InstructionsSnapshot = method.Instructions,
 
-                PaymentProofUrl = proofFile.Url,
+                PaymentProofUrl = BannerBookingCatalog.PaymentProofRoute(bookingId),
                 PaymentProofPath = proofFile.RelativePath,
                 PaymentProofFileName = proofFile.FileName,
                 PaymentStatus = BannerPaymentStatus.Pending,
@@ -351,6 +356,9 @@ public class BannerBookingService : IBannerBookingService
         {
             foreach (var path in stored)
                 _fileService.Delete(path);
+
+            if (privateProofPath is not null)
+                _privateFiles.Delete(privateProofPath);
 
             throw;
         }
@@ -705,7 +713,9 @@ public class BannerBookingService : IBannerBookingService
         var booking = await _repository.GetByIdAsync(id, asNoTracking: false, cancellationToken)
             ?? throw new NotFoundException("حجز الإعلان غير موجود.");
 
-        var paths = new[] { booking.DesktopImagePath, booking.MobileImagePath, booking.PaymentProofPath };
+        var paths = new[] { booking.DesktopImagePath, booking.MobileImagePath };
+        var proofIsPrivate = BannerBookingCatalog.IsPrivateProof(booking.PaymentProofUrl);
+        var proofPath = booking.PaymentProofPath;
 
         _repository.Remove(booking);
         await _repository.SaveChangesAsync(cancellationToken);
@@ -714,6 +724,26 @@ public class BannerBookingService : IBannerBookingService
 
         foreach (var path in paths)
             _fileService.Delete(path);
+
+        if (proofIsPrivate)
+            _privateFiles.Delete(proofPath);
+        else
+            _fileService.Delete(proofPath);
+    }
+
+    public async Task<PrivateFileContent> OpenPaymentProofAsync(
+        Guid id, string userId, bool canViewAsAdmin, CancellationToken cancellationToken = default)
+    {
+        var booking = await _repository.GetByIdAsync(id, asNoTracking: true, cancellationToken);
+
+        if (booking is null || (!canViewAsAdmin && !string.Equals(booking.UserId, userId, StringComparison.Ordinal)))
+            throw new NotFoundException("حجز الإعلان غير موجود.");
+
+        var file = BannerBookingCatalog.IsPrivateProof(booking.PaymentProofUrl)
+            ? _privateFiles.Open(booking.PaymentProofPath)
+            : _fileService.Open(booking.PaymentProofPath);
+
+        return file ?? throw new NotFoundException("صورة إثبات الدفع مش موجودة.");
     }
 
     private readonly record struct PlacementScope(

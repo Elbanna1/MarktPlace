@@ -20,5 +20,7 @@ public interface IFileService
 
     void Delete(string relativePath);
 
+    PrivateFileContent? Open(string relativePath);
+
     string BuildPublicUrl(string relativePath);
 }

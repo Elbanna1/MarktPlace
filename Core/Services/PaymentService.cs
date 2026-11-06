@@ -1,5 +1,6 @@
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.Extensions.Logging;
 using ServicesAbstraction;
 using Shared.Constants;
 using Shared.DTOs.Admin;
@@ -14,24 +15,30 @@ namespace Services;
 public class PaymentService : IPaymentService
 {
     private readonly IPaymentRepository _repository;
+    private readonly IPrivateFileStore _privateFiles;
     private readonly IFileService _fileService;
     private readonly IMapper _mapper;
     private readonly INotificationService _notifications;
     private readonly IAdminAuditService _audit;
     private readonly IAdminAlertService _alerts;
+    private readonly ILogger<PaymentService> _logger;
     private readonly IAdPaymentService? _adPayments;
 
     public PaymentService(
         IPaymentRepository repository,
+        IPrivateFileStore privateFiles,
         IFileService fileService,
         IMapper mapper,
         INotificationService notifications,
         IAdminAuditService audit,
         IAdminAlertService alerts,
+        ILogger<PaymentService> logger,
         IAdPaymentService? adPayments = null)
     {
         _repository = repository;
+        _privateFiles = privateFiles;
         _fileService = fileService;
+        _logger = logger;
         _mapper = mapper;
         _notifications = notifications;
         _audit = audit;
@@ -181,6 +188,9 @@ public class PaymentService : IPaymentService
         var payment = await _repository.GetByIdAsync(id, asNoTracking: true, cancellationToken)
             ?? throw new NotFoundException("عملية الدفع غير موجودة.");
 
+        if (string.Equals(payment.UserId, adminUserId, StringComparison.Ordinal))
+            throw new ForbiddenException("مينفعش تسترد عملية دفع إنت اللي دافعها.");
+
         if (payment.Status != PaymentStatus.Approved)
             throw new BadRequestException("لا يمكن استرداد إلا عملية دفع مؤكدة.");
 
@@ -249,16 +259,46 @@ public class PaymentService : IPaymentService
 
     private Task NotifyPayerAsync(
         Payment payment, string title, string message, string icon, NotificationType type) =>
-        _notifications.CreateAsync(
-            payment.UserId,
-            title,
-            message,
-            type,
-            payment.Id,
-            NotificationReferenceTypes.Payment,
-            NotificationAction.Updated,
-            icon,
-            "عملية الدفع");
+        RunSideEffectAsync(
+            () => _notifications.CreateAsync(
+                payment.UserId,
+                title,
+                message,
+                type,
+                payment.Id,
+                NotificationReferenceTypes.Payment,
+                action: NotificationAction.Updated,
+                icon: icon,
+                entityName: NotificationCatalog.Payment.EntityName,
+                deepLink: $"{NotificationCatalog.Payment.Route}/{payment.Id}"),
+            "payer notification", payment.Id);
+
+    private async Task RunSideEffectAsync(Func<Task> effect, string name, Guid paymentId)
+    {
+        try
+        {
+            await effect();
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Payment {PaymentId}: the {SideEffect} failed.", paymentId, name);
+        }
+    }
+
+    public async Task<PrivateFileContent> OpenScreenshotAsync(
+        Guid id, string userId, bool isAdmin, CancellationToken cancellationToken = default)
+    {
+        var payment = await _repository.GetByIdAsync(id, asNoTracking: true, cancellationToken);
+
+        if (payment is null || (!isAdmin && !string.Equals(payment.UserId, userId, StringComparison.Ordinal)))
+            throw new NotFoundException("عملية الدفع مش موجودة.");
+
+        var file = PaymentCatalog.IsPrivateScreenshot(payment.ScreenshotUrl)
+            ? _privateFiles.Open(payment.ScreenshotPath)
+            : _fileService.Open(payment.ScreenshotPath);
+
+        return file ?? throw new NotFoundException("صورة إيصال الدفع مش موجودة.");
+    }
 
     private async Task<AdminPaymentDetailsDto> BuildAdminDetailsAsync(
         Payment payment, CancellationToken cancellationToken)
@@ -361,7 +401,7 @@ public class PaymentService : IPaymentService
             ?? payment.PaymentMethod?.Name
             ?? string.Empty;
 
-        row.ScreenshotUrl = payment.ScreenshotUrl;
+        row.ScreenshotUrl = PaymentCatalog.AdminScreenshotRoute(payment.Id);
         row.Status = payment.Status;
         row.StatusName = PaymentCatalog.GetStatusName(payment.Status);
         row.SubmittedAt = payment.SubmittedAt;
@@ -383,7 +423,8 @@ public class PaymentService : IPaymentService
         if (!method.IsActive)
             throw new BadRequestException($"طريقة الدفع '{method.Name}' مابقتش متاحة.");
 
-        var stored = await _fileService.SaveAsync(screenshot, ImageConstants.PaymentsFolder, cancellationToken);
+        var stored = await _privateFiles.SaveImageAsync(
+            screenshot, PaymentCatalog.PrivateScreenshotFolder, cancellationToken);
 
         var payment = new Payment
         {
@@ -399,7 +440,6 @@ public class PaymentService : IPaymentService
 
             Amount = request.Amount,
             Currency = PaymentCatalog.DefaultCurrency,
-            ScreenshotUrl = stored.Url,
             ScreenshotPath = stored.RelativePath,
             Notes = string.IsNullOrWhiteSpace(request.Notes) ? null : request.Notes.Trim(),
 
@@ -409,6 +449,8 @@ public class PaymentService : IPaymentService
             Purpose = PaymentPurpose.Unspecified
         };
 
+        payment.ScreenshotUrl = PaymentCatalog.OwnerScreenshotRoute(payment.Id);
+
         try
         {
             await _repository.AddAsync(payment, cancellationToken);
@@ -416,24 +458,34 @@ public class PaymentService : IPaymentService
         }
         catch
         {
-            _fileService.Delete(stored.RelativePath);
+            _privateFiles.Delete(stored.RelativePath);
             throw;
         }
 
-        await _alerts.NotifyNewPaymentAsync(
-            payment.Id, payment.Amount, payment.Currency, method.Name, cancellationToken);
+        await RunSideEffectAsync(
+            async () =>
+            {
+                var payer = (await _repository.GetUserNamesAsync(new[] { userId }, cancellationToken))
+                    .GetValueOrDefault(userId);
 
-        await _notifications.CreateAsync(
-            userId,
-            "استلام الدفع",
-            "💳 تم استلام إثبات الدفع وهو الآن قيد المراجعة.",
-            NotificationType.PaymentSubmitted,
-            payment.Id,
-            NotificationReferenceTypes.Payment,
-            action: NotificationAction.Created,
-            icon: "💳",
-            entityName: NotificationCatalog.Payment.EntityName,
-            deepLink: $"{NotificationCatalog.Payment.Route}/{payment.Id}");
+                await _alerts.NotifyNewPaymentAsync(
+                    payment.Id, payment.Amount, payment.Currency, payer, cancellationToken);
+            },
+            "admin alert", payment.Id);
+
+        await RunSideEffectAsync(
+            () => _notifications.CreateAsync(
+                userId,
+                "استلام الدفع",
+                "💳 تم استلام إثبات الدفع وهو الآن قيد المراجعة.",
+                NotificationType.PaymentSubmitted,
+                payment.Id,
+                NotificationReferenceTypes.Payment,
+                action: NotificationAction.Created,
+                icon: "💳",
+                entityName: NotificationCatalog.Payment.EntityName,
+                deepLink: $"{NotificationCatalog.Payment.Route}/{payment.Id}"),
+            "payer notification", payment.Id);
 
         var created = await _repository.GetByIdAsync(payment.Id, asNoTracking: true, cancellationToken)
             ?? throw new NotFoundException("عملية الدفع مش موجودة.");
@@ -567,20 +619,20 @@ public class PaymentService : IPaymentService
         switch (request.Type)
         {
             case PaymentMethodType.MobileWallet:
-                method.PhoneNumber = Require(request.PhoneNumber, "A wallet phone number is required for a mobile wallet.");
+                method.PhoneNumber = Require(request.PhoneNumber, "رقم المحفظة مطلوب للمحفظة الإلكترونية.");
                 break;
 
             case PaymentMethodType.InstaPay:
                 method.InstaPayIdentifier = Require(
-                    request.InstaPayIdentifier, "An InstaPay address is required for an InstaPay method.");
+                    request.InstaPayIdentifier, "عنوان إنستاباي مطلوب لطريقة إنستاباي.");
                 break;
 
             case PaymentMethodType.BankAccount:
-                method.BankName = Require(request.BankName, "A bank name is required for a bank account.");
+                method.BankName = Require(request.BankName, "اسم البنك مطلوب للحساب البنكي.");
                 method.AccountHolderName = Require(
-                    request.AccountHolderName, "An account holder name is required for a bank account.");
+                    request.AccountHolderName, "اسم صاحب الحساب مطلوب للحساب البنكي.");
                 method.AccountNumber = Require(
-                    request.AccountNumber, "An account number is required for a bank account.");
+                    request.AccountNumber, "رقم الحساب مطلوب للحساب البنكي.");
                 method.Iban = Trim(request.Iban);
                 break;
 

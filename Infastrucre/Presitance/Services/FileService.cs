@@ -86,8 +86,35 @@ public class FileService : IFileService
 
     public void Delete(string relativePath)
     {
+        var physicalPath = ResolveInsideUploads(relativePath);
+
+        if (physicalPath is not null && File.Exists(physicalPath))
+            File.Delete(physicalPath);
+    }
+
+    public PrivateFileContent? Open(string relativePath)
+    {
+        var physicalPath = ResolveInsideUploads(relativePath);
+
+        if (physicalPath is null || !File.Exists(physicalPath))
+            return null;
+
+        var extension = Path.GetExtension(physicalPath);
+
+        var contentType = ImageFormatCatalog.All
+            .FirstOrDefault(format => format.Extensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
+            ?.CanonicalContentType ?? "application/octet-stream";
+
+        var stream = new FileStream(
+            physicalPath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 81920, useAsync: true);
+
+        return new PrivateFileContent(stream, contentType, Path.GetFileName(physicalPath));
+    }
+
+    private string? ResolveInsideUploads(string? relativePath)
+    {
         if (string.IsNullOrWhiteSpace(relativePath))
-            return;
+            return null;
 
         var uploadsRoot = GetUploadsRootPath();
 
@@ -98,11 +125,9 @@ public class FileService : IFileService
         var physicalPath = Path.GetFullPath(
             Path.Combine(uploadsRoot, normalized.Replace('/', Path.DirectorySeparatorChar)));
 
-        if (!physicalPath.StartsWith(uploadsRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
-            return;
-
-        if (File.Exists(physicalPath))
-            File.Delete(physicalPath);
+        return physicalPath.StartsWith(uploadsRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
+            ? physicalPath
+            : null;
     }
 
     public string BuildPublicUrl(string relativePath)

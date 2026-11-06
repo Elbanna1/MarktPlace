@@ -18,10 +18,12 @@ namespace Presentation.Controllers;
 public class BannerBookingsController : ControllerBase
 {
     private readonly IBannerBookingService _bookingService;
+    private readonly IAdminPermissionService _permissions;
 
-    public BannerBookingsController(IBannerBookingService bookingService)
+    public BannerBookingsController(IBannerBookingService bookingService, IAdminPermissionService permissions)
     {
         _bookingService = bookingService;
+        _permissions = permissions;
     }
 
     private string CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -132,6 +134,27 @@ public class BannerBookingsController : ControllerBase
         var result = await _bookingService.GetByIdAsync(id, CurrentUserId, IsAdmin, HttpContext.RequestAborted);
 
         return Ok(ApiResponse<BannerBookingDto>.Ok(result, "تم استرجاع حجز الإعلان."));
+    }
+
+    [HttpGet("{id:guid}/payment-proof")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPaymentProof(Guid id)
+    {
+        var canViewAsAdmin = IsAdmin && (await _permissions.AuthorizeAsync(
+            CurrentUserId, AdminPageCatalog.Keys.BannerRequests, AdminPermission.View,
+            HttpContext.RequestAborted)).Allowed;
+
+        var file = await _bookingService.OpenPaymentProofAsync(
+            id, CurrentUserId, canViewAsAdmin, HttpContext.RequestAborted);
+
+        Response.Headers.CacheControl = "private, no-store";
+        Response.Headers["X-Content-Type-Options"] = "nosniff";
+        Response.Headers["Content-Security-Policy"] = "default-src 'none'; sandbox";
+
+        return File(file.Content, file.ContentType);
     }
 
     [HttpPost("{id:guid}/cancel")]

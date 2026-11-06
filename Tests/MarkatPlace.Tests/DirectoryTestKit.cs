@@ -24,6 +24,8 @@ internal sealed class StubFileService : IFileService
     {
     }
 
+    public PrivateFileContent? Open(string relativePath) => null;
+
     public string BuildPublicUrl(string relativePath) => "https://example.test" + relativePath;
 
     private static StoredFile Stored(UploadImageModel file, string folder)

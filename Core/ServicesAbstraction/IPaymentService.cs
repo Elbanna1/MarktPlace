@@ -15,6 +15,9 @@ public interface IPaymentService
     Task<PaymentDetailsDto> GetByIdAsync(
         Guid id, string userId, bool isAdmin = false, CancellationToken cancellationToken = default);
 
+    Task<PrivateFileContent> OpenScreenshotAsync(
+        Guid id, string userId, bool isAdmin, CancellationToken cancellationToken = default);
+
     Task<PaymentDetailsDto> SubmitAsync(
         string userId,
         SubmitPaymentRequest request,

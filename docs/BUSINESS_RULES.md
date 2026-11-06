@@ -373,4 +373,9 @@ Enforced by three test suites, including a source-wide scan that fails the build
 - Screenshots are stored under `FileStorage:PrivateRootPath` (default `<content root>/App_Data/private-uploads`),
   never under the public uploads root, and are streamed only by the admin screenshot endpoint. **Production must
   set `FileStorage__PrivateRootPath` to a folder outside the application directory** or a redeploy deletes them.
+- **Every payment receipt is private** — ad payments, general payments (`/api/payments`) and banner bookings.
+  New receipts go to the private store; receipts saved before 2026-11-06 stay where they are under
+  `uploads/payments` and `uploads/banner-bookings-proof`, but the application (and the committed Nginx site)
+  answers 404 for those two folders, and every API response points at an authenticated route that streams the
+  file to its owner or an authorised admin, wherever it is stored. See D-47.
 

@@ -46,6 +46,21 @@ public class AdminPaymentsController : AdminApiController
         return Ok(ApiResponse<AdminPaymentDetailsDto>.Ok(result, "تم استرجاع عملية الدفع."));
     }
 
+    [RequireAdminPermission(AdminPermission.View)]
+    [HttpGet("{id:guid}/screenshot")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetScreenshot(Guid id)
+    {
+        var file = await _payments.OpenScreenshotAsync(id, CurrentAdminId, isAdmin: true, RequestAborted);
+
+        Response.Headers.CacheControl = "private, no-store";
+        Response.Headers["X-Content-Type-Options"] = "nosniff";
+        Response.Headers["Content-Security-Policy"] = "default-src 'none'; sandbox";
+
+        return File(file.Content, file.ContentType);
+    }
+
     [RequireAdminPermission(AdminPermission.Approve)]
     [HttpPatch("{id:guid}/approve")]
     [ProducesResponseType(typeof(ApiResponse<AdminPaymentDetailsDto>), StatusCodes.Status200OK)]

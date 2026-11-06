@@ -69,4 +69,19 @@ public class PaymentsController : ControllerBase
         var result = await _paymentService.GetByIdAsync(id, CurrentUserId, IsAdmin, HttpContext.RequestAborted);
         return Ok(ApiResponse<PaymentDetailsDto>.Ok(result, UserMessages.Payments.DetailsLoaded));
     }
+
+    [HttpGet("{id:guid}/screenshot")]
+    [Produces("image/jpeg", "image/png", "image/webp", "application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetScreenshot(Guid id)
+    {
+        var file = await _paymentService.OpenScreenshotAsync(id, CurrentUserId, IsAdmin, HttpContext.RequestAborted);
+
+        Response.Headers.CacheControl = "private, no-store";
+        Response.Headers["X-Content-Type-Options"] = "nosniff";
+        Response.Headers["Content-Security-Policy"] = "default-src 'none'; sandbox";
+
+        return File(file.Content, file.ContentType);
+    }
 }

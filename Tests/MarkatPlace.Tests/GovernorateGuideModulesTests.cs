@@ -542,6 +542,8 @@ public class ListingMediaFileInterceptorTests
 
         public void Delete(string relativePath) => Deleted.Add(relativePath);
 
+        public PrivateFileContent? Open(string relativePath) => _inner.Open(relativePath);
+
         public string BuildPublicUrl(string relativePath) => _inner.BuildPublicUrl(relativePath);
     }
 

@@ -16,6 +16,16 @@ public static class PaymentCatalog
 
     public const int MaxReviewFeedbackLength = 1000;
 
+    public const string PrivateScreenshotFolder = "payments";
+
+    public static string OwnerScreenshotRoute(Guid paymentId) => $"/api/payments/{paymentId}/screenshot";
+
+    public static string AdminScreenshotRoute(Guid paymentId) =>
+        $"/{ApiVersions.AdminRoutePrefix}/payments/{paymentId}/screenshot";
+
+    public static bool IsPrivateScreenshot(string? screenshotUrl) =>
+        screenshotUrl is not null && screenshotUrl.StartsWith("/api/", StringComparison.Ordinal);
+
     public static readonly IReadOnlyDictionary<PaymentMethodType, string> MethodTypeNames =
         new Dictionary<PaymentMethodType, string>
         {

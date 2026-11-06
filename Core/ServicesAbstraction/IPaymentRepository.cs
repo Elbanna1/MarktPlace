@@ -25,9 +25,6 @@ public interface IPaymentRepository
     Task<IReadOnlyList<Payment>> GetByUserAsync(
         string userId, PaymentStatus? status = null, CancellationToken cancellationToken = default);
 
-    Task<(IReadOnlyList<Payment> Items, int TotalCount)> GetPagedAsync(
-        PaymentFilterParams filter, CancellationToken cancellationToken = default);
-
     Task<(IReadOnlyList<Payment> Items, int TotalCount)> GetPagedForAdminAsync(
         Shared.DTOs.Admin.AdminPaymentFilterParams filter, CancellationToken cancellationToken = default);
 
@@ -40,8 +37,6 @@ public interface IPaymentRepository
         IReadOnlyCollection<string> userIds, CancellationToken cancellationToken = default);
 
     Task AddAsync(Payment payment, CancellationToken cancellationToken = default);
-
-    void Update(Payment payment);
 
     Task<int> TransitionAsync(
         Guid id, PaymentStatus from, PaymentStatus to, string reviewerId, string? reason, string? feedback,

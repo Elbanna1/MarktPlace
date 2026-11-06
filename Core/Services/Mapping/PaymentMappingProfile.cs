@@ -31,9 +31,11 @@ public class PaymentMappingProfile : Profile
             .ForMember(d => d.TypeName, o => o.MapFrom(s => PaymentCatalog.GetMethodTypeName(s.Type)));
 
         CreateMap<Payment, PaymentListItemDto>()
-            .ForMember(d => d.StatusName, o => o.MapFrom(s => PaymentCatalog.GetStatusName(s.Status)));
+            .ForMember(d => d.StatusName, o => o.MapFrom(s => PaymentCatalog.GetStatusName(s.Status)))
+            .ForMember(d => d.ScreenshotUrl, o => o.MapFrom(s => PaymentCatalog.OwnerScreenshotRoute(s.Id)));
 
         CreateMap<Payment, PaymentDetailsDto>()
-            .ForMember(d => d.StatusName, o => o.MapFrom(s => PaymentCatalog.GetStatusName(s.Status)));
+            .ForMember(d => d.StatusName, o => o.MapFrom(s => PaymentCatalog.GetStatusName(s.Status)))
+            .ForMember(d => d.ScreenshotUrl, o => o.MapFrom(s => PaymentCatalog.OwnerScreenshotRoute(s.Id)));
     }
 }

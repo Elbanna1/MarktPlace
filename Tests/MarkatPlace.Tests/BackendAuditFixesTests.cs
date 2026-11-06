@@ -98,6 +98,7 @@ public class BackendAuditFixesTests
         new(repository,
             SilentProxy<IPaymentService>.Create(),
             SilentProxy<IFileService>.Create(),
+            SilentProxy<IPrivateFileStore>.Create(),
             SilentProxy<INotificationService>.Create(),
             null!,
             SilentProxy<IAdminAuditService>.Create(),

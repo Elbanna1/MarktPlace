@@ -67,19 +67,23 @@ public class AdPaymentRepository : IAdPaymentRepository
         ListingModuleType type, Guid listingId, DateTime utcNow, DateTime? windowEnd,
         CancellationToken cancellationToken = default)
     {
-        var credit = await ForListing(type, listingId)
+        var creditId = await ForListing(type, listingId)
             .Where(payment => payment.Status == PaymentStatus.Approved && payment.ActivatedAt == null)
             .OrderBy(payment => payment.ApprovedAt)
+            .Select(payment => (Guid?)payment.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (credit is null)
+        if (creditId is not { } id)
             return 0;
 
-        credit.ActivatedAt = utcNow;
-        credit.ActivationStartAt = utcNow;
-        credit.ActivationEndAt = windowEnd;
-
-        return await _context.SaveChangesAsync(cancellationToken);
+        return await _context.Payments
+            .Where(payment => payment.Id == id &&
+                              payment.Status == PaymentStatus.Approved &&
+                              payment.ActivatedAt == null)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(payment => payment.ActivatedAt, utcNow)
+                .SetProperty(payment => payment.ActivationStartAt, utcNow)
+                .SetProperty(payment => payment.ActivationEndAt, windowEnd), cancellationToken);
     }
 
     public async Task<Payment?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>

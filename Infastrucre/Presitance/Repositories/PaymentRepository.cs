@@ -197,45 +197,8 @@ public class PaymentRepository : IPaymentRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<(IReadOnlyList<Payment> Items, int TotalCount)> GetPagedAsync(
-        PaymentFilterParams filter, CancellationToken cancellationToken = default)
-    {
-        var query = _context.Payments.AsNoTracking().AsQueryable();
-
-        if (filter.Status is { } status)
-            query = query.Where(p => p.Status == status);
-
-        if (!string.IsNullOrWhiteSpace(filter.UserId))
-        {
-            var userId = filter.UserId.Trim();
-            query = query.Where(p => p.UserId == userId);
-        }
-
-        if (filter.PaymentMethodId is { } methodId)
-            query = query.Where(p => p.PaymentMethodId == methodId);
-
-        if (filter.FromDate is { } from)
-            query = query.Where(p => p.SubmittedAt >= from);
-
-        if (filter.ToDate is { } to)
-            query = query.Where(p => p.SubmittedAt <= to);
-
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        var items = await query
-            .Include(p => p.PaymentMethod)
-            .OrderByDescending(p => p.SubmittedAt)
-            .Skip((filter.PageIndex - 1) * filter.PageSize)
-            .Take(filter.PageSize)
-            .ToListAsync(cancellationToken);
-
-        return (items, totalCount);
-    }
-
     public async Task AddAsync(Payment payment, CancellationToken cancellationToken = default) =>
         await _context.Payments.AddAsync(payment, cancellationToken);
-
-    public void Update(Payment payment) => _context.Payments.Update(payment);
 
     public Task<int> TransitionAsync(
         Guid id, PaymentStatus from, PaymentStatus to, string reviewerId, string? reason, string? feedback,

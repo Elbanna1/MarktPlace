@@ -40,6 +40,8 @@ public static class ImageConstants
 
     public const string BannerBookingProofFolder = "banner-bookings-proof";
 
+    public static readonly IReadOnlyList<string> NonPublicUploadFolders = new[] { PaymentsFolder, BannerBookingProofFolder };
+
     public const string BannerBookingPreviewFolder = "banner-bookings-preview";
 
     public const string FeedbackFolder = "feedback";

@@ -6,6 +6,11 @@ public static class BannerBookingCatalog
 {
     public const int DefaultDurationDays = 30;
 
+    public static string PaymentProofRoute(Guid bookingId) => $"/api/banner-bookings/{bookingId}/payment-proof";
+
+    public static bool IsPrivateProof(string? paymentProofUrl) =>
+        paymentProofUrl is not null && paymentProofUrl.StartsWith("/api/", StringComparison.Ordinal);
+
     public const int MinDurationDays = 1;
 
     public const int MaxDurationDays = 365;

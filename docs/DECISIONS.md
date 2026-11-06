@@ -909,3 +909,22 @@ of them and a half-created ad on every image failure anyway.
 **Consequence.** An unpaid ad exists but is invisible; the owner can retry the payment call alone. Admin rows
 carry `payment.stage` so the moderation queue can tell unpaid ads apart. The create-ad-form `payment`
 descriptor is static (so the form stays HTTP-cacheable); the live switch is `GET /api/v2/ad-payment/config`.
+
+## D-47 — Payment receipts are served only through authenticated routes; legacy files are not moved
+
+**Decision.** Receipts for general payments and banner bookings are saved through `IPrivateFileStore` (folder
+`payments` / `banner-bookings-proof` under `FileStorage:PrivateRootPath`), like ad-payment receipts already were.
+Every DTO returns an authenticated route instead of a file URL: `/api/payments/{id}/screenshot` (owner/admin),
+`/api/v2/admin/payments/{id}/screenshot` (Payments page, View) and `/api/banner-bookings/{id}/payment-proof`
+(owner, or admin with View on Banner Requests). Those routes serve a legacy receipt from the public uploads root
+and a new one from the private store, decided by the stored URL (`/api/...` = private). Direct requests to
+`/uploads/payments/*` and `/uploads/banner-bookings-proof/*` are refused by `Program.cs` and by the committed
+Nginx site (`ImageConstants.NonPublicUploadFolders`).
+
+**Why.** Receipts show names, phone numbers and balances, and Nginx serves `/uploads` from disk to anyone with
+a URL. Moving the existing files would touch customer data in production; closing the two folders and routing
+every read through an ownership/permission check removes the exposure without moving or deleting anything.
+
+**Consequence.** The frontend must load receipts with the bearer token (fetch → blob URL), not as a bare
+`<img src>`. The Nginx rule takes effect only after the site file is installed on the server. Moving legacy
+files into the private store remains optional and needs explicit approval.

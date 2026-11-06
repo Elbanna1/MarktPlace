@@ -39,6 +39,7 @@ public class BannerBookingMappingProfile : Profile
             .ForMember(d => d.DurationDays, o => o.MapFrom(s => s.DurationDays))
             .ForMember(d => d.DurationDisplay, o => o.MapFrom(s => BannerBookingCatalog.FormatDuration(s.DurationDays)))
             .ForMember(d => d.PriceDisplay, o => o.MapFrom(s => BannerPlacementPresenter.FormatPrice(s.Price)))
+            .ForMember(d => d.PaymentProofUrl, o => o.MapFrom(s => BannerBookingCatalog.PaymentProofRoute(s.Id)))
             .ForMember(d => d.IsLive, o => o.Ignore())
             .ForMember(d => d.Preview, o => o.Ignore())
             .ForMember(d => d.Summary, o => o.Ignore())

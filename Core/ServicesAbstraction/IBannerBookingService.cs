@@ -44,6 +44,9 @@ public interface IBannerBookingService
 
     Task<BannerBookingDto> CancelAsync(Guid id, string userId, CancellationToken cancellationToken = default);
 
+    Task<PrivateFileContent> OpenPaymentProofAsync(
+        Guid id, string userId, bool canViewAsAdmin, CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<PublishedBannerDto>> GetPublishedAsync(
         BannerLocation? location = null,
         int? categoryId = null,
