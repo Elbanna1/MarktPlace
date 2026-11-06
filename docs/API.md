@@ -467,11 +467,11 @@ Every route requires the `Admin` role **and** the specific page permission. See
 | `PATCH` | `/ads/{type}/{id}/republish` | **Admin republish**: restart the 30-day window (approved listings, ≤ 5 days left or expired, every module). Returns `publishedAt`, `expireAt`, `previousExpireAt`, `remainingDays`, `republishCount`, `status` |
 | `DELETE` | `/ads/{type}/{id}` | Delete any listing |
 | `GET` | `/moderation/overview` | |
-| `PATCH` | `/payments/{id}/approve`, `/reject` | Manual payment decisions |
+| `PATCH` | `/payments/{id}/approve`, `/reject`, `/refund` | Manual payment decisions. Approve takes an optional `{ "feedback" }`; reject takes `{ "reason"?, "feedback"? }` (both optional); refund takes `{ "reason" }`. Decisions are atomic (409 on a concurrent decision) and an admin cannot decide their own payment. Ad payments are delegated to the ad-payment review |
 | `GET`/`PUT` | `/ad-payment/settings` | Advertisement payment settings: `isEnabled`, `price`, `currency`, `instructions`, `paymentMethodIds` (empty = every active method). Account details live on `/payment-methods` |
 | `GET` | `/ad-payment/submissions` | Ad payment queue (default `status=Pending`; also `type`, `categoryId`, `advertisementId`, `userId`, `fromDate`, `toDate`) |
 | `GET` | `/ad-payment/submissions/{id}`, `/ad-payment/submissions/{id}/screenshot` | One submission; the screenshot is streamed only to admins (`private, no-store`) |
-| `PATCH` | `/ad-payment/submissions/{id}/review` | `{ "decision": "Approved" \| "Rejected", "rejectionReason" }` — approval of an expired ad runs the admin republish; approval of a pending ad leaves it for moderation |
+| `PATCH` | `/ad-payment/submissions/{id}/review` | `{ "decision": "Approved" \| "Rejected", "rejectionReason"?, "feedback"? }` — both texts optional; `Approved` needs the **Approve** permission on the payments page and `Rejected` needs **Reject**. Approval of an expired ad runs the admin republish; approval of a pending ad leaves it for moderation |
 | `GET` | `/ad-payment/history` | Every ad payment, any status, same filters |
 | `PATCH` | `/banner-requests/{id}/approve`, `/reject`, `/approve-payment`, `/reject-payment` | Banner bookings |
 | — | `/users`, `/categories`, `/locations`, `/banners`, `/reports`, `/feedback`, `/referrals`, `/forms`, `/home`, `/settings`, `/audit-logs` | Dashboard pages |

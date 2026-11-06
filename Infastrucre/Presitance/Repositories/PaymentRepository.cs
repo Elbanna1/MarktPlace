@@ -237,6 +237,38 @@ public class PaymentRepository : IPaymentRepository
 
     public void Update(Payment payment) => _context.Payments.Update(payment);
 
+    public Task<int> TransitionAsync(
+        Guid id, PaymentStatus from, PaymentStatus to, string reviewerId, string? reason, string? feedback,
+        DateTime utcNow, CancellationToken cancellationToken = default)
+    {
+        var current = _context.Payments.Where(payment => payment.Id == id && payment.Status == from);
+
+        return to switch
+        {
+            PaymentStatus.Approved => current.ExecuteUpdateAsync(setters => setters
+                .SetProperty(payment => payment.Status, PaymentStatus.Approved)
+                .SetProperty(payment => payment.ApprovedAt, utcNow)
+                .SetProperty(payment => payment.ApprovedBy, reviewerId)
+                .SetProperty(payment => payment.RejectedAt, (DateTime?)null)
+                .SetProperty(payment => payment.RejectReason, (string?)null)
+                .SetProperty(payment => payment.ReviewFeedback, feedback), cancellationToken),
+
+            PaymentStatus.Rejected => current.ExecuteUpdateAsync(setters => setters
+                .SetProperty(payment => payment.Status, PaymentStatus.Rejected)
+                .SetProperty(payment => payment.RejectedAt, utcNow)
+                .SetProperty(payment => payment.ApprovedAt, (DateTime?)null)
+                .SetProperty(payment => payment.ApprovedBy, reviewerId)
+                .SetProperty(payment => payment.RejectReason, reason)
+                .SetProperty(payment => payment.ReviewFeedback, feedback), cancellationToken),
+
+            PaymentStatus.Refunded => current.ExecuteUpdateAsync(setters => setters
+                .SetProperty(payment => payment.Status, PaymentStatus.Refunded)
+                .SetProperty(payment => payment.RejectReason, reason), cancellationToken),
+
+            _ => throw new ArgumentOutOfRangeException(nameof(to), to, "Unsupported payment transition.")
+        };
+    }
+
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         _context.SaveChangesAsync(cancellationToken);
 }

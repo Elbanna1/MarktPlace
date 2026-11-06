@@ -31,6 +31,8 @@ public enum NotificationType
 
     PaymentRejected = 19,
 
+    PaymentRefunded = 59,
+
     ListingPublished = 20,
 
     ListingUpdated = 21,

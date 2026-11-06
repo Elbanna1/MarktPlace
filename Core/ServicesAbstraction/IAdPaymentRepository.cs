@@ -33,8 +33,8 @@ public interface IAdPaymentRepository
         AdminAdPaymentFilterParams filter, CancellationToken cancellationToken = default);
 
     Task<int> DecideAsync(
-        Guid id, PaymentStatus decision, string reviewerId, string? rejectionReason, DateTime utcNow,
-        CancellationToken cancellationToken = default);
+        Guid id, PaymentStatus decision, string reviewerId, string? rejectionReason, string? feedback,
+        DateTime utcNow, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyDictionary<(ListingModuleType Type, Guid Id), AdPaymentListingSummary>> GetListingSummariesAsync(
         IReadOnlyCollection<(ListingModuleType Type, Guid Id)> listings, CancellationToken cancellationToken = default);

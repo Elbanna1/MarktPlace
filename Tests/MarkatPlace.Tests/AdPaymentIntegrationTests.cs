@@ -11,7 +11,7 @@ using Xunit;
 namespace MarkatPlace.Tests;
 
 [Collection(LifecycleApiCollection.Name)]
-public class AdPaymentIntegrationTests
+public partial class AdPaymentIntegrationTests
 {
     private const ListingModuleType Cars = ListingModuleType.Advertisement;
 
@@ -165,8 +165,10 @@ public class AdPaymentIntegrationTests
 
             Assert.Equal(HttpStatusCode.Forbidden,
                 (await owner.PatchAsync(reviewUrl, Json(new { decision = "Approved" }))).StatusCode);
-            Assert.Equal(HttpStatusCode.BadRequest,
-                (await _api.Admin.PatchAsync(reviewUrl, Json(new { decision = "Rejected" }))).StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, (await _api.Admin.PatchAsync(reviewUrl,
+                Json(new { decision = "Rejected", rejectionReason = new string('x', 501) }))).StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, (await _api.Admin.PatchAsync(reviewUrl,
+                Json(new { decision = "Rejected", feedback = new string('x', 1001) }))).StatusCode);
             Assert.Equal(HttpStatusCode.BadRequest,
                 (await _api.Admin.PatchAsync(reviewUrl, Json(new { decision = "Maybe" }))).StatusCode);
 
@@ -312,6 +314,119 @@ public class AdPaymentIntegrationTests
     }
 
     [LocalDbFact]
+    public async Task Approve_and_reject_on_the_review_endpoint_need_their_own_permissions()
+    {
+        await WithPaymentsDisabledAfterAsync(async () =>
+        {
+            await EnableAsync(55m);
+
+            var approver = await CreatePaymentsAdminAsync("View", "Approve");
+            var rejecter = await CreatePaymentsAdminAsync("View", "Reject");
+            var viewer = await CreatePaymentsAdminAsync("View");
+
+            var (ownerId, owner) = await _api.CreateOwnerAsync();
+            var methodId = await FirstMethodIdAsync();
+
+            var listing = await _api.SeedAsync(Generic, ownerId, "صلاحيات-" + Guid.NewGuid().ToString("N"));
+            var firstPayment = (await SubmitOkAsync(owner, $"/api/v2/ads/{Generic}/{listing}/payment", methodId))
+                .GetProperty("paymentSubmissionId").GetGuid();
+            var firstReview = $"/api/v2/admin/ad-payment/submissions/{firstPayment}/review";
+
+            Assert.Equal(HttpStatusCode.Forbidden, (await approver.PatchAsync(firstReview,
+                Json(new { decision = "Rejected", rejectionReason = "مش واضح" }))).StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, (await viewer.PatchAsync(firstReview,
+                Json(new { decision = "Approved" }))).StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, (await rejecter.PatchAsync(firstReview,
+                Json(new { decision = "Approved" }))).StatusCode);
+
+            var rejected = await PatchOkAsync(rejecter, firstReview,
+                new { decision = "Rejected", rejectionReason = "مش واضح" });
+            Assert.Equal((int)PaymentStatus.Rejected,
+                rejected.GetProperty("payment").GetProperty("paymentStatus").GetInt32());
+
+            var second = (await SubmitOkAsync(owner, $"/api/v2/ads/{Generic}/{listing}/payment/resubmit", methodId))
+                .GetProperty("paymentSubmissionId").GetGuid();
+            var secondReview = $"/api/v2/admin/ad-payment/submissions/{second}/review";
+
+            var approved = await PatchOkAsync(approver, secondReview, new { decision = "Approved" });
+            Assert.Equal((int)PaymentStatus.Approved,
+                approved.GetProperty("payment").GetProperty("paymentStatus").GetInt32());
+
+            Assert.Equal(HttpStatusCode.Conflict,
+                (await approver.PatchAsync(secondReview, Json(new { decision = "Approved" }))).StatusCode);
+        });
+    }
+
+    [LocalDbFact]
+    public async Task The_last_method_offered_for_ad_payments_cannot_be_withdrawn_while_payments_are_on()
+    {
+        var first = await CreateMethodAsync();
+        var second = await CreateMethodAsync();
+
+        try
+        {
+            await WithPaymentsDisabledAfterAsync(async () =>
+            {
+                await PutOkAsync(_api.Admin, SettingsUrl,
+                    new { isEnabled = true, price = 80, paymentMethodIds = new[] { first, second } });
+
+                await PatchOkAsync(_api.Admin, $"{MethodsUrl}/{second}/status", new { isActive = false });
+
+                var settings = await DataAsync(_api.Admin, SettingsUrl);
+                var ids = settings.GetProperty("paymentMethodIds").EnumerateArray().Select(id => id.GetInt32()).ToArray();
+                Assert.Equal(new[] { first }, ids);
+                Assert.False(settings.GetProperty("usesAllActiveMethods").GetBoolean());
+
+                await PutOkAsync(_api.Admin, SettingsUrl, new { isEnabled = true, price = 90, paymentMethodIds = ids });
+
+                var offered = (await DataAsync(_api.Anonymous, ConfigUrl)).GetProperty("paymentMethods");
+                Assert.Equal(first, Assert.Single(offered.EnumerateArray()).GetProperty("id").GetInt32());
+
+                Assert.Equal(HttpStatusCode.Conflict, (await _api.Admin.PatchAsync(
+                    $"{MethodsUrl}/{first}/status", Json(new { isActive = false }))).StatusCode);
+                Assert.Equal(HttpStatusCode.Conflict, (await _api.Admin.DeleteAsync($"{MethodsUrl}/{first}")).StatusCode);
+                Assert.True((await DataAsync(_api.Admin, $"{MethodsUrl}/{first}")).GetProperty("isActive").GetBoolean());
+
+                var (ownerId, owner) = await _api.CreateOwnerAsync();
+                var listing = await _api.SeedAsync(Generic, ownerId, "وسيلة-معطلة-" + Guid.NewGuid().ToString("N"));
+                Assert.Equal(HttpStatusCode.BadRequest,
+                    (await SubmitAsync(owner, $"/api/v2/ads/{Generic}/{listing}/payment", second)).StatusCode);
+
+                await PutOkAsync(_api.Admin, SettingsUrl, new { isEnabled = false, price = 90 });
+                await PatchOkAsync(_api.Admin, $"{MethodsUrl}/{first}/status", new { isActive = false });
+            });
+        }
+        finally
+        {
+            await _api.Admin.PatchAsync($"{MethodsUrl}/{first}/status", Json(new { isActive = false }));
+            await _api.Admin.PatchAsync($"{MethodsUrl}/{second}/status", Json(new { isActive = false }));
+        }
+    }
+
+    [LocalDbFact]
+    public async Task Generic_payment_decisions_send_the_matching_notification_type()
+    {
+        await WithPaymentsDisabledAfterAsync(async () =>
+        {
+            await EnableAsync(65m);
+
+            var (ownerId, owner) = await _api.CreateOwnerAsync();
+            var methodId = await FirstMethodIdAsync();
+            var id = await _api.SeedAsync(Generic, ownerId, "إشعار-" + Guid.NewGuid().ToString("N"));
+            var paymentUrl = $"/api/v2/ads/{Generic}/{id}/payment";
+
+            var rejectedId = (await SubmitOkAsync(owner, paymentUrl, methodId)).GetProperty("paymentSubmissionId").GetGuid();
+            await PatchOkAsync(_api.Admin, $"/api/v2/admin/payments/{rejectedId}/reject", new { reason = "غير واضح" });
+            Assert.Equal(1, await CountNotificationsAsync(ownerId, NotificationType.PaymentRejected));
+
+            var approvedId = (await SubmitOkAsync(owner, paymentUrl, methodId)).GetProperty("paymentSubmissionId").GetGuid();
+            await PatchOkAsync(_api.Admin, $"/api/v2/admin/payments/{approvedId}/approve", new { });
+            Assert.Equal(1, await CountNotificationsAsync(ownerId, NotificationType.PaymentApproved));
+            Assert.Equal(2, await CountNotificationsAsync(ownerId, NotificationType.PaymentSubmitted));
+        });
+    }
+
+    [LocalDbFact]
     public async Task The_existing_payments_screen_approves_an_ad_payment_through_the_same_workflow()
     {
         await WithPaymentsDisabledAfterAsync(async () =>
@@ -348,17 +463,35 @@ public class AdPaymentIntegrationTests
             Assert.Equal(HttpStatusCode.PaymentRequired,
                 (await _api.Admin.PatchAsync($"/api/v2/admin/ads/{(int)module}/{id}/approve", Json(new { }))).StatusCode);
 
-            var paymentId = (await SubmitOkAsync(owner, paymentUrl, await FirstMethodIdAsync()))
-                .GetProperty("paymentSubmissionId").GetGuid();
+            var before = await DataAsync(owner, paymentUrl);
+            Assert.Equal("AwaitingPayment", before.GetProperty("stage").GetString());
+            Assert.Equal(25m, before.GetProperty("currentPrice").GetDecimal());
+
+            var submitted = await SubmitOkAsync(owner, paymentUrl, await FirstMethodIdAsync(), tamperedAmount: "1");
+            Assert.Equal(25m, submitted.GetProperty("amount").GetDecimal());
+            var paymentId = submitted.GetProperty("paymentSubmissionId").GetGuid();
+
+            Assert.Equal("PaymentUnderReview", (await DataAsync(owner, paymentUrl)).GetProperty("stage").GetString());
+
+            var queued = await DataAsync(_api.Admin, $"/api/v2/admin/ad-payment/submissions?type={module}&advertisementId={id}");
+            Assert.Equal((int)module, Assert.Single(queued.GetProperty("items").EnumerateArray())
+                .GetProperty("advertisementType").GetInt32());
 
             await PatchOkAsync(_api.Admin,
                 $"/api/v2/admin/ad-payment/submissions/{paymentId}/review", new { decision = "Approved" });
+
+            Assert.Equal(ModerationStatus.Pending, (await _api.ReadAsync(module, id)).ModerationStatus);
 
             await PatchOkAsync(_api.Admin, $"/api/v2/admin/ads/{(int)module}/{id}/approve", new { });
 
             var feed = await FeedAsync(module, id);
             Assert.Contains(id.ToString(), (await GetAsync(_api.Anonymous, feed)).Body);
             Assert.NotNull(await ConsumedAtAsync(paymentId));
+            Assert.Equal("Paid", (await DataAsync(owner, paymentUrl)).GetProperty("stage").GetString());
+
+            Assert.Equal(module, (await SingleNotificationAsync(ownerId, NotificationType.PaymentSubmitted, paymentId)).ListingType);
+            Assert.Equal(module, (await SingleNotificationAsync(ownerId, NotificationType.PaymentApproved, paymentId)).ListingType);
+            Assert.Equal(module, (await SingleNotificationAsync(_api.AdminId, NotificationType.AdminNewPayment, paymentId)).ListingType);
         });
     }
 
@@ -525,6 +658,42 @@ public class AdPaymentIntegrationTests
 
             await PatchOkAsync(_api.Admin, $"/api/v2/admin/ads/{(int)Generic}/{id}/approve", new { });
         });
+    }
+
+    private const string MethodsUrl = "/api/v2/admin/payment-methods";
+
+    private async Task<HttpClient> CreatePaymentsAdminAsync(params string[] permissions) =>
+        (await CreatePaymentsAdminWithIdAsync(permissions)).Client;
+
+    private async Task<(string Id, HttpClient Client)> CreatePaymentsAdminWithIdAsync(params string[] permissions)
+    {
+        var (userId, client) = await _api.CreateOwnerAsync();
+
+        var response = await _api.Admin.PostAsync("/api/v2/admin/admins", Json(new
+        {
+            userId,
+            pages = new[] { new { pageKey = "payments", permissions } }
+        }));
+
+        Assert.True(response.IsSuccessStatusCode,
+            $"promote: {(int)response.StatusCode} {await response.Content.ReadAsStringAsync()}");
+
+        return (userId, client);
+    }
+
+    private async Task<int> CreateMethodAsync()
+    {
+        var response = await _api.Admin.PostAsync(MethodsUrl, Json(new
+        {
+            name = "Test Wallet " + Guid.NewGuid().ToString("N")[..10],
+            arabicName = "محفظة اختبار",
+            type = (int)PaymentMethodType.MobileWallet,
+            phoneNumber = "01000000000",
+            isActive = true,
+            displayOrder = 900
+        }));
+
+        return (await ReadCreatedAsync(response)).GetProperty("id").GetInt32();
     }
 
     private const string UserConfigUrl = "/api/v2/ad-payment/config";

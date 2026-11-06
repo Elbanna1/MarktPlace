@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Shared.Constants;
@@ -21,6 +21,7 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.ScreenshotPath).IsRequired().HasMaxLength(500);
         builder.Property(p => p.Notes).HasMaxLength(PaymentCatalog.MaxNotesLength);
         builder.Property(p => p.RejectReason).HasMaxLength(PaymentCatalog.MaxRejectReasonLength);
+        builder.Property(p => p.ReviewFeedback).HasMaxLength(PaymentCatalog.MaxReviewFeedbackLength);
 
         builder.Property(p => p.PaymentMethodNameSnapshot).HasMaxLength(100);
         builder.Property(p => p.PaymentInfoSnapshot).HasMaxLength(200);

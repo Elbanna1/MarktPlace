@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServicesAbstraction;
 using Shared.Constants;
@@ -51,9 +51,10 @@ public class AdminPaymentsController : AdminApiController
     [ProducesResponseType(typeof(ApiResponse<AdminPaymentDetailsDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ApiResponse<AdminPaymentDetailsDto>>> Approve(Guid id)
+    public async Task<ActionResult<ApiResponse<AdminPaymentDetailsDto>>> Approve(
+        Guid id, [FromBody] ApprovePaymentRequest? request = null)
     {
-        var result = await _payments.ApprovePaymentAsync(id, CurrentAdminId, RequestAborted);
+        var result = await _payments.ApprovePaymentAsync(id, CurrentAdminId, request, RequestAborted);
 
         return Ok(ApiResponse<AdminPaymentDetailsDto>.Ok(result, "تم تأكيد الدفع."));
     }

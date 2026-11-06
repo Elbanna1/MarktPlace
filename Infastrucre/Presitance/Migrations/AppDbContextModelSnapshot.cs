@@ -24706,6 +24706,10 @@ namespace Presitance.Migrations
                     b.Property<DateTime?>("RejectedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ReviewFeedback")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("ScreenshotPath")
                         .IsRequired()
                         .HasMaxLength(500)

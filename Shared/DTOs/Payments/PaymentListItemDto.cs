@@ -21,4 +21,6 @@ public class PaymentListItemDto
     public DateTime SubmittedAt { get; set; }
 
     public string? RejectReason { get; set; }
+
+    public string? ReviewFeedback { get; set; }
 }

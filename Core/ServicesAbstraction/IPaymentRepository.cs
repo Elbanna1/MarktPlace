@@ -43,5 +43,9 @@ public interface IPaymentRepository
 
     void Update(Payment payment);
 
+    Task<int> TransitionAsync(
+        Guid id, PaymentStatus from, PaymentStatus to, string reviewerId, string? reason, string? feedback,
+        DateTime utcNow, CancellationToken cancellationToken = default);
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

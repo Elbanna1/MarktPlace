@@ -154,6 +154,14 @@ public class AdminAlertService : IAdminAlertService
             NotificationCatalog.AdminAlerts.NewPayment(paymentId, amount, currency, payerName),
             paymentId, createdAfterUtc: null, cancellationToken);
 
+    public Task NotifyNewAdPaymentAsync(
+        Guid paymentId, decimal amount, string currency, string? payerName, string? listingTitle,
+        ListingModuleType listingType, bool isResubmission, CancellationToken cancellationToken = default) =>
+        SendOnceAsync(
+            NotificationCatalog.AdminAlerts.NewAdPayment(
+                paymentId, amount, currency, payerName, listingTitle, listingType, isResubmission),
+            paymentId, createdAfterUtc: null, cancellationToken);
+
     public Task NotifyUserModerationAsync(
         string targetUserId, string? targetUserName, UserAccountStatus status, string? reason,
         CancellationToken cancellationToken = default) =>

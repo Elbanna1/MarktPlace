@@ -21,6 +21,10 @@ public interface IAdminAlertService
         Guid paymentId, decimal amount, string currency, string? payerName,
         CancellationToken cancellationToken = default);
 
+    Task NotifyNewAdPaymentAsync(
+        Guid paymentId, decimal amount, string currency, string? payerName, string? listingTitle,
+        ListingModuleType listingType, bool isResubmission, CancellationToken cancellationToken = default);
+
     Task NotifyUserModerationAsync(
         string targetUserId, string? targetUserName, UserAccountStatus status, string? reason,
         CancellationToken cancellationToken = default);

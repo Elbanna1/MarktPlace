@@ -352,7 +352,9 @@ Enforced by three test suites, including a source-wide scan that fails the build
   listing needs a new window: pending/rejected with no running window, or approved and expired / ≤ 5 days left.
   One pending submission per listing (filtered unique index `UX_Payments_AdPayment_OnePending`), and none while
   an approved, unused payment exists.
-- Review: `Approved` or `Rejected` (reason required). A reviewer cannot review their own payment. Approval
+- Review: `Approved` or `Rejected`. The rejection reason (≤ 500) and the reviewer feedback (`ReviewFeedback`,
+  ≤ 1000, either decision) are both optional and are included in the owner's notification when given.
+  Approve and Reject are separate permissions. A reviewer cannot review their own payment. Approval
   **never approves moderation**: a pending listing stays pending; an approved expired listing is renewed through
   the existing admin republish. The approved payment is a credit, consumed (`ActivatedAt`) when a window opens.
 - Gate: while enabled, `PATCH /api/v2/admin/ads/{type}/{id}/approve` that would open a new window needs a credit

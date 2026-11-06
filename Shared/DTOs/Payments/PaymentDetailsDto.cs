@@ -29,4 +29,6 @@ public class PaymentDetailsDto
     public DateTime? RejectedAt { get; set; }
 
     public string? RejectReason { get; set; }
+
+    public string? ReviewFeedback { get; set; }
 }

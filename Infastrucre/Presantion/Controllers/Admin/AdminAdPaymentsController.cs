@@ -15,10 +15,12 @@ namespace Presentation.Controllers.Admin;
 public class AdminAdPaymentsController : AdminApiController
 {
     private readonly IAdPaymentService _payments;
+    private readonly IAdminPermissionService _permissions;
 
-    public AdminAdPaymentsController(IAdPaymentService payments)
+    public AdminAdPaymentsController(IAdPaymentService payments, IAdminPermissionService permissions)
     {
         _payments = payments;
+        _permissions = permissions;
     }
 
     [RequireAdminPermission(AdminPermission.View)]
@@ -85,15 +87,31 @@ public class AdminAdPaymentsController : AdminApiController
         return File(file.Content, file.ContentType);
     }
 
-    [RequireAdminPermission(AdminPermission.Approve)]
+    [RequireAdminPermission(AdminPermission.View)]
     [HttpPatch("submissions/{paymentSubmissionId:guid}/review")]
+    [EndpointDescription(
+        "decision \"Approved\" needs the Approve permission on the payments page and \"Rejected\" needs Reject, " +
+        "the same split as /payments/{id}/approve and /payments/{id}/reject.")]
     [ProducesResponseType(typeof(ApiResponse<AdPaymentReviewResultDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ApiResponse<AdPaymentReviewResultDto>>> Review(
         Guid paymentSubmissionId, [FromBody] ReviewAdPaymentRequest request)
     {
+        if (AdPaymentDecisions.Parse(request.Decision) is { } decision)
+        {
+            var access = await _permissions.AuthorizeAsync(
+                CurrentAdminId,
+                AdminPageCatalog.Keys.Payments,
+                decision == PaymentStatus.Approved ? AdminPermission.Approve : AdminPermission.Reject,
+                RequestAborted);
+
+            if (!access.Allowed)
+                return StatusCode(access.StatusCode, ApiResponse.Fail(access.Message ?? "مالكش صلاحية توصل للمحتوى ده."));
+        }
+
         var result = await _payments.ReviewAsync(paymentSubmissionId, request, CurrentAdminId, RequestAborted);
 
         return Ok(ApiResponse<AdPaymentReviewResultDto>.Ok(result, "تمت مراجعة الدفع."));

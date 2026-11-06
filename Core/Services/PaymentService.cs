@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Domain.Entities;
 using ServicesAbstraction;
 using Shared.Constants;
@@ -85,27 +85,28 @@ public class PaymentService : IPaymentService
     }
 
     public async Task<AdminPaymentDetailsDto> ApprovePaymentAsync(
-        Guid id, string adminUserId, CancellationToken cancellationToken = default)
+        Guid id, string adminUserId, ApprovePaymentRequest? request = null,
+        CancellationToken cancellationToken = default)
     {
+        var feedback = Optional(request?.Feedback);
+
         if (_adPayments is not null && await _adPayments.IsAdPaymentAsync(id, cancellationToken))
         {
             await _adPayments.ReviewAsync(
-                id, new Shared.DTOs.AdPayments.ReviewAdPaymentRequest { Decision = nameof(PaymentStatus.Approved) },
+                id,
+                new Shared.DTOs.AdPayments.ReviewAdPaymentRequest
+                {
+                    Decision = nameof(PaymentStatus.Approved),
+                    Feedback = feedback
+                },
                 adminUserId, cancellationToken);
 
             return await GetForAdminAsync(id, cancellationToken);
         }
 
-        var payment = await LoadForDecisionAsync(id, cancellationToken);
+        var payment = await LoadForDecisionAsync(id, adminUserId, PaymentStatus.Pending, cancellationToken);
 
-        payment.Status = PaymentStatus.Approved;
-        payment.ApprovedAt = DateTime.UtcNow;
-        payment.ApprovedBy = adminUserId;
-        payment.RejectedAt = null;
-        payment.RejectReason = null;
-
-        _repository.Update(payment);
-        await _repository.SaveChangesAsync(cancellationToken);
+        await TransitionAsync(payment, PaymentStatus.Approved, adminUserId, reason: null, feedback, cancellationToken);
 
         await _audit.LogAsync(
             AdminAuditAction.ApprovePayment, AdminAuditCatalog.Targets.Payment, id.ToString(),
@@ -117,8 +118,9 @@ public class PaymentService : IPaymentService
         await NotifyPayerAsync(
             payment,
             "تأكيد الدفع",
-            "✅ تم تأكيد استلام المبلغ.",
-            "✅");
+            "✅ تم تأكيد استلام المبلغ." + FeedbackSuffix(feedback),
+            "✅",
+            NotificationType.PaymentApproved);
 
         return await GetForAdminAsync(id, cancellationToken);
     }
@@ -127,6 +129,11 @@ public class PaymentService : IPaymentService
         Guid id, string adminUserId, RejectPaymentRequest request,
         CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var reason = Optional(request.Reason);
+        var feedback = Optional(request.Feedback);
+
         if (_adPayments is not null && await _adPayments.IsAdPaymentAsync(id, cancellationToken))
         {
             await _adPayments.ReviewAsync(
@@ -134,29 +141,23 @@ public class PaymentService : IPaymentService
                 new Shared.DTOs.AdPayments.ReviewAdPaymentRequest
                 {
                     Decision = nameof(PaymentStatus.Rejected),
-                    RejectionReason = request.Reason
+                    RejectionReason = reason,
+                    Feedback = feedback
                 },
                 adminUserId, cancellationToken);
 
             return await GetForAdminAsync(id, cancellationToken);
         }
 
-        var payment = await LoadForDecisionAsync(id, cancellationToken);
+        var payment = await LoadForDecisionAsync(id, adminUserId, PaymentStatus.Pending, cancellationToken);
 
-        var reason = request.Reason.Trim();
-
-        payment.Status = PaymentStatus.Rejected;
-        payment.RejectedAt = DateTime.UtcNow;
-        payment.ApprovedBy = adminUserId;
-        payment.ApprovedAt = null;
-        payment.RejectReason = reason;
-
-        _repository.Update(payment);
-        await _repository.SaveChangesAsync(cancellationToken);
+        await TransitionAsync(payment, PaymentStatus.Rejected, adminUserId, reason, feedback, cancellationToken);
 
         await _audit.LogAsync(
             AdminAuditAction.RejectPayment, AdminAuditCatalog.Targets.Payment, id.ToString(),
-            $"رفض عملية دفع بقيمة {payment.Amount:N0} {payment.Currency} — {reason}",
+            reason is null
+                ? $"رفض عملية دفع بقيمة {payment.Amount:N0} {payment.Currency}"
+                : $"رفض عملية دفع بقيمة {payment.Amount:N0} {payment.Currency} — {reason}",
             oldValue: PaymentCatalog.GetStatusName(PaymentStatus.Pending),
             newValue: PaymentCatalog.GetStatusName(PaymentStatus.Rejected),
             adminUserId: adminUserId, cancellationToken: cancellationToken);
@@ -164,8 +165,11 @@ public class PaymentService : IPaymentService
         await NotifyPayerAsync(
             payment,
             "رفض الدفع",
-            $"❌ لم يتم قبول إثبات الدفع. السبب: {reason}",
-            "❌");
+            "❌ لم يتم قبول إثبات الدفع." +
+            (reason is null ? string.Empty : $" السبب: {reason}.") +
+            FeedbackSuffix(feedback),
+            "❌",
+            NotificationType.PaymentRejected);
 
         return await GetForAdminAsync(id, cancellationToken);
     }
@@ -174,7 +178,7 @@ public class PaymentService : IPaymentService
         Guid id, string adminUserId, RefundPaymentRequest request,
         CancellationToken cancellationToken = default)
     {
-        var payment = await _repository.GetByIdAsync(id, asNoTracking: false, cancellationToken)
+        var payment = await _repository.GetByIdAsync(id, asNoTracking: true, cancellationToken)
             ?? throw new NotFoundException("عملية الدفع غير موجودة.");
 
         if (payment.Status != PaymentStatus.Approved)
@@ -182,12 +186,12 @@ public class PaymentService : IPaymentService
 
         var reason = request.Reason.Trim();
 
-        payment.Status = PaymentStatus.Refunded;
-        payment.RejectReason = reason;
-        payment.ApprovedBy = adminUserId;
+        var changed = await _repository.TransitionAsync(
+            id, PaymentStatus.Approved, PaymentStatus.Refunded, adminUserId, reason, feedback: null,
+            DateTime.UtcNow, cancellationToken);
 
-        _repository.Update(payment);
-        await _repository.SaveChangesAsync(cancellationToken);
+        if (changed == 0)
+            throw new BadRequestException("لا يمكن استرداد إلا عملية دفع مؤكدة.");
 
         await _audit.LogAsync(
             AdminAuditAction.RefundPayment, AdminAuditCatalog.Targets.Payment, id.ToString(),
@@ -199,30 +203,57 @@ public class PaymentService : IPaymentService
         await NotifyPayerAsync(
             payment,
             "استرداد المبلغ",
-            $"↩️ تم استرداد المبلغ. السبب: {reason}",
-            "↩️");
+            $"↩️ تم استرداد مبلغ {payment.Amount:N0} {payment.Currency}. السبب: {reason}",
+            "↩️",
+            NotificationType.PaymentRefunded);
 
         return await GetForAdminAsync(id, cancellationToken);
     }
 
-    private async Task<Payment> LoadForDecisionAsync(Guid id, CancellationToken cancellationToken)
+    private async Task<Payment> LoadForDecisionAsync(
+        Guid id, string adminUserId, PaymentStatus expected, CancellationToken cancellationToken)
     {
-        var payment = await _repository.GetByIdAsync(id, asNoTracking: false, cancellationToken)
+        var payment = await _repository.GetByIdAsync(id, asNoTracking: true, cancellationToken)
             ?? throw new NotFoundException("عملية الدفع غير موجودة.");
 
-        if (payment.Status != PaymentStatus.Pending)
+        if (string.Equals(payment.UserId, adminUserId, StringComparison.Ordinal))
+            throw new ForbiddenException("مينفعش تراجع عملية دفع إنت اللي دافعها.");
+
+        if (payment.Status != expected)
             throw new BadRequestException(
                 $"تم البت في عملية الدفع بالفعل ({PaymentCatalog.GetStatusName(payment.Status)}).");
 
         return payment;
     }
 
-    private Task NotifyPayerAsync(Payment payment, string title, string message, string icon) =>
+    private async Task TransitionAsync(
+        Payment payment, PaymentStatus to, string adminUserId, string? reason, string? feedback,
+        CancellationToken cancellationToken)
+    {
+        if (feedback is { Length: > PaymentCatalog.MaxReviewFeedbackLength })
+            throw new BadRequestException(
+                $"ملاحظات المراجعة مينفعش تزيد عن {PaymentCatalog.MaxReviewFeedbackLength} حرف.");
+
+        var changed = await _repository.TransitionAsync(
+            payment.Id, PaymentStatus.Pending, to, adminUserId, reason, feedback, DateTime.UtcNow, cancellationToken);
+
+        if (changed == 0)
+            throw new ConflictException("تم البت في عملية الدفع دي من مسؤول تاني في نفس اللحظة.");
+    }
+
+    private static string? Optional(string? value) =>
+        string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+    private static string FeedbackSuffix(string? feedback) =>
+        feedback is null ? string.Empty : $" ملاحظات الإدارة: {feedback}";
+
+    private Task NotifyPayerAsync(
+        Payment payment, string title, string message, string icon, NotificationType type) =>
         _notifications.CreateAsync(
             payment.UserId,
             title,
             message,
-            NotificationType.PaymentSubmitted,
+            type,
             payment.Id,
             NotificationReferenceTypes.Payment,
             NotificationAction.Updated,
@@ -241,6 +272,7 @@ public class PaymentService : IPaymentService
                 ? null
                 : $"{payment.Reviewer.FirstName} {payment.Reviewer.SecondName}".Trim(),
             RejectReason = payment.RejectReason,
+            ReviewFeedback = payment.ReviewFeedback,
             Snapshot = BuildSnapshot(payment)
         };
 
@@ -467,6 +499,9 @@ public class PaymentService : IPaymentService
 
         var name = request.Name.Trim();
 
+        if (method.IsActive && !request.IsActive && _adPayments is not null)
+            await _adPayments.EnsureMethodCanBeWithdrawnAsync(id, cancellationToken);
+
         if (await _repository.MethodNameExistsAsync(name, excludeId: id, cancellationToken))
             throw new ConflictException($"فيه طريقة دفع بالاسم ده '{name}' موجودة بالفعل.");
 
@@ -490,6 +525,9 @@ public class PaymentService : IPaymentService
     {
         var method = await _repository.GetMethodByIdAsync(id, asNoTracking: false, cancellationToken)
             ?? throw new NotFoundException("طريقة الدفع مش موجودة.");
+
+        if (method.IsActive && _adPayments is not null)
+            await _adPayments.EnsureMethodCanBeWithdrawnAsync(id, cancellationToken);
 
         var usages = await _repository.CountMethodUsagesAsync(id, cancellationToken);
 

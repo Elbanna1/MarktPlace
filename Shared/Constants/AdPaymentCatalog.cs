@@ -82,7 +82,7 @@ public static class AdPaymentCatalog
             return Stages.PaymentUnderReview;
 
         if (!required)
-            return Stages.NotRequired;
+            return latest == PaymentStatus.Approved ? Stages.Paid : Stages.NotRequired;
 
         return latest == PaymentStatus.Rejected ? Stages.PaymentRejected : Stages.AwaitingPayment;
     }

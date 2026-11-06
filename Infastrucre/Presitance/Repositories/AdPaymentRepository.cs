@@ -128,8 +128,8 @@ public class AdPaymentRepository : IAdPaymentRepository
     }
 
     public Task<int> DecideAsync(
-        Guid id, PaymentStatus decision, string reviewerId, string? rejectionReason, DateTime utcNow,
-        CancellationToken cancellationToken = default)
+        Guid id, PaymentStatus decision, string reviewerId, string? rejectionReason, string? feedback,
+        DateTime utcNow, CancellationToken cancellationToken = default)
     {
         var pending = _context.Payments.Where(payment =>
             payment.Id == id && payment.Purpose == Purpose && payment.Status == PaymentStatus.Pending);
@@ -140,12 +140,14 @@ public class AdPaymentRepository : IAdPaymentRepository
                 .SetProperty(payment => payment.ApprovedAt, utcNow)
                 .SetProperty(payment => payment.ApprovedBy, reviewerId)
                 .SetProperty(payment => payment.RejectedAt, (DateTime?)null)
-                .SetProperty(payment => payment.RejectReason, (string?)null), cancellationToken)
+                .SetProperty(payment => payment.RejectReason, (string?)null)
+                .SetProperty(payment => payment.ReviewFeedback, feedback), cancellationToken)
             : pending.ExecuteUpdateAsync(setters => setters
                 .SetProperty(payment => payment.Status, PaymentStatus.Rejected)
                 .SetProperty(payment => payment.RejectedAt, utcNow)
                 .SetProperty(payment => payment.ApprovedBy, reviewerId)
-                .SetProperty(payment => payment.RejectReason, rejectionReason), cancellationToken);
+                .SetProperty(payment => payment.RejectReason, rejectionReason)
+                .SetProperty(payment => payment.ReviewFeedback, feedback), cancellationToken);
     }
 
     public async Task<IReadOnlyDictionary<(ListingModuleType Type, Guid Id), AdPaymentListingSummary>> GetListingSummariesAsync(

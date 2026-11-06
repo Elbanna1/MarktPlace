@@ -27,7 +27,7 @@ public interface IPaymentService
     Task<AdminPaymentDetailsDto> GetForAdminAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<AdminPaymentDetailsDto> ApprovePaymentAsync(
-        Guid id, string adminUserId, CancellationToken cancellationToken = default);
+        Guid id, string adminUserId, ApprovePaymentRequest? request = null, CancellationToken cancellationToken = default);
 
     Task<AdminPaymentDetailsDto> RejectPaymentAsync(
         Guid id, string adminUserId, RejectPaymentRequest request, CancellationToken cancellationToken = default);

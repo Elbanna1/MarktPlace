@@ -160,6 +160,8 @@ public class AdPaymentStatusDto
 
     public string? RejectionReason { get; set; }
 
+    public string? ReviewFeedback { get; set; }
+
     public decimal? CurrentPrice { get; set; }
 
     public string? CurrentCurrency { get; set; }
@@ -286,6 +288,8 @@ public class AdminAdPaymentSubmissionDto
 
     public string? RejectionReason { get; set; }
 
+    public string? ReviewFeedback { get; set; }
+
     public DateTime? ConsumedAt { get; set; }
 
     public string ScreenshotUrl { get; set; } = default!;
@@ -296,6 +300,8 @@ public class ReviewAdPaymentRequest
     public string? Decision { get; set; }
 
     public string? RejectionReason { get; set; }
+
+    public string? Feedback { get; set; }
 }
 
 public class AdPaymentReviewResultDto
@@ -318,4 +324,26 @@ public static class AdPaymentListingActions
     public const string Republished = "Republished";
 
     public const string CreditKept = "CreditKept";
+}
+
+public static class AdPaymentDecisions
+{
+    public static PaymentStatus? Parse(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return null;
+
+        var text = value.Trim();
+
+        if (string.Equals(text, "approve", StringComparison.OrdinalIgnoreCase))
+            return PaymentStatus.Approved;
+
+        if (string.Equals(text, "reject", StringComparison.OrdinalIgnoreCase))
+            return PaymentStatus.Rejected;
+
+        return Enum.TryParse<PaymentStatus>(text, ignoreCase: true, out var parsed) &&
+               parsed is PaymentStatus.Approved or PaymentStatus.Rejected
+            ? parsed
+            : null;
+    }
 }

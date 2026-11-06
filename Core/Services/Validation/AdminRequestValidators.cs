@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Shared.Constants;
 using Shared.DTOs.Admin;
 using Shared.DTOs.Lookups.Forms;
@@ -338,9 +338,12 @@ public class RejectPaymentRequestValidator : AbstractValidator<RejectPaymentRequ
     public RejectPaymentRequestValidator()
     {
         RuleFor(x => x.Reason)
-            .NotEmpty().WithMessage("سبب الرفض مطلوب.")
             .MaximumLength(PaymentCatalog.MaxRejectReasonLength)
             .WithMessage("لا يمكن أن يتجاوز سبب الرفض 500 حرف.");
+
+        RuleFor(x => x.Feedback)
+            .MaximumLength(PaymentCatalog.MaxReviewFeedbackLength)
+            .WithMessage("لا يمكن أن تتجاوز ملاحظات المراجعة 1000 حرف.");
     }
 }
 

@@ -16,6 +16,8 @@ public class AdPaymentCatalogTests
     [InlineData(false, PaymentStatus.Rejected, false, AdPaymentCatalog.Stages.NotRequired)]
     [InlineData(false, PaymentStatus.Approved, true, AdPaymentCatalog.Stages.Paid)]
     [InlineData(true, PaymentStatus.Approved, false, AdPaymentCatalog.Stages.AwaitingPayment)]
+    [InlineData(false, PaymentStatus.Approved, false, AdPaymentCatalog.Stages.Paid)]
+    [InlineData(false, PaymentStatus.Refunded, false, AdPaymentCatalog.Stages.NotRequired)]
     public void The_stage_is_resolved_from_requirement_latest_status_and_credit(
         bool required, PaymentStatus? latest, bool hasCredit, string expected)
     {

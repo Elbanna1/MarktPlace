@@ -40,6 +40,8 @@ public interface IAdPaymentService
     Task<PrivateFileContent> OpenScreenshotAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<bool> IsAdPaymentAsync(Guid paymentId, CancellationToken cancellationToken = default);
+
+    Task EnsureMethodCanBeWithdrawnAsync(int paymentMethodId, CancellationToken cancellationToken = default);
 }
 
 public sealed record AdPaymentListingSnapshot(

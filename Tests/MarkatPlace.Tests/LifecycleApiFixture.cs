@@ -5,7 +5,9 @@ using System.Text.Json;
 using Domain.Entities;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -176,6 +178,21 @@ public sealed class LifecycleApiFixture : IAsyncLifetime
     }
 
     public IServiceScope CreateScope() => _factory!.Services.CreateScope();
+
+    public HubConnection ConnectNotifications(HttpClient client)
+    {
+        var token = client.DefaultRequestHeaders.Authorization?.Parameter;
+        var server = _factory!.Server;
+
+        return new HubConnectionBuilder()
+            .WithUrl(new Uri(server.BaseAddress, "/hubs/notifications"), options =>
+            {
+                options.HttpMessageHandlerFactory = _ => server.CreateHandler();
+                options.Transports = HttpTransportType.LongPolling;
+                options.AccessTokenProvider = () => Task.FromResult(token);
+            })
+            .Build();
+    }
 
     public async Task RunJobAsync(DateTime utcNow)
     {

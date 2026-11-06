@@ -127,7 +127,7 @@ on the submission.
   "amount": 150.0, "currency": "EGP", "paymentMethodId": 1, "paymentMethodName": "فودافون كاش",
   "transactionReference": "TX-123", "notes": null,
   "submittedAt": "2026-11-04T08:01:00Z", "reviewedAt": "2026-11-04T09:00:00Z",
-  "rejectionReason": "المبلغ ناقص",
+  "rejectionReason": "المبلغ ناقص", "reviewFeedback": "حوّل المبلغ كامل وارفع الإيصال تاني.",
   "currentPrice": 200.0, "currentCurrency": "EGP",
   "submitEndpoint": "/api/v2/ads/Furniture/3c1d…/payment",
   "resubmitEndpoint": "/api/v2/ads/Furniture/3c1d…/payment/resubmit"
@@ -138,6 +138,8 @@ on the submission.
 submission would cost. 401 / 404 as above. `no-store`.
 
 `stage` values: `NotRequired`, `AwaitingPayment`, `PaymentUnderReview`, `PaymentRejected`, `Paid`.
+`Paid` covers both an approved payment not yet used and one that paid for the window currently running.
+`rejectionReason` and `reviewFeedback` are optional and are omitted when the admin left them empty.
 
 ### E. `POST /api/v2/ads/{type}/{id}/payment/resubmit` — after a rejection
 

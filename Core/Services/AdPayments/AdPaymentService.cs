@@ -113,7 +113,7 @@ public class AdPaymentService : IAdPaymentService
             Currency = settings.Currency,
             Instructions = settings.Instructions,
             PaymentMethods = methods.Select(ToDto).ToList(),
-            PaymentMethodIds = ids,
+            PaymentMethodIds = ids.Count == 0 ? ids : methods.Select(method => method.Id).ToList(),
             UsesAllActiveMethods = ids.Count == 0,
             EnabledAt = settings.EnabledAt,
             UpdatedAt = settings.UpdatedAt,
@@ -323,9 +323,18 @@ public class AdPaymentService : IAdPaymentService
             throw;
         }
 
+        var isResubmission = latest is { Status: PaymentStatus.Rejected };
+
         await RunSideEffectAsync(
-            () => _alerts.NotifyNewPaymentAsync(
-                payment.Id, payment.Amount, payment.Currency, payment.PaymentMethodNameSnapshot, cancellationToken),
+            async () =>
+            {
+                var payer = (await _repository.GetUserNamesAsync(new[] { userId }, cancellationToken))
+                    .GetValueOrDefault(userId);
+
+                await _alerts.NotifyNewAdPaymentAsync(
+                    payment.Id, payment.Amount, payment.Currency, payer, listing.ListingTitle, type,
+                    isResubmission, cancellationToken);
+            },
             "admin alert", payment.Id);
 
         await RunSideEffectAsync(
@@ -404,6 +413,9 @@ public class AdPaymentService : IAdPaymentService
             SubmittedAt = latest?.SubmittedAt,
             ReviewedAt = latest is null ? null : latest.ApprovedAt ?? latest.RejectedAt,
             RejectionReason = latest?.Status == PaymentStatus.Rejected ? latest.RejectReason : null,
+            ReviewFeedback = latest?.Status is PaymentStatus.Approved or PaymentStatus.Rejected
+                ? latest.ReviewFeedback
+                : null,
             CurrentPrice = settings.IsEnabled ? settings.Price : null,
             CurrentCurrency = settings.IsEnabled ? settings.Currency : null,
             CanResubmit = required && !hasPending && latest is { Status: PaymentStatus.Rejected },
@@ -443,16 +455,21 @@ public class AdPaymentService : IAdPaymentService
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var decision = ParseDecision(request.Decision)
+        var decision = AdPaymentDecisions.Parse(request.Decision)
             ?? throw new BadRequestException("القرار لازم يكون موافقة أو رفض.");
 
-        var reason = string.IsNullOrWhiteSpace(request.RejectionReason) ? null : request.RejectionReason.Trim();
-
-        if (decision == PaymentStatus.Rejected && reason is null)
-            throw new BadRequestException("لازم تكتب سبب رفض الدفع.");
+        var reason = decision == PaymentStatus.Rejected && !string.IsNullOrWhiteSpace(request.RejectionReason)
+            ? request.RejectionReason.Trim()
+            : null;
 
         if (reason is { Length: > PaymentCatalog.MaxRejectReasonLength })
             throw new BadRequestException($"سبب الرفض مينفعش يزيد عن {PaymentCatalog.MaxRejectReasonLength} حرف.");
+
+        var feedback = string.IsNullOrWhiteSpace(request.Feedback) ? null : request.Feedback.Trim();
+
+        if (feedback is { Length: > PaymentCatalog.MaxReviewFeedbackLength })
+            throw new BadRequestException(
+                $"ملاحظات المراجعة مينفعش تزيد عن {PaymentCatalog.MaxReviewFeedbackLength} حرف.");
 
         var payment = await LoadAdPaymentAsync(id, cancellationToken);
 
@@ -466,8 +483,7 @@ public class AdPaymentService : IAdPaymentService
         var now = DateTime.UtcNow;
 
         var decided = await _repository.DecideAsync(
-            id, decision, adminUserId,
-            decision == PaymentStatus.Rejected ? reason : null, now, cancellationToken);
+            id, decision, adminUserId, reason, feedback, now, cancellationToken);
 
         if (decided == 0)
             throw new ConflictException("تم البت في عملية الدفع دي من مسؤول تاني في نفس اللحظة.");
@@ -480,7 +496,9 @@ public class AdPaymentService : IAdPaymentService
             AdminAuditCatalog.Targets.Payment, id.ToString(),
             decision == PaymentStatus.Approved
                 ? $"تأكيد دفع رسوم إعلان بقيمة {payment.Amount:N0} {payment.Currency}"
-                : $"رفض دفع رسوم إعلان بقيمة {payment.Amount:N0} {payment.Currency} — {reason}",
+                : reason is null
+                    ? $"رفض دفع رسوم إعلان بقيمة {payment.Amount:N0} {payment.Currency}"
+                    : $"رفض دفع رسوم إعلان بقيمة {payment.Amount:N0} {payment.Currency} — {reason}",
             oldValue: PaymentCatalog.GetStatusName(PaymentStatus.Pending),
             newValue: PaymentCatalog.GetStatusName(decision),
             adminUserId: adminUserId, cancellationToken: cancellationToken);
@@ -499,8 +517,8 @@ public class AdPaymentService : IAdPaymentService
                 payment.UserId,
                 decision == PaymentStatus.Approved ? "تأكيد الدفع" : "رفض الدفع",
                 decision == PaymentStatus.Approved
-                    ? ApprovedMessage(title, action)
-                    : $"❌ تم رفض إثبات دفع رسوم إعلان «{title}». السبب: {reason}. تقدر ترفع إثبات دفع جديد.",
+                    ? ApprovedMessage(title, action) + FeedbackSuffix(feedback)
+                    : RejectedMessage(title, reason, feedback),
                 decision == PaymentStatus.Approved ? NotificationType.PaymentApproved : NotificationType.PaymentRejected,
                 payment.Id,
                 NotificationReferenceTypes.Payment,
@@ -532,6 +550,21 @@ public class AdPaymentService : IAdPaymentService
 
     public async Task<bool> IsAdPaymentAsync(Guid paymentId, CancellationToken cancellationToken = default) =>
         await _repository.GetByIdAsync(paymentId, cancellationToken) is { Purpose: PaymentPurpose.AdvertisementPublication };
+
+    public async Task EnsureMethodCanBeWithdrawnAsync(int paymentMethodId, CancellationToken cancellationToken = default)
+    {
+        var settings = await LoadSettingsAsync(cancellationToken);
+
+        if (!settings.IsEnabled)
+            return;
+
+        var offered = await OfferedMethodsAsync(settings, cancellationToken);
+
+        if (offered.Count == 1 && offered[0].Id == paymentMethodId)
+            throw new ConflictException(
+                "طريقة الدفع دي هي الوحيدة المتاحة لدفع رسوم الإعلانات، ولو اتوقفت مش هيبقى فيه طريقة يدفع بيها أصحاب الإعلانات " +
+                "ومش هينفع تتم الموافقة على أي إعلان جديد. ضيف طريقة دفع تانية لدفع الإعلانات أو وقف الدفع للإعلانات الأول.");
+    }
 
     private async Task<(string Action, string? Moderation)> ContinueListingAsync(
         ListingModuleType type, Guid listingId, string adminUserId, CancellationToken cancellationToken)
@@ -666,6 +699,7 @@ public class AdPaymentService : IAdPaymentService
                     ? null
                     : $"{payment.Reviewer.FirstName} {payment.Reviewer.SecondName}".Trim(),
                 RejectionReason = payment.RejectReason,
+                ReviewFeedback = payment.ReviewFeedback,
                 ConsumedAt = payment.ActivatedAt,
                 ScreenshotUrl = ScreenshotRoute(payment.Id)
             };
@@ -704,26 +738,7 @@ public class AdPaymentService : IAdPaymentService
         Instructions = method.Instructions
     };
 
-    internal static PaymentStatus? ParseDecision(string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            return null;
-
-        var text = value.Trim();
-
-        if (string.Equals(text, "approve", StringComparison.OrdinalIgnoreCase))
-            return PaymentStatus.Approved;
-
-        if (string.Equals(text, "reject", StringComparison.OrdinalIgnoreCase))
-            return PaymentStatus.Rejected;
-
-        return Enum.TryParse<PaymentStatus>(text, ignoreCase: true, out var parsed) &&
-               parsed is PaymentStatus.Approved or PaymentStatus.Rejected
-            ? parsed
-            : null;
-    }
-
-        internal static IReadOnlyList<int> ParseIds(string? value) =>
+    internal static IReadOnlyList<int> ParseIds(string? value) =>
         string.IsNullOrWhiteSpace(value)
             ? Array.Empty<int>()
             : value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -743,6 +758,15 @@ public class AdPaymentService : IAdPaymentService
             $"✅ تم تأكيد دفع رسوم إعلان «{title}». الإعلان دلوقتي في انتظار مراجعة الإدارة قبل النشر.",
         _ => $"✅ تم تأكيد دفع رسوم إعلان «{title}»."
     };
+
+    private static string RejectedMessage(string? title, string? reason, string? feedback) =>
+        $"❌ تم رفض إثبات دفع رسوم إعلان «{title}»." +
+        (reason is null ? string.Empty : $" السبب: {reason}.") +
+        FeedbackSuffix(feedback) +
+        " تقدر ترفع إثبات دفع جديد من صفحة الإعلان.";
+
+    private static string FeedbackSuffix(string? feedback) =>
+        feedback is null ? string.Empty : $" ملاحظات الإدارة: {feedback}";
 
     private static string ActionName(string action) => action switch
     {

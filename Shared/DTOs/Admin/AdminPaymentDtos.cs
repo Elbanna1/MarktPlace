@@ -65,6 +65,8 @@ public class AdminPaymentDetailsDto : AdminPaymentListItemDto
 
     public string? RejectReason { get; set; }
 
+    public string? ReviewFeedback { get; set; }
+
     public AdminDashboardBannerRequestDto? BannerRequest { get; set; }
 }
 
@@ -83,10 +85,20 @@ public class AdminPaymentSnapshotDto
 
 public class RejectPaymentRequest
 {
-    [Required(ErrorMessage = "سبب الرفض مطلوب.")]
     [MaxLength(PaymentCatalog.MaxRejectReasonLength,
         ErrorMessage = "لا يمكن أن يتجاوز سبب الرفض 500 حرف.")]
-    public string Reason { get; set; } = default!;
+    public string? Reason { get; set; }
+
+    [MaxLength(PaymentCatalog.MaxReviewFeedbackLength,
+        ErrorMessage = "لا يمكن أن تتجاوز ملاحظات المراجعة 1000 حرف.")]
+    public string? Feedback { get; set; }
+}
+
+public class ApprovePaymentRequest
+{
+    [MaxLength(PaymentCatalog.MaxReviewFeedbackLength,
+        ErrorMessage = "لا يمكن أن تتجاوز ملاحظات المراجعة 1000 حرف.")]
+    public string? Feedback { get; set; }
 }
 
 public class RefundPaymentRequest

@@ -45,6 +45,8 @@ public class Payment
 
     public string? RejectReason { get; set; }
 
+    public string? ReviewFeedback { get; set; }
+
     public PaymentPurpose Purpose { get; set; } = PaymentPurpose.Unspecified;
 
     public string? TargetType { get; set; }

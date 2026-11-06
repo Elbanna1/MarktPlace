@@ -14,6 +14,8 @@ public static class PaymentCatalog
 
     public const int MaxRejectReasonLength = 500;
 
+    public const int MaxReviewFeedbackLength = 1000;
+
     public static readonly IReadOnlyDictionary<PaymentMethodType, string> MethodTypeNames =
         new Dictionary<PaymentMethodType, string>
         {

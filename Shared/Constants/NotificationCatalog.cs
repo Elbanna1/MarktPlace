@@ -1,4 +1,4 @@
-﻿using Shared.Enums;
+using Shared.Enums;
 
 namespace Shared.Constants;
 
@@ -529,6 +529,24 @@ public static class NotificationCatalog
                 referenceType: NotificationReferenceTypes.Payment,
                 entityName: "عملية دفع",
                 deepLink: $"/admin/payments/{paymentId}");
+
+        public static NotificationContent NewAdPayment(
+            Guid paymentId, decimal amount, string currency, string? payerName, string? listingTitle,
+            ListingModuleType listingType, bool isResubmission) =>
+            Content(
+                title: isResubmission ? "إعادة رفع إثبات دفع إعلان" : "إثبات دفع إعلان جديد",
+                body: Describe(
+                    (isResubmission
+                        ? $"تم إعادة رفع إثبات دفع رسوم إعلان «{listingTitle}» بعد رفض السابق"
+                        : $"تم رفع إثبات دفع رسوم إعلان «{listingTitle}»") +
+                    $" بقيمة {amount:N0} {currency} بانتظار المراجعة.",
+                    payerName),
+                type: NotificationType.AdminNewPayment,
+                icon: "💳",
+                referenceType: NotificationReferenceTypes.Payment,
+                entityName: "عملية دفع",
+                deepLink: $"/admin/payments/{paymentId}",
+                listingType: listingType);
 
         public static NotificationContent UserModeration(
             string targetUserId, string? targetUserName, UserAccountStatus status, string? reason)
