@@ -424,9 +424,21 @@ publishing commit `c5d621e` (8.19.2 → 8.23.0) rewrote `MarkatPlace.deps.json` 
 request that went through authentication — login and anonymous endpoints included. Swagger kept
 answering 200, which made the service look healthy.
 
-`MarkatPlace.csproj` now switches those copies to `IfDifferent` (target
-`PublishReplacesDifferingFiles`), so even a publish into a stale folder replaces a DLL whose size or
-date differs. The release script makes the question moot by never publishing into a non-empty folder.
+The fix is to **never publish into a non-empty folder**: the release script publishes every build into
+a new, empty `RELEASES_DIR/<timestamp>-<commit>` folder and verifies it before anything is copied live.
+
+### Why a release once contained only the apphost and `deps.json` (2026-11-06)
+
+Commit `55ff7ef` briefly added a `PublishReplacesDifferingFiles` target that re-tagged every published
+file as `CopyToPublishDirectory=IfDifferent`. Only newer SDKs (10.0.403 here) have a copy bucket for
+`IfDifferent`; on an SDK without it those items fall into no bucket and are **silently never copied**,
+so the publish output held just `MarkatPlace` (apphost), `MarkatPlace.deps.json`,
+`MarkatPlace.staticwebassets.endpoints.json` and `web.config` (those are written by their own targets).
+Reproduced on SDK 9.0.101 with an identical target: no DLLs; without it: complete output. The target
+was removed. `MarkatPlace.csproj` now has a `VerifyPublishedApplication` target that fails `dotnet
+publish` when `MarkatPlace.dll`, `MarkatPlace.runtimeconfig.json` or `Microsoft.IdentityModel.Tokens.dll`
+is missing from the output, and `deploy/verify-assemblies.fsx` also requires the project, JWT, EF Core
+and Swagger assemblies by name.
 
 ### Publish never ships data folders
 

@@ -31,12 +31,9 @@
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
-  <Target Name="PublishReplacesDifferingFiles" AfterTargets="ComputeResolvedFilesToPublishList">
-    <ItemGroup>
-      <ResolvedFileToPublish Condition="'%(ResolvedFileToPublish.CopyToPublishDirectory)' == 'PreserveNewest'">
-        <CopyToPublishDirectory>IfDifferent</CopyToPublishDirectory>
-      </ResolvedFileToPublish>
-    </ItemGroup>
+  <Target Name="VerifyPublishedApplication" AfterTargets="Publish" Condition="'$(PublishSingleFile)' != 'true'">
+    <Error Condition="!Exists('$(PublishDir)$(TargetFileName)') Or !Exists('$(PublishDir)$(AssemblyName).runtimeconfig.json') Or !Exists('$(PublishDir)Microsoft.IdentityModel.Tokens.dll')"
+           Text="Publish to '$(PublishDir)' is incomplete: $(TargetFileName), $(AssemblyName).runtimeconfig.json or Microsoft.IdentityModel.Tokens.dll is missing. Do not deploy this output." />
   </Target>
 
 </Project>

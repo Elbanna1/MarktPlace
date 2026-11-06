@@ -357,6 +357,7 @@ cmd_deploy() {
     say "3/8 Build commit $commit into a fresh, empty release folder"
     if [[ -n "$(git -C "$REPO_DIR" status --porcelain -- . ':!graphify-out')" ]]; then warn "the repository has uncommitted changes; they are included in this build"; fi
     mkdir -p "$RELEASES_DIR"
+    echo "   SDK: $(cd "$REPO_DIR" && dotnet --version)"
     (cd "$REPO_DIR" && dotnet restore "$PROJECT" && dotnet build "$PROJECT" -c Release --no-restore \
         && dotnet publish "$PROJECT" -c Release --no-build -o "$release")
     git -C "$REPO_DIR" rev-parse HEAD > "$release/RELEASE_COMMIT"

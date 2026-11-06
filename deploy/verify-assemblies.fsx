@@ -47,10 +47,36 @@ for lib in target.EnumerateObject() do
                 | _ -> ()
     | _ -> ()
 
+for required in [ "MarkatPlace.runtimeconfig.json" ] do
+    if not (File.Exists(Path.Combine(dir, required))) then
+        problems.Add(sprintf "MISSING  %-55s required to start the application" required)
+
+let runtimeFiles =
+    target.EnumerateObject()
+    |> Seq.collect (fun lib ->
+        match lib.Value.TryGetProperty "runtime" with
+        | true, r -> r.EnumerateObject() |> Seq.map (fun a -> Path.GetFileName a.Name)
+        | _ -> Seq.empty)
+    |> Set.ofSeq
+
+let requiredAssemblies =
+    [ "MarkatPlace.dll"; "Domain.dll"; "Services.dll"; "ServicesAbstraction.dll"; "Presitance.dll"; "Presantion.dll"; "Shared.dll"
+      "Microsoft.IdentityModel.Tokens.dll"; "Microsoft.IdentityModel.JsonWebTokens.dll"
+      "Microsoft.IdentityModel.Protocols.dll"; "Microsoft.IdentityModel.Protocols.OpenIdConnect.dll"
+      "System.IdentityModel.Tokens.Jwt.dll"; "Microsoft.AspNetCore.Authentication.JwtBearer.dll"
+      "Microsoft.EntityFrameworkCore.dll"; "Microsoft.EntityFrameworkCore.SqlServer.dll"; "Microsoft.EntityFrameworkCore.Relational.dll"
+      "Swashbuckle.AspNetCore.Swagger.dll"; "Swashbuckle.AspNetCore.SwaggerGen.dll"; "Swashbuckle.AspNetCore.SwaggerUI.dll" ]
+
+for name in requiredAssemblies do
+    if not (runtimeFiles.Contains name) then
+        problems.Add(sprintf "DEPS     %-55s not listed in MarkatPlace.deps.json (single-file or broken publish?)" name)
+    elif not (File.Exists(Path.Combine(dir, name))) && not (problems |> Seq.exists (fun p -> p.Contains name)) then
+        problems.Add(sprintf "MISSING  %-55s required assembly" name)
+
 if problems.Count = 0 then
     printfn "OK: %d runtime assemblies in %s match MarkatPlace.deps.json" checkedCount dir
     exit 0
 else
     for p in problems do eprintfn "%s" p
-    eprintfn "FAIL: %d of %d runtime assemblies do not match MarkatPlace.deps.json in %s" problems.Count checkedCount dir
+    eprintfn "FAIL: %d problems (%d runtime assemblies listed in MarkatPlace.deps.json) in %s" problems.Count checkedCount dir
     exit 1
