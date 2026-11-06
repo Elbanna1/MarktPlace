@@ -370,14 +370,15 @@ public class RestaurantsAndCafesTests
     {
         using var context = NewContext();
         var owner = SeedUser(context);
+        var now = DateTime.UtcNow;
 
         context.RestaurantsAndCafes.AddRange(
-            Listing(owner, "كافيه النخيل", Baseline.AddDays(-1)),
-            Listing(owner, "كافيه النخيل", Baseline.AddDays(-2)),
-            Listing(owner, "كافيه النخيل", Baseline.AddDays(-3)),
-            Listing(owner, "كافيه النخيل الجديد", Baseline.AddDays(-4)),
-            Listing(owner, "مطعم الريف", Baseline.AddDays(-5)),
-            Listing(owner, "قيد المراجعة", Baseline, ModerationStatus.Pending));
+            Listing(owner, "كافيه النخيل", now.AddDays(-1)),
+            Listing(owner, "كافيه النخيل", now.AddDays(-2)),
+            Listing(owner, "كافيه النخيل", now.AddDays(-3)),
+            Listing(owner, "كافيه النخيل الجديد", now.AddDays(-4)),
+            Listing(owner, "مطعم الريف", now.AddDays(-5)),
+            Listing(owner, "قيد المراجعة", now, ModerationStatus.Pending));
         await context.SaveChangesAsync();
 
         var options = await AdvertiserService(context).GetAdvertisersAsync(Category, SubCategory, new AdvertiserLookupParams());

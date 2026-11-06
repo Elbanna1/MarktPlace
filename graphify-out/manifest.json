@@ -6564,9 +6564,9 @@
     "semantic_hash": ""
   },
   "MarkatPlace/MarkatPlace.csproj": {
-    "mtime": 1793969063.5956917,
-    "seen": 1793969221.8574157,
-    "ast_hash": "58b3f04894e51a7f7f79ebaaa08a1a1f",
+    "mtime": 1793970464.0946884,
+    "seen": 1793970814.198753,
+    "ast_hash": "1a5820ef1a14de21984821ae1359e859",
     "semantic_hash": ""
   },
   "MarkatPlace/Middleware/AccountStatusMiddleware.cs": {
@@ -9702,9 +9702,9 @@
     "semantic_hash": ""
   },
   "Tests/MarkatPlace.Tests/RestaurantsAndCafesTests.cs": {
-    "mtime": 1793630629.8971665,
-    "seen": 1793631652.907036,
-    "ast_hash": "082c241f9a337597b309377f412a724f",
+    "mtime": 1793971134.6844893,
+    "seen": 1793971610.6644926,
+    "ast_hash": "50e78a7af90a63d198b8a15d619f58d7",
     "semantic_hash": ""
   },
   "Tests/MarkatPlace.Tests/ReverseProxyHostingTests.cs": {
@@ -9894,9 +9894,9 @@
     "semantic_hash": ""
   },
   "docs/DEPLOYMENT.md": {
-    "mtime": 1791571097.695379,
-    "seen": 1793628588.8837643,
-    "ast_hash": "719d12746797ea373b68463e1ac00b19",
+    "mtime": 1793970689.449551,
+    "seen": 1793970814.3231318,
+    "ast_hash": "a86a66a0b7d04fadf75bc77a1d95ee5f",
     "semantic_hash": ""
   },
   "docs/DEVELOPMENT_GUIDE.md": {
@@ -12849,6 +12849,12 @@
     "mtime": 1793964872.8262618,
     "seen": 1793965905.6099367,
     "ast_hash": "9b756126591713b81cbad5ccb22e1a06",
+    "semantic_hash": ""
+  },
+  "deploy/markatplace-deploy.sh": {
+    "mtime": 1793971061.9402778,
+    "seen": 1793971610.6660402,
+    "ast_hash": "073cd4cd1d24811a439cd96d24666ba1",
     "semantic_hash": ""
   }
 }

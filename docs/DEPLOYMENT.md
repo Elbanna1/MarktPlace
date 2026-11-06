@@ -67,6 +67,9 @@ the environment supplies them.
 
 ## Publish
 
+On the production server, release with the script (below). Never `dotnet publish -o` straight
+into the live folder.
+
 ```bash
 dotnet publish MarkatPlace/MarkatPlace.csproj -c Release -o ./publish
 ```
@@ -369,6 +372,70 @@ redeploying fixes it.
 
 ---
 
+## Release script
+
+`deploy/markatplace-deploy.sh` is the supported way to release on the Ubuntu host. Run it as root
+from the repository checkout, after `git pull`:
+
+```bash
+sudo bash deploy/markatplace-deploy.sh diagnose        # read-only: service, data paths, DLLs vs deps.json, errors
+sudo bash deploy/markatplace-deploy.sh deploy          # build HEAD and release it
+sudo SMOKE_USERNAME=<an account> bash deploy/markatplace-deploy.sh deploy   # + a real valid-token request
+sudo bash deploy/markatplace-deploy.sh rollback /var/www/backend-releases/<stamp>-previous-live
+```
+
+Defaults: repository `/home/MarktPlace`, live folder `/var/www/backend`, unit `markatplace.service`,
+releases in `/var/www/backend-releases`, data backups in `/var/backups/markatplace`. Each is an
+environment variable of the same name in the script (`REPO_DIR`, `LIVE_DIR`, …).
+
+What `deploy` does, and refuses to do:
+
+1. **Locates customer data** from the running process (its working directory and
+   `FileStorage__UploadsRootPath` / `FileStorage__PrivateRootPath`), falling back to the unit file and
+   `appsettings*.json`, and cross-checks the uploads path against the last
+   `Uploaded files are stored in …` log line. A disagreement stops the release.
+2. **Backs up** the uploads and private-files folders to a tar per folder with a file manifest, and
+   checks the tar holds every file before going on.
+3. **Builds into a new, empty folder** (`/var/www/backend-releases/<stamp>-<commit>`), so no file from an
+   earlier build can survive into the release.
+4. **Verifies the release**: every runtime assembly listed in `MarkatPlace.deps.json` must be present
+   with exactly the listed assembly and file version (`deploy/verify-assemblies.fsx`). It also refuses a
+   release that contains data folders, and stops if `appsettings*.json` / `web.config` differ from the
+   live copies until you have reviewed them and set `ALLOW_CONFIG_CHANGES=1`.
+5. **Snapshots** the live application files (data folders excluded) for rollback.
+6. **Copies** the release over the live folder with `rsync -a --checksum` (content-compared, never
+   "newer only"), **without `--delete`**, and with `wwwroot/uploads`, `App_Data` and the resolved data
+   folders excluded. The live folder is verified against `deps.json` again.
+7. **Restarts and checks**: anonymous endpoint → 200; `/api/profile` with no token and with a forged
+   token → 401 (a 500 here is the signature of a JWT stack that failed to load); optionally a real
+   login and valid-token request; no restart loop; no `Could not load file or assembly` in the journal.
+   If a local check fails, the snapshot is put back automatically. Public-URL failures are reported
+   but do not trigger a rollback on their own (they can be Nginx or DNS).
+8. **Re-checks customer data**: every file listed in the pre-release manifest must still be there with
+   the same size.
+
+### Why "publish into the live folder" broke authentication (2026-11-06)
+
+`dotnet publish` copies package assemblies only when the source is **newer** than the destination
+(`PreserveNewest`), and a NuGet DLL keeps its package build date. The live folder had a
+`Microsoft.IdentityModel.Tokens.dll` 8.19.2 with a later timestamp than the 8.23.0 package file, so
+publishing commit `c5d621e` (8.19.2 → 8.23.0) rewrote `MarkatPlace.deps.json` but left the old DLL.
+`JwtBearerOptions`' constructor then failed with `FileNotFoundException … Version=8.23.0.0` on every
+request that went through authentication — login and anonymous endpoints included. Swagger kept
+answering 200, which made the service look healthy.
+
+`MarkatPlace.csproj` now switches those copies to `IfDifferent` (target
+`PublishReplacesDifferingFiles`), so even a publish into a stale folder replaces a DLL whose size or
+date differs. The release script makes the question moot by never publishing into a non-empty folder.
+
+### Publish never ships data folders
+
+`wwwroot/uploads/**` and `App_Data/**` are in `DefaultItemExcludes`. The repository happens to track
+451 development images under `wwwroot/uploads`; before this change every publish copied them into the
+live uploads folder. The application creates the upload folders it needs at start-up.
+
+---
+
 ## Post-deployment verification
 
 ```bash
@@ -395,7 +462,9 @@ curl -sI https://<host>/api/lookups/categories-tree | grep -iE "x-content-type|x
 
 The application is stateless apart from the database and the uploads folder.
 
-1. Redeploy the previous build.
+1. Redeploy the previous build: `sudo bash deploy/markatplace-deploy.sh rollback <dir>` with a
+   `…-previous-live` snapshot (or a `/var/www/backend-backup-*` folder). It refuses a source whose
+   DLLs do not match its own `deps.json`, and never copies data folders.
 2. **Migrations do not roll back automatically.** If the new build added a migration, the database is
    ahead of the old code. Additive migrations (a new index, a new nullable column) are usually
    compatible; destructive ones are not.

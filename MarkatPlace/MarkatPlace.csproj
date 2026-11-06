@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
+    <DefaultItemExcludes>$(DefaultItemExcludes);wwwroot\uploads\**;App_Data\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,5 +30,13 @@
     <ProjectReference Include="..\Infastrucre\Presantion\Presantion.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
+
+  <Target Name="PublishReplacesDifferingFiles" AfterTargets="ComputeResolvedFilesToPublishList">
+    <ItemGroup>
+      <ResolvedFileToPublish Condition="'%(ResolvedFileToPublish.CopyToPublishDirectory)' == 'PreserveNewest'">
+        <CopyToPublishDirectory>IfDifferent</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 
 </Project>
