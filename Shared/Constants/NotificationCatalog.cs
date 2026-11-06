@@ -191,6 +191,23 @@ public static class NotificationCatalog
             DeepLink: BuildDeepLink(subject, entityId));
     }
 
+    public static NotificationContent CreatedAwaitingPayment(
+        NotificationSubject subject, Guid entityId, string? entityTitle)
+    {
+        var content = Build(subject, NotificationAction.Created, entityId, entityTitle);
+
+        var body = $"تم حفظ {subject.EntityName} بنجاح، لكنه مش هيدخل مراجعة الإدارة ولا هيتنشر غير بعد دفع رسوم النشر " +
+                   "وتأكيدها. ادفع وارفع صورة إيصال التحويل من صفحة الإعلان.";
+
+        return content with
+        {
+            Title = $"{subject.EntityName} في انتظار الدفع",
+            Message = string.IsNullOrWhiteSpace(entityTitle)
+                ? $"{subject.Icon} {body}"
+                : $"{subject.Icon} {body} ({entityTitle.Trim()})"
+        };
+    }
+
     private static string? BuildDeepLink(NotificationSubject subject, Guid? entityId) =>
         subject.Route is null
             ? null
@@ -397,6 +414,19 @@ public static class NotificationCatalog
 
     public static class AdminAlerts
     {
+        public static NotificationContent PaidListingReady(
+            ListingModuleType module, Guid listingId, string? title, decimal amount, string currency)
+        {
+            var subject = For(module);
+
+            return PendingListing(module, listingId, title) with
+            {
+                Title = "إعلان جاهز للمراجعة بعد تأكيد الدفع",
+                Icon = "💳",
+                Message = $"💳 {Describe($"تم تأكيد دفع رسوم {subject.EntityName} ({amount:N0} {currency})، وهو دلوقتي في قائمة المراجعة بانتظار قرارك.", title)}"
+            };
+        }
+
         public static NotificationContent PendingListing(
             ListingModuleType module,
             Guid listingId,

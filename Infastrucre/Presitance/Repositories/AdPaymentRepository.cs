@@ -180,6 +180,19 @@ public class AdPaymentRepository : IAdPaymentRepository
         return result;
     }
 
+    public async Task<AdPaymentListingRow?> GetListingRowAsync(
+        ListingModuleType type, Guid listingId, CancellationToken cancellationToken = default)
+    {
+        if (!_sources.TryGetValue(type, out var source))
+            return null;
+
+        return await source
+            .Query(ownerId: null, DateTime.UtcNow, includeUnmoderated: true)
+            .Where(row => row.Id == listingId)
+            .Select(row => new AdPaymentListingRow(row.CreatedAt, row.ModerationStatus, row.ExpireAt))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyDictionary<string, string>> GetUserNamesAsync(
         IReadOnlyCollection<string> userIds, CancellationToken cancellationToken = default)
     {

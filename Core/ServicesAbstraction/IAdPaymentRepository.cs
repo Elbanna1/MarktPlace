@@ -6,6 +6,8 @@ namespace ServicesAbstraction;
 
 public record AdPaymentListingSummary(string? Title, int? CategoryId, int? SubCategoryId);
 
+public record AdPaymentListingRow(DateTime CreatedAt, ModerationStatus ModerationStatus, DateTime? ExpireAt);
+
 public record AdPaymentListingFacts(Guid LatestPaymentId, PaymentStatus LatestStatus, bool HasCredit);
 
 public interface IAdPaymentRepository
@@ -41,6 +43,9 @@ public interface IAdPaymentRepository
 
     Task<IReadOnlyDictionary<(ListingModuleType Type, Guid Id), AdPaymentListingFacts>> GetListingFactsAsync(
         IReadOnlyCollection<(ListingModuleType Type, Guid Id)> listings, CancellationToken cancellationToken = default);
+
+    Task<AdPaymentListingRow?> GetListingRowAsync(
+        ListingModuleType type, Guid listingId, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyDictionary<string, string>> GetUserNamesAsync(
         IReadOnlyCollection<string> userIds, CancellationToken cancellationToken = default);

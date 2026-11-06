@@ -347,3 +347,26 @@ public static class AdPaymentDecisions
             : null;
     }
 }
+
+public sealed record AdPaymentQueueFilter(DateTime? EnabledAt, string Stage);
+
+public static class AdminAdPaymentStages
+{
+    public const string ReadyForReview = "ReadyForReview";
+
+    public const string AwaitingPayment = "AwaitingPayment";
+
+    public const string All = "All";
+
+    public static readonly IReadOnlyList<string> Values = new[] { ReadyForReview, AwaitingPayment, All };
+
+    public static string? Parse(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return null;
+
+        var text = value.Trim();
+
+        return Values.FirstOrDefault(candidate => string.Equals(candidate, text, StringComparison.OrdinalIgnoreCase));
+    }
+}

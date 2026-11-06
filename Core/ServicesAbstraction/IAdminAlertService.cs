@@ -9,6 +9,10 @@ public interface IAdminAlertService
         DateTime? cycleStartedUtc,
         CancellationToken cancellationToken = default);
 
+    Task NotifyListingReadyAfterPaymentAsync(
+        ListingModuleType listingType, Guid listingId, string? title, decimal amount, string currency,
+        DateTime approvedAtUtc, CancellationToken cancellationToken = default);
+
     Task NotifyNewReportAsync(
         Guid reportId, ListingModuleType listingType, Guid listingId, string? listingTitle,
         string reasonName, CancellationToken cancellationToken = default);

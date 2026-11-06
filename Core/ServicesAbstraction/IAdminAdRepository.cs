@@ -21,7 +21,8 @@ public interface IAdminAdRepository
 {
     Task<(IReadOnlyList<UserListingRow> Items, int TotalCount)> GetPagedAsync(
         AdminAdFilterParams filter, DateTime utcNow, CancellationToken cancellationToken = default,
-        bool includeTotal = true, bool orderByExpiry = false);
+        bool includeTotal = true, bool orderByExpiry = false,
+        Shared.DTOs.AdPayments.AdPaymentQueueFilter? paymentFilter = null);
 
     Task<IReadOnlyList<AdminAdStatusCount>> GetStatusBreakdownAsync(
         DateTime utcNow, string? ownerId = null, CancellationToken cancellationToken = default);
@@ -30,7 +31,8 @@ public interface IAdminAdRepository
         ModerationStatus status, DateTime utcNow, CancellationToken cancellationToken = default);
 
     Task<int> CountAsync(
-        AdminAdFilterParams filter, DateTime utcNow, CancellationToken cancellationToken = default);
+        AdminAdFilterParams filter, DateTime utcNow, CancellationToken cancellationToken = default,
+        Shared.DTOs.AdPayments.AdPaymentQueueFilter? paymentFilter = null);
 
     Task<IReadOnlyDictionary<string, int>> CountByOwnersAsync(
         IReadOnlyCollection<string> ownerIds, DateTime utcNow,

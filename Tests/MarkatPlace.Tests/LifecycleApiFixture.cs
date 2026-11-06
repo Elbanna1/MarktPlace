@@ -102,6 +102,8 @@ public sealed class LifecycleApiFixture : IAsyncLifetime
 
         var connectionString = LocalDb.ConnectionString(_database);
 
+        await CreateDatabaseInConfiguredDirectoryAsync();
+
         var overrides = new Dictionary<string, string>(Environment)
         {
             ["ConnectionStrings__DefaultConnection"] = connectionString
@@ -173,6 +175,29 @@ public sealed class LifecycleApiFixture : IAsyncLifetime
         await using var command = connection.CreateCommand();
         command.CommandText =
             $"ALTER DATABASE [{_database}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE [{_database}];";
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    private async Task CreateDatabaseInConfiguredDirectoryAsync()
+    {
+        var directory = System.Environment.GetEnvironmentVariable("MARKATPLACE_TEST_DB_DIR");
+
+        if (string.IsNullOrWhiteSpace(directory))
+            return;
+
+        Directory.CreateDirectory(directory);
+
+        var data = Path.Combine(directory, _database + ".mdf").Replace("'", "''");
+        var log = Path.Combine(directory, _database + "_log.ldf").Replace("'", "''");
+
+        await using var connection = new SqlConnection(LocalDb.ConnectionString("master"));
+        await connection.OpenAsync();
+
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            $"CREATE DATABASE [{_database}] ON (NAME = N'{_database}', FILENAME = N'{data}') " +
+            $"LOG ON (NAME = N'{_database}_log', FILENAME = N'{log}');";
 
         await command.ExecuteNonQueryAsync();
     }

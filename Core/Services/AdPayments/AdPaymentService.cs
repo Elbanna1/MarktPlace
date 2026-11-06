@@ -531,6 +531,12 @@ public class AdPaymentService : IAdPaymentService
                 subCategoryId: (int?)ListingModuleCatalog.SubCategoryOf(type)),
             "owner notification", payment.Id);
 
+        if (action == AdPaymentListingActions.AwaitingModeration)
+            await RunSideEffectAsync(
+                () => _alerts.NotifyListingReadyAfterPaymentAsync(
+                    type, listingId, title, payment.Amount, payment.Currency, now, cancellationToken),
+                "admin moderation alert", payment.Id);
+
         return new AdPaymentReviewResultDto
         {
             Payment = await GetSubmissionAsync(id, cancellationToken),

@@ -928,3 +928,23 @@ every read through an ownership/permission check removes the exposure without mo
 **Consequence.** The frontend must load receipts with the bearer token (fetch → blob URL), not as a bare
 `<img src>`. The Nginx rule takes effect only after the site file is installed on the server. Moving legacy
 files into the private store remains optional and needs explicit approval.
+
+## D-48 — Unpaid ads stay out of the moderation queue until their payment is approved
+
+**Decision.** D-46 still holds: every create endpoint stores the ad `Pending`, and approval stays the only
+enforcement (402). On top of that, while payments are on, the admin moderation queue and the pending count leave
+out every ad that still needs a payment. Approving the payment is what puts the ad into the queue, and admins
+get an alert at that moment. Admins are not alerted about the ad when it is created, and the owner's creation
+notice says the ad is waiting for payment. `paymentStage=AwaitingPayment|All` still lets admins see unpaid ads.
+
+**Why.** The requirement is that an unpaid ad is not part of the final moderation queue. Adding a new
+`AwaitingPayment` value to `ModerationStatus` would have meant touching 65 tables, every public query filter and
+the edit/republish paths. Filtering the queue with one `EXISTS` on `Payments` (`IX_Payments_TargetType_TargetId`),
+using the rule `IAdPaymentGate.DescribeAsync` already applies, does the same job with no migration and no change
+to listing data.
+
+**Consequence.** The queue rule lives in `AdminAdRepository.ApplyPaymentStage` and is the same as
+`IAdPaymentGate.DescribeAsync`: a Pending ad with no running window, created after `EnabledAt`, with no
+approved, unused payment. If one changes, the other must too. `AdminAlertService.NotifyPendingListingAsync` and
+`NotificationService.NotifyAsync(Created)` use `IAdPaymentGate.IsAwaitingPaymentAsync`. Both seams are shared by
+all 65 modules, so a new module inherits all of this.

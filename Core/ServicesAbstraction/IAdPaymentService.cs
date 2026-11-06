@@ -61,6 +61,12 @@ public interface IAdPaymentGate
     Task ConsumeAsync(
         ListingModuleType type, Guid listingId, DateTime utcNow, DateTime? windowEnd,
         CancellationToken cancellationToken = default);
+
+    Task<AdPaymentQueueFilter?> GetQueueFilterAsync(
+        string? requestedStage, ModerationStatus? moderationStatus, CancellationToken cancellationToken = default);
+
+    Task<bool> IsAwaitingPaymentAsync(
+        ListingModuleType type, Guid listingId, CancellationToken cancellationToken = default);
 }
 
 public interface IPrivateFileStore

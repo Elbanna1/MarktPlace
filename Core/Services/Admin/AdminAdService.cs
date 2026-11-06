@@ -84,8 +84,12 @@ public class AdminAdService : IAdminAdService
     {
         var utcNow = DateTime.UtcNow;
 
+        var paymentFilter = _paymentGate is null
+            ? null
+            : await _paymentGate.GetQueueFilterAsync(filter.PaymentStage, filter.ModerationStatus, cancellationToken);
+
         var (rows, totalCount) = await _repository.GetPagedAsync(
-            filter, utcNow, cancellationToken, includeTotal, orderByExpiry);
+            filter, utcNow, cancellationToken, includeTotal, orderByExpiry, paymentFilter);
 
         if (rows.Count == 0)
             return new PaginatedResult<AdminAdListItemDto>(
@@ -159,8 +163,18 @@ public class AdminAdService : IAdminAdService
             items, totalCount, filter.PageIndex, filter.PageSize);
     }
 
-    public Task<int> GetPendingCountAsync(CancellationToken cancellationToken = default) =>
-        _repository.CountByStatusAsync(ModerationStatus.Pending, DateTime.UtcNow, cancellationToken);
+    public async Task<int> GetPendingCountAsync(CancellationToken cancellationToken = default)
+    {
+        var paymentFilter = _paymentGate is null
+            ? null
+            : await _paymentGate.GetQueueFilterAsync(null, ModerationStatus.Pending, cancellationToken);
+
+        return paymentFilter is null
+            ? await _repository.CountByStatusAsync(ModerationStatus.Pending, DateTime.UtcNow, cancellationToken)
+            : await _repository.CountAsync(
+                new AdminAdFilterParams { ModerationStatus = ModerationStatus.Pending },
+                DateTime.UtcNow, cancellationToken, paymentFilter);
+    }
 
     public async Task<AdminAdDetailsDto> GetAdDetailsAsync(
         ListingModuleType type, Guid id, CancellationToken cancellationToken = default)
@@ -297,8 +311,7 @@ public class AdminAdService : IAdminAdService
     }
 
     private static bool AwaitsFirstWindow(ModerationStatus status, DateTime? expireAt, DateTime utcNow) =>
-        status is ModerationStatus.Pending or ModerationStatus.Rejected &&
-        !(expireAt is { } end && end > utcNow);
+        Services.AdPayments.AdPaymentRules.AwaitsFirstWindow(status, expireAt, utcNow);
 
     public async Task<AdminModerationResultDto> ApproveAsync(
         ListingModuleType type, Guid id, string adminUserId,

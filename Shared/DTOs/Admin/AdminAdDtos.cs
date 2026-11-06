@@ -102,6 +102,8 @@ public class AdminAdFilterParams : PaginationParams
     public bool? RepublishDue { get; set; }
 
     public bool? Republished { get; set; }
+
+    public string? PaymentStage { get; set; }
 }
 
 public class AdminAdDetailsDto : IListingStats

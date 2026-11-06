@@ -152,6 +152,14 @@ verified by reintroducing the bug:
 
 ---
 
+## LocalDB suites (`LifecycleApiFixture`)
+
+Tests marked `[LocalDbFact]`/`[LocalDbTheory]` boot the real API on a throwaway LocalDB database, which is
+dropped afterwards, and they skip when LocalDB is missing. By default LocalDB puts the files in the user profile
+on `C:`. When that drive is short on space, migrations fail with "The transaction log … is full". Set
+`MARKATPLACE_TEST_DB_DIR` to a folder on another drive (for example `MARKATPLACE_TEST_DB_DIR='E:\MarkatPlaceTestDb'`)
+and the fixture creates the database files there.
+
 ## HTTP suites
 
 Behaviour that needs a database is proven against a running instance. These suites are **not** in the

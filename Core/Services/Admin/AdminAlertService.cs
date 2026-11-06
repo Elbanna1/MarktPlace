@@ -14,6 +14,7 @@ public class AdminAlertService : IAdminAlertService
     private readonly ILookupService _lookups;
     private readonly INotificationRepository _notificationHistory;
     private readonly ILogger<AdminAlertService> _logger;
+    private readonly IAdPaymentGate? _paymentGate;
 
     public AdminAlertService(
         INotificationService notifications,
@@ -21,8 +22,10 @@ public class AdminAlertService : IAdminAlertService
         IUserListingRepository listings,
         ILookupService lookups,
         INotificationRepository notificationHistory,
-        ILogger<AdminAlertService> logger)
+        ILogger<AdminAlertService> logger,
+        IAdPaymentGate? paymentGate = null)
     {
+        _paymentGate = paymentGate;
         _notifications = notifications;
         _users = users;
         _listings = listings;
@@ -113,6 +116,15 @@ public class AdminAlertService : IAdminAlertService
         DateTime? cycleStartedUtc,
         CancellationToken cancellationToken = default)
     {
+        if (await AwaitsPaymentAsync(listingType, listingId, cancellationToken))
+        {
+            _logger.LogInformation(
+                "{Module} {ListingId} awaits its publication payment; the moderation alert waits for the payment approval.",
+                listingType, listingId);
+
+            return;
+        }
+
         var context = await ListingContextResolver.ResolveAsync(
             _listings, _lookups, _users, listingType, listingId, cancellationToken);
 
@@ -129,6 +141,48 @@ public class AdminAlertService : IAdminAlertService
                 subCategoryName: context?.SubCategoryName,
                 imageUrl: context?.ImageUrl),
             listingId, cycleStartedUtc, cancellationToken);
+    }
+
+    public async Task NotifyListingReadyAfterPaymentAsync(
+        ListingModuleType listingType, Guid listingId, string? title, decimal amount, string currency,
+        DateTime approvedAtUtc, CancellationToken cancellationToken = default)
+    {
+        var context = await ListingContextResolver.ResolveAsync(
+            _listings, _lookups, _users, listingType, listingId, cancellationToken);
+
+        var content = NotificationCatalog.AdminAlerts.PaidListingReady(
+            listingType, listingId, title ?? context?.Title, amount, currency) with
+        {
+            CategoryId = context?.CategoryId,
+            SubCategoryId = context?.SubCategoryId,
+            CategoryName = context?.CategoryName,
+            SubCategoryName = context?.SubCategoryName,
+            OwnerId = context?.OwnerId,
+            OwnerName = context?.OwnerName,
+            ImageUrl = context?.ImageUrl
+        };
+
+        await SendOnceAsync(content, listingId, approvedAtUtc.AddSeconds(-1), cancellationToken);
+    }
+
+    private async Task<bool> AwaitsPaymentAsync(
+        ListingModuleType listingType, Guid listingId, CancellationToken cancellationToken)
+    {
+        if (_paymentGate is null)
+            return false;
+
+        try
+        {
+            return await _paymentGate.IsAwaitingPaymentAsync(listingType, listingId, cancellationToken);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            _logger.LogError(exception,
+                "Could not read the payment state of {Module} {ListingId}; the moderation alert is sent anyway.",
+                listingType, listingId);
+
+            return false;
+        }
     }
 
     public Task NotifyNewReportAsync(

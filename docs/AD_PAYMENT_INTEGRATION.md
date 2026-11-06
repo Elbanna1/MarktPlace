@@ -65,10 +65,31 @@ after creation while payments are enabled:
 
 | Ad state after create | Public | Admin moderation queue | Admin can approve the ad? |
 | --- | --- | --- | --- |
-| `Pending`, stage `AwaitingPayment` | No | Yes, row carries `payment.stage = "AwaitingPayment"` | **No — 402** |
-| `Pending`, stage `PaymentUnderReview` | No | Yes, `payment.stage = "PaymentUnderReview"` | **No — 402** |
-| `Pending`, stage `PaymentRejected` | No | Yes | **No — 402** |
-| `Pending`, stage `Paid` (approved, unused payment) | No | Yes | Yes → published, payment consumed |
+| `Pending`, stage `AwaitingPayment` | No | **No** (only with `paymentStage=AwaitingPayment`) | **No — 402** |
+| `Pending`, stage `PaymentUnderReview` | No | **No** (only with `paymentStage=AwaitingPayment`) | **No — 402** |
+| `Pending`, stage `PaymentRejected` | No | **No** (only with `paymentStage=AwaitingPayment`) | **No — 402** |
+| `Pending`, stage `Paid` (approved, unused payment) | No | **Yes** — enters the queue when the payment is approved | Yes → published, payment consumed |
+
+**Moderation queue (D-48).** While payments are on, `GET /api/v2/admin/ads/pending`, `GET /api/v2/admin/ads?moderationStatus=1`
+and `GET /api/v2/admin/ads/pending/count` (plus the legacy `api/admin/ads` equivalents) show only ads that are
+ready for moderation: paid, grandfathered (created before payments were switched on), or edits of a listing whose
+window is still running. The optional `paymentStage` query parameter changes this:
+
+| `paymentStage` | Result |
+| --- | --- |
+| omitted | `ReadyForReview` when filtering on `Pending`, otherwise `All` |
+| `ReadyForReview` | ads that need no further payment |
+| `AwaitingPayment` | pending ads still blocked on payment (awaiting, under review or rejected proof) |
+| `All` | the pre-D-48 behaviour, every row |
+| anything else | **400** |
+
+With payments off, `ReadyForReview` is every pending ad and `AwaitingPayment` is empty.
+
+**Notifications.** While payments are on, creating an ad sends the owner "… في انتظار الدفع" (same `type`/`deepLink`
+as the usual "submitted" notice) and **no** "إعلان جديد بانتظار المراجعة" alert to admins. When an admin approves
+the payment, admins get "إعلان جاهز للمراجعة بعد تأكيد الدفع" (`type` `AdminPendingListing` = 50, `referenceId` = the
+listing id, `deepLink` `/admin/ads/{type}/{id}`), once per approval. All of these go through the existing
+`NotificationService`: they are stored first, then pushed over `/hubs/notifications`.
 
 The advertisement is stored in its own table as a normal `Pending` listing. It is invisible to the public
 (moderation filter) until an admin approves it, and approval is refused with **402 Payment Required** until an
@@ -171,7 +192,7 @@ create ad ──► Pending / AwaitingPayment
           Pending / PaymentUnderReview ──admin Reject──► Pending / PaymentRejected
                  │ admin Approve                                │ POST resubmit
                  ▼                                              └──► PaymentUnderReview (again)
-          Pending / Paid  (credit)
+          Pending / Paid  (credit) ── enters the admin moderation queue, admins notified
                  │ admin approves the AD (normal moderation)        admin rejects the AD
                  ▼                                                  ▼
           Approved, 30-day window, credit consumed          Rejected (credit kept; owner edits → Pending → approval uses it)

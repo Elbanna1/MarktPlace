@@ -22,6 +22,10 @@ public static class AdPaymentRules
     public static bool OpensNewWindow(IModeratedListing listing, DateTime utcNow) =>
         !(WindowEndOf(listing) is { } current && current > utcNow && !IsStampedExpired(listing));
 
+    public static bool AwaitsFirstWindow(ModerationStatus status, DateTime? expireAt, DateTime utcNow) =>
+        status is ModerationStatus.Pending or ModerationStatus.Rejected &&
+        !(expireAt is { } end && end > utcNow);
+
     public static bool NeedsNewWindow(IModeratedListing listing, DateTime utcNow)
     {
         if (IsDeleted(listing))

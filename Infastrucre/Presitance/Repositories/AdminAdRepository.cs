@@ -4,6 +4,7 @@ using Persistence.Data;
 using Persistence.Listings;
 using ServicesAbstraction;
 using Shared.Constants;
+using Shared.DTOs.AdPayments;
 using Shared.DTOs.Admin;
 using Shared.DTOs.Listings;
 using Shared.Enums;
@@ -28,7 +29,8 @@ public class AdminAdRepository : IAdminAdRepository
 
     public async Task<(IReadOnlyList<UserListingRow> Items, int TotalCount)> GetPagedAsync(
         AdminAdFilterParams filter, DateTime utcNow, CancellationToken cancellationToken = default,
-        bool includeTotal = true, bool orderByExpiry = false)
+        bool includeTotal = true, bool orderByExpiry = false,
+        AdPaymentQueueFilter? paymentFilter = null)
     {
         IReadOnlyList<string> matchedUserIds = Array.Empty<string>();
         var search = filter.Search?.Trim();
@@ -36,7 +38,7 @@ public class AdminAdRepository : IAdminAdRepository
         if (!string.IsNullOrWhiteSpace(search))
             matchedUserIds = await FindUserIdsAsync(search, cancellationToken);
 
-        var query = BuildQuery(filter, search, matchedUserIds, utcNow);
+        var query = BuildQuery(filter, search, matchedUserIds, utcNow, paymentFilter);
 
         if (query is null)
             return (Array.Empty<UserListingRow>(), 0);
@@ -97,9 +99,11 @@ public class AdminAdRepository : IAdminAdRepository
     }
 
     public async Task<int> CountAsync(
-        AdminAdFilterParams filter, DateTime utcNow, CancellationToken cancellationToken = default)
+        AdminAdFilterParams filter, DateTime utcNow, CancellationToken cancellationToken = default,
+        AdPaymentQueueFilter? paymentFilter = null)
     {
-        var query = BuildQuery(filter, search: null, matchedUserIds: Array.Empty<string>(), utcNow);
+        var query = BuildQuery(
+            filter, search: null, matchedUserIds: Array.Empty<string>(), utcNow, paymentFilter);
 
         return query is null ? 0 : await query.CountAsync(cancellationToken);
     }
@@ -359,7 +363,8 @@ public class AdminAdRepository : IAdminAdRepository
         AdminAdFilterParams filter,
         string? search,
         IReadOnlyList<string> matchedUserIds,
-        DateTime utcNow)
+        DateTime utcNow,
+        AdPaymentQueueFilter? paymentFilter = null)
     {
         IQueryable<UserListingRow>? combined = null;
 
@@ -415,10 +420,56 @@ public class AdminAdRepository : IAdminAdRepository
                     EF.Functions.Like(row.Title, $"%{search}%") ||
                     matchedUserIds.Contains(row.OwnerId));
 
+            if (paymentFilter is not null)
+                query = ApplyPaymentStage(query, source.Type, paymentFilter, utcNow);
+
             combined = combined is null ? query : combined.Concat(query);
         }
 
         return combined;
+    }
+
+    private IQueryable<UserListingRow> ApplyPaymentStage(
+        IQueryable<UserListingRow> query, ListingModuleType type, AdPaymentQueueFilter paymentFilter,
+        DateTime utcNow)
+    {
+        if (paymentFilter.Stage == AdminAdPaymentStages.All)
+            return query;
+
+        if (!AdPaymentCatalog.IsSubjectToPayment(type))
+            return paymentFilter.Stage == AdminAdPaymentStages.AwaitingPayment ? query.Where(_ => false) : query;
+
+        var targetType = type.ToString();
+        var credits = _context.Payments.Where(payment =>
+            payment.Purpose == PaymentPurpose.AdvertisementPublication &&
+            payment.TargetType == targetType &&
+            payment.Status == PaymentStatus.Approved &&
+            payment.ActivatedAt == null);
+
+        if (paymentFilter.EnabledAt is { } enabledAt)
+        {
+            return paymentFilter.Stage == AdminAdPaymentStages.AwaitingPayment
+                ? query.Where(row =>
+                    row.ModerationStatus == ModerationStatus.Pending &&
+                    (row.ExpireAt == null || row.ExpireAt <= utcNow) &&
+                    row.CreatedAt >= enabledAt &&
+                    !credits.Any(payment => payment.TargetId == row.Id))
+                : query.Where(row =>
+                    row.ModerationStatus != ModerationStatus.Pending ||
+                    (row.ExpireAt != null && row.ExpireAt > utcNow) ||
+                    row.CreatedAt < enabledAt ||
+                    credits.Any(payment => payment.TargetId == row.Id));
+        }
+
+        return paymentFilter.Stage == AdminAdPaymentStages.AwaitingPayment
+            ? query.Where(row =>
+                row.ModerationStatus == ModerationStatus.Pending &&
+                (row.ExpireAt == null || row.ExpireAt <= utcNow) &&
+                !credits.Any(payment => payment.TargetId == row.Id))
+            : query.Where(row =>
+                row.ModerationStatus != ModerationStatus.Pending ||
+                (row.ExpireAt != null && row.ExpireAt > utcNow) ||
+                credits.Any(payment => payment.TargetId == row.Id));
     }
 
     private static bool Participates(ListingModuleType type, AdminAdFilterParams filter)

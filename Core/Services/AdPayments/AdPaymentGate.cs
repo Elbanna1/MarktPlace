@@ -86,6 +86,53 @@ public class AdPaymentGate : IAdPaymentGate
         return result;
     }
 
+    public async Task<AdPaymentQueueFilter?> GetQueueFilterAsync(
+        string? requestedStage, ModerationStatus? moderationStatus, CancellationToken cancellationToken = default)
+    {
+        var stage = requestedStage is null
+            ? moderationStatus == ModerationStatus.Pending ? AdminAdPaymentStages.ReadyForReview : AdminAdPaymentStages.All
+            : AdminAdPaymentStages.Parse(requestedStage)
+              ?? throw new BadRequestException(
+                  $"قيمة مرحلة الدفع غير صحيحة. القيم المسموحة: {string.Join("، ", AdminAdPaymentStages.Values)}.");
+
+        if (stage == AdminAdPaymentStages.All)
+            return null;
+
+        var settings = await _repository.GetSettingsAsync(asNoTracking: true, cancellationToken);
+
+        if (settings is not { IsEnabled: true })
+            return stage == AdminAdPaymentStages.AwaitingPayment
+                ? new AdPaymentQueueFilter(DateTime.MaxValue, AdminAdPaymentStages.AwaitingPayment)
+                : null;
+
+        return new AdPaymentQueueFilter(settings.EnabledAt, stage);
+    }
+
+    public async Task<bool> IsAwaitingPaymentAsync(
+        ListingModuleType type, Guid listingId, CancellationToken cancellationToken = default)
+    {
+        if (!AdPaymentCatalog.IsSubjectToPayment(type))
+            return false;
+
+        var row = await _repository.GetListingRowAsync(type, listingId, cancellationToken);
+
+        if (row is null)
+            return false;
+
+        var utcNow = DateTime.UtcNow;
+
+        var states = await DescribeAsync(
+            new[]
+            {
+                new AdPaymentListingSnapshot(
+                    type, listingId, row.CreatedAt, row.ModerationStatus,
+                    AdPaymentRules.AwaitsFirstWindow(row.ModerationStatus, row.ExpireAt, utcNow))
+            },
+            utcNow, cancellationToken);
+
+        return states.TryGetValue((type, listingId), out var state) && state.IsPaymentRequired;
+    }
+
     public Task ConsumeAsync(
         ListingModuleType type, Guid listingId, DateTime utcNow, DateTime? windowEnd,
         CancellationToken cancellationToken = default) =>

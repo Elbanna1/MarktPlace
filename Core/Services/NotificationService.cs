@@ -16,20 +16,23 @@ public class NotificationService : INotificationService
     private readonly IRealtimeNotifier _realtimeNotifier;
     private readonly IMapper _mapper;
     private readonly ILogger<NotificationService> _logger;
+    private readonly IAdPaymentGate? _paymentGate;
 
     public NotificationService(
         INotificationRepository repository,
         IRealtimeNotifier realtimeNotifier,
         IMapper mapper,
-        ILogger<NotificationService> logger)
+        ILogger<NotificationService> logger,
+        IAdPaymentGate? paymentGate = null)
     {
+        _paymentGate = paymentGate;
         _repository = repository;
         _realtimeNotifier = realtimeNotifier;
         _mapper = mapper;
         _logger = logger;
     }
 
-    public Task NotifyAsync(
+    public async Task NotifyAsync(
         string userId,
         ListingModuleType module,
         NotificationAction action,
@@ -38,15 +41,39 @@ public class NotificationService : INotificationService
     {
         var subCategory = ListingModuleCatalog.SubCategoryOf(module);
         var category = ListingModuleCatalog.CategoryOf(module);
+        var subject = NotificationCatalog.For(module);
 
-        var content = NotificationCatalog
-            .Build(NotificationCatalog.For(module), action, entityId, entityTitle)
+        var awaitsPayment = action == NotificationAction.Created &&
+                            await AwaitsPaymentAsync(module, entityId);
+
+        var content = (awaitsPayment
+                ? NotificationCatalog.CreatedAwaitingPayment(subject, entityId, entityTitle)
+                : NotificationCatalog.Build(subject, action, entityId, entityTitle))
             .WithListing(
                 listingType: module,
                 categoryId: (int?)category,
                 subCategoryId: (int?)subCategory);
 
-        return CreateAsync(userId, content, entityId, action);
+        await CreateAsync(userId, content, entityId, action);
+    }
+
+    private async Task<bool> AwaitsPaymentAsync(ListingModuleType module, Guid entityId)
+    {
+        if (_paymentGate is null)
+            return false;
+
+        try
+        {
+            return await _paymentGate.IsAwaitingPaymentAsync(module, entityId);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            _logger.LogError(exception,
+                "Could not read the payment state of {Module} {ListingId}; the default wording is used.",
+                module, entityId);
+
+            return false;
+        }
     }
 
     public async Task NotifyAsync(
