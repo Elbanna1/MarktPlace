@@ -948,3 +948,27 @@ to listing data.
 approved, unused payment. If one changes, the other must too. `AdminAlertService.NotifyPendingListingAsync` and
 `NotificationService.NotifyAsync(Created)` use `IAdPaymentGate.IsAwaitingPaymentAsync`. Both seams are shared by
 all 65 modules, so a new module inherits all of this.
+
+## D-49 — Payment and visibility are configured per catalog node and resolved in one place
+
+**Decision.** A single `CatalogConfigurations` table holds at most one payment rule per node and one visibility rule
+per node and area. Nodes are a category, sub-category or `ListingModuleType` module. A pure resolver
+(`Shared/Catalog/CatalogConfigurationSnapshot`) walks module → sub-category → category → global settings. The
+lowest in-effect rule wins, prices inherit independently, and the schedule window is `[activation, expiration)` in
+UTC. The snapshot is cached 30 s and dropped on every write. `AdPaymentGate`, the moderation-queue filter, proof
+submission, owner status, the lookups and home endpoints, and the create endpoints (via
+`ListingCreationAvailabilityFilter`) all consult it. بوابة الخيرات (category 12) is protected by id in
+`CatalogProtection`, so payment can never be required there and enabling it is refused.
+
+**Why.** The requirement was category-, sub-category- and module-level control with inheritance, bulk changes and
+schedules, without per-module conditions. One row per node (instead of a schedule history) keeps the result
+deterministic and the admin model simple: to change a schedule you edit the node's rule. The global
+`AdPaymentSettings` row stays the root, so the existing admin settings page, payment methods and instructions keep
+working unchanged.
+
+**Consequence.** `GET /api/v2/ad-payment/config` without a selection still returns the global default. A frontend
+that does not pass the form's selection will not show the payment section for a category that is paid on its own;
+the 402 approval check still enforces payment. When a child rule is switched on, it keeps the parent's
+`requiredSince` if the parent already required payment, so no pending ad is freed by accident. Visibility changes
+reach the response-cached lookup endpoints within their existing cache time (≤ 300 s). The three charity modules
+are no longer chargeable, so the earlier "all 65 types pay" tests now assert 62.

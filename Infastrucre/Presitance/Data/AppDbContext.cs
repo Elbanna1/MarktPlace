@@ -82,6 +82,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<AdPaymentSetting> AdPaymentSettings => Set<AdPaymentSetting>();
 
+    public DbSet<CatalogConfiguration> CatalogConfigurations => Set<CatalogConfiguration>();
+
     public DbSet<Banner> Banners => Set<Banner>();
 
     public DbSet<BannerPlacementSetting> BannerPlacementSettings => Set<BannerPlacementSetting>();

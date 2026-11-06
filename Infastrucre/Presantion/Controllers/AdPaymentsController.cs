@@ -32,9 +32,10 @@ public class PublicAdPaymentController : ControllerBase
         "Same payload as GET /api/v2/ad-payment/config but without authentication. " +
         "Always served with Cache-Control: no-store, so it reflects the latest admin settings.")]
     [ProducesResponseType(typeof(ApiResponse<PublicAdPaymentConfigDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<ApiResponse<PublicAdPaymentConfigDto>>> GetConfig()
+    public async Task<ActionResult<ApiResponse<PublicAdPaymentConfigDto>>> GetConfig(
+        [FromQuery] AdPaymentConfigQuery query)
     {
-        var result = await _payments.GetPublicConfigAsync(HttpContext.RequestAborted);
+        var result = await _payments.GetPublicConfigAsync(HttpContext.RequestAborted, query);
 
         Response.Headers.CacheControl = "no-store";
 
@@ -62,12 +63,16 @@ public class AdPaymentConfigController : ControllerBase
         "Authenticated. Returns the live admin settings: isEnabled, price, currency, instructions and the active " +
         "payment methods offered for ad payments (paymentMethods is empty while isEnabled is false). " +
         "Call it every time a create-ad form opens; the response is never cached (Cache-Control: no-store). " +
-        "When isEnabled is true the form shows its Payment section; when false the section is hidden and nothing changes.")]
+        "When isEnabled is true the form shows its Payment section; when false the section is hidden and nothing changes. " +
+        "Pass type (ListingModuleType number or name), categoryId and/or subCategoryId to get the EFFECTIVE configuration " +
+        "for that selection (category, sub-category and module overrides, schedules and the always-free charity category). " +
+        "Without a selection the response is the global default and anyCategoryRequiresPayment tells whether some category overrides it.")]
     [ProducesResponseType(typeof(ApiResponse<PublicAdPaymentConfigDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ApiResponse<PublicAdPaymentConfigDto>>> GetConfig()
+    public async Task<ActionResult<ApiResponse<PublicAdPaymentConfigDto>>> GetConfig(
+        [FromQuery] AdPaymentConfigQuery query)
     {
-        var result = await _payments.GetPublicConfigAsync(HttpContext.RequestAborted);
+        var result = await _payments.GetPublicConfigAsync(HttpContext.RequestAborted, query);
 
         Response.Headers.CacheControl = "no-store";
 

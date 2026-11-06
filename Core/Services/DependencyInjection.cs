@@ -91,6 +91,8 @@ public static class DependencyInjection
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IAdPaymentService, Services.AdPayments.AdPaymentService>();
         services.AddScoped<IAdPaymentGate, Services.AdPayments.AdPaymentGate>();
+        services.AddScoped<ICatalogConfigurationProvider, Services.Catalog.CatalogConfigurationProvider>();
+        services.AddScoped<ICatalogConfigurationService, Services.Catalog.CatalogConfigurationService>();
         services.AddScoped<IBannerService, BannerService>();
 
         services.AddScoped<IBannerBookingService, BannerBookingService>();

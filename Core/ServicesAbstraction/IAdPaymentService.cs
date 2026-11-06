@@ -9,7 +9,8 @@ public sealed record PrivateFileContent(Stream Content, string ContentType, stri
 
 public interface IAdPaymentService
 {
-    Task<PublicAdPaymentConfigDto> GetPublicConfigAsync(CancellationToken cancellationToken = default);
+    Task<PublicAdPaymentConfigDto> GetPublicConfigAsync(
+        CancellationToken cancellationToken = default, AdPaymentConfigQuery? query = null);
 
     Task<AdminAdPaymentSettingsDto> GetSettingsAsync(CancellationToken cancellationToken = default);
 
@@ -45,14 +46,21 @@ public interface IAdPaymentService
 }
 
 public sealed record AdPaymentListingSnapshot(
-    ListingModuleType Type, Guid Id, DateTime? CreatedAt, ModerationStatus ModerationStatus, bool OpensNewWindow);
+    ListingModuleType Type, Guid Id, DateTime? CreatedAt, ModerationStatus ModerationStatus, bool OpensNewWindow,
+    int? SubCategoryId = null);
 
 public interface IAdPaymentGate
 {
     Task EnsurePaidAsync(
         ListingModuleType type, Guid listingId, DateTime? listingCreatedAt, CancellationToken cancellationToken = default);
 
-    Task<bool> IsRequiredForNewListingAsync(ListingModuleType type, CancellationToken cancellationToken = default);
+    Task<bool> IsRequiredForNewListingAsync(
+        ListingModuleType type, CancellationToken cancellationToken = default, int? subCategoryId = null);
+
+    Task<Shared.Catalog.CatalogConfigurationSnapshot> GetSnapshotAsync(CancellationToken cancellationToken = default);
+
+    Task<Shared.Catalog.EffectivePaymentConfiguration> ResolveAsync(
+        ListingModuleType type, int? subCategoryId, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyDictionary<(ListingModuleType Type, Guid Id), AdPaymentListingStateDto>> DescribeAsync(
         IReadOnlyCollection<AdPaymentListingSnapshot> listings, DateTime utcNow,

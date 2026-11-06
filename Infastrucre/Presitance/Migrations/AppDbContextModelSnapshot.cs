@@ -17,7 +17,7 @@ namespace Presitance.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.10")
+                .HasAnnotation("ProductVersion", "10.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -7148,6 +7148,78 @@ namespace Presitance.Migrations
                             Id = 4,
                             Name = "غير معروف",
                             NameEn = "Unknown"
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.CatalogConfiguration", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ActiveFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ActiveUntil")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Area")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Currency")
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
+
+                    b.Property<DateTime?>("EnabledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsVisible")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NodeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NodeType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Kind", "NodeType", "NodeId", "Area")
+                        .IsUnique()
+                        .HasDatabaseName("UX_CatalogConfigurations_Node");
+
+                    b.ToTable("CatalogConfigurations", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_CatalogConfigurations_Area", "([Kind] = 1 AND [Area] = 0) OR ([Kind] = 2 AND [Area] > 0)");
+
+                            t.HasCheckConstraint("CK_CatalogConfigurations_Price", "[Price] IS NULL OR [Price] > 0");
+
+                            t.HasCheckConstraint("CK_CatalogConfigurations_Window", "[ActiveFrom] IS NULL OR [ActiveUntil] IS NULL OR [ActiveFrom] < [ActiveUntil]");
                         });
                 });
 

@@ -59,7 +59,8 @@ public static class AdPaymentCatalog
         };
     }
 
-    private static readonly IReadOnlySet<ListingModuleType> Exempt = new HashSet<ListingModuleType>();
+    private static readonly IReadOnlySet<ListingModuleType> Exempt =
+        ListingModuleCatalog.All.Where(CatalogProtection.IsFreeModule).ToHashSet();
 
     public static bool IsSubjectToPayment(ListingModuleType type) =>
         Enum.IsDefined(type) && !Exempt.Contains(type);

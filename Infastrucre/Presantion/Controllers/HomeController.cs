@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Filters;
 using ServicesAbstraction;
+using Shared.Catalog;
 using Shared.DTOs.Home;
+using Shared.Enums;
 using Shared.DTOs.Lookups;
 using Shared.Responses;
 
@@ -16,10 +18,12 @@ namespace Presentation.Controllers;
 public class HomeController : ControllerBase
 {
     private readonly IHomeService _home;
+    private readonly ICatalogConfigurationProvider? _catalog;
 
-    public HomeController(IHomeService home)
+    public HomeController(IHomeService home, ICatalogConfigurationProvider? catalog = null)
     {
         _home = home;
+        _catalog = catalog;
     }
 
     [HttpGet]
@@ -28,6 +32,22 @@ public class HomeController : ControllerBase
     public async Task<ActionResult<ApiResponse<HomeConfigurationDto>>> Get()
     {
         var result = await _home.GetAsync(HttpContext.RequestAborted);
+
+        if (_catalog is not null)
+        {
+            var snapshot = await _catalog.GetSnapshotAsync(HttpContext.RequestAborted);
+            var now = DateTime.UtcNow;
+
+            bool Shown(int? categoryId) =>
+                categoryId is not { } id ||
+                snapshot.IsVisible(CatalogContext.ForCategory(id), CatalogArea.HomePage, now);
+
+            result = new HomeConfigurationDto
+            {
+                Sections = result.Sections.Where(section => Shown(section.CategoryId)).ToList(),
+                Categories = result.Categories.Where(category => Shown(category.Id)).ToList()
+            };
+        }
 
         return Ok(ApiResponse<HomeConfigurationDto>.Ok(result, "تم استرجاع إعدادات الصفحة الرئيسية."));
     }

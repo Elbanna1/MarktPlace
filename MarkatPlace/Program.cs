@@ -90,6 +90,8 @@ builder.Services
     {
         options.Filters.Add<AdminPermissionFilter>();
 
+        options.Filters.Add<ListingCreationAvailabilityFilter>();
+
         options.Filters.Add<ValidationFilter>();
 
         options.Filters.Add<ListingInteractionFilter>();

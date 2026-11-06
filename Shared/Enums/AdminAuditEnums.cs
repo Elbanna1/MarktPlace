@@ -106,5 +106,11 @@ public enum AdminAuditAction
 
     UpdateAdminPermissions = 94,
 
-    RevokeAdmin = 95
+    RevokeAdmin = 95,
+
+    UpdateCatalogPayment = 100,
+
+    UpdateCatalogVisibility = 101,
+
+    ResetCatalogConfiguration = 102
 }

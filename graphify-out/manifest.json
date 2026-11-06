@@ -1896,9 +1896,9 @@
     "semantic_hash": ""
   },
   "Core/Services/Admin/AdminDashboardService.cs": {
-    "mtime": 1788880309.756251,
-    "seen": 1793628588.8818252,
-    "ast_hash": "e91d28e920daab3c504abdbca95380fb",
+    "mtime": 1793986339.3815439,
+    "seen": 1793987439.1631124,
+    "ast_hash": "b234e5d9006ca72a8c905fa96a642ac8",
     "semantic_hash": ""
   },
   "Core/Services/Admin/AdminFormService.cs": {
@@ -2160,9 +2160,9 @@
     "semantic_hash": ""
   },
   "Core/Services/DependencyInjection.cs": {
-    "mtime": 1793713591.437001,
-    "seen": 1793714423.3475127,
-    "ast_hash": "8cc7c6da45ecce7dcc6d9fa0411d79c6",
+    "mtime": 1793985635.4019527,
+    "seen": 1793987439.1724708,
+    "ast_hash": "7336dc9be48af88271eef3e62b03808a",
     "semantic_hash": ""
   },
   "Core/Services/Directory/DirectoryListingService.cs": {
@@ -2304,9 +2304,9 @@
     "semantic_hash": ""
   },
   "Core/Services/Listings/ListingRepublishService.cs": {
-    "mtime": 1793766958.255412,
-    "seen": 1793767854.6602952,
-    "ast_hash": "2633bc32688a2d28ed5d171e2596bde0",
+    "mtime": 1793986036.9049911,
+    "seen": 1793987439.1776476,
+    "ast_hash": "c88dc6a1179437fa1d8c878edbf5b92b",
     "semantic_hash": ""
   },
   "Core/Services/Listings/ListingViewFlushService.cs": {
@@ -3912,9 +3912,9 @@
     "semantic_hash": ""
   },
   "Infastrucre/Presantion/Controllers/HomeController.cs": {
-    "mtime": 1790160227.8005953,
-    "seen": 1793628588.882303,
-    "ast_hash": "55e1df27c764575cfa6a696bc7dc02ee",
+    "mtime": 1793986303.3535745,
+    "seen": 1793987439.2367384,
+    "ast_hash": "84b690a44b1c07a0ef2b38db2063fa05",
     "semantic_hash": ""
   },
   "Infastrucre/Presantion/Controllers/HomeKitchenController.cs": {
@@ -3978,9 +3978,9 @@
     "semantic_hash": ""
   },
   "Infastrucre/Presantion/Controllers/LookupsController.cs": {
-    "mtime": 1790163605.2623944,
-    "seen": 1793628588.8823183,
-    "ast_hash": "99dc46ddd9178dc448027c710a1a491d",
+    "mtime": 1793986303.3535745,
+    "seen": 1793987439.2388914,
+    "ast_hash": "7080cc47215b9e3250f1f49067cebbf0",
     "semantic_hash": ""
   },
   "Infastrucre/Presantion/Controllers/LostFoundController.cs": {
@@ -4746,9 +4746,9 @@
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/Data/AppDbContext.cs": {
-    "mtime": 1793713492.128506,
-    "seen": 1793714423.4454339,
-    "ast_hash": "8763198b14aaff9509a7a25e4abefb7e",
+    "mtime": 1793985602.5125349,
+    "seen": 1793987439.2665708,
+    "ast_hash": "6888546ae5604491d2fdc8fb4f9ab78f",
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/Data/AppDbContextFactory.cs": {
@@ -4812,9 +4812,9 @@
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/DependencyInjection.cs": {
-    "mtime": 1793713591.437001,
-    "seen": 1793714423.4477286,
-    "ast_hash": "cfbda275b40ad5c0448ed5fc945f9e25",
+    "mtime": 1793985618.8121316,
+    "seen": 1793987439.2687254,
+    "ast_hash": "f687440a79ed8572dcf25969ef4b1a1f",
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/Interceptors/ListingEditModerationInterceptor.cs": {
@@ -5874,9 +5874,9 @@
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/Migrations/AppDbContextModelSnapshot.cs": {
-    "mtime": 1793964278.05062,
-    "seen": 1793965905.3637073,
-    "ast_hash": "53fb02517487fde47b8007b08d0729ae",
+    "mtime": 1793986155.200665,
+    "seen": 1793987439.3073514,
+    "ast_hash": "96ed6ad0335d3868082678f494cd069f",
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/Presitance.csproj": {
@@ -5904,9 +5904,9 @@
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/Repositories/AdminAdRepository.cs": {
-    "mtime": 1793980668.0881715,
-    "seen": 1793981775.9469042,
-    "ast_hash": "dcac8a6814d536dd5a4f9de315fc0e46",
+    "mtime": 1793985718.1284463,
+    "seen": 1793987439.3082135,
+    "ast_hash": "fceb62c77c2728712e8a5f4b8e608616",
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/Repositories/AdminAuditRepository.cs": {
@@ -6486,9 +6486,9 @@
     "semantic_hash": ""
   },
   "MarkatPlace/Extensions/MinimalSwaggerDocumentFilter.cs": {
-    "mtime": 1793767407.3946168,
-    "seen": 1793767854.8122387,
-    "ast_hash": "e2c7a9031cf6ea17a09f6d969274e26c",
+    "mtime": 1793986262.5512643,
+    "seen": 1793987439.3289535,
+    "ast_hash": "b2b04a96c7bcdedbbfe7f83b2a9f1d6a",
     "semantic_hash": ""
   },
   "MarkatPlace/Extensions/PasswordResetTokenHeaderOperationFilter.cs": {
@@ -6594,9 +6594,9 @@
     "semantic_hash": ""
   },
   "MarkatPlace/Program.cs": {
-    "mtime": 1793977539.0710087,
-    "seen": 1793978486.1201248,
-    "ast_hash": "c1f05ce385fa8607b3f6510f0e6f155d",
+    "mtime": 1793986476.5480337,
+    "seen": 1793987439.3325083,
+    "ast_hash": "ec3022f7edce3a7e073fdbce3b589a60",
     "semantic_hash": ""
   },
   "MarkatPlace/Properties/launchSettings.json": {
@@ -6666,9 +6666,9 @@
     "semantic_hash": ""
   },
   "Shared/Constants/AdminAuditCatalog.cs": {
-    "mtime": 1791564788.4889777,
-    "seen": 1793628588.8829536,
-    "ast_hash": "598f7cb35dc4b2253a560f8f63567833",
+    "mtime": 1793985855.065782,
+    "seen": 1793987439.3348675,
+    "ast_hash": "744c1ceed2606328d90fc02cf6ebf0ba",
     "semantic_hash": ""
   },
   "Shared/Constants/AdminPageCatalog.cs": {
@@ -7236,9 +7236,9 @@
     "semantic_hash": ""
   },
   "Shared/Constants/UserMessages.cs": {
-    "mtime": 1793766999.8655734,
-    "seen": 1793767854.8378315,
-    "ast_hash": "92b5bb864debbb7f98e26122ac013cc9",
+    "mtime": 1793986312.2579045,
+    "seen": 1793987439.3551993,
+    "ast_hash": "55cda38ef7f2bafe17716e49eb59ecd4",
     "semantic_hash": ""
   },
   "Shared/Constants/VideoFormatCatalog.cs": {
@@ -7278,9 +7278,9 @@
     "semantic_hash": ""
   },
   "Shared/DTOs/Admin/AdminAnalyticsDtos.cs": {
-    "mtime": 1788583478.6734824,
-    "seen": 1793628588.8831003,
-    "ast_hash": "8e4e90d48713b4a27f4dab38fabf208a",
+    "mtime": 1793986339.3815439,
+    "seen": 1793987439.356473,
+    "ast_hash": "837dbe5ebdf8cd9b99cc0151aba97ece",
     "semantic_hash": ""
   },
   "Shared/DTOs/Admin/AdminAuditLogDtos.cs": {
@@ -8988,9 +8988,9 @@
     "semantic_hash": ""
   },
   "Shared/Enums/AdminAuditEnums.cs": {
-    "mtime": 1791564788.4889777,
-    "seen": 1793628588.88354,
-    "ast_hash": "81ee6d9df2135ff58ce539b3ec2cbbba",
+    "mtime": 1793985855.055436,
+    "seen": 1793987439.417433,
+    "ast_hash": "db07a9eaaf2ae1049514fa1ce0b79ef0",
     "semantic_hash": ""
   },
   "Shared/Enums/AdminPermissionEnums.cs": {
@@ -9882,9 +9882,9 @@
     "semantic_hash": ""
   },
   "docs/DECISIONS.md": {
-    "mtime": 1793981670.5606601,
-    "seen": 1793981776.0936513,
-    "ast_hash": "656ad0d1e6bc5c635d51c9ff6806c673",
+    "mtime": 1793987090.2770338,
+    "seen": 1793987439.451192,
+    "ast_hash": "0541f826a992938409ad09b0ae61d06a",
     "semantic_hash": ""
   },
   "docs/DEPLOYMENT.md": {
@@ -12702,21 +12702,21 @@
     "semantic_hash": ""
   },
   "Core/ServicesAbstraction/IAdPaymentRepository.cs": {
-    "mtime": 1793980691.530278,
-    "seen": 1793981775.761039,
-    "ast_hash": "05f94a1666a0452093d1f584505dc6ee",
+    "mtime": 1793985658.8405318,
+    "seen": 1793987439.1244106,
+    "ast_hash": "d2c992d7f3d5bafda575a9515cc390bf",
     "semantic_hash": ""
   },
   "Core/ServicesAbstraction/IAdPaymentService.cs": {
-    "mtime": 1793980691.5312772,
-    "seen": 1793981775.7610424,
-    "ast_hash": "24f907feb7aaa0ba71f9ffd8e7bca7ee",
+    "mtime": 1793985760.592677,
+    "seen": 1793987439.1244133,
+    "ast_hash": "6365edcd1331329befb1a7d19877f286",
     "semantic_hash": ""
   },
   "Core/Services/AdPayments/AdPaymentGate.cs": {
-    "mtime": 1793980691.5312772,
-    "seen": 1793981775.7982707,
-    "ast_hash": "45e768b0d9a09604a0629ba942d8bfca",
+    "mtime": 1793985760.592677,
+    "seen": 1793987439.1618016,
+    "ast_hash": "72802241361148bc9d783dea41821ce1",
     "semantic_hash": ""
   },
   "Core/Services/AdPayments/AdPaymentRules.cs": {
@@ -12726,15 +12726,15 @@
     "semantic_hash": ""
   },
   "Core/Services/AdPayments/AdPaymentService.cs": {
-    "mtime": 1793980856.093706,
-    "seen": 1793981775.798275,
-    "ast_hash": "4a7c145016911d7a249cad053452a6b2",
+    "mtime": 1793986119.9442537,
+    "seen": 1793987439.1620216,
+    "ast_hash": "f48fa0856c42fabdc2027c5dc21534d2",
     "semantic_hash": ""
   },
   "Infastrucre/Presantion/Controllers/AdPaymentsController.cs": {
-    "mtime": 1793766999.8143208,
-    "seen": 1793767854.7052248,
-    "ast_hash": "2414c720fbe05d382ac79c025fc565b2",
+    "mtime": 1793986176.207673,
+    "seen": 1793987439.2237742,
+    "ast_hash": "be1d9d0da9790cd549e5a4f2965e2cc2",
     "semantic_hash": ""
   },
   "Infastrucre/Presantion/Controllers/Admin/AdminAdPaymentsController.cs": {
@@ -12762,9 +12762,9 @@
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/Repositories/AdPaymentRepository.cs": {
-    "mtime": 1793980691.5312772,
-    "seen": 1793981775.9466865,
-    "ast_hash": "84a36fbc0d5f9a63db6d34cd5afa9001",
+    "mtime": 1793985658.8498907,
+    "seen": 1793987439.3079839,
+    "ast_hash": "c2979828c7b18308c122b8ba23ee5e9e",
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/Services/PrivateFileStore.cs": {
@@ -12774,15 +12774,15 @@
     "semantic_hash": ""
   },
   "Shared/DTOs/AdPayments/AdPaymentDtos.cs": {
-    "mtime": 1793980626.5178075,
-    "seen": 1793981775.9958625,
-    "ast_hash": "d2c26de5c12a2a5a9fa82f817cce9ca9",
+    "mtime": 1793985760.5936778,
+    "seen": 1793987439.3560424,
+    "ast_hash": "a2fe8b4fc6b3c07c80c7f661b96644fb",
     "semantic_hash": ""
   },
   "Tests/MarkatPlace.Tests/AdPaymentIntegrationTests.cs": {
-    "mtime": 1793964407.0590851,
-    "seen": 1793965905.6099317,
-    "ast_hash": "896cdffc229ea01d969e8487e300fe35",
+    "mtime": 1793986934.1581004,
+    "seen": 1793987439.4356503,
+    "ast_hash": "9b0e2e049a86759f9982a8ee1dc12023",
     "semantic_hash": ""
   },
   "Tests/MarkatPlace.Tests/ExpiredListingsAdminPageTests.cs": {
@@ -12804,9 +12804,9 @@
     "semantic_hash": ""
   },
   "Shared/Constants/AdPaymentCatalog.cs": {
-    "mtime": 1793964751.0378458,
-    "seen": 1793965905.424601,
-    "ast_hash": "1ab8e127413805d64ebe8430e5f05f8e",
+    "mtime": 1793985540.6059647,
+    "seen": 1793987439.3348649,
+    "ast_hash": "bcbe3d6114270247483d748f7ca7bef4",
     "semantic_hash": ""
   },
   "Shared/DTOs/Lookups/Forms/CreateAdFormPaymentDto.cs": {
@@ -12816,15 +12816,15 @@
     "semantic_hash": ""
   },
   "Tests/MarkatPlace.Tests/AdPaymentCatalogTests.cs": {
-    "mtime": 1793964751.0378458,
-    "seen": 1793965905.6099277,
-    "ast_hash": "09a6ad5d2d24986fc67b06842aced190",
+    "mtime": 1793986934.1565378,
+    "seen": 1793987439.4356475,
+    "ast_hash": "1b95c9acf1ba2359939664aa95414745",
     "semantic_hash": ""
   },
   "docs/AD_PAYMENT_INTEGRATION.md": {
-    "mtime": 1793981663.3017972,
-    "seen": 1793981776.091822,
-    "ast_hash": "0c4e396a31bf8250b051ad69947d4324",
+    "mtime": 1793987090.2601821,
+    "seen": 1793987439.4497557,
+    "ast_hash": "f7bc3a2a8e72b202bebb7bd8146d4cae",
     "semantic_hash": ""
   },
   "Infastrucre/Presitance/Migrations/20261106112437_AddPaymentReviewFeedback.Designer.cs": {
@@ -12873,6 +12873,132 @@
     "mtime": 1793981504.9746976,
     "seen": 1793981776.0759773,
     "ast_hash": "97dbf2b2839bf2dc9697e7de75a4f392",
+    "semantic_hash": ""
+  },
+  "Core/Domain/Entities/CatalogConfiguration.cs": {
+    "mtime": 1793985595.9068534,
+    "seen": 1793987439.1061695,
+    "ast_hash": "ad9258ec20b89544aefb1c54936591b9",
+    "semantic_hash": ""
+  },
+  "Core/ServicesAbstraction/ICatalogConfigurationProvider.cs": {
+    "mtime": 1793985634.782465,
+    "seen": 1793987439.131959,
+    "ast_hash": "3f6b36a9518f3c2ef4d9a802fa64e4f8",
+    "semantic_hash": ""
+  },
+  "Core/ServicesAbstraction/ICatalogConfigurationRepository.cs": {
+    "mtime": 1793985618.5740447,
+    "seen": 1793987439.1319616,
+    "ast_hash": "2ac19fd4a4245f0edd6a8f9b7a335279",
+    "semantic_hash": ""
+  },
+  "Core/ServicesAbstraction/ICatalogConfigurationService.cs": {
+    "mtime": 1793986020.419549,
+    "seen": 1793987439.131964,
+    "ast_hash": "deb711c95aa42b77e5f390aec21f6571",
+    "semantic_hash": ""
+  },
+  "Core/Services/Catalog/CatalogConfigurationProvider.cs": {
+    "mtime": 1793985634.8588374,
+    "seen": 1793987439.170315,
+    "ast_hash": "89bec1e1b0bb376cf4c430fd838b7dc9",
+    "semantic_hash": ""
+  },
+  "Core/Services/Catalog/CatalogConfigurationService.cs": {
+    "mtime": 1793986020.6692905,
+    "seen": 1793987439.1703181,
+    "ast_hash": "0eaeff12888f0e4c846b10307e466552",
+    "semantic_hash": ""
+  },
+  "Infastrucre/Presantion/Controllers/Admin/AdminCatalogConfigurationController.cs": {
+    "mtime": 1793986262.6402414,
+    "seen": 1793987439.2266173,
+    "ast_hash": "fc6b4a61c25a4709577233af1955310d",
+    "semantic_hash": ""
+  },
+  "Infastrucre/Presantion/Controllers/CatalogConfigurationController.cs": {
+    "mtime": 1793986262.855743,
+    "seen": 1793987439.2328289,
+    "ast_hash": "9423d1d1a5ccac069889e1dd9797ffb7",
+    "semantic_hash": ""
+  },
+  "Infastrucre/Presitance/Configurations/CatalogConfigurationConfiguration.cs": {
+    "mtime": 1793985595.9343128,
+    "seen": 1793987439.2509358,
+    "ast_hash": "853eef3332a08254fde88bb2c22063d8",
+    "semantic_hash": ""
+  },
+  "Infastrucre/Presitance/Migrations/20261106172914_AddCatalogConfiguration.Designer.cs": {
+    "mtime": 1793986155.1966455,
+    "seen": 1793987439.3073466,
+    "ast_hash": "f50f694d1d4e14ad5d86d2621314d7a3",
+    "semantic_hash": ""
+  },
+  "Infastrucre/Presitance/Migrations/20261106172914_AddCatalogConfiguration.cs": {
+    "mtime": 1793986155.1946397,
+    "seen": 1793987439.307349,
+    "ast_hash": "81889d916ebb4afc176c8b2e3a809a84",
+    "semantic_hash": ""
+  },
+  "Infastrucre/Presitance/Repositories/CatalogConfigurationRepository.cs": {
+    "mtime": 1793985618.5999527,
+    "seen": 1793987439.311789,
+    "ast_hash": "df4678357c226db9454ca996744c2c6e",
+    "semantic_hash": ""
+  },
+  "Infastrucre/Presitance/Repositories/QueryPredicates.cs": {
+    "mtime": 1793985718.1754594,
+    "seen": 1793987439.3210824,
+    "ast_hash": "8a7d7a0b3b4f69763e6e998341477bde",
+    "semantic_hash": ""
+  },
+  "MarkatPlace/Filters/ListingCreationAvailabilityFilter.cs": {
+    "mtime": 1793986325.503344,
+    "seen": 1793987439.3304236,
+    "ast_hash": "986bcf0f9f846211f103945c43d60079",
+    "semantic_hash": ""
+  },
+  "Shared/Catalog/CatalogConfigurationSnapshot.cs": {
+    "mtime": 1793985658.8718376,
+    "seen": 1793987439.3343925,
+    "ast_hash": "0426503a11359442ef83b0e44e32dff0",
+    "semantic_hash": ""
+  },
+  "Shared/Constants/CatalogProtection.cs": {
+    "mtime": 1793985540.3397398,
+    "seen": 1793987439.3413012,
+    "ast_hash": "da656b82ff230135af62d7df2080948a",
+    "semantic_hash": ""
+  },
+  "Shared/DTOs/Catalog/CatalogConfigurationDtos.cs": {
+    "mtime": 1793985883.4476182,
+    "seen": 1793987439.3827496,
+    "ast_hash": "f39ecfedcb92ba049c1867bfc033c12a",
+    "semantic_hash": ""
+  },
+  "Shared/Enums/CatalogConfigurationEnums.cs": {
+    "mtime": 1793985515.6574574,
+    "seen": 1793987439.4214585,
+    "ast_hash": "7fa530e890ebd9f61fd665302e0d10f7",
+    "semantic_hash": ""
+  },
+  "Tests/MarkatPlace.Tests/CatalogConfigurationIntegrationTests.cs": {
+    "mtime": 1793986934.1581004,
+    "seen": 1793987439.4384043,
+    "ast_hash": "5e4010b8cdee8fb3ca00063bb797305d",
+    "semantic_hash": ""
+  },
+  "Tests/MarkatPlace.Tests/CatalogConfigurationSnapshotTests.cs": {
+    "mtime": 1793986442.6763418,
+    "seen": 1793987439.4384072,
+    "ast_hash": "6bdb6f08c8939573b681a45fb99f5f04",
+    "semantic_hash": ""
+  },
+  "docs/CATALOG_CONFIGURATION_INTEGRATION.md": {
+    "mtime": 1793987068.766224,
+    "seen": 1793987439.450781,
+    "ast_hash": "1a6ff9c26f4eff91991ac825f05dc0fb",
     "semantic_hash": ""
   }
 }

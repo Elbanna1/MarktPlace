@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Data;
 using Persistence.Listings;
+using Shared.Constants;
 using Shared.Enums;
 using Xunit;
 
@@ -32,7 +33,7 @@ public partial class AdPaymentIntegrationTests
     {
         foreach (var module in ModerationModuleRegistry.EntityTypes.Keys)
         {
-            if (module != Cars)
+            if (module != Cars && AdPaymentCatalog.IsSubjectToPayment(module))
                 yield return new object?[] { module, null };
         }
 
@@ -532,7 +533,9 @@ public partial class AdPaymentIntegrationTests
 
             var modules = await DataAsync(user, "/api/v2/ad-payment/modules");
             Assert.Equal(Enum.GetValues<ListingModuleType>().Length, modules.GetArrayLength());
-            Assert.All(modules.EnumerateArray(), row => Assert.True(row.GetProperty("isSubjectToPayment").GetBoolean()));
+            Assert.All(modules.EnumerateArray(), row => Assert.Equal(
+                !CatalogProtection.IsFreeModule((ListingModuleType)row.GetProperty("advertisementType").GetInt32()),
+                row.GetProperty("isSubjectToPayment").GetBoolean()));
         });
     }
 

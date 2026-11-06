@@ -33,6 +33,11 @@ number **or** name (`50` or `Furniture`).
 
 ### A. `GET /api/v2/ad-payment/config` — live configuration
 
+> **Per-category payments.** Pass the form's selection, `?categoryId=&subCategoryId=` or `?type=`, to get the
+> *effective* configuration for that form (`scope`, `isProtected`, `advertisementType`, `categoryId`,
+> `subCategoryId`). Without a selection you get the global default plus `anyCategoryRequiresPayment`. Details are
+> in `docs/CATALOG_CONFIGURATION_INTEGRATION.md`.
+
 Auth: any signed-in user (401 otherwise). `GET /api/v2/public/ad-payment/config` returns the same payload
 anonymously and is kept for compatibility. Both send `Cache-Control: no-store`.
 
@@ -229,9 +234,11 @@ if one exists).
 
 ## 4. Advertisement types subject to Ad Payment
 
-All 65 advertisement types are subject to Ad Payment (cars sub-categories 1–4 share the `Advertisement`
-module). An exemption, if ever needed, is a one-line change in `AdPaymentCatalog.Exempt`: the form descriptor,
-the approval gate, the status endpoint and `/api/v2/ad-payment/modules` all read it.
+62 of the 65 advertisement types can be charged (cars sub-categories 1–4 share the `Advertisement` module). The
+three بوابة الخيرات modules (category 12) are **always free**: `AdPaymentCatalog.Exempt` is derived from
+`CatalogProtection`, and the form descriptor, the approval gate, the status endpoint and `/api/v2/ad-payment/modules`
+all read it. Whether a chargeable type actually requires payment is decided per category, sub-category and module.
+See `docs/CATALOG_CONFIGURATION_INTEGRATION.md`.
 
 | # | `advertisementType` | Key | Name | Category | Sub-category | Ad Payment |
 |---|---|---|---|---|---|---|
@@ -280,9 +287,9 @@ the approval gate, the status endpoint and `/api/v2/ad-payment/modules` all read
 | 43 | 61 | `Apartment` | إعلان الشقة | 11 | 48 | Yes |
 | 44 | 62 | `Shop` | إعلان المحل | 11 | 49 | Yes |
 | 45 | 63 | `Building` | إعلان المبنى | 11 | 65 | Yes |
-| 46 | 65 | `Rescue` | الاستغاثة | 12 | 50 | Yes |
-| 47 | 66 | `BloodRequest` | طلب فصيلة الدم | 12 | 51 | Yes |
-| 48 | 67 | `AskConsult` | السؤال | 12 | 52 | Yes |
+| 46 | 65 | `Rescue` | الاستغاثة | 12 | 50 | **No, always free** |
+| 47 | 66 | `BloodRequest` | طلب فصيلة الدم | 12 | 51 | **No, always free** |
+| 48 | 67 | `AskConsult` | السؤال | 12 | 52 | **No, always free** |
 | 49 | 70 | `LostItem` | بلاغ المفقودات | 3 | 7 | Yes |
 | 50 | 71 | `FoundItem` | بلاغ المعثورات | 3 | 8 | Yes |
 | 51 | 80 | `Doctor` | إعلان الطبيب | 13 | 53 | Yes |

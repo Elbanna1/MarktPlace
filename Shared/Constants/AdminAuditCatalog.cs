@@ -27,6 +27,8 @@ public static class AdminAuditCatalog
         public const string FormField = "FormField";
 
         public const string Admin = "Admin";
+
+        public const string CatalogConfiguration = "CatalogConfiguration";
     }
 
     public static readonly IReadOnlyDictionary<string, string> TargetNames =
@@ -47,7 +49,8 @@ public static class AdminAuditCatalog
             [Targets.Project] = "مشروع",
             [Targets.Report] = "بلاغ",
             [Targets.FormField] = "حقل في نموذج",
-            [Targets.Admin] = "مسؤول"
+            [Targets.Admin] = "مسؤول",
+            [Targets.CatalogConfiguration] = "إعدادات قسم أو وحدة"
         };
 
     public static readonly IReadOnlyDictionary<AdminAuditAction, string> ActionNames =
@@ -114,7 +117,10 @@ public static class AdminAuditCatalog
             [AdminAuditAction.ActivateAdmin] = "تفعيل مسؤول",
             [AdminAuditAction.DeactivateAdmin] = "إيقاف مسؤول",
             [AdminAuditAction.UpdateAdminPermissions] = "تعديل صلاحيات مسؤول",
-            [AdminAuditAction.RevokeAdmin] = "سحب صلاحيات مسؤول"
+            [AdminAuditAction.RevokeAdmin] = "سحب صلاحيات مسؤول",
+            [AdminAuditAction.UpdateCatalogPayment] = "تعديل إعدادات رسوم النشر لقسم",
+            [AdminAuditAction.UpdateCatalogVisibility] = "تعديل ظهور قسم",
+            [AdminAuditAction.ResetCatalogConfiguration] = "إرجاع إعدادات قسم للوراثة"
         };
 
     public static string NameOf(AdminAuditAction action) =>

@@ -338,7 +338,9 @@ public class AdminDashboardService : IAdminDashboardService
             Count = stats.PendingAdsCount,
             Route = "/admin/ads?moderationStatus=Pending",
             Icon = "📢",
-            IsUrgent = stats.PendingAdsCount > 0
+            IsUrgent = stats.PendingAdsCount > 0,
+            PageKey = AdminPageCatalog.Keys.Ads,
+            RequiredPermissions = new[] { nameof(AdminPermission.View) }
         },
         new()
         {
@@ -347,7 +349,9 @@ public class AdminDashboardService : IAdminDashboardService
             Count = stats.PendingReportsCount,
             Route = "/admin/reports?status=Pending",
             Icon = "🚨",
-            IsUrgent = stats.PendingReportsCount > 0
+            IsUrgent = stats.PendingReportsCount > 0,
+            PageKey = AdminPageCatalog.Keys.Reports,
+            RequiredPermissions = new[] { nameof(AdminPermission.View) }
         },
         new()
         {
@@ -356,7 +360,9 @@ public class AdminDashboardService : IAdminDashboardService
             Count = stats.PendingPaymentsCount,
             Route = "/admin/payments?status=Pending",
             Icon = "💳",
-            IsUrgent = stats.PendingPaymentsCount > 0
+            IsUrgent = stats.PendingPaymentsCount > 0,
+            PageKey = AdminPageCatalog.Keys.Payments,
+            RequiredPermissions = new[] { nameof(AdminPermission.View) }
         },
         new()
         {
@@ -366,7 +372,9 @@ public class AdminDashboardService : IAdminDashboardService
 
             Route = $"/admin/banner-requests?status={(int)BannerBookingStatus.PendingReview}",
             Icon = "🖼️",
-            IsUrgent = stats.PendingBannerRequestsCount > 0
+            IsUrgent = stats.PendingBannerRequestsCount > 0,
+            PageKey = AdminPageCatalog.Keys.BannerRequests,
+            RequiredPermissions = new[] { nameof(AdminPermission.View) }
         },
         new()
         {
@@ -376,7 +384,9 @@ public class AdminDashboardService : IAdminDashboardService
             Route = "/admin/users",
             Icon = "👥",
 
-            IsUrgent = false
+            IsUrgent = false,
+            PageKey = AdminPageCatalog.Keys.Users,
+            RequiredPermissions = new[] { nameof(AdminPermission.View) }
         }
     ];
 }

@@ -31,9 +31,32 @@ public class AdPaymentMethodDto
     public string? Instructions { get; set; }
 }
 
+public class AdPaymentConfigQuery
+{
+    public string? Type { get; set; }
+
+    public int? CategoryId { get; set; }
+
+    public int? SubCategoryId { get; set; }
+
+    public bool IsEmpty => string.IsNullOrWhiteSpace(Type) && CategoryId is null && SubCategoryId is null;
+}
+
 public class PublicAdPaymentConfigDto
 {
     public bool IsEnabled { get; set; }
+
+    public bool IsProtected { get; set; }
+
+    public string Scope { get; set; } = "Global";
+
+    public ListingModuleType? AdvertisementType { get; set; }
+
+    public int? CategoryId { get; set; }
+
+    public int? SubCategoryId { get; set; }
+
+    public bool AnyCategoryRequiresPayment { get; set; }
 
     public decimal Price { get; set; }
 
@@ -348,7 +371,10 @@ public static class AdPaymentDecisions
     }
 }
 
-public sealed record AdPaymentQueueFilter(DateTime? EnabledAt, string Stage);
+public sealed record AdPaymentQueueRule(IReadOnlyList<int?>? SubCategoryIds, DateTime? Since);
+
+public sealed record AdPaymentQueueFilter(
+    string Stage, IReadOnlyDictionary<ListingModuleType, IReadOnlyList<AdPaymentQueueRule>> Rules);
 
 public static class AdminAdPaymentStages
 {

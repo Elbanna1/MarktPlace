@@ -2,6 +2,7 @@ using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Services.Listings;
 using ServicesAbstraction;
+using Shared.Catalog;
 using Shared.Constants;
 using Shared.DTOs.Advertisements;
 using Shared.DTOs.AdPayments;
@@ -31,6 +32,8 @@ public class AdPaymentService : IAdPaymentService
     private readonly ILookupService _lookups;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<AdPaymentService> _logger;
+    private readonly IAdPaymentGate _gate;
+    private readonly ICatalogConfigurationProvider? _catalog;
 
     public AdPaymentService(
         IAdPaymentRepository repository,
@@ -42,8 +45,12 @@ public class AdPaymentService : IAdPaymentService
         IAdminAuditService audit,
         ILookupService lookups,
         IUnitOfWork unitOfWork,
-        ILogger<AdPaymentService> logger)
+        ILogger<AdPaymentService> logger,
+        IAdPaymentGate? gate = null,
+        ICatalogConfigurationProvider? catalog = null)
     {
+        _gate = gate ?? new AdPaymentGate(repository, catalog);
+        _catalog = catalog;
         _repository = repository;
         _listings = listings;
         _adminAds = adminAds;
@@ -59,20 +66,67 @@ public class AdPaymentService : IAdPaymentService
     public static string ScreenshotRoute(Guid paymentId) =>
         $"/{ApiVersions.AdminRoutePrefix}/ad-payment/submissions/{paymentId}/screenshot";
 
-    public async Task<PublicAdPaymentConfigDto> GetPublicConfigAsync(CancellationToken cancellationToken = default)
+    public async Task<PublicAdPaymentConfigDto> GetPublicConfigAsync(
+        CancellationToken cancellationToken = default, AdPaymentConfigQuery? query = null)
     {
         var settings = await LoadSettingsAsync(cancellationToken);
         var methods = await OfferedMethodsAsync(settings, cancellationToken);
+        var snapshot = await _gate.GetSnapshotAsync(cancellationToken);
+        var now = DateTime.UtcNow;
+
+        if (query is null || query.IsEmpty)
+        {
+            return new PublicAdPaymentConfigDto
+            {
+                IsEnabled = settings.IsEnabled,
+                Price = settings.Price,
+                Currency = settings.Currency,
+                Instructions = settings.Instructions,
+                PaymentMethods = settings.IsEnabled ? methods.Select(ToDto).ToList() : Array.Empty<AdPaymentMethodDto>(),
+                UpdatedAt = settings.UpdatedAt,
+                AnyCategoryRequiresPayment = snapshot.AnyPaymentEnabled(now)
+            };
+        }
+
+        var context = ContextOf(query);
+        var effective = snapshot.ResolvePayment(context, now);
 
         return new PublicAdPaymentConfigDto
         {
-            IsEnabled = settings.IsEnabled,
-            Price = settings.Price,
-            Currency = settings.Currency,
-            Instructions = settings.Instructions,
-            PaymentMethods = settings.IsEnabled ? methods.Select(ToDto).ToList() : Array.Empty<AdPaymentMethodDto>(),
-            UpdatedAt = settings.UpdatedAt
+            IsEnabled = effective.IsRequired,
+            IsProtected = effective.IsProtected,
+            Scope = context.Module is not null ? "Module" : context.SubCategoryId is not null ? "SubCategory" : "Category",
+            AdvertisementType = context.Module,
+            CategoryId = snapshot.CategoryOf(context),
+            SubCategoryId = CatalogConfigurationSnapshot.SubCategoryOf(context),
+            Price = effective.IsRequired ? effective.Price : 0m,
+            Currency = effective.Currency,
+            Instructions = effective.IsRequired ? settings.Instructions : null,
+            PaymentMethods = effective.IsRequired ? methods.Select(ToDto).ToList() : Array.Empty<AdPaymentMethodDto>(),
+            UpdatedAt = settings.UpdatedAt,
+            AnyCategoryRequiresPayment = snapshot.AnyPaymentEnabled(now)
         };
+    }
+
+    private static CatalogContext ContextOf(AdPaymentConfigQuery query)
+    {
+        ListingModuleType? module = null;
+
+        if (!string.IsNullOrWhiteSpace(query.Type))
+        {
+            var text = query.Type.Trim();
+
+            if (int.TryParse(text, out var number) && Enum.IsDefined((ListingModuleType)number))
+                module = (ListingModuleType)number;
+            else if (Enum.TryParse<ListingModuleType>(text, ignoreCase: true, out var parsed) && Enum.IsDefined(parsed))
+                module = parsed;
+            else
+                throw new BadRequestException("نوع الإعلان غير معروف.");
+        }
+
+        module ??= query.SubCategoryId is { } subCategoryId ? ListingModuleCatalog.ModuleOf(subCategoryId) : null;
+
+        return new CatalogContext(module, query.SubCategoryId, query.CategoryId);
     }
 
     public IReadOnlyList<AdPaymentModuleDto> GetModules() =>
@@ -143,6 +197,25 @@ public class AdPaymentService : IAdPaymentService
         if (request.IsEnabled && request.Price <= 0)
             throw new BadRequestException("لازم تحدد سعر أكبر من صفر قبل تفعيل الدفع للإعلانات.");
 
+        if (request.Price <= 0)
+        {
+            var snapshot = await _gate.GetSnapshotAsync(cancellationToken);
+            var at = DateTime.UtcNow;
+
+            var inheriting = snapshot.Entries
+                .Where(entry => entry.Kind == CatalogConfigurationKind.Payment && entry.IsEnabled &&
+                                !(entry.ActiveUntil <= at) &&
+                                snapshot.ResolvePayment(ContextOf(entry.Node), entry.ActiveFrom > at ? entry.ActiveFrom.Value : at)
+                                    .PriceSource is null)
+                .Select(entry => entry.Node.ToString())
+                .ToList();
+
+            if (inheriting.Count > 0)
+                throw new BadRequestException(
+                    "فيه أقسام مفعل عليها رسوم النشر وبتاخد السعر العام. حدد لها سعر خاص أو اوقفها قبل ما تخلي السعر العام صفر.",
+                    inheriting);
+        }
+
         var instructions = string.IsNullOrWhiteSpace(request.Instructions) ? null : request.Instructions.Trim();
 
         if (instructions is { Length: > MaxInstructionsLength })
@@ -185,6 +258,8 @@ public class AdPaymentService : IAdPaymentService
 
         await _repository.SaveChangesAsync(cancellationToken);
 
+        _catalog?.Invalidate();
+
         await _audit.LogAsync(
             AdminAuditAction.UpdateSettings, AdminAuditCatalog.Targets.PlatformSettings, "ad-payment",
             "تعديل إعدادات الدفع للإعلانات",
@@ -212,13 +287,18 @@ public class AdPaymentService : IAdPaymentService
 
         var settings = await LoadSettingsAsync(cancellationToken);
 
-        if (!settings.IsEnabled)
-            throw new BadRequestException("الدفع للإعلانات مش مفعل حالياً، ومش محتاج تدفع حاجة.");
-
         var listing = await LoadOwnedListingAsync(type, listingId, userId, cancellationToken);
+
+        var effective = await _gate.ResolveAsync(type, SubCategoryOf(listing), cancellationToken);
+
+        if (effective.IsProtected)
+            throw new BadRequestException(CatalogProtection.FreeCategoryMessage);
 
         if (!AdPaymentCatalog.IsSubjectToPayment(type))
             throw new BadRequestException("النوع ده من الإعلانات مش عليه رسوم نشر.");
+
+        if (!effective.IsRequired)
+            throw new BadRequestException("الدفع للإعلانات مش مفعل حالياً للقسم ده، ومش محتاج تدفع حاجة.");
 
         var latest = await _repository.GetLatestForListingAsync(type, listingId, cancellationToken);
 
@@ -245,18 +325,18 @@ public class AdPaymentService : IAdPaymentService
         if (!AdPaymentRules.NeedsNewWindow(listing, DateTime.UtcNow))
             throw new BadRequestException(AdPaymentRules.NotNeededReason(listing));
 
-        if (AdPaymentRules.IsGrandfathered(settings.EnabledAt, listing.ModerationStatus, _listings.CreatedAtOf(listing)))
+        if (AdPaymentRules.IsGrandfathered(effective.RequiredSince, listing.ModerationStatus, _listings.CreatedAtOf(listing)))
             throw new BadRequestException("الإعلان ده اتضاف قبل تفعيل رسوم النشر، ومش محتاج دفع.");
 
-        if (request.ExpectedAmount is { } expectedAmount && expectedAmount != settings.Price)
+        if (request.ExpectedAmount is { } expectedAmount && expectedAmount != effective.Price)
             throw new ConflictException(
-                $"رسوم نشر الإعلان اتغيرت. الرسوم الحالية {settings.Price:0.##} {settings.Currency}، " +
+                $"رسوم نشر الإعلان اتغيرت. الرسوم الحالية {effective.Price:0.##} {effective.Currency}، " +
                 "حدّث الصفحة وراجع المبلغ قبل ما تدفع.");
 
         if (!string.IsNullOrWhiteSpace(request.ExpectedCurrency) &&
-            !string.Equals(request.ExpectedCurrency.Trim(), settings.Currency, StringComparison.OrdinalIgnoreCase))
+            !string.Equals(request.ExpectedCurrency.Trim(), effective.Currency, StringComparison.OrdinalIgnoreCase))
             throw new ConflictException(
-                $"عملة رسوم النشر اتغيرت. العملة الحالية {settings.Currency}، حدّث الصفحة قبل ما تدفع.");
+                $"عملة رسوم النشر اتغيرت. العملة الحالية {effective.Currency}، حدّث الصفحة قبل ما تدفع.");
 
         var reference = string.IsNullOrWhiteSpace(request.TransactionReference)
             ? null
@@ -291,8 +371,8 @@ public class AdPaymentService : IAdPaymentService
             AccountNameSnapshot = method.AccountHolderName,
             InstructionsSnapshot = method.Instructions ?? settings.Instructions,
 
-            Amount = settings.Price,
-            Currency = settings.Currency,
+            Amount = effective.Price,
+            Currency = effective.Currency,
             ScreenshotPath = stored.RelativePath,
             TransactionReference = reference,
             Notes = notes,
@@ -387,18 +467,19 @@ public class AdPaymentService : IAdPaymentService
         var hasPending = latest is { Status: PaymentStatus.Pending };
         var hasCredit = await _repository.HasCreditAsync(type, listingId, cancellationToken);
 
-        var grandfathered = AdPaymentRules.IsGrandfathered(
-            settings.EnabledAt, listing.ModerationStatus, _listings.CreatedAtOf(listing));
+        var effective = await _gate.ResolveAsync(type, SubCategoryOf(listing), cancellationToken);
 
-        var required = settings.IsEnabled && AdPaymentCatalog.IsSubjectToPayment(type) &&
-                       needsWindow && !grandfathered && !hasCredit;
+        var grandfathered = AdPaymentRules.IsGrandfathered(
+            effective.RequiredSince, listing.ModerationStatus, _listings.CreatedAtOf(listing));
+
+        var required = effective.IsRequired && needsWindow && !grandfathered && !hasCredit;
         var stage = AdPaymentCatalog.ResolveStage(required, latest?.Status, hasCredit);
 
         return new AdPaymentStatusDto
         {
             AdvertisementId = listingId,
             AdvertisementType = type,
-            PaymentsEnabled = settings.IsEnabled,
+            PaymentsEnabled = effective.IsRequired,
             IsPaymentRequired = required,
             CanSubmit = required && !hasPending,
             HasPayment = latest is not null,
@@ -416,8 +497,8 @@ public class AdPaymentService : IAdPaymentService
             ReviewFeedback = latest?.Status is PaymentStatus.Approved or PaymentStatus.Rejected
                 ? latest.ReviewFeedback
                 : null,
-            CurrentPrice = settings.IsEnabled ? settings.Price : null,
-            CurrentCurrency = settings.IsEnabled ? settings.Currency : null,
+            CurrentPrice = effective.IsRequired ? effective.Price : null,
+            CurrentCurrency = effective.IsRequired ? effective.Currency : null,
             CanResubmit = required && !hasPending && latest is { Status: PaymentStatus.Rejected },
             Stage = stage,
             StageName = AdPaymentCatalog.Stages.NameOf(stage),
@@ -561,7 +642,7 @@ public class AdPaymentService : IAdPaymentService
     {
         var settings = await LoadSettingsAsync(cancellationToken);
 
-        if (!settings.IsEnabled)
+        if (!(await _gate.GetSnapshotAsync(cancellationToken)).AnyPaymentEnabled(DateTime.UtcNow))
             return;
 
         var offered = await OfferedMethodsAsync(settings, cancellationToken);
@@ -637,6 +718,16 @@ public class AdPaymentService : IAdPaymentService
 
         return payment;
     }
+
+    private static CatalogContext ContextOf(CatalogNodeRef node) => node.Type switch
+    {
+        CatalogNodeType.Category => CatalogContext.ForCategory(node.Id),
+        CatalogNodeType.SubCategory => CatalogContext.ForSubCategory(node.Id),
+        _ => CatalogContext.ForModule((ListingModuleType)node.Id)
+    };
+
+    private static int? SubCategoryOf(IModeratedListing listing) =>
+        listing is Advertisement advertisement ? advertisement.SubCategoryId : null;
 
     private async Task<AdPaymentSetting> LoadSettingsAsync(CancellationToken cancellationToken) =>
         await _repository.GetSettingsAsync(asNoTracking: true, cancellationToken)

@@ -41,7 +41,7 @@ public class ListingRepublishService : IListingRepublishService
             ? await RepublishAdvertisementAsync(userId, listingId)
             : await RepublishModuleAsync(userId, type, listingId, cancellationToken);
 
-        if (_paymentGate is not null && await _paymentGate.IsRequiredForNewListingAsync(type, cancellationToken))
+        if (_paymentGate is not null && await _paymentGate.IsAwaitingPaymentAsync(type, listingId, cancellationToken))
         {
             result.PaymentRequired = true;
             result.PaymentEndpoint = AdPaymentCatalog.SubmitRouteOf(type, listingId);

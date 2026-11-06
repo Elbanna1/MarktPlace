@@ -7,7 +7,8 @@ public class MinimalSwaggerDocumentFilter : IDocumentFilter
 {
     public static readonly IReadOnlySet<string> DocumentedTags = new HashSet<string>(StringComparer.Ordinal)
     {
-        "Ad Payments"
+        "Ad Payments",
+        "Catalog Configuration"
     };
 
     private static bool KeepsDocumentation(OpenApiOperation operation) =>

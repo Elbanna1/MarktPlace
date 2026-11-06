@@ -189,7 +189,7 @@ public class AdPaymentRepository : IAdPaymentRepository
         return await source
             .Query(ownerId: null, DateTime.UtcNow, includeUnmoderated: true)
             .Where(row => row.Id == listingId)
-            .Select(row => new AdPaymentListingRow(row.CreatedAt, row.ModerationStatus, row.ExpireAt))
+            .Select(row => new AdPaymentListingRow(row.CreatedAt, row.ModerationStatus, row.ExpireAt, row.SubCategoryId))
             .FirstOrDefaultAsync(cancellationToken);
     }
 

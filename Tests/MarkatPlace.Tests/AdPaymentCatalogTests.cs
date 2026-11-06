@@ -25,10 +25,14 @@ public class AdPaymentCatalogTests
     }
 
     [Fact]
-    public void Every_listing_module_is_subject_to_payment()
+    public void Every_listing_module_except_the_always_free_charity_ones_is_subject_to_payment()
     {
-        Assert.Equal(ListingModuleCatalog.All.Count, AdPaymentCatalog.SubjectModules.Count);
-        Assert.All(ListingModuleCatalog.All, type => Assert.True(AdPaymentCatalog.IsSubjectToPayment(type)));
+        var charity = new[] { ListingModuleType.Rescue, ListingModuleType.BloodRequest, ListingModuleType.AskConsult };
+
+        Assert.Equal(ListingModuleCatalog.All.Count - charity.Length, AdPaymentCatalog.SubjectModules.Count);
+        Assert.All(ListingModuleCatalog.All, type =>
+            Assert.Equal(!charity.Contains(type), AdPaymentCatalog.IsSubjectToPayment(type)));
+        Assert.All(charity, type => Assert.True(CatalogProtection.IsFreeModule(type)));
         Assert.False(AdPaymentCatalog.IsSubjectToPayment((ListingModuleType)9999));
     }
 
@@ -41,7 +45,7 @@ public class AdPaymentCatalogTests
 
             Assert.NotNull(descriptor);
             Assert.Equal(ListingModuleCatalog.ModuleOf(subCategory.Id), descriptor!.AdvertisementType);
-            Assert.True(descriptor.IsSubjectToPayment);
+            Assert.Equal(!CatalogProtection.IsFreeModule(descriptor.AdvertisementType), descriptor.IsSubjectToPayment);
             Assert.Equal(AdPaymentCatalog.ConfigRoute, descriptor.ConfigEndpoint);
             Assert.Equal("multipart/form-data", descriptor.ContentType);
 

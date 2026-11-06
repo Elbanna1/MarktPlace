@@ -116,6 +116,7 @@ public static class DependencyInjection
         services.AddScoped<ICraftsmanRepository, CraftsmanRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IAdPaymentRepository, AdPaymentRepository>();
+        services.AddScoped<ICatalogConfigurationRepository, CatalogConfigurationRepository>();
 
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 

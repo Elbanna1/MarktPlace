@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using System.Linq.Expressions;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Persistence.Listings;
@@ -436,8 +437,10 @@ public class AdminAdRepository : IAdminAdRepository
         if (paymentFilter.Stage == AdminAdPaymentStages.All)
             return query;
 
-        if (!AdPaymentCatalog.IsSubjectToPayment(type))
-            return paymentFilter.Stage == AdminAdPaymentStages.AwaitingPayment ? query.Where(_ => false) : query;
+        var awaitingOnly = paymentFilter.Stage == AdminAdPaymentStages.AwaitingPayment;
+
+        if (!paymentFilter.Rules.TryGetValue(type, out var rules) || rules.Count == 0)
+            return awaitingOnly ? query.Where(_ => false) : query;
 
         var targetType = type.ToString();
         var credits = _context.Payments.Where(payment =>
@@ -446,30 +449,32 @@ public class AdminAdRepository : IAdminAdRepository
             payment.Status == PaymentStatus.Approved &&
             payment.ActivatedAt == null);
 
-        if (paymentFilter.EnabledAt is { } enabledAt)
+        Expression<Func<UserListingRow, bool>> blocked = row =>
+            row.ModerationStatus == ModerationStatus.Pending &&
+            (row.ExpireAt == null || row.ExpireAt <= utcNow) &&
+            !credits.Any(payment => payment.TargetId == row.Id);
+
+        Expression<Func<UserListingRow, bool>>? covered = null;
+
+        foreach (var rule in rules)
         {
-            return paymentFilter.Stage == AdminAdPaymentStages.AwaitingPayment
-                ? query.Where(row =>
-                    row.ModerationStatus == ModerationStatus.Pending &&
-                    (row.ExpireAt == null || row.ExpireAt <= utcNow) &&
-                    row.CreatedAt >= enabledAt &&
-                    !credits.Any(payment => payment.TargetId == row.Id))
-                : query.Where(row =>
-                    row.ModerationStatus != ModerationStatus.Pending ||
-                    (row.ExpireAt != null && row.ExpireAt > utcNow) ||
-                    row.CreatedAt < enabledAt ||
-                    credits.Any(payment => payment.TargetId == row.Id));
+            var since = rule.Since;
+            var subCategoryIds = rule.SubCategoryIds;
+
+            Expression<Func<UserListingRow, bool>> match = (subCategoryIds, since) switch
+            {
+                (null, null) => row => true,
+                (null, { } from) => row => row.CreatedAt >= from,
+                ({ } ids, null) => row => ids.Contains(row.SubCategoryId),
+                ({ } ids, { } from) => row => ids.Contains(row.SubCategoryId) && row.CreatedAt >= from
+            };
+
+            covered = covered is null ? match : QueryPredicates.Or(covered, match);
         }
 
-        return paymentFilter.Stage == AdminAdPaymentStages.AwaitingPayment
-            ? query.Where(row =>
-                row.ModerationStatus == ModerationStatus.Pending &&
-                (row.ExpireAt == null || row.ExpireAt <= utcNow) &&
-                !credits.Any(payment => payment.TargetId == row.Id))
-            : query.Where(row =>
-                row.ModerationStatus != ModerationStatus.Pending ||
-                (row.ExpireAt != null && row.ExpireAt > utcNow) ||
-                credits.Any(payment => payment.TargetId == row.Id));
+        var awaiting = QueryPredicates.And(blocked, covered!);
+
+        return query.Where(awaitingOnly ? awaiting : QueryPredicates.Not(awaiting));
     }
 
     private static bool Participates(ListingModuleType type, AdminAdFilterParams filter)

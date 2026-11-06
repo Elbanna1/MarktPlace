@@ -46,6 +46,8 @@ public static class UserMessages
         public const string FormLoaded = "تم تحميل نموذج إضافة الإعلان.";
 
         public const string ReadConfigLoaded = "تم تحميل إعدادات العرض.";
+
+        public const string CreationUnavailable = "إضافة الإعلانات في القسم ده متوقفة حالياً.";
     }
 
     public static class Auth

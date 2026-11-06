@@ -6,7 +6,8 @@ namespace ServicesAbstraction;
 
 public record AdPaymentListingSummary(string? Title, int? CategoryId, int? SubCategoryId);
 
-public record AdPaymentListingRow(DateTime CreatedAt, ModerationStatus ModerationStatus, DateTime? ExpireAt);
+public record AdPaymentListingRow(
+    DateTime CreatedAt, ModerationStatus ModerationStatus, DateTime? ExpireAt, int? SubCategoryId = null);
 
 public record AdPaymentListingFacts(Guid LatestPaymentId, PaymentStatus LatestStatus, bool HasCredit);
 

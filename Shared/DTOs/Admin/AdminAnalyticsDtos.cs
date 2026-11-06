@@ -85,6 +85,10 @@ public class AdminQuickActionDto
     public string Icon { get; set; } = default!;
 
     public bool IsUrgent { get; set; }
+
+    public string? PageKey { get; set; }
+
+    public IReadOnlyList<string> RequiredPermissions { get; set; } = Array.Empty<string>();
 }
 
 public class AdminModerationOverviewDto
